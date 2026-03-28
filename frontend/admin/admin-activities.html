@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Activities & Clubs - Admin | Loretto Central School</title>
+  <script src="/admin/admin-auth.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800&family=Nunito:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <script src="/admin/adminfooter.js"></script>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--navy:#0e6b6b;--navy-dark:#094f4f;--navy-deep:#062f2f;--gold:#c8960c;--gold-light:#e8b020;--white:#fff;--bg:#f4f1eb;--bg2:#edeae2;--text:#1a2e2e;--text-muted:#5a6e6e;--border:#ddd6c0;--green:#27ae60;--red:#e74c3c;--orange:#e67e22;--sidebar-w:258px;--radius:13px;--shadow:0 4px 24px rgba(9,79,79,.10)}
+    html{scroll-behavior:smooth}
+    body{font-family:'Nunito',sans-serif;color:var(--text);background:var(--bg);min-height:100vh;overflow-x:hidden}
+    .shell{display:flex;min-height:100vh}
+    .sidebar{width:var(--sidebar-w);background:var(--navy-deep);display:flex;flex-direction:column;flex-shrink:0;position:sticky;top:0;height:100vh;overflow-y:auto;scrollbar-width:thin;scrollbar-color:rgba(200,150,12,.3) transparent;z-index:100}
+    .sidebar::-webkit-scrollbar{width:4px}.sidebar::-webkit-scrollbar-thumb{background:rgba(200,150,12,.3);border-radius:4px}
+    .sb-brand{padding:16px 14px 12px;border-bottom:1px solid rgba(255,255,255,.07);display:flex;align-items:center;gap:10px}
+    .sb-ic{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--gold),var(--gold-light));display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0;box-shadow:0 3px 10px rgba(200,150,12,.4)}
+    .sb-brand .sbn{font-family:'Playfair Display',serif;font-size:.84rem;font-weight:700;color:#fff}
+    .sb-brand .sbs{font-size:.57rem;color:var(--gold-light);font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-top:1px}
+    .sb-sec{font-size:.57rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;padding:12px 14px 4px}
+    .sb-sec.acts{color:rgba(200,150,12,.8)}.sb-sec.clubs{color:rgba(14,200,180,.7)}.sb-sec.oth{color:rgba(255,255,255,.28)}
+    .sb-nav{padding:4px 8px;flex:1}
+    .sl{display:flex;align-items:center;gap:7px;padding:7px 9px;border-radius:8px;font-size:.78rem;font-weight:600;color:rgba(255,255,255,.55);text-decoration:none;cursor:pointer;transition:all .2s;margin-bottom:2px;position:relative}
+    .sl:hover{background:rgba(255,255,255,.06);color:rgba(255,255,255,.9)}
+    .sl.active{background:linear-gradient(135deg,rgba(200,150,12,.22),rgba(200,150,12,.12));color:var(--gold-light);border:1px solid rgba(200,150,12,.3)}
+    .sl.active::before{content:'';position:absolute;left:0;top:22%;bottom:22%;width:3px;background:var(--gold-light);border-radius:0 3px 3px 0}
+    .sl .ic{font-size:.86rem;width:18px;text-align:center;flex-shrink:0}
+    .sl .tag{margin-left:auto;font-size:.54rem;font-weight:800;padding:1px 6px;border-radius:7px;background:rgba(200,150,12,.18);color:var(--gold-light)}
+    .sl .tag.cl{background:rgba(14,200,180,.15);color:rgba(14,220,180,1)}
+    .sb-footer{padding:10px 8px 12px;border-top:1px solid rgba(255,255,255,.07)}
+    .sb-user{display:flex;align-items:center;gap:8px;padding:8px 9px;border-radius:8px;background:rgba(255,255,255,.05)}
+    .sb-av{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold-light));display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:800;color:var(--navy-deep);flex-shrink:0}
+    .main{flex:1;min-width:0;display:flex;flex-direction:column}
+    .atbar{height:56px;background:var(--white);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 22px;gap:12px;position:sticky;top:0;z-index:50;box-shadow:0 2px 10px rgba(9,79,79,.06)}
+    .at-title{font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:700;color:var(--navy-dark);flex:1;min-width:0}
+    .at-title span{font-family:'Nunito',sans-serif;font-size:.68rem;font-weight:600;color:var(--text-muted);display:block;margin-top:1px}
+    .at-acts{display:flex;align-items:center;gap:8px;flex-shrink:0}
+    .btn{display:inline-flex;align-items:center;gap:5px;padding:6px 14px;border-radius:8px;cursor:pointer;font-family:'Nunito',sans-serif;font-size:.73rem;font-weight:700;border:none;transition:all .2s;white-space:nowrap}
+    .btn.out{background:transparent;border:1.5px solid var(--border);color:var(--text-muted)}.btn.out:hover{border-color:var(--navy);color:var(--navy)}
+    .btn.tl{background:var(--navy);color:#fff;box-shadow:0 3px 12px rgba(9,79,79,.22)}.btn.tl:hover{background:var(--navy-dark);transform:translateY(-1px)}
+    .btn.gd{background:linear-gradient(135deg,var(--gold),var(--gold-light));color:var(--navy-deep);box-shadow:0 3px 12px rgba(200,150,12,.28)}.btn.gd:hover{transform:translateY(-1px)}
+    .at-div{width:1px;height:24px;background:var(--border)}
+    .subnav{background:var(--white);border-bottom:2px solid var(--border);display:flex;overflow-x:auto;padding:0 14px;scrollbar-width:none;position:sticky;top:56px;z-index:40;align-items:stretch}
+    .subnav::-webkit-scrollbar{display:none}
+    .sn-label{font-size:.6rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;padding:0 8px;white-space:nowrap;color:var(--text-muted);display:flex;align-items:center}
+    .sn-label.acts{color:rgba(200,150,12,.9)}.sn-label.clubs{color:var(--navy)}
+    .sn-div{width:1px;background:var(--border);margin:8px 4px}
+    .subnav a{display:flex;align-items:center;gap:4px;padding:10px 10px;font-size:.72rem;font-weight:700;color:var(--text-muted);text-decoration:none;white-space:nowrap;border-bottom:3px solid transparent;transition:all .2s;cursor:pointer;flex-shrink:0}
+    .subnav a:hover{color:var(--navy);border-color:var(--navy)}
+    .subnav a.active{color:var(--navy);border-color:var(--gold);background:rgba(200,150,12,.04)}
+    .pbody{padding:22px;flex:1}
+    .panel{display:none}.panel.active{display:block}
+    .ov-items{display:grid;gap:10px}
+    .ov-item{display:flex;flex-direction:column;align-items:center;gap:5px;padding:14px 8px;border-radius:10px;border:1.5px solid var(--border);background:var(--bg);cursor:pointer;transition:all .2s;text-align:center}
+    .ov-item:hover{border-color:var(--navy);background:rgba(14,107,107,.05);transform:translateY(-2px);box-shadow:0 6px 20px rgba(9,79,79,.1)}
+    .oi-icon{font-size:1.6rem}.oi-name{font-size:.64rem;font-weight:700;color:var(--navy);line-height:1.3}
+    .ov-label{font-family:'Playfair Display',serif;font-size:.9rem;font-weight:700;color:var(--navy-dark);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+    .type-badge{font-size:.55rem;font-weight:800;padding:2px 8px;border-radius:9px}
+    .type-badge.act{background:rgba(200,150,12,.12);color:var(--gold);border:1px solid rgba(200,150,12,.3)}
+    .type-badge.club{background:rgba(14,107,107,.12);color:var(--navy);border:1px solid rgba(14,107,107,.25)}
+    .block{background:var(--white);border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow);margin-bottom:18px;overflow:hidden}
+    .bh{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--border);background:linear-gradient(135deg,var(--white),var(--bg));flex-wrap:wrap;gap:8px}
+    .bt{font-family:'Playfair Display',serif;font-size:.92rem;font-weight:700;color:var(--navy-dark);display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+    .dbc{font-family:'Nunito',sans-serif;font-size:.56rem;font-weight:800;background:rgba(14,107,107,.1);color:var(--navy);border:1px solid rgba(14,107,107,.18);padding:2px 7px;border-radius:7px}
+    .bb{padding:18px}
+    .ba{display:flex;gap:7px;flex-shrink:0}
+    .hero-preview{background:linear-gradient(135deg,var(--navy-dark),var(--navy));border-radius:12px;padding:22px;margin-bottom:16px;position:relative;overflow:hidden}
+    .hero-preview::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 50% 70% at 95% 50%,rgba(200,150,12,.2),transparent 70%)}
+    .hp-inner{position:relative;display:flex;align-items:center;gap:18px}
+    .hp-icon{font-size:3rem;flex-shrink:0;line-height:1}
+    .hp-badge{display:inline-block;background:rgba(200,150,12,.22);border:1px solid rgba(200,150,12,.45);color:var(--gold-light);font-size:.63rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:3px 10px;border-radius:20px;margin-bottom:7px}
+    .hp-title{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:800;color:#fff;margin-bottom:5px}
+    .hp-desc{font-size:.8rem;color:rgba(255,255,255,.7);line-height:1.6}
+    .info-tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}
+    .it{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center}
+    .it-icon{font-size:1.4rem;margin-bottom:6px}
+    .it-label{font-size:.6rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin-bottom:3px}
+    .it-val{font-size:.85rem;font-weight:700;color:var(--navy)}
+    .fg{display:grid;gap:12px}.fg.c2{grid-template-columns:1fr 1fr}.fg.c3{grid-template-columns:1fr 1fr 1fr}
+    .f label{display:block;font-size:.72rem;font-weight:700;color:var(--navy-dark);margin-bottom:4px}
+    .f label .dbh{font-size:.56rem;font-weight:700;color:var(--text-muted);background:var(--bg2);padding:1px 5px;border-radius:4px;margin-left:4px}
+    .f input,.f textarea,.f select{width:100%;padding:8px 12px;border:1.5px solid var(--border);border-radius:9px;font-family:'Nunito',sans-serif;font-size:.85rem;color:var(--text);background:var(--white);outline:none;transition:border .2s,box-shadow .2s}
+    .f input:focus,.f textarea:focus,.f select:focus{border-color:var(--navy);box-shadow:0 0 0 3px rgba(14,107,107,.09)}
+    .f textarea{resize:vertical;min-height:75px}
+    .fhint{font-size:.62rem;color:var(--text-muted);margin-top:3px}
+    .fhint code{background:var(--bg2);padding:1px 4px;border-radius:4px;font-family:monospace;font-size:.8em;color:#b35e00}
+    .le{display:grid;gap:6px}
+    .lr{display:flex;gap:7px;align-items:center}
+    .lr input{flex:1;padding:7px 11px;border:1.5px solid var(--border);border-radius:8px;font-family:'Nunito',sans-serif;font-size:.83rem;color:var(--text);background:var(--white);outline:none;transition:border .2s}
+    .lr input:focus{border-color:var(--navy)}
+    .ab{width:28px;height:28px;border-radius:6px;border:1.5px solid var(--border);background:var(--white);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.76rem;transition:all .15s;flex-shrink:0}
+    .ab:hover{border-color:var(--navy);background:var(--bg)}.ab.del:hover{border-color:var(--red);background:rgba(231,76,60,.06)}
+    .add-btn{display:inline-flex;align-items:center;gap:5px;padding:5px 11px;border-radius:7px;background:rgba(14,107,107,.07);border:1.5px dashed rgba(14,107,107,.25);color:var(--navy);font-family:'Nunito',sans-serif;font-size:.72rem;font-weight:700;cursor:pointer;transition:all .2s;margin-top:6px}
+    .add-btn:hover{background:rgba(14,107,107,.12);border-color:var(--navy)}
+    .two-col{display:grid;grid-template-columns:1.4fr 1fr;gap:18px;align-items:start}
+    .gal-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:8px}
+    .gal-slot{background:var(--bg2);border:1.5px solid var(--border);border-radius:9px;overflow:hidden;aspect-ratio:4/3;position:relative;display:flex;flex-direction:column}
+    .gal-prev{flex:1;background:var(--bg2);display:flex;align-items:center;justify-content:center;color:var(--text-muted);font-size:1.6rem;overflow:hidden}
+    .gal-prev img{width:100%;height:100%;object-fit:cover}
+    .gal-tag{position:absolute;top:5px;right:5px;background:rgba(0,0,0,.55);color:rgba(255,255,255,.85);font-size:.46rem;padding:2px 5px;border-radius:4px;font-family:monospace}
+    .gal-inp{padding:5px 8px;border:none;border-top:1px solid var(--border);background:var(--white);font-family:'Nunito',sans-serif;font-size:.67rem;color:var(--text-muted);width:100%;outline:none}
+    .tog-row{display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--bg2)}.tog-row:last-child{border-bottom:none}
+    .tln{font-size:.83rem;font-weight:700;color:var(--text)}.tld{font-size:.68rem;color:var(--text-muted);margin-top:2px}
+    .tog{position:relative;width:40px;height:22px;flex-shrink:0}.tog input{display:none}
+    .togt{position:absolute;inset:0;background:var(--bg2);border-radius:12px;border:1.5px solid var(--border);cursor:pointer;transition:all .2s}
+    .togt::after{content:'';position:absolute;width:14px;height:14px;border-radius:50%;background:#fff;top:3px;left:3px;box-shadow:0 2px 5px rgba(0,0,0,.18);transition:transform .2s}
+    .tog input:checked~.togt{background:var(--navy);border-color:var(--navy-dark)}.tog input:checked~.togt::after{transform:translateX(18px)}
+    .cld-row{display:flex;gap:7px;align-items:center}
+    .cld-row input{flex:1;font-size:.8rem}
+    .cld-up{flex-shrink:0;padding:6px 10px;border-radius:8px;cursor:pointer;background:rgba(200,150,12,.1);border:1.5px solid rgba(200,150,12,.25);color:var(--gold);font-family:'Nunito',sans-serif;font-size:.7rem;font-weight:700;transition:all .2s;white-space:nowrap}
+    .cld-up:hover{background:rgba(200,150,12,.2)}
+    .toast{position:fixed;bottom:24px;right:24px;background:var(--navy-deep);color:#fff;padding:11px 18px;border-radius:10px;font-size:.79rem;font-weight:700;display:flex;align-items:center;gap:8px;box-shadow:0 8px 28px rgba(0,0,0,.22);transform:translateY(80px);opacity:0;transition:all .3s cubic-bezier(.34,1.56,.64,1);z-index:99998;border-left:4px solid var(--gold-light);pointer-events:none;max-width:320px}
+    .toast.show{transform:translateY(0);opacity:1}
+    @media(max-width:1100px){.two-col{grid-template-columns:1fr}.ov-items{grid-template-columns:repeat(4,1fr)!important}}
+    @media(max-width:768px){.sidebar{display:none}.fg.c2,.fg.c3{grid-template-columns:1fr}.info-tiles{grid-template-columns:1fr 1fr}.gal-grid{grid-template-columns:1fr 1fr}}
+  </style>
+</head>
+<body>
+<script src="adminnavbar.js"></script>
+<div class="shell">
+  <aside class="sidebar">
+    <div class="sb-brand"><div class="sb-ic"></div><div><div class="sbn">Loretto Admin</div><div class="sbs">Activities & Clubs</div></div></div>
+    <div class="sb-nav">
+      <div class="sb-sec acts"> Activities</div>
+      <a class="sl" onclick="go('western-dance')"><span class="ic"></span> Western Dance <span class="tag">ACT</span></a>
+      <a class="sl" onclick="go('thinkers-space')"><span class="ic"></span> Thinkers Space .In <span class="tag">ACT</span></a>
+      <a class="sl" onclick="go('classical-dance')"><span class="ic"></span> Classical Dance <span class="tag">ACT</span></a>
+      <a class="sl" onclick="go('karate-class')"><span class="ic"></span> Karate Class <span class="tag">ACT</span></a>
+      <a class="sl" onclick="go('chess-class')"><span class="ic"></span> Chess Class <span class="tag">ACT</span></a>
+      <div class="sb-sec clubs"> Clubs</div>
+      <a class="sl" onclick="go('english-club')"><span class="ic"></span> English Club <span class="tag cl">CLUB</span></a>
+      <a class="sl" onclick="go('social-club')"><span class="ic"></span> Social Club <span class="tag cl">CLUB</span></a>
+      <a class="sl" onclick="go('eco-club')"><span class="ic"></span> Eco Club <span class="tag cl">CLUB</span></a>
+      <a class="sl" onclick="go('kannada-club')"><span class="ic">ಕ</span> Kannada Club <span class="tag cl">CLUB</span></a>
+      <a class="sl" onclick="go('maths-club')"><span class="ic"></span> Maths Club <span class="tag cl">CLUB</span></a>
+      <a class="sl" onclick="go('science-club')"><span class="ic"></span> Science Club <span class="tag cl">CLUB</span></a>
+      <a class="sl" onclick="go('hindi-club')"><span class="ic">🇮🇳</span> Hindi Club <span class="tag cl">CLUB</span></a>
+      <div class="sb-sec oth">Other</div>
+      <a class="sl" href="admin-panel.html"><span class="ic"></span> Dashboard</a>
+      <a class="sl" href="admin-academics.html"><span class="ic"></span> Academics</a>
+      <a class="sl" href="admin-schoolinfo.html"><span class="ic"></span> School Info</a>
+    </div>
+    <div class="sb-footer"><div class="sb-user"><div class="sb-av">A</div><div><div style="font-size:.74rem;font-weight:700;color:#fff">Administrator</div><div style="font-size:.58rem;color:rgba(255,255,255,.4)">Super Admin</div></div></div></div>
+  </aside>
+  <main class="main">
+    <div class="atbar">
+      <div class="at-title" id="atTitle">Activities &amp; Clubs<span id="atSub">Select an activity or club from the sidebar or overview below</span></div>
+      <div class="at-acts">
+        <button class="btn out" id="prevBtn" onclick="previewPage()"> Preview</button>
+        <div class="at-div"></div>
+        <button class="btn tl" onclick="savePage()"> Save</button>
+        <button class="btn gd" onclick="publishPage()"> Publish</button>
+      </div>
+    </div>
+    <nav class="subnav">
+      <span class="sn-label acts"> Activities</span>
+      <a onclick="go('western-dance')"> Western Dance</a>
+      <a onclick="go('thinkers-space')"> Thinkers Space</a>
+      <a onclick="go('classical-dance')"> Classical Dance</a>
+      <a onclick="go('karate-class')"> Karate</a>
+      <a onclick="go('chess-class')"> Chess</a>
+      <span class="sn-div"></span>
+      <span class="sn-label clubs"> Clubs</span>
+      <a onclick="go('english-club')"> English</a>
+      <a onclick="go('social-club')"> Social</a>
+      <a onclick="go('eco-club')"> Eco</a>
+      <a onclick="go('kannada-club')">ಕ Kannada</a>
+      <a onclick="go('maths-club')"> Maths</a>
+      <a onclick="go('science-club')"> Science</a>
+      <a onclick="go('hindi-club')">🇮🇳 Hindi</a>
+    </nav>
+    <div class="pbody">
+      <!-- OVERVIEW -->
+      <div class="panel active" id="tab-overview">
+        <div class="block">
+          <div class="bh"><div class="bt"> Activities &amp; Clubs — Overview <span class="dbc">12 pages · shared editor</span></div></div>
+          <div class="bb">
+            <p style="font-size:.85rem;color:var(--text-muted);margin-bottom:18px;">Click any card to open its editor. All 12 pages share the same structure: hero card, 3 info tiles, 2 content sections, gallery, and settings.</p>
+            <div class="ov-label"> Activities <span class="type-badge act">5 pages</span></div>
+            <div class="ov-items" style="grid-template-columns:repeat(5,1fr);margin-bottom:20px">
+              <div class="ov-item" onclick="go('western-dance')"><span class="oi-icon"></span><span class="oi-name">Western Dance</span></div>
+              <div class="ov-item" onclick="go('thinkers-space')"><span class="oi-icon"></span><span class="oi-name">Thinkers Space .In</span></div>
+              <div class="ov-item" onclick="go('classical-dance')"><span class="oi-icon"></span><span class="oi-name">Classical Dance</span></div>
+              <div class="ov-item" onclick="go('karate-class')"><span class="oi-icon"></span><span class="oi-name">Karate Class</span></div>
+              <div class="ov-item" onclick="go('chess-class')"><span class="oi-icon"></span><span class="oi-name">Chess Class</span></div>
+            </div>
+            <div class="ov-label"> Clubs <span class="type-badge club">7 pages</span></div>
+            <div class="ov-items" style="grid-template-columns:repeat(7,1fr)">
+              <div class="ov-item" onclick="go('english-club')"><span class="oi-icon"></span><span class="oi-name">English Club</span></div>
+              <div class="ov-item" onclick="go('social-club')"><span class="oi-icon"></span><span class="oi-name">Social Club</span></div>
+              <div class="ov-item" onclick="go('eco-club')"><span class="oi-icon"></span><span class="oi-name">Eco Club</span></div>
+              <div class="ov-item" onclick="go('kannada-club')"><span class="oi-icon">ಕ</span><span class="oi-name">Kannada Club</span></div>
+              <div class="ov-item" onclick="go('maths-club')"><span class="oi-icon"></span><span class="oi-name">Maths Club</span></div>
+              <div class="ov-item" onclick="go('science-club')"><span class="oi-icon"></span><span class="oi-name">Science Club</span></div>
+              <div class="ov-item" onclick="go('hindi-club')"><span class="oi-icon">🇮🇳</span><span class="oi-name">Hindi Club</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- SHARED EDITOR -->
+      <div class="panel" id="tab-editor">
+        <div class="hero-preview" id="hero-preview">
+          <div class="hp-inner">
+            <div class="hp-icon" id="prev-icon"></div>
+            <div><div class="hp-badge" id="prev-badge">Performing Arts · Dance</div><div class="hp-title" id="prev-title">Western Dance</div><div class="hp-desc" id="prev-desc">Loading...</div></div>
+          </div>
+        </div>
+        <div class="two-col">
+          <div>
+            <div class="block">
+              <div class="bh"><div class="bt" id="hero-blk-title"> Hero Card <span class="dbc" id="hero-dbc">activities_clubs.western-dance.hero</span></div><div class="ba"><button class="btn gd" onclick="savePage()"> Save</button></div></div>
+              <div class="bb"><div class="fg">
+                <div class="fg c3">
+                  <div class="f"><label>Emoji Icon <span class="dbh">hero.icon</span></label><input type="text" id="e-icon" oninput="liveUpdate()" maxlength="4" placeholder=""/></div>
+                  <div class="f" style="grid-column:span 2"><label>Badge Text <span class="dbh">hero.badge</span></label><input type="text" id="e-badge" oninput="liveUpdate()" placeholder="Performing Arts · Dance"/></div>
+                </div>
+                <div class="f"><label>Page Title <span class="dbh">hero.title</span></label><input type="text" id="e-title" oninput="liveUpdate()" placeholder="Western Dance"/></div>
+                <div class="f"><label>Description Paragraph <span class="dbh">hero.description</span></label><textarea id="e-desc" oninput="liveUpdate()" rows="3"></textarea></div>
+              </div></div>
+            </div>
+            <div class="block">
+              <div class="bh"><div class="bt"> Info Tiles <span class="dbc">hero.infoTiles[3]</span></div><div class="ba"><button class="btn gd" onclick="savePage()"> Save</button></div></div>
+              <div class="bb">
+                <div class="info-tiles">
+                  <div class="it"><div class="it-icon"></div><div class="it-label" id="t1-label">Schedule</div><div class="it-val" id="t1-val">—</div></div>
+                  <div class="it"><div class="it-icon"></div><div class="it-label" id="t2-label">Open To</div><div class="it-val" id="t2-val">—</div></div>
+                  <div class="it"><div class="it-icon"></div><div class="it-label" id="t3-label">Venue</div><div class="it-val" id="t3-val">—</div></div>
+                </div>
+                <div class="fg c3">
+                  <div class="f"><label>Label 1</label><input id="t1l" oninput="updateTile(1)" value="Schedule"/><input id="t1v" oninput="updateTile(1)" placeholder="Value..." style="margin-top:6px"/></div>
+                  <div class="f"><label>Label 2</label><input id="t2l" oninput="updateTile(2)" value="Open To"/><input id="t2v" oninput="updateTile(2)" placeholder="Value..." style="margin-top:6px"/></div>
+                  <div class="f"><label>Label 3</label><input id="t3l" oninput="updateTile(3)" value="Venue"/><input id="t3v" oninput="updateTile(3)" placeholder="Value..." style="margin-top:6px"/></div>
+                </div>
+              </div>
+            </div>
+            <div class="block">
+              <div class="bh"><div class="bt"> Section 1 — <span id="s1hl" style="color:var(--gold)">What Students Learn</span> <span class="dbc">content.section1</span></div><div class="ba"><button class="btn gd" onclick="savePage()"> Save</button></div></div>
+              <div class="bb">
+                <div class="f" style="margin-bottom:10px"><label>Heading <span class="dbh">section1.heading</span></label><input id="sec1-heading" oninput="document.getElementById('s1hl').textContent=this.value" placeholder="What Students Learn"/></div>
+                <div class="le" id="sec1-list"></div>
+                <button class="add-btn" onclick="addItem('sec1-list')">＋ Add Item</button>
+              </div>
+            </div>
+            <div class="block">
+              <div class="bh"><div class="bt"> Section 2 — <span id="s2hl" style="color:var(--gold)">Highlights</span> <span class="dbc">content.section2</span></div><div class="ba"><button class="btn gd" onclick="savePage()"> Save</button></div></div>
+              <div class="bb">
+                <div class="f" style="margin-bottom:10px"><label>Heading <span class="dbh">section2.heading</span></label><input id="sec2-heading" oninput="document.getElementById('s2hl').textContent=this.value" placeholder="Highlights &amp; Achievements"/></div>
+                <div class="le" id="sec2-list"></div>
+                <button class="add-btn" onclick="addItem('sec2-list')">＋ Add Item</button>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="block">
+              <div class="bh"><div class="bt"> Settings <span class="dbc">meta</span></div><div class="ba"><button class="btn gd" onclick="savePage()"> Save</button></div></div>
+              <div class="bb">
+                <div class="tog-row"><div><div class="tln">Page Live</div><div class="tld">Visible on public site</div></div><label class="tog"><input type="checkbox" id="tog-live" checked/><span class="togt"></span></label></div>
+                <div class="tog-row"><div><div class="tln">Show Gallery</div><div class="tld">Photo gallery section</div></div><label class="tog"><input type="checkbox" id="tog-gallery" checked/><span class="togt"></span></label></div>
+                <div class="tog-row"><div><div class="tln">Show Notice Box</div><div class="tld">Dark enrolment notice</div></div><label class="tog"><input type="checkbox" id="tog-notice"/><span class="togt"></span></label></div>
+                <div style="margin-top:14px"><div class="f"><label>Type <span class="dbh">meta.type</span></label><select id="e-type"><option value="activity"> Activity</option><option value="club"> Club</option></select></div></div>
+              </div>
+            </div>
+            <div class="block">
+              <div class="bh"><div class="bt"> Photo Gallery <span class="dbc">content.gallery[]</span></div><div class="ba"><button class="btn out" onclick="addGalSlot()">＋</button><button class="btn gd" onclick="savePage()"> Save</button></div></div>
+              <div class="bb">
+                <p class="fhint" style="margin-bottom:8px">Cloudinary URLs · <code>w_800,q_auto,f_auto,c_fill</code></p>
+                <div class="gal-grid" id="gal-grid"></div>
+                <div style="display:flex;gap:7px;align-items:center;margin-top:6px">
+                  <button class="cld-up" onclick="document.getElementById('gal-file').click()"> Upload Images</button>
+                  <input type="file" id="gal-file" accept="image/*" multiple style="display:none" onchange="uploadGalImages(this)"/>
+                  <span class="fhint">Up to 6 photos</span>
+                </div>
+              </div>
+            </div>
+            <div class="block">
+              <div class="bh"><div class="bt"> Notice Box <span class="dbc">content.noticeBox</span></div><div class="ba"><button class="btn gd" onclick="savePage()"> Save</button></div></div>
+              <div class="bb">
+                <p class="fhint" style="margin-bottom:8px">Dark navy box shown at bottom of page. Toggle visibility above.</p>
+                <div class="f"><label>Notice Text</label><textarea id="e-notice" rows="3" placeholder="e.g. To enrol, contact the class teacher or school office..."></textarea></div>
+              </div>
+            </div>
+            <div class="block">
+              <div class="bh"><div class="bt"> SEO <span class="dbc">meta.seo</span></div><div class="ba"><button class="btn gd" onclick="savePage()"> Save</button></div></div>
+              <div class="bb"><div class="fg">
+                <div class="f"><label>Meta Title</label><input id="seo-title" placeholder="Western Dance | Loretto Central School"/></div>
+                <div class="f"><label>Meta Description</label><textarea id="seo-desc" rows="2" placeholder="Discover Western Dance at Loretto Central School..."></textarea></div>
+              </div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<div class="toast" id="toast">Saved!</div>
+<script>
+var PAGES={
+  'western-dance':{type:'activity',icon:'',badge:'Performing Arts · Dance',title:'Western Dance',desc:'Loretto Central School celebrates the joy of movement through its vibrant Western Dance programme. Students learn a variety of contemporary dance styles in a fun, disciplined environment that builds confidence, rhythm, and self-expression.',t1l:'Schedule',t1v:'Every Friday, 3:30–4:30 PM',t2l:'Open To',t2v:'Classes V to X',t3l:'Venue',t3v:'School Auditorium',s1h:'What Students Learn',s1:['Contemporary and freestyle dance techniques','Hip-hop, jazz, and salsa fundamentals','Choreography and stage performance skills','Teamwork and synchronised group routines','Expression, body language, and stage presence'],s2h:'Highlights & Achievements',s2:['Annual Day showcase performances','Inter-school dance competitions','School cultural fest performances'],notice:'To enrol in Western Dance, contact the class teacher or visit the school office.',file:'1-western-dance.html'},
+  'thinkers-space':{type:'activity',icon:'',badge:'Critical Thinking · Debate',title:'Thinkers Space .In',desc:'Thinkers Space .In is a unique intellectual forum at Loretto Central School that encourages students to think critically, question deeply, and articulate their ideas with confidence. Through debates, discussions, and thought experiments, students develop essential 21st-century skills.',t1l:'Schedule',t1v:'Every Wednesday, 3:30–4:30 PM',t2l:'Open To',t2v:'Classes VII to X',t3l:'Venue',t3v:'Library / Seminar Room',s1h:'What We Do',s1:['Structured debates and group discussions','Critical thinking puzzles and brain teasers','Current affairs analysis and group presentations','Public speaking and argumentation training','Model United Nations (MUN) preparation sessions'],s2h:'Benefits for Students',s2:['Develops logical reasoning and analytical thinking','Builds confidence in public speaking','Improves research, reading, and writing skills'],notice:'',file:'2-thinkers-space.html'},
+  'classical-dance':{type:'activity',icon:'',badge:'Performing Arts · Classical',title:'Classical Dance',desc:'The Classical Dance programme at Loretto Central School offers students a gateway into the rich heritage of Indian classical dance traditions. Under the guidance of a trained instructor, students learn the discipline, grace, and storytelling art of classical forms.',t1l:'Schedule',t1v:'Every Tuesday, 3:30–4:30 PM',t2l:'Open To',t2v:'Classes III to IX',t3l:'Venue',t3v:'Dance Room / Auditorium',s1h:'Dance Forms Taught',s1:['Bharatanatyam — fundamentals of adavus and mudras','Classical folk dance forms of Karnataka','Expressive storytelling through movement (abhinaya)','Group choreography for school cultural events','Stage performance training and costume knowledge'],s2h:'Why Classical Dance?',s2:["Develops physical fitness, flexibility, and coordination","Instils patience, discipline, and focus","Connects students to India's cultural heritage"],notice:'',file:'3-classical-dance.html'},
+  'karate-class':{type:'activity',icon:'',badge:'Martial Arts · Self-Defence',title:'Karate Class',desc:'The Karate programme at Loretto Central School is conducted by a certified instructor and teaches students the discipline, focus, and self-defence skills of this respected martial art. Students have excelled at national-level competitions.',t1l:'Schedule',t1v:'Mon & Thu, 3:30–4:30 PM',t2l:'Open To',t2v:'Classes I to X',t3l:'Venue',t3v:'School Ground / Hall',s1h:'What Students Learn',s1:['Basic kata (forms) and kumite (sparring techniques)','Stances, blocks, punches, and kicks with precision','Belt grading system from white to advanced belts','Discipline, respect, and the code of martial arts','Self-defence skills and situational awareness'],s2h:'Achievements & Recognition',s2:['Students have won medals at state-level karate championships','National-level open karate competition participants','Regular participation in belt grading examinations'],notice:'',file:'4-karate-class.html'},
+  'chess-class':{type:'activity',icon:'',badge:'Strategy · Mind Sports',title:'Chess Class',desc:"Chess at Loretto Central School is more than a game — it is a mental workout that sharpens strategic thinking, patience, and problem-solving. Open to beginners and experienced players alike.",t1l:'Schedule',t1v:'Every Friday, 3:30–4:30 PM',t2l:'Open To',t2v:'Classes III to X',t3l:'Venue',t3v:'Library / Activity Room',s1h:'What Students Learn',s1:['Rules, board setup, and piece movements for beginners','Opening theory and key strategies for intermediate players','Tactics: pins, forks, skewers, and discovered attacks','Endgame technique and time management','Tournament etiquette and competitive play'],s2h:'Benefits of Chess',s2:['Develops critical thinking and forward planning','Improves concentration and patience','Builds resilience — learning from losses'],notice:'',file:'5-chess-class.html'},
+  'english-club':{type:'club',icon:'',badge:'Language · Literature',title:'English Club',desc:'The English Club at Loretto Central School is a vibrant space for students who love language, literature, and creative expression. Through a range of activities, students develop fluency, confidence, and a deep appreciation for the English language.',t1l:'Meets',t1v:'Every Monday, Lunch Break',t2l:'Open To',t2v:'Classes V to X',t3l:'Venue',t3v:'Library',s1h:'Club Activities',s1:['Creative writing workshops — stories, poems, essays','Vocabulary enrichment and word games','Public speaking and oral storytelling sessions','Literary discussions on books, poems, and short stories','Wall magazine and school newsletter contributions'],s2h:'Annual Events',s2:['Elocution and recitation competitions','English Week celebrations with themed events','Inter-house elocution and debate competitions'],notice:'',file:'6-english-club.html'},
+  'social-club':{type:'club',icon:'',badge:'Community · Service',title:'Social Club',desc:'The Social Club at Loretto Central School nurtures compassion, civic responsibility, and community spirit. Guided by the motto "Love Through Service," students engage in meaningful social activities that make a real difference.',t1l:'Meets',t1v:'Bi-weekly, Thursdays',t2l:'Open To',t2v:'Classes VI to X',t3l:'Venue',t3v:'Activity Room',s1h:'What We Do',s1:['Community outreach and awareness drives','Fundraising for charitable causes','Environmental cleanliness and plantation drives','Visits to care homes and community centres','Social awareness campaigns on key issues','Collaboration with local NGOs and community groups'],s2h:'Values We Build',s2:["Empathy and understanding for others' perspectives",'Teamwork, leadership, and organisational skills'],notice:'',file:'7-social-club.html'},
+  'eco-club':{type:'club',icon:'',badge:'Environment · Sustainability',title:'Eco Club',desc:'The Eco Club at Loretto Central School champions environmental awareness and sustainable living. Students are inspired to be guardians of the planet through hands-on activities, green campaigns, and a deep connection with nature.',t1l:'Meets',t1v:'Every Wednesday, Lunch Break',t2l:'Open To',t2v:'All Classes',t3l:'Venue',t3v:'School Garden / Ground',s1h:'Club Activities',s1:['Campus plantation drives and garden maintenance','Waste segregation and composting projects','Rainwater harvesting awareness campaigns','Nature walks and biodiversity documentation','World Environment Day and Earth Day celebrations','No-plastic and reduce-reuse-recycle campaigns'],s2h:'Achievements',s2:['Maintained and expanded school garden','Organised inter-class eco quiz and poster competitions'],notice:'',file:'8-eco-club.html'},
+  'kannada-club':{type:'club',icon:'ಕ',badge:'Language · Culture',title:'Kannada Club',desc:"The Kannada Club at Loretto Central School celebrates the rich language, literature, and culture of Karnataka. The club brings students closer to their regional roots, fostering pride in Kannada heritage.",t1l:'Meets',t1v:'Every Tuesday, Lunch Break',t2l:'Open To',t2v:'All Classes',t3l:'Venue',t3v:'Classroom / Hall',s1h:'Club Activities',s1:['Kannada poem recitation and creative writing','Folk song and traditional story sessions','Rajyotsava Day and cultural celebrations','Kannada calligraphy and script appreciation','Debates and discussions in Kannada','Wall magazine contributions in Kannada'],s2h:'Why the Kannada Club?',s2:["Strengthens spoken and written Kannada skills","Connects students to Karnataka's cultural heritage"],notice:'',file:'9-kannada-club.html'},
+  'maths-club':{type:'club',icon:'',badge:'Mathematics · Logic',title:'Maths Club',desc:'The Maths Club at Loretto Central School transforms mathematics from a subject into an adventure. Through puzzles, competitions, and explorations, students discover the beauty, logic, and real-world power of mathematics.',t1l:'Meets',t1v:'Every Thursday, Lunch Break',t2l:'Open To',t2v:'Classes IV to X',t3l:'Venue',t3v:'Maths Lab / Classroom',s1h:'Club Activities',s1:['Maths puzzles, riddles, and brain teasers','Mental maths competitions and timed challenges','Olympiad preparation — AMO, IMO, and state-level','Real-world maths applications (finance, architecture, nature)','Historical stories of great mathematicians','Math card games, Sudoku, and strategy games'],s2h:'Competitions & Achievements',s2:['Annual Maths Olympiad participation','Inter-school Maths quiz and problem-solving challenges'],notice:'',file:'10-maths-club.html'},
+  'science-club':{type:'club',icon:'',badge:'Science · Innovation',title:'Science Club',desc:'The Science Club at Loretto Central School fuels curiosity and a love for discovery. Through experiments, projects, and explorations, students experience science beyond the textbook — hands-on.',t1l:'Meets',t1v:'Every Friday, 3:30–4:30 PM',t2l:'Open To',t2v:'Classes V to X',t3l:'Venue',t3v:'Science Laboratory',s1h:'Club Activities',s1:['Live science experiments and demonstrations','Science fair project development and mentorship','Science quiz competitions — inter-class and inter-school','ISRO / NASA model-making and space science sessions','Environmental science field studies on campus','Innovation challenges and prototype building'],s2h:'Events & Achievements',s2:['Annual Science Exhibition — open to parents and community','National Science Day celebrations with live demonstrations'],notice:'',file:'11-science-club.html'},
+  'hindi-club':{type:'club',icon:'🇮🇳',badge:'Language · National',title:'Hindi Club',desc:"The Hindi Club at Loretto Central School fosters love for India's national language and its rich literary traditions. Students develop strong Hindi language skills and a deeper connection to national culture.",t1l:'Meets',t1v:'Every Wednesday, Lunch Break',t2l:'Open To',t2v:'All Classes',t3l:'Venue',t3v:'Classroom / Library',s1h:'Club Activities',s1:['Hindi poem recitation and creative story writing','Hindi Diwas celebrations and cultural programme','Debates, discussions, and elocution in Hindi','Hindi calligraphy and letter-writing sessions','Wall magazine and school notice-board in Hindi','Participation in Hindi language competitions'],s2h:'Benefits',s2:['Strengthens spoken and written Hindi proficiency','Builds confidence in using Hindi in daily communication'],notice:'',file:'12-hindi-club.html'}
+};
+var currentId=null,API_BASE=window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://loretto-cbse-school.onrender.com';
+function apiJson(url, options){
+  return fetch(url, Object.assign({
+    headers:{'Content-Type':'application/json'}
+  }, options||{})).then(function(res){
+    return res.json().catch(function(){return {};}).then(function(data){
+      if(!res.ok) throw new Error(data.error||'Request failed');
+      return data;
+    });
+  });
+}
+async function fetchPageData(id){
+  try{
+    var item=await apiJson(API_BASE+'/api/activities-clubs/'+id);
+    if(item && item.data && Object.keys(item.data).length){
+      PAGES[id]=Object.assign({},PAGES[id]||{},item.data);
+    }
+  }catch(e){
+    toast('Could not load '+((PAGES[id]||{}).title||id),true);
+  }
+}
+async function go(id){
+  if(!PAGES[id])return;
+  await fetchPageData(id);
+  currentId=id;
+  document.getElementById('tab-overview').classList.remove('active');
+  document.getElementById('tab-editor').classList.add('active');
+  document.querySelectorAll('.sl').forEach(function(l){l.classList.remove('active')});
+  var s=document.querySelector('.sl[onclick="go('+id+')"]');if(s)s.classList.add('active');
+  document.querySelectorAll('.subnav a').forEach(function(a){a.classList.remove('active')});
+  var sn=document.querySelector('.subnav a[onclick="go('+id+')"]');if(sn)sn.classList.add('active');
+  var p=PAGES[id];
+  document.getElementById('atTitle').childNodes[0].textContent='Activities & Clubs — '+p.title+' ';
+  document.getElementById('atSub').textContent='activities_clubs.'+id+' · POST /api/activities-clubs/'+id;
+  document.getElementById('prev-icon').textContent=p.icon;
+  document.getElementById('prev-badge').textContent=p.badge;
+  document.getElementById('prev-title').textContent=p.title;
+  document.getElementById('prev-desc').textContent=p.desc;
+  document.getElementById('hero-blk-title').innerHTML=p.icon+' Hero Card — '+p.title+' <span class="dbc">activities_clubs.'+id+'.hero</span>';
+  document.getElementById('e-icon').value=p.icon;
+  document.getElementById('e-badge').value=p.badge;
+  document.getElementById('e-title').value=p.title;
+  document.getElementById('e-desc').value=p.desc;
+  document.getElementById('e-type').value=p.type;
+  document.getElementById('e-notice').value=p.notice||'';
+  document.getElementById('tog-notice').checked=!!(p.notice&&p.notice.length>0);
+  document.getElementById('t1l').value=p.t1l;document.getElementById('t1v').value=p.t1v;
+  document.getElementById('t2l').value=p.t2l;document.getElementById('t2v').value=p.t2v;
+  document.getElementById('t3l').value=p.t3l;document.getElementById('t3v').value=p.t3v;
+  updateTile(1);updateTile(2);updateTile(3);
+  document.getElementById('sec1-heading').value=p.s1h;
+  document.getElementById('s1hl').textContent=p.s1h;
+  document.getElementById('sec2-heading').value=p.s2h;
+  document.getElementById('s2hl').textContent=p.s2h;
+  renderList('sec1-list',p.s1);
+  renderList('sec2-list',p.s2);
+  document.getElementById('seo-title').value=p.title+' | Activities & Clubs | Loretto Central School';
+  document.getElementById('seo-desc').value=p.desc.substring(0,160);
+  document.getElementById('gal-grid').innerHTML=makeGS()+makeGS()+makeGS();
+  if(p.content && Array.isArray(p.content.gallery) && p.content.gallery.length){
+    document.getElementById('gal-grid').innerHTML=p.content.gallery.map(function(u){return makeGS(u);}).join('');
+  }
+}
+function liveUpdate(){
+  document.getElementById('prev-icon').textContent=document.getElementById('e-icon').value||'?';
+  document.getElementById('prev-badge').textContent=document.getElementById('e-badge').value||'';
+  document.getElementById('prev-title').textContent=document.getElementById('e-title').value||'';
+  document.getElementById('prev-desc').textContent=document.getElementById('e-desc').value||'';
+}
+function updateTile(n){
+  var l=document.getElementById('t'+n+'l').value,v=document.getElementById('t'+n+'v').value;
+  document.getElementById('t'+n+'-label').textContent=l;
+  document.getElementById('t'+n+'-val').textContent=v||'—';
+}
+function renderList(cid,items){
+  var c=document.getElementById(cid);
+  c.innerHTML=items.map(function(it){return '<div class="lr"><input type="text" value="'+esc(it)+'"/><button class="ab del" aria-label="Remove item" onclick="this.closest(\'.lr\').remove()">×</button></div>';}).join('');
+}
+function addItem(cid){
+  var c=document.getElementById(cid),r=document.createElement('div');r.className='lr';
+  r.innerHTML='<input type="text" placeholder="Enter item..."/><button class="ab del" aria-label="Remove item" onclick="this.closest(\'.lr\').remove()">×</button>';
+  c.appendChild(r);r.querySelector('input').focus();
+}
+function esc(s){return(s||'').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function makeGS(url){return'<div class="gal-slot"><div class="gal-prev">'+(url?'<img src="'+url+'"/>':'')+'</div><div class="gal-tag">w_800,q_auto,f_auto</div><input class="gal-inp" type="url" value="'+(url||'')+'" placeholder="Cloudinary image URL..." oninput="updGS(this)"/></div>';}
+function addGalSlot(){document.getElementById('gal-grid').insertAdjacentHTML('beforeend',makeGS());}
+function updGS(inp){var s=inp.closest('.gal-slot'),p=s.querySelector('.gal-prev'),u=inp.value.trim();p.innerHTML=u?'<img src="'+u+'" onerror="this.parentElement.textContent=\'\'"/>':'';}
+async function uploadGalImages(inp){
+  if(!inp.files.length)return;
+  toast('Uploading '+inp.files.length+' image(s)...');
+  var urls=[];
+  for(var i=0;i<Math.min(inp.files.length,6);i++){
+    var fd=new FormData();fd.append('file',inp.files[i]);
+    try{var r=await fetch(API_BASE+'/api/upload',{method:'POST',body:fd});var d=await r.json();if(d.url)urls.push(d.url);}catch(e){}
+  }
+  if(urls.length){document.getElementById('gal-grid').innerHTML=urls.map(function(u){return makeGS(u);}).join('')+(urls.length<3?makeGS():'');toast('Uploaded '+urls.length+' image(s)!');}
+  else toast('Upload failed',true);
+}
+function collectData(){
+  if(!currentId)return null;
+  var s1=[],s2=[];
+  document.querySelectorAll('#sec1-list .lr input').forEach(function(i){if(i.value.trim())s1.push(i.value.trim())});
+  document.querySelectorAll('#sec2-list .lr input').forEach(function(i){if(i.value.trim())s2.push(i.value.trim())});
+  var gal=[];document.querySelectorAll('#gal-grid .gal-inp').forEach(function(i){if(i.value.trim())gal.push(i.value.trim())});
+  return{id:currentId,type:document.getElementById('e-type').value,
+    hero:{icon:document.getElementById('e-icon').value,badge:document.getElementById('e-badge').value,title:document.getElementById('e-title').value,description:document.getElementById('e-desc').value},
+    infoTiles:[{label:document.getElementById('t1l').value,value:document.getElementById('t1v').value},{label:document.getElementById('t2l').value,value:document.getElementById('t2v').value},{label:document.getElementById('t3l').value,value:document.getElementById('t3v').value}],
+    content:{section1:{heading:document.getElementById('sec1-heading').value,items:s1},section2:{heading:document.getElementById('sec2-heading').value,items:s2},gallery:gal,noticeBox:{text:document.getElementById('e-notice').value,visible:document.getElementById('tog-notice').checked}},
+    settings:{live:document.getElementById('tog-live').checked,showGallery:document.getElementById('tog-gallery').checked},
+    seo:{title:document.getElementById('seo-title').value,description:document.getElementById('seo-desc').value}};
+}
+async function savePage(){
+  var d=collectData();
+  if(!d){toast('Select a page first',true);return;}
+  try{
+    var saved=await apiJson(API_BASE+'/api/activities-clubs/'+d.id,{method:'POST',body:JSON.stringify(d)});
+    if(saved && saved.data) PAGES[d.id]=Object.assign({},PAGES[d.id]||{},saved.data);
+    else PAGES[d.id]=Object.assign({},PAGES[d.id]||{},d);
+    toast(' '+((PAGES[d.id]||{}).title||d.id)+' saved!');
+  }catch(e){
+    toast(e.message||'Failed to save page',true);
+  }
+}
+async function publishPage(){
+  if(!currentId){toast('Select a page first',true);return;}
+  await savePage();
+  toast(' '+(PAGES[currentId]||{}).title+' published!');
+}
+function previewPage(){if(!currentId)return;var p=PAGES[currentId];if(p)window.open('../activities-and-clubs/'+p.file,'_blank');}
+function toast(msg,err){var t=document.getElementById('toast');t.textContent=msg;t.style.borderLeftColor=err?'var(--red)':'var(--gold-light)';t.classList.add('show');setTimeout(function(){t.classList.remove('show')},3200);}
+// Admin token prompt removed
+document.addEventListener('keydown',function(e){if((e.ctrlKey||e.metaKey)&&e.key==='s'){e.preventDefault();savePage();}});
+document.getElementById('gal-grid').innerHTML=makeGS()+makeGS()+makeGS();
+</script>
+</body>
+</html>

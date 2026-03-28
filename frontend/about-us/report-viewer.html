@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Report Viewer | Loretto Central School</title>
+  <link rel="shortcut icon" href="../favicon.ico" type="image/x-icon">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800&family=Nunito:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --navy: #0e6b6b; --navy-dark: #094f4f; --gold: #c8960c; --gold-light: #e8b020; --gold-pale: #f5e6c0; --white: #ffffff; --light-bg: #f9f6ef; --text: #1a2e2e; --text-muted: #5a6e6e; --border: #e2d5b0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Nunito', sans-serif; color: var(--text); background: var(--white); overflow-x: hidden; }
+    .container { max-width: 1160px; margin: 0 auto; padding: 0 24px; }
+    .page-banner { background: linear-gradient(135deg, #094f4f 0%, #0e6b6b 60%, #127a7a 100%); padding: 60px 0 50px; position: relative; overflow: hidden; }
+    .page-banner::before { content: ''; position: absolute; inset: 0; background: url('https://school.edu/wp-content/uploads/2023/06/cropped-20230601_095851-1.jpg') center/cover no-repeat; opacity: 0.15; }
+    .page-banner-content { position: relative; z-index: 2; text-align: center; }
+    .page-banner h1 { font-family: 'Playfair Display', serif; font-size: 2.5rem; font-weight: 800; color: #fff; margin-bottom: 12px; }
+    .breadcrumb { display: flex; gap: 8px; align-items: center; justify-content: center; font-size: 0.82rem; color: rgba(255,255,255,0.75); }
+    .breadcrumb a { color: var(--gold-light); text-decoration: none; }
+    .breadcrumb span { color: rgba(255,255,255,0.45); }
+    .page-content { padding: 48px 0 64px; }
+    .viewer-card { background: #fff; border: 1px solid var(--border); border-radius: 16px; padding: 28px; box-shadow: 0 10px 30px rgba(14,107,107,0.08); }
+    .viewer-head { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; margin-bottom: 20px; }
+    .viewer-head h2 { font-family: 'Playfair Display', serif; font-size: 1.8rem; color: var(--navy); }
+    .viewer-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+    .viewer-btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-width: 150px; padding: 10px 18px; border-radius: 8px; font-size: 0.86rem; font-weight: 700; text-decoration: none; transition: all 0.2s; }
+    .viewer-btn.secondary { background: var(--gold-pale); color: var(--navy-dark); border: 1px solid var(--border); }
+    .viewer-btn.secondary:hover { background: #f3ddb0; }
+    .viewer-frame-wrap { border: 1px solid var(--border); border-radius: 14px; overflow: hidden; background: var(--light-bg); min-height: 75vh; }
+    .viewer-frame { width: 100%; height: 75vh; border: 0; display: block; background: #fff; }
+    .viewer-empty { text-align: center; padding: 48px 24px; color: var(--text-muted); }
+    .viewer-empty h2 { font-family: 'Playfair Display', serif; color: var(--navy); margin-bottom: 12px; }
+    @media (max-width: 768px) {
+      .page-banner h1 { font-size: 2rem; }
+      .viewer-card { padding: 18px; }
+      .viewer-frame-wrap, .viewer-frame { min-height: 65vh; height: 65vh; }
+      .viewer-btn { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-banner">
+    <div class="container">
+      <div class="page-banner-content">
+        <h1 id="viewerBannerTitle">Report Viewer</h1>
+        <div class="breadcrumb">
+          <a href="../index.html">Home</a><span>›</span>
+          <a href="7-annual-report.html">Annual Report</a><span>›</span>
+          <span id="viewerCrumbTitle">Report Viewer</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="page-content">
+    <div class="container">
+      <div class="viewer-card" id="viewerCard" style="display:none;">
+        <div class="viewer-head">
+          <h2 id="viewerTitle">Report Viewer</h2>
+          <div class="viewer-actions">
+            <a href="7-annual-report.html" class="viewer-btn secondary">Back to Reports</a>
+          </div>
+        </div>
+        <div class="viewer-frame-wrap">
+          <iframe id="reportFrame" class="viewer-frame" title="Report preview"></iframe>
+        </div>
+      </div>
+
+      <div class="viewer-card viewer-empty" id="viewerEmpty">
+        <h2>No Report Selected</h2>
+        <p>A report link is missing or invalid. Please return to the Annual Report page and choose a report to view.</p>
+      </div>
+    </div>
+  </section>
+
+  <script src="/components/Navbar.js"></script>
+  <script src="/components/Footer.js"></script>
+  <script>
+    (function () {
+      'use strict';
+
+      function getParam(name) {
+        return new URLSearchParams(window.location.search).get(name) || '';
+      }
+
+      function fileExtension(url) {
+        var clean = String(url || '').split('?')[0].split('#')[0];
+        var parts = clean.split('.');
+        return parts.length > 1 ? parts.pop().toLowerCase() : '';
+      }
+
+      function viewerUrlFor(url) {
+        var ext = fileExtension(url);
+        if (/^pdf$/i.test(ext)) {
+          return 'https://docs.google.com/gview?embedded=1&url=' + encodeURIComponent(url);
+        }
+        if (/^(doc|docx|xls|xlsx|ppt|pptx)$/i.test(ext)) {
+          return 'https://view.officeapps.live.com/op/embed.aspx?src=' + encodeURIComponent(url);
+        }
+        return url;
+      }
+
+      var reportUrl = getParam('url');
+      var title = getParam('title') || 'Report Viewer';
+
+      document.title = title + ' | Loretto Central School';
+      document.getElementById('viewerBannerTitle').textContent = title;
+      document.getElementById('viewerCrumbTitle').textContent = title;
+      document.getElementById('viewerTitle').textContent = title;
+
+      if (!reportUrl) return;
+
+      document.getElementById('viewerEmpty').style.display = 'none';
+      document.getElementById('viewerCard').style.display = 'block';
+      document.getElementById('reportFrame').src = viewerUrlFor(reportUrl);
+    })();
+  </script>
+</body>
+</html>

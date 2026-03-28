@@ -1,0 +1,24 @@
+# Dependencies
+node_modules/
+
+# Environment variables - NEVER commit these
+.env
+.env.local
+.env.production
+
+# macOS
+.DS_Store
+__MACOSX/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Data backups
+data/backups/
+
+# Admin file (local only)
+loretto-admin.html
+
+# VS Code
+.vscode/

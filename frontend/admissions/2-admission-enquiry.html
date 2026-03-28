@@ -1,0 +1,1119 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admission Enquiry | Loretto Central School</title>
+  <link rel="shortcut icon" href="../favicon.ico" type="image/x-icon">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800&family=Nunito:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet" />
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --navy: #0e6b6b;
+      --navy-dark: #094f4f;
+      --gold: #c8960c;
+      --gold-light: #e8b020;
+      --gold-pale: #f5e6c0;
+      --white: #ffffff;
+      --light-bg: #f9f6ef;
+      --text: #1a2e2e;
+      --text-muted: #5a6e6e;
+      --border: #e2d5b0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      color: var(--text);
+      background: var(--white);
+      overflow-x: hidden;
+    }
+
+    .top-bar {
+      background: var(--navy-dark);
+    }
+
+    .top-bar-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+    }
+
+    .top-bar-brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      text-decoration: none;
+    }
+
+    .top-bar-brand .tb-logo {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid var(--gold);
+      flex-shrink: 0;
+    }
+
+    .top-bar-brand .tb-text {
+      text-align: left;
+    }
+
+    .top-bar-brand .tb-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.55rem;
+      font-weight: 700;
+      color: #ffffff;
+      line-height: 1.2;
+      letter-spacing: 0.01em;
+    }
+
+    .top-bar-brand .tb-tagline {
+      font-size: 0.72rem;
+      color: var(--gold-light);
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-top: 3px;
+    }
+
+    .top-bar-login {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .login-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 4px;
+      text-decoration: none;
+      transition: all 0.2s;
+      border: 1px solid transparent;
+    }
+
+    .parent-btn {
+      background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
+      color: var(--navy-dark) !important;
+      border: none;
+      border-radius: 8px;
+      padding: 8px 18px !important;
+      font-size: 0.78rem !important;
+      font-weight: 800 !important;
+      letter-spacing: 0.05em;
+      box-shadow: 0 3px 10px rgba(200, 150, 12, 0.40), inset 0 1px 0 rgba(255, 255, 255, 0.30);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .parent-btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.20) 50%, transparent 100%);
+      transform: translateX(-100%);
+      transition: transform 0.5s ease;
+    }
+
+    .parent-btn:hover::before {
+      transform: translateX(100%);
+    }
+
+    .parent-btn:hover {
+      background: linear-gradient(135deg, var(--gold-light) 0%, #f5c842 100%) !important;
+      color: var(--navy-dark) !important;
+      box-shadow: 0 5px 18px rgba(200, 150, 12, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.35) !important;
+      transform: translateY(-1px);
+    }
+
+    header {
+      background: var(--white);
+      border-bottom: 3px solid var(--gold);
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.10);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    nav {
+      display: flex;
+      align-items: stretch;
+      gap: 0;
+      width: 100%;
+      justify-content: center;
+      max-width: 1160px;
+      margin: 0 auto;
+    }
+
+    /* ══════════════════════════════════════════════════════════════════ */
+    /* NAVBAR - MODERN HOVER EFFECT (Inspired by Vidya Sagar) */
+    /* ══════════════════════════════════════════════════════════════════ */
+
+    nav {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      flex-wrap: wrap;
+    }
+
+    .nav-item {
+      position: relative;
+      display: flex;
+      align-items: stretch;
+      /* REMOVED: border-right: 1px solid rgba(0,0,0,0.07); */
+    }
+
+    /* REMOVED: .nav-item:first-child { border-left: 1px solid rgba(0,0,0,0.07); } */
+
+    .nav-item>a {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--navy);
+      text-decoration: none;
+      padding: 12px 20px;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      letter-spacing: 0.01em;
+
+      /* Modern hover properties */
+      border-radius: 8px;
+      background: transparent;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      margin: 0 2px;
+    }
+
+    .nav-item>a .arrow {
+      font-size: 0.55rem;
+      opacity: 0.6;
+      transition: transform 0.3s, opacity 0.3s;
+      margin-left: 2px;
+    }
+
+    /* MODERN HOVER EFFECT */
+    .nav-item:hover>a {
+      background: rgba(14, 107, 107, 0.12);
+      /* Teal with reduced transparency */
+      color: var(--navy-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(14, 107, 107, 0.15);
+    }
+
+    .nav-item:hover>a .arrow {
+      transform: rotate(180deg);
+      opacity: 1;
+    }
+
+    /* Active/Current Page Style */
+    .nav-item>a.active {
+      background: linear-gradient(135deg, var(--navy) 0%, var(--navy-dark) 100%);
+      color: white;
+      box-shadow: 0 4px 12px rgba(14, 107, 107, 0.25);
+    }
+
+    .dropdown {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      min-width: 210px;
+      background: var(--navy);
+      box-shadow: 0 6px 24px rgba(0, 0, 0, 0.18);
+      z-index: 9999;
+      border-top: 3px solid var(--gold);
+      overflow: visible;
+    }
+
+    .nav-item:hover .dropdown {
+      display: block;
+    }
+
+    .dropdown a {
+      display: block;
+      padding: 10px 18px;
+      font-size: 0.76rem;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.88);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+      transition: background 0.15s, color 0.15s, padding-left 0.15s;
+      white-space: nowrap;
+    }
+
+    .dropdown a:last-child {
+      border-bottom: none;
+    }
+
+    .dropdown a:hover,
+    .dropdown a.active {
+      background: var(--gold);
+      color: #fff;
+      padding-left: 24px;
+    }
+
+    .container {
+      max-width: 1160px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .page-banner {
+      background: linear-gradient(135deg, #094f4f 0%, #0e6b6b 60%, #127a7a 100%);
+      padding: 60px 0 50px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .page-banner::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url('https://school.edu/wp-content/uploads/2023/06/cropped-20230601_095851-1.jpg') center/cover no-repeat;
+      opacity: 0.15;
+    }
+
+    .page-banner-content {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+    }
+
+    .page-banner h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.6rem;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 12px;
+    }
+
+    .breadcrumb {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.82rem;
+      color: rgba(255, 255, 255, 0.75);
+    }
+
+    .breadcrumb a {
+      color: var(--gold-light);
+      text-decoration: none;
+    }
+
+    .breadcrumb span {
+      color: rgba(255, 255, 255, 0.45);
+    }
+
+    .adm-subnav {
+      background: var(--light-bg);
+      border-bottom: 2px solid var(--border);
+    }
+
+    .adm-subnav-inner {
+      display: flex;
+      gap: 0;
+      overflow-x: auto;
+      max-width: 1160px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .adm-subnav-inner a {
+      display: block;
+      padding: 14px 20px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-decoration: none;
+      white-space: nowrap;
+      border-bottom: 3px solid transparent;
+      transition: all 0.2s;
+    }
+
+    .adm-subnav-inner a:hover {
+      color: var(--navy);
+      border-color: var(--navy);
+    }
+
+    .adm-subnav-inner a.active {
+      color: var(--navy);
+      border-color: var(--gold);
+      background: rgba(200, 150, 12, 0.06);
+    }
+
+    .page-content {
+      padding: 64px 0;
+    }
+
+    .content-layout {
+      display: grid;
+      grid-template-columns: 1fr 360px;
+      gap: 36px;
+      align-items: start;
+    }
+
+    .content-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 48px;
+      box-shadow: 0 4px 24px rgba(14, 107, 107, 0.07);
+    }
+
+    .content-card h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      color: var(--navy);
+      margin-bottom: 8px;
+    }
+
+    .content-card h2::after {
+      content: '';
+      display: block;
+      width: 50px;
+      height: 3px;
+      background: linear-gradient(90deg, var(--gold), var(--gold-light));
+      border-radius: 2px;
+      margin-top: 10px;
+      margin-bottom: 24px;
+    }
+
+    .content-card p {
+      font-size: 1rem;
+      line-height: 1.85;
+      color: var(--text-muted);
+      margin-bottom: 14px;
+    }
+
+    .content-card h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.25rem;
+      color: var(--navy);
+      margin: 32px 0 14px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid var(--border);
+    }
+
+    /* RULES LIST */
+    .rules-list {
+      list-style: none;
+      margin: 0 0 24px;
+    }
+
+    .rules-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.96rem;
+      line-height: 1.7;
+      color: var(--text-muted);
+    }
+
+    .rules-list li:last-child {
+      border-bottom: none;
+    }
+
+    .rules-list li .rule-bullet {
+      width: 26px;
+      height: 26px;
+      background: var(--navy);
+      color: var(--gold-light);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.72rem;
+      font-weight: 800;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    /* SIDEBAR */
+    .sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .sidebar-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 28px 24px;
+      box-shadow: 0 4px 18px rgba(14, 107, 107, 0.07);
+    }
+
+    .sidebar-card h4 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      color: var(--navy);
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid var(--border);
+    }
+
+    .sidebar-card p {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      line-height: 1.7;
+      margin-bottom: 14px;
+    }
+
+    .download-link {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--light-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 16px;
+      text-decoration: none;
+      transition: box-shadow 0.2s, transform 0.2s;
+      margin-bottom: 10px;
+    }
+
+    .download-link:last-child {
+      margin-bottom: 0;
+    }
+
+    .download-link:hover {
+      box-shadow: 0 4px 16px rgba(14, 107, 107, 0.12);
+      transform: translateY(-2px);
+    }
+
+    .download-link .dl-icon {
+      width: 40px;
+      height: 40px;
+      background: var(--navy);
+      color: var(--gold-light);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      flex-shrink: 0;
+    }
+
+    .download-link .dl-info .dl-name {
+      font-size: 0.84rem;
+      font-weight: 700;
+      color: var(--navy);
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    .download-link .dl-info .dl-type {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+    }
+
+    .info-card {
+      background: linear-gradient(135deg, var(--navy-dark), var(--navy));
+      border-radius: 12px;
+      padding: 24px;
+      color: #fff;
+    }
+
+    .info-card h4 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.05rem;
+      color: var(--gold-light);
+      margin-bottom: 12px;
+    }
+
+    .info-card .info-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 12px;
+      font-size: 0.85rem;
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    .info-card .info-row:last-child {
+      margin-bottom: 0;
+    }
+
+    .info-card .info-row span {
+      font-size: 1.1rem;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    footer {
+      background: var(--navy-dark);
+      color: rgba(255, 255, 255, 0.7);
+      padding: 48px 0 0;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 40px;
+      padding-bottom: 40px;
+    }
+
+    .footer-col h4 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.05rem;
+      color: var(--gold-light);
+      border-bottom: 1px solid rgba(200, 150, 12, 0.25);
+      padding-bottom: 8px;
+      margin-bottom: 16px;
+    }
+
+    .footer-col p,
+    .footer-col li {
+      font-size: 0.83rem;
+      line-height: 1.7;
+    }
+
+    .footer-col ul {
+      list-style: none;
+    }
+
+    .footer-col ul li {
+      margin-bottom: 8px;
+    }
+
+    .footer-col ul li a {
+      color: rgba(255, 255, 255, 0.65);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .footer-col ul li a:hover {
+      color: var(--gold-light);
+    }
+
+    .footer-bottom {
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 18px 24px;
+      text-align: center;
+      font-size: 0.78rem;
+      color: rgba(255, 255, 255, 0.45);
+    }
+
+    @media (max-width: 960px) {
+      .content-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .sidebar {
+        grid-template-columns: 1fr;
+      }
+
+      .footer-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    /* ── TOP-BAR SEARCH ── */
+    /* ── TOP-BAR SEARCH (icon-only, expands on click) ── */
+    .tb-search {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .tb-search-toggle {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 1.05rem;
+      padding: 6px 8px;
+      border-radius: 50%;
+      transition: color 0.2s, background 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .tb-search-toggle:hover {
+      color: var(--gold-light);
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .tb-search-box {
+      display: flex;
+      align-items: center;
+      position: absolute;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      background: var(--navy-dark);
+      border: 1.5px solid rgba(200, 150, 12, 0.5);
+      border-radius: 22px;
+      overflow: hidden;
+      width: 0;
+      opacity: 0;
+      pointer-events: none;
+      transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease;
+      z-index: 100;
+    }
+
+    .tb-search-box.open {
+      width: 220px;
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .tb-search-input {
+      background: transparent;
+      border: none;
+      outline: none;
+      color: #fff;
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 500;
+      padding: 7px 32px 7px 14px;
+      width: 100%;
+    }
+
+    .tb-search-input::placeholder {
+      color: rgba(255, 255, 255, 0.4);
+    }
+
+    .tb-search-clear {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: rgba(255, 255, 255, 0.5);
+      font-size: 0.75rem;
+      padding: 0 10px 0 0;
+      flex-shrink: 0;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .tb-search-clear.show {
+      opacity: 1;
+    }
+
+    .tb-search-results {
+      position: absolute;
+      top: calc(100% + 10px);
+      right: 0;
+      width: 300px;
+      max-height: 360px;
+      overflow-y: auto;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.18);
+      border: 2px solid var(--gold);
+      display: none;
+      z-index: 99999;
+    }
+
+    .tb-search-results.show {
+      display: block;
+    }
+
+    .tb-res-item {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      transition: background 0.15s;
+      text-decoration: none;
+      display: block;
+    }
+
+    .tb-res-item:last-child {
+      border-bottom: none;
+    }
+
+    .tb-res-item:hover {
+      background: var(--gold-pale);
+    }
+
+    .tb-res-cat {
+      font-size: 0.65rem;
+      color: var(--gold);
+      text-transform: uppercase;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+    }
+
+    .tb-res-title {
+      font-weight: 600;
+      color: var(--navy);
+      margin-top: 3px;
+      font-size: 0.87rem;
+    }
+
+    /* ═══════════════════════════════════════════════════════════════════ */
+    /* DESKTOP SEARCH BAR - ALWAYS VISIBLE */
+    /* ═══════════════════════════════════════════════════════════════════ */
+
+    /* ═══════════════════════════════════════════════════════════════════ */
+    /* MOBILE RESPONSIV */
+    /* ═══════════════════════════════════════════════════════════════════ */
+    @media (max-width: 768px) {
+      .tb-search {
+        display: none;
+      }
+
+      nav {
+        display: none !important;
+      }
+
+      .mobile-menu-btn {
+        display: block !important;
+      }
+
+      .header-inner {
+        justify-content: space-between;
+        padding: 0 20px;
+      }
+
+      .top-bar-row {
+        flex-direction: column;
+        padding: 15px 0;
+        gap: 15px;
+      }
+
+      .top-bar-brand {
+        justify-content: center;
+      }
+
+      .top-bar-login {
+        display: none;
+      }
+
+      .hero {
+        min-height: 500px;
+      }
+
+      .hero h1 {
+        font-size: clamp(1.8rem, 7vw, 3rem);
+      }
+
+      .prog-grid,
+      .news-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .gallery-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 480px) {
+      .gallery-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .mobile-menu {
+        width: 100%;
+        max-width: 100%;
+      }
+    }
+
+
+    /* ── MANDATORY DISCLOSURE FLYOUT (click-based) ── */
+    .has-flyout {
+      position: relative;
+    }
+
+    .has-flyout>a {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      cursor: pointer;
+    }
+
+    .flyout-arrow {
+      font-size: 0.55rem;
+      margin-left: auto;
+      opacity: 0.7;
+      flex-shrink: 0;
+      transition: transform 0.2s;
+    }
+
+    .has-flyout.open>a .flyout-arrow {
+      transform: rotate(90deg);
+    }
+
+    .flyout-panel {
+      display: none;
+      position: absolute;
+      left: 100%;
+      top: -3px;
+      min-width: 230px;
+      background: var(--navy-dark);
+      border-top: 3px solid var(--gold);
+      border-left: 2px solid rgba(200, 150, 12, 0.35);
+      box-shadow: 8px 8px 28px rgba(0, 0, 0, 0.30);
+      z-index: 10001;
+    }
+
+    .has-flyout.open>.flyout-panel {
+      display: block;
+    }
+
+    /* fallback hover for non-JS */
+    @media (hover: hover) {
+      .has-flyout:hover>.flyout-panel {
+        display: block;
+      }
+    }
+
+    .flyout-panel a {
+      display: block;
+      padding: 10px 16px;
+      font-size: 0.74rem;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.85);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+      transition: background 0.15s, padding-left 0.15s, color 0.15s;
+      white-space: nowrap;
+    }
+
+    .flyout-panel a:last-child {
+      border-bottom: none;
+    }
+
+    .flyout-panel a:hover {
+      background: var(--gold);
+      color: #fff;
+      padding-left: 22px;
+    }
+
+    .dropdown .has-flyout>a {
+      padding: 10px 12px;
+      background: rgba(255, 255, 255, 0.05);
+      font-weight: 700;
+      font-size: 0.75rem;
+      color: rgba(255, 255, 255, 0.92);
+      letter-spacing: 0.02em;
+    }
+
+    .dropdown .has-flyout>a:hover,
+    .dropdown .has-flyout.open>a {
+      background: var(--gold);
+      color: #fff;
+    }
+
+    /* Make sure dropdown doesn't clip the flyout */
+    .dropdown {
+      overflow: visible !important;
+    }
+
+    .nav-item {
+      overflow: visible !important;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="page-banner">
+    <div class="container">
+      <div class="page-banner-content">
+        <div class="breadcrumb"><a href="../index.html">Home</a><span>›</span><a
+            href="1-admissions.html">Admissions</a><span>›</span><span>Admission Enquiry</span></div>
+        <h1>Admission Enquiry</h1>
+      </div>
+    </div>
+  </div>
+
+  <div class="adm-subnav">
+    <div class="adm-subnav-inner">
+      <a href="1-admissions.html">Overview</a>
+      <a href="2-admission-enquiry.html" class="active">Admission Enquiry</a>
+      <a href="3-transfer-certificate.html">Transfer Certificate Format</a>
+      <a href="4-fee-structure.html">Fee Structure</a>
+    </div>
+  </div>
+
+  <section class="page-content">
+    <div class="container">
+      <div class="content-layout">
+
+        <!-- MAIN CONTENT -->
+        <div class="content-card">
+          <h2>Admission Enquiry</h2>
+          <p>Committed to our core value of nurturing excellence, we at Loretto Central School ensure that optimum
+            learning happens for your child in an environment that is student-centric, fosters mutual respect, and
+            stimulates innovation. With an intention to serve the student and parent communities and remain completely
+            impartial, the school follows an explicit admission process.</p>
+
+          <h3> Rules for Admission</h3>
+          <ul class="rules-list">
+            <li>
+              <div class="rule-bullet">1</div>
+              The school, which mainly runs for the Christian minority community, is also open for admission to boys and
+              girls irrespective of caste, creed, or social status.
+            </li>
+            <li>
+              <div class="rule-bullet">2</div>
+              The child should complete the age prescribed by the Government to be admitted to the 1st standard.
+            </li>
+            <li>
+              <div class="rule-bullet">3</div>
+              Every student for admission and withdrawal from the school must be introduced by letter or in person by
+              someone responsible to the Head of the School.
+            </li>
+            <li>
+              <div class="rule-bullet">4</div>
+              Application for admission should be made in the prescribed form, which can be obtained from the office,
+              and must be submitted along with the Transfer Certificate from the school previously attended.
+            </li>
+            <li>
+              <div class="rule-bullet">5</div>
+              Every pupil on admission shall pay the prescribed fees. No fees shall be refunded for any cause.
+            </li>
+            <li>
+              <div class="rule-bullet">6</div>
+              The payment may be made in instalments as prescribed by the school management. The entire fee is to be
+              remitted by February end.
+            </li>
+            <li>
+              <div class="rule-bullet">7</div>
+              Pupils coming from secondary or primary schools should produce a Transfer Certificate and Conduct
+              Certificate issued by the Head of the School concerned.
+            </li>
+            <li>
+              <div class="rule-bullet">8</div>
+              Pupils coming from schools outside Dakshina Kannada district or outside Karnataka State will be admitted
+              on production of a Transfer Certificate duly countersigned by the concerned authorities of the Department
+              of Education, in strict conformity with the rules and standards issued by the department.
+            </li>
+            <li>
+              <div class="rule-bullet">9</div>
+              In the case of admission of pupils coming from primary or secondary schools, the date of birth furnished
+              in the Transfer Certificate will be taken as correct.
+            </li>
+            <li>
+              <div class="rule-bullet">10</div>
+              The admission application must be signed by the father or mother or, in their absence, by the guardian who
+              has been authorized by the parents. The letter of authorization must be filed with the admission form.
+            </li>
+          </ul>
+
+          <h3> Documents Required</h3>
+          <p>Please bring the following documents when submitting your application to the school office:</p>
+          <ul class="rules-list">
+            <li>
+              <div class="rule-bullet"></div>Completed Application Form (downloaded and filled)
+            </li>
+            <li>
+              <div class="rule-bullet"></div>Transfer Certificate (TC) from previous school (for Classes 1–8)
+            </li>
+            <li>
+              <div class="rule-bullet"></div>Conduct Certificate from previous school (where applicable)
+            </li>
+            <li>
+              <div class="rule-bullet"></div>Original Birth Certificate of the child
+            </li>
+            <li>
+              <div class="rule-bullet"></div>Recent passport-size photographs of the student (2–4 copies)
+            </li>
+            <li>
+              <div class="rule-bullet"></div>Aadhar Card copy of student and parent/guardian
+            </li>
+            <li>
+              <div class="rule-bullet"></div>Caste Certificate / Community Certificate (if applicable)
+            </li>
+            <li>
+              <div class="rule-bullet"></div>Previous academic records / report card
+            </li>
+          </ul>
+        </div>
+
+        <!-- SIDEBAR -->
+        <div class="sidebar">
+
+          <div class="sidebar-card">
+            <h4> Download Application Forms</h4>
+            <p>Choose the form that applies to your child's class:</p>
+            <a href="https://school.edu/wp-content/uploads/2025/02/application-for-kindergarten-school-admission-1.pdf"
+              class="download-link" target="_blank">
+              <div class="dl-icon"></div>
+              <div class="dl-info">
+                <span class="dl-name">Kindergarten Admission</span>
+                <span class="dl-type">PDF · Application Form</span>
+              </div>
+            </a>
+            <a href="https://school.edu/wp-content/uploads/2025/02/application-for-play-school-admission-1.pdf"
+              class="download-link" target="_blank">
+              <div class="dl-icon"></div>
+              <div class="dl-info">
+                <span class="dl-name">Play School Admission</span>
+                <span class="dl-type">PDF · Application Form</span>
+              </div>
+            </a>
+            <a href="https://school.edu/wp-content/uploads/2025/02/application-for-1-8-admission-1.pdf"
+              class="download-link" target="_blank">
+              <div class="dl-icon"></div>
+              <div class="dl-info">
+                <span class="dl-name">Class 1–8 Admission</span>
+                <span class="dl-type">PDF · Application Form</span>
+              </div>
+            </a>
+          </div>
+
+          <div class="info-card">
+            <h4> School Office Information</h4>
+            <div class="info-row"><span></span><span>Loretto Central School<br>Loretto Padavu, Bantwal<br>Dakshina
+                Kannada – 574219</span></div>
+            <div class="info-row"><span></span><span>Please enquire during working hours</span></div>
+            <div class="info-row"><span></span><span><a href="https://lorettocentralschool.edu.in" target="_blank"
+                  style="color:var(--gold-light)">lorettocentralschool.edu.in</a></span></div>
+          </div>
+
+          <div class="sidebar-card">
+            <h4> Quick Tips</h4>
+            <p>• Collect or download forms in advance</p>
+            <p>• Fill all fields accurately and completely</p>
+            <p>• Keep original documents ready for verification</p>
+            <p>• Submit during office working hours only</p>
+            <p>• Fees once paid are non-refundable</p>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script src="../shared-data-loader.js"></script>
+  <script src="admissions-page-loader.js?v=20260328-1"></script>
+  <script src="/components/Navbar.js"></script>
+  <script src="/components/Footer.js"></script>
+</body>
+
+</html>

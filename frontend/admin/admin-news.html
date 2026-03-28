@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>News & Events — Admin | Loretto Central School</title>
+  <script src="/admin/admin-auth.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Nunito:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <script src="/admin/adminfooter.js"></script>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --navy:#0e6b6b;--navy-dark:#094f4f;--navy-deep:#062f2f;
+      --gold:#c8960c;--gold-light:#e8b020;--gold-pale:#f5e6c0;
+      --white:#fff;--bg:#f4f1eb;--bg2:#edeae2;
+      --text:#1a2e2e;--text-muted:#5a6e6e;--border:#ddd6c0;
+      --green:#27ae60;--red:#e74c3c;--orange:#e67e22;
+      --sidebar-w:240px;--radius:13px;--shadow:0 4px 24px rgba(9,79,79,.10);
+    }
+    html{scroll-behavior:smooth}
+    body{font-family:'Nunito',sans-serif;color:var(--text);background:var(--bg);min-height:100vh;overflow-x:hidden}
+    .shell{display:flex;min-height:100vh}
+
+    /* ── SIDEBAR ── */
+    .sidebar{width:var(--sidebar-w);background:var(--navy-deep);display:flex;flex-direction:column;flex-shrink:0;position:sticky;top:0;height:100vh;overflow-y:auto;scrollbar-width:thin;scrollbar-color:rgba(200,150,12,.3) transparent;z-index:100}
+    .sidebar::-webkit-scrollbar{width:4px}.sidebar::-webkit-scrollbar-thumb{background:rgba(200,150,12,.3);border-radius:4px}
+    .sb-brand{padding:18px 15px 14px;border-bottom:1px solid rgba(255,255,255,.07);display:flex;align-items:center;gap:10px}
+    .sb-ic{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--gold),var(--gold-light));display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0;box-shadow:0 3px 10px rgba(200,150,12,.4)}
+    .sb-brand .sbn{font-family:'Playfair Display',serif;font-size:.84rem;font-weight:700;color:#fff}
+    .sb-brand .sbs{font-size:.57rem;color:var(--gold-light);font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-top:1px}
+    .sb-sec{font-size:.57rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.28);padding:14px 14px 5px}
+    .sb-nav{padding:4px 8px;flex:1}
+    .sl{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:9px;font-size:.8rem;font-weight:600;color:rgba(255,255,255,.58);text-decoration:none;cursor:pointer;transition:all .2s;margin-bottom:2px;position:relative}
+    .sl:hover{background:rgba(255,255,255,.06);color:rgba(255,255,255,.9)}
+    .sl.active{background:linear-gradient(135deg,rgba(200,150,12,.22),rgba(200,150,12,.12));color:var(--gold-light);border:1px solid rgba(200,150,12,.3)}
+    .sl.active::before{content:'';position:absolute;left:0;top:22%;bottom:22%;width:3px;background:var(--gold-light);border-radius:0 3px 3px 0}
+    .sl .ic{font-size:.88rem;width:18px;text-align:center;flex-shrink:0}
+    .sb-cnt{margin-left:auto;font-size:.58rem;font-weight:800;background:rgba(200,150,12,.22);color:var(--gold-light);padding:1px 7px;border-radius:10px}
+    .sb-footer{padding:11px 8px 14px;border-top:1px solid rgba(255,255,255,.07)}
+    .sb-user{display:flex;align-items:center;gap:8px;padding:9px 10px;border-radius:9px;background:rgba(255,255,255,.05)}
+    .sb-av{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold-light));display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:800;color:var(--navy-deep);flex-shrink:0}
+
+    /* ── MAIN ── */
+    .main{flex:1;min-width:0;display:flex;flex-direction:column}
+
+    /* ── TOPBAR ── */
+    .atbar{height:56px;background:var(--white);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 22px;gap:10px;position:sticky;top:0;z-index:50;box-shadow:0 2px 10px rgba(9,79,79,.06)}
+    .at-title{font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:700;color:var(--navy-dark);flex:1;min-width:0}
+    .at-title span{font-family:'Nunito',sans-serif;font-size:.66rem;font-weight:600;color:var(--text-muted);display:block;margin-top:1px}
+    .at-acts{display:flex;align-items:center;gap:8px;flex-shrink:0}
+    .btn{display:inline-flex;align-items:center;gap:5px;padding:6px 14px;border-radius:8px;cursor:pointer;font-family:'Nunito',sans-serif;font-size:.73rem;font-weight:700;border:none;transition:all .2s;white-space:nowrap}
+    .btn.out{background:transparent;border:1.5px solid var(--border);color:var(--text-muted)}.btn.out:hover{border-color:var(--navy);color:var(--navy)}
+    .btn.tl{background:var(--navy);color:#fff;box-shadow:0 3px 12px rgba(9,79,79,.22)}.btn.tl:hover{background:var(--navy-dark);transform:translateY(-1px)}
+    .btn.gd{background:linear-gradient(135deg,var(--gold),var(--gold-light));color:var(--navy-deep);box-shadow:0 3px 12px rgba(200,150,12,.28)}.btn.gd:hover{transform:translateY(-1px)}
+    .btn.rd{background:var(--red);color:#fff}.btn.rd:hover{background:#c0392b;transform:translateY(-1px)}
+    .at-div{width:1px;height:24px;background:var(--border);flex-shrink:0}
+    .api-dot{width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse 2s infinite;flex-shrink:0}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+    /* ── FILTER BAR ── */
+    .filter-bar{background:var(--white);border-bottom:1px solid var(--border);padding:10px 22px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;position:sticky;top:56px;z-index:40}
+    .search-box{display:flex;align-items:center;gap:7px;background:var(--bg);border:1.5px solid var(--border);border-radius:9px;padding:6px 12px;flex:1;min-width:180px;max-width:320px;transition:border .2s}
+    .search-box:focus-within{border-color:var(--navy)}
+    .search-box input{background:transparent;border:none;outline:none;font-family:'Nunito',sans-serif;font-size:.83rem;color:var(--text);width:100%}
+    .search-box input::placeholder{color:var(--text-muted)}
+    .fsel{padding:6px 10px;border:1.5px solid var(--border);border-radius:9px;font-family:'Nunito',sans-serif;font-size:.78rem;color:var(--text);background:var(--white);outline:none;cursor:pointer;transition:border .2s}
+    .fsel:focus{border-color:var(--navy)}
+    .filter-pills{display:flex;gap:6px;flex-wrap:wrap}
+    .fpill{padding:4px 11px;border-radius:20px;font-size:.67rem;font-weight:700;cursor:pointer;border:1.5px solid var(--border);background:var(--white);color:var(--text-muted);transition:all .15s}
+    .fpill:hover{border-color:var(--navy);color:var(--navy)}
+    .fpill.active{background:var(--navy);color:#fff;border-color:var(--navy)}
+    .stats-mini{margin-left:auto;display:flex;gap:14px;flex-shrink:0}
+    .sm{font-size:.7rem;font-weight:700;color:var(--text-muted);display:flex;align-items:center;gap:4px}
+    .sm strong{color:var(--text)}
+
+    /* ── BODY ── */
+    .pbody{padding:22px;flex:1}
+
+    /* ── STAT TILES ── */
+    .stat-row{display:grid;grid-template-columns:repeat(5,1fr);gap:13px;margin-bottom:18px}
+    .sc{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:15px 13px;text-align:center;box-shadow:var(--shadow);position:relative;overflow:hidden;transition:all .2s;cursor:pointer}
+    .sc:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(9,79,79,.14)}
+    .sc.active-filter{border-color:var(--navy);background:rgba(14,107,107,.04)}
+    .sc::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+    .sc.s0::before{background:linear-gradient(90deg,var(--navy),var(--navy-dark))}
+    .sc.s1::before{background:linear-gradient(90deg,var(--gold),var(--gold-light))}
+    .sc.s2::before{background:linear-gradient(90deg,var(--green),#2ecc71)}
+    .sc.s3::before{background:linear-gradient(90deg,var(--orange),#f39c12)}
+    .sc.s4::before{background:linear-gradient(90deg,#8e44ad,#9b59b6)}
+    .sc-ic{font-size:1.4rem;margin-bottom:5px}
+    .sc-val{font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:800;color:var(--text);line-height:1}
+    .sc-lbl{font-size:.62rem;font-weight:700;color:var(--text-muted);margin-top:3px}
+
+    /* ── NEWS TABLE ── */
+    .block{background:var(--white);border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow);overflow:hidden}
+    .bh{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--border);background:linear-gradient(135deg,var(--white),var(--bg));flex-wrap:wrap;gap:8px}
+    .bt{font-family:'Playfair Display',serif;font-size:.92rem;font-weight:700;color:var(--navy-dark);display:flex;align-items:center;gap:7px}
+    .dbc{font-family:'Nunito',sans-serif;font-size:.56rem;font-weight:800;background:rgba(14,107,107,.1);color:var(--navy);border:1px solid rgba(14,107,107,.18);padding:2px 7px;border-radius:7px}
+    .ba{display:flex;gap:7px;flex-shrink:0}
+
+    .tbl{width:100%;border-collapse:collapse}
+    .tbl thead th{font-size:.63rem;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--text-muted);padding:9px 14px;text-align:left;background:var(--bg);border-bottom:2px solid var(--border)}
+    .tbl thead th:first-child{padding-left:18px}
+    .tbl tbody tr{border-bottom:1px solid var(--bg2);transition:background .15s}
+    .tbl tbody tr:last-child{border-bottom:none}
+    .tbl tbody tr:hover{background:rgba(14,107,107,.03)}
+    .tbl tbody td{padding:11px 14px;font-size:.82rem;color:var(--text);vertical-align:middle}
+    .tbl tbody td:first-child{padding-left:18px}
+
+    /* ── NEWS THUMB ── */
+    .news-thumb{width:52px;height:40px;border-radius:7px;object-fit:cover;background:var(--bg2);flex-shrink:0;display:block}
+    .news-thumb-ph{width:52px;height:40px;border-radius:7px;background:linear-gradient(135deg,var(--navy-dark),var(--navy));display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
+    .news-title-cell{max-width:280px}
+    .ntitle{font-weight:700;color:var(--navy-dark);font-size:.85rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:270px}
+    .nexcerpt{font-size:.72rem;color:var(--text-muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:270px}
+
+    /* ── CATEGORY PILL ── */
+    .cpill{display:inline-flex;align-items:center;padding:2px 9px;border-radius:20px;font-size:.61rem;font-weight:800;white-space:nowrap}
+    .cpill.announcement{background:rgba(14,107,107,.12);color:var(--navy);border:1px solid rgba(14,107,107,.22)}
+    .cpill.achievement{background:rgba(200,150,12,.12);color:var(--gold);border:1px solid rgba(200,150,12,.28)}
+    .cpill.event{background:rgba(39,174,96,.12);color:#1e7a3a;border:1px solid rgba(39,174,96,.22)}
+    .cpill.general{background:var(--bg2);color:var(--text-muted);border:1px solid var(--border)}
+    .cpill.sports{background:rgba(231,76,60,.1);color:#a93226;border:1px solid rgba(231,76,60,.2)}
+    .cpill.cultural{background:rgba(142,68,173,.1);color:#6c3483;border:1px solid rgba(142,68,173,.2)}
+
+    /* ── STATUS PILL ── */
+    .spill{display:inline-flex;align-items:center;gap:3px;padding:2px 9px;border-radius:20px;font-size:.61rem;font-weight:800}
+    .spill::before{content:'●';font-size:.44rem}
+    .spill.live{background:rgba(39,174,96,.1);color:#1e7a3a;border:1px solid rgba(39,174,96,.2)}
+    .spill.draft{background:var(--bg2);color:var(--text-muted);border:1px solid var(--border)}
+
+    /* ── ACTION BTNS ── */
+    .abtns{display:flex;gap:5px}
+    .ab{width:28px;height:28px;border-radius:6px;border:1.5px solid var(--border);background:var(--white);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.76rem;transition:all .15s;flex-shrink:0}
+    .ab:hover{border-color:var(--navy);background:var(--bg)}
+    .ab.del:hover{border-color:var(--red);background:rgba(231,76,60,.06)}
+    .ab.pub:hover{border-color:var(--green);background:rgba(39,174,96,.06)}
+
+    /* ── EMPTY STATE ── */
+    .empty-state{text-align:center;padding:60px 20px;color:var(--text-muted)}
+    .empty-state .em{font-size:3rem;margin-bottom:12px}
+    .empty-state p{font-size:.9rem;margin-bottom:18px}
+
+    /* ── MODAL OVERLAY ── */
+    .modal-ov{display:none;position:fixed;inset:0;background:rgba(6,47,47,.65);backdrop-filter:blur(4px);z-index:99999;align-items:center;justify-content:center;padding:20px}
+    .modal-ov.open{display:flex}
+    .modal{background:#fff;border-radius:16px;max-width:720px;width:100%;max-height:92vh;overflow-y:auto;box-shadow:0 28px 70px rgba(0,0,0,.3);animation:mIn .24s cubic-bezier(.22,1,.36,1)}
+    @keyframes mIn{from{opacity:0;transform:scale(.95) translateY(14px)}to{opacity:1;transform:scale(1) translateY(0)}}
+    .modal-hd{display:flex;align-items:center;justify-content:space-between;padding:17px 22px;border-bottom:1px solid var(--border);background:linear-gradient(135deg,var(--white),var(--bg));position:sticky;top:0;z-index:2}
+    .modal-title{font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:700;color:var(--navy-dark)}
+    .modal-x{width:28px;height:28px;border-radius:50%;background:var(--bg2);border:none;cursor:pointer;font-size:.86rem;display:flex;align-items:center;justify-content:center;color:var(--text-muted);transition:all .2s;flex-shrink:0}
+    .modal-x:hover{background:#fde8e8;color:var(--red)}
+    .modal-body{padding:22px}
+    .modal-ft{display:flex;gap:9px;justify-content:flex-end;padding:14px 22px;border-top:1px solid var(--border);background:var(--bg)}
+
+    /* ── FORM ── */
+    .fg{display:grid;gap:14px}
+    .fg.c2{grid-template-columns:1fr 1fr}
+    .fg.c3{grid-template-columns:1fr 1fr 1fr}
+    .f label{display:block;font-size:.72rem;font-weight:700;color:var(--navy-dark);margin-bottom:4px}
+    .f label .req{color:var(--gold);margin-left:2px}
+    .f label .dbh{font-size:.56rem;font-weight:700;color:var(--text-muted);background:var(--bg2);padding:1px 5px;border-radius:4px;margin-left:4px;font-style:normal}
+    .f input,.f textarea,.f select{width:100%;padding:8px 12px;border:1.5px solid var(--border);border-radius:9px;font-family:'Nunito',sans-serif;font-size:.85rem;color:var(--text);background:var(--white);outline:none;transition:border .2s,box-shadow .2s}
+    .f input:focus,.f textarea:focus,.f select:focus{border-color:var(--navy);box-shadow:0 0 0 3px rgba(14,107,107,.09)}
+    .f textarea{resize:vertical;min-height:90px}
+    .fhint{font-size:.61rem;color:var(--text-muted);margin-top:3px}
+    .fhint code{background:var(--bg2);padding:1px 4px;border-radius:4px;font-family:monospace;font-size:.8em;color:#b35e00}
+    .char-count{font-size:.6rem;color:var(--text-muted);text-align:right;margin-top:2px}
+
+    /* ── IMAGE UPLOAD ── */
+    .img-upload-area{border:2px dashed var(--border);border-radius:10px;padding:20px;text-align:center;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
+    .img-upload-area:hover,.img-upload-area.drag{border-color:var(--navy);background:rgba(14,107,107,.04)}
+    .img-upload-area input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+    .img-prev{width:100%;height:160px;object-fit:cover;border-radius:8px;display:block;margin-bottom:10px}
+    .img-ph{font-size:2rem;color:var(--text-muted);margin-bottom:6px}
+    .img-hint{font-size:.72rem;color:var(--text-muted)}
+    .cld-row{display:flex;gap:7px;align-items:center;margin-top:8px}
+    .cld-row input{flex:1;padding:7px 11px;border:1.5px solid var(--border);border-radius:9px;font-family:'Nunito',sans-serif;font-size:.82rem;color:var(--text);background:var(--white);outline:none;transition:border .2s}
+    .cld-row input:focus{border-color:var(--navy)}
+    .cld-up{flex-shrink:0;padding:7px 12px;border-radius:8px;cursor:pointer;background:rgba(200,150,12,.1);border:1.5px solid rgba(200,150,12,.25);color:var(--gold);font-family:'Nunito',sans-serif;font-size:.7rem;font-weight:700;transition:all .2s;white-space:nowrap}
+    .cld-up:hover{background:rgba(200,150,12,.2)}
+
+    /* ── PREVIEW CARD (live preview inside modal) ── */
+    .preview-card{background:var(--white);border:1px solid var(--border);border-radius:12px;overflow:hidden;box-shadow:0 4px 18px rgba(14,107,107,.08)}
+    .preview-img{width:100%;height:150px;object-fit:cover;background:linear-gradient(135deg,var(--navy-dark),var(--navy));display:flex;align-items:center;justify-content:center;font-size:2.5rem;color:rgba(255,255,255,.4)}
+    .preview-img img{width:100%;height:100%;object-fit:cover}
+    .preview-body{padding:14px}
+    .preview-meta{display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap}
+    .preview-date{font-size:.68rem;color:var(--gold);font-weight:700;text-transform:uppercase;letter-spacing:.07em}
+    .preview-tag{font-size:.6rem;font-weight:700;background:rgba(14,107,107,.08);color:var(--navy);border-radius:20px;padding:2px 9px;border:1px solid rgba(14,107,107,.15)}
+    .preview-h3{font-family:'Playfair Display',serif;font-size:.95rem;color:var(--text);font-weight:700;margin-bottom:7px;line-height:1.4}
+    .preview-exc{font-size:.78rem;color:var(--text-muted);line-height:1.6}
+
+    /* ── TOGGLE ── */
+    .tog-inline{display:flex;align-items:center;gap:8px}
+    .tog{position:relative;width:40px;height:22px;flex-shrink:0}.tog input{display:none}
+    .togt{position:absolute;inset:0;background:var(--bg2);border-radius:12px;border:1.5px solid var(--border);cursor:pointer;transition:all .2s}
+    .togt::after{content:'';position:absolute;width:14px;height:14px;border-radius:50%;background:#fff;top:3px;left:3px;box-shadow:0 2px 5px rgba(0,0,0,.18);transition:transform .2s}
+    .tog input:checked~.togt{background:var(--navy);border-color:var(--navy-dark)}.tog input:checked~.togt::after{transform:translateX(18px)}
+    .tog-lbl{font-size:.78rem;font-weight:600;color:var(--text)}
+
+    /* ── TOAST ── */
+    .toast{position:fixed;bottom:24px;right:24px;background:var(--navy-deep);color:#fff;padding:11px 18px;border-radius:10px;font-size:.79rem;font-weight:700;display:flex;align-items:center;gap:8px;box-shadow:0 8px 28px rgba(0,0,0,.22);transform:translateY(80px);opacity:0;transition:all .3s cubic-bezier(.34,1.56,.64,1);z-index:99997;border-left:4px solid var(--gold-light);pointer-events:none}
+    .toast.show{transform:translateY(0);opacity:1}
+
+    /* ── RESPONSIVE ── */
+    @media(max-width:1100px){.stat-row{grid-template-columns:repeat(3,1fr)}}
+    @media(max-width:768px){.sidebar{display:none}.stat-row{grid-template-columns:1fr 1fr}.fg.c2,.fg.c3{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+
+<script src="adminnavbar.js"></script>
+
+<div class="shell">
+
+  <!-- ══ SIDEBAR ══ -->
+  <aside class="sidebar">
+    <div class="sb-brand">
+      <div class="sb-ic"></div>
+      <div><div class="sbn">Loretto Admin</div><div class="sbs">News &amp; Events</div></div>
+    </div>
+    <div class="sb-nav">
+      <div class="sb-sec">Views</div>
+      <a class="sl active" onclick="setFilter('all')"><span class="ic"></span> All Articles <span class="sb-cnt" id="sb-all">0</span></a>
+      <a class="sl" onclick="setFilter('live')"><span class="ic"></span> Published <span class="sb-cnt" id="sb-live">0</span></a>
+      <a class="sl" onclick="setFilter('draft')"><span class="ic"></span> Drafts <span class="sb-cnt" id="sb-draft">0</span></a>
+      <div class="sb-sec">Categories</div>
+      <a class="sl" onclick="setFilter('Announcement')"><span class="ic"></span> Announcements</a>
+      <a class="sl" onclick="setFilter('Achievement')"><span class="ic"></span> Achievements</a>
+      <a class="sl" onclick="setFilter('Event')"><span class="ic"></span> Events</a>
+      <a class="sl" onclick="setFilter('Sports')"><span class="ic"></span> Sports</a>
+      <a class="sl" onclick="setFilter('Cultural')"><span class="ic"></span> Cultural</a>
+      <a class="sl" onclick="setFilter('General')"><span class="ic"></span> General</a>
+      <div class="sb-sec">Other</div>
+      <a class="sl" href="admin-panel.html"><span class="ic"></span> Dashboard</a>
+      <a class="sl" href="admin-academics.html"><span class="ic"></span> Academics</a>
+      <a class="sl" href="admin-activities.html"><span class="ic"></span> Activities</a>
+    </div>
+    <div class="sb-footer">
+      <div class="sb-user">
+        <div class="sb-av">A</div>
+        <div><div style="font-size:.74rem;font-weight:700;color:#fff;">Administrator</div><div style="font-size:.58rem;color:rgba(255,255,255,.4);">Super Admin</div></div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ══ MAIN ══ -->
+  <main class="main">
+
+    <!-- Topbar -->
+    <div class="atbar">
+      <div class="at-title">
+        News &amp; Events
+        <span>Collection: <code style="font-family:monospace;font-size:.75em;color:var(--navy)">news</code> · Schema: { title, category, date, excerpt, content, image }</span>
+      </div>
+      <div class="at-acts">
+        <div style="display:flex;align-items:center;gap:5px;font-size:.68rem;font-weight:700;color:var(--green);background:rgba(39,174,96,.08);border:1px solid rgba(39,174,96,.2);padding:4px 10px;border-radius:20px;flex-shrink:0">
+          <span class="api-dot"></span> API Live
+        </div>
+        <div class="at-div"></div>
+        <button class="btn out" onclick="window.open('../news.html','_blank')"> Preview Page</button>
+        <button class="btn tl" onclick="loadNews()"> Refresh</button>
+        <button class="btn gd" onclick="openModal()">＋ New Article</button>
+      </div>
+    </div>
+
+    <!-- Filter Bar -->
+    <div class="filter-bar">
+      <div class="search-box">
+        <span></span>
+        <input type="text" id="search-input" placeholder="Search title, excerpt, category..." oninput="applyFilters()"/>
+      </div>
+      <select class="fsel" id="cat-filter" onchange="applyFilters()">
+        <option value="">All Categories</option>
+        <option>Announcement</option>
+        <option>Achievement</option>
+        <option>Event</option>
+        <option>Sports</option>
+        <option>Cultural</option>
+        <option>General</option>
+      </select>
+      <select class="fsel" id="sort-filter" onchange="applyFilters()">
+        <option value="newest">Newest First</option>
+        <option value="oldest">Oldest First</option>
+        <option value="title">Title A–Z</option>
+      </select>
+      <div class="stats-mini">
+        <div class="sm">Showing <strong id="showing-count">0</strong></div>
+        <div class="sm">Total <strong id="total-count">0</strong></div>
+      </div>
+    </div>
+
+    <!-- Body -->
+    <div class="pbody">
+
+      <!-- Stat tiles -->
+      <div class="stat-row">
+        <div class="sc s0" onclick="setFilter('all')"><div class="sc-ic"></div><div class="sc-val" id="t-total">—</div><div class="sc-lbl">Total Articles</div></div>
+        <div class="sc s1" onclick="setFilter('Announcement')"><div class="sc-ic"></div><div class="sc-val" id="t-ann">—</div><div class="sc-lbl">Announcements</div></div>
+        <div class="sc s2" onclick="setFilter('Achievement')"><div class="sc-ic"></div><div class="sc-val" id="t-ach">—</div><div class="sc-lbl">Achievements</div></div>
+        <div class="sc s3" onclick="setFilter('Event')"><div class="sc-ic"></div><div class="sc-val" id="t-ev">—</div><div class="sc-lbl">Events</div></div>
+        <div class="sc s4" onclick="setFilter('all')"><div class="sc-ic"></div><div class="sc-val" id="t-recent">—</div><div class="sc-lbl">This Month</div></div>
+      </div>
+
+      <!-- Articles table -->
+      <div class="block">
+        <div class="bh">
+          <div class="bt"> All Articles <span class="dbc">news collection · MongoDB</span></div>
+          <div class="ba">
+            <button class="btn out" id="bulk-del-btn" style="display:none" onclick="bulkDelete()"> Delete Selected</button>
+            <button class="btn gd" onclick="openModal()">＋ New Article</button>
+          </div>
+        </div>
+
+        <div id="news-loading" style="text-align:center;padding:50px;color:var(--text-muted);font-size:.88rem;">
+          <div style="font-size:2rem;margin-bottom:10px;">⏳</div>
+          Connecting to MongoDB...
+        </div>
+
+        <table class="tbl" id="news-table" style="display:none">
+          <thead>
+            <tr>
+              <th style="width:36px"><input type="checkbox" id="select-all" onchange="toggleSelectAll(this)"/></th>
+              <th style="width:58px">Image</th>
+              <th>Title &amp; Excerpt</th>
+              <th>Category</th>
+              <th>Date</th>
+              <th>Status</th>
+              <th style="width:100px">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="news-tbody"></tbody>
+        </table>
+
+        <div class="empty-state" id="news-empty" style="display:none">
+          <div class="em"></div>
+          <p>No articles found. Click <strong>+ New Article</strong> to create your first one.</p>
+          <button class="btn gd" onclick="openModal()">＋ Create Article</button>
+        </div>
+      </div>
+
+    </div><!-- /pbody -->
+  </main>
+</div><!-- /shell -->
+
+<!-- ══════════════════════════════════
+     ADD / EDIT MODAL
+══════════════════════════════════ -->
+<div class="modal-ov" id="articleModal" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="modal-hd">
+      <div class="modal-title" id="modal-title-text"> New Article</div>
+      <button class="modal-x" onclick="closeModal()"></button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="edit-id"/>
+
+      <div style="display:grid;grid-template-columns:1.4fr 1fr;gap:18px;">
+
+        <!-- Left: form -->
+        <div>
+          <div class="fg">
+
+            <div class="f">
+              <label>Title <span class="req">*</span> <span class="dbh">news.title</span></label>
+              <input type="text" id="f-title" placeholder="e.g. Annual Day 2024 — A Grand Celebration" maxlength="120" oninput="updatePreview();updateCharCount('f-title','cc-title',120)"/>
+              <div class="char-count"><span id="cc-title">0</span>/120</div>
+            </div>
+
+            <div class="fg c2">
+              <div class="f">
+                <label>Category <span class="req">*</span> <span class="dbh">news.category</span></label>
+                <select id="f-category" onchange="updatePreview()">
+                  <option value="">— Select —</option>
+                  <option>Announcement</option>
+                  <option>Achievement</option>
+                  <option>Event</option>
+                  <option>Sports</option>
+                  <option>Cultural</option>
+                  <option>General</option>
+                </select>
+              </div>
+              <div class="f">
+                <label>Date <span class="req">*</span> <span class="dbh">news.date</span></label>
+                <input type="date" id="f-date" oninput="updatePreview()"/>
+              </div>
+            </div>
+
+            <div class="f">
+              <label>Excerpt <span class="req">*</span> <span class="dbh">news.excerpt</span></label>
+              <textarea id="f-excerpt" placeholder="Short summary shown on the news card (1–2 sentences)..." maxlength="200" rows="3" oninput="updatePreview();updateCharCount('f-excerpt','cc-exc',200)"></textarea>
+              <div class="char-count"><span id="cc-exc">0</span>/200 · shown on public card</div>
+            </div>
+
+            <div class="f">
+              <label>Full Article Content <span class="dbh">news.content</span></label>
+              <textarea id="f-content" placeholder="Full article body shown in the modal popup. Separate paragraphs with a blank line." rows="7"></textarea>
+              <div class="fhint">Shown in the popup modal when "Read Story" is clicked. Supports plain text; each paragraph on its own line.</div>
+            </div>
+
+            <div class="f">
+              <label>Image <span class="dbh">news.image</span> <span style="font-size:.56rem;color:var(--text-muted);font-style:normal;margin-left:4px;">optional</span></label>
+              <div id="img-preview-wrap" style="display:none;margin-bottom:8px">
+                <img id="img-preview" class="img-prev" src="" alt="Preview"/>
+              </div>
+              <div class="cld-row">
+                <input type="url" id="f-image" placeholder="https://res.cloudinary.com/your-cloud/image/upload/..." oninput="previewImage();updatePreview()"/>
+                <button class="cld-up" onclick="document.getElementById('img-file').click()"> Upload</button>
+                <input type="file" id="img-file" accept="image/*" style="display:none" onchange="uploadImage(this)"/>
+              </div>
+              <div class="fhint">Upload via Cloudinary or paste URL directly. Recommended: <code>w_800,h_500,c_fill,q_auto,f_auto</code></div>
+            </div>
+
+            <div class="f">
+              <label>Additional Images <span class="dbh">news.images[]</span></label>
+              <div id="gallery-preview-wrap" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:10px;margin-bottom:10px;"></div>
+              <div class="cld-row" style="margin-bottom:8px;">
+                <input type="url" id="f-gallery-url" placeholder="https://res.cloudinary.com/your-cloud/image/upload/..."/>
+                <button class="cld-up" type="button" onclick="addGalleryUrl()"> Add URL</button>
+                <button class="cld-up" type="button" onclick="document.getElementById('gallery-files').click()"> Upload Many</button>
+                <input type="file" id="gallery-files" accept="image/*" multiple style="display:none" onchange="uploadGalleryImages(this)"/>
+              </div>
+              <textarea id="f-gallery-urls" rows="4" placeholder="Uploaded image URLs will appear here, one per line..." oninput="syncGalleryUrlsFromTextarea()" style="margin-top:8px;"></textarea>
+              <div class="fhint">Upload multiple photos for the news popup gallery. The cover image above is still used on the card.</div>
+            </div>
+
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--bg);border-radius:9px;border:1px solid var(--border);">
+              <div class="tog-lbl">Publish immediately</div>
+              <div class="tog-inline">
+                <label class="tog"><input type="checkbox" id="f-publish" checked/><span class="togt"></span></label>
+                <span id="pub-label" style="font-size:.72rem;color:var(--green);font-weight:700;">Live</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Right: live preview -->
+        <div>
+          <div style="font-size:.68rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px;">Live Preview</div>
+          <div class="preview-card">
+            <div class="preview-img" id="prev-img-wrap">
+              <span id="prev-img-em"></span>
+            </div>
+            <div class="preview-body">
+              <div class="preview-meta">
+                <span class="preview-date" id="prev-date">— Select date —</span>
+                <span class="preview-tag" id="prev-cat">Category</span>
+              </div>
+              <div class="preview-h3" id="prev-title">Article title will appear here...</div>
+              <div class="preview-exc" id="prev-exc">Excerpt will appear here...</div>
+            </div>
+          </div>
+
+          <div style="margin-top:14px;font-size:.68rem;font-weight:700;color:var(--text-muted);padding:10px 12px;background:var(--bg);border-radius:8px;border:1px solid var(--border);">
+            <div style="margin-bottom:4px;color:var(--navy);">MongoDB Document Preview</div>
+            <pre id="json-preview" style="font-family:monospace;font-size:.62rem;color:var(--text-muted);white-space:pre-wrap;word-break:break-all;line-height:1.5;">{
+  "title": "...",
+  "category": "...",
+  "date": "...",
+  "excerpt": "...",
+  "content": "...",
+  "image": "...",
+  "images": []
+}</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn out" onclick="closeModal()">Cancel</button>
+      <button class="btn tl" onclick="saveArticle(true)"> Save as Draft</button>
+      <button class="btn gd" onclick="saveArticle(false)"> Publish Article</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+     VIEW ARTICLE MODAL
+══════════════════════════════════ -->
+<div class="modal-ov" id="viewModal" onclick="if(event.target===this)closeView()">
+  <div class="modal" style="max-width:660px">
+    <div class="modal-hd">
+      <div class="modal-title"> Article Preview</div>
+      <div style="display:flex;gap:7px;align-items:center;">
+        <button class="btn out" id="view-edit-btn"> Edit</button>
+        <button class="modal-x" onclick="closeView()"></button>
+      </div>
+    </div>
+    <div class="modal-body" id="view-body"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"> Done!</div>
+
+<script>
+/* ═══════════════════════════════════════════════════
+   CONFIG
+═══════════════════════════════════════════════════ */
+var API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://loretto-cbse-school.onrender.com';
+function apiH() { return { 'Content-Type': 'application/json' }; }
+
+/* ═══════════════════════════════════════════════════
+   STATE
+═══════════════════════════════════════════════════ */
+var _all = [];
+var _filtered = [];
+var _activeFilter = 'all';
+var _galleryImages = [];
+var _newsGalleryUploadPromise = null;
+var _newsGalleryUploading = false;
+
+/* ═══════════════════════════════════════════════════
+   TOAST
+═══════════════════════════════════════════════════ */
+function toast(msg, err) {
+  var t = document.getElementById('toast');
+  t.textContent = (err ? ' ' : ' ') + (msg || 'Done!');
+  t.style.borderLeftColor = err ? 'var(--red)' : 'var(--gold-light)';
+  t.classList.add('show');
+  setTimeout(function(){ t.classList.remove('show'); }, 3200);
+}
+
+/* ═══════════════════════════════════════════════════
+   LOAD NEWS
+═══════════════════════════════════════════════════ */
+async function loadNews() {
+  document.getElementById('news-loading').style.display = 'block';
+  document.getElementById('news-table').style.display = 'none';
+  document.getElementById('news-empty').style.display = 'none';
+  try {
+    var res = await fetch(API_BASE + '/api/news');
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    _all = await res.json();
+    if (!Array.isArray(_all)) _all = [];
+    updateStats();
+    applyFilters();
+  } catch(e) {
+    document.getElementById('news-loading').innerHTML = '<div style="font-size:1.5rem;margin-bottom:8px;"></div><p style="font-size:.85rem">Could not connect to API. Is the server running?</p><button class="btn tl" style="margin-top:12px" onclick="loadNews()">Retry</button>';
+    toast('Cannot reach /api/news', true);
+  }
+}
+
+/* ═══════════════════════════════════════════════════
+   STATS
+═══════════════════════════════════════════════════ */
+function updateStats() {
+  var now = new Date();
+  var monthStr = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0');
+  document.getElementById('t-total').textContent = _all.length;
+  document.getElementById('t-ann').textContent   = _all.filter(function(a){ return a.category === 'Announcement'; }).length;
+  document.getElementById('t-ach').textContent   = _all.filter(function(a){ return a.category === 'Achievement'; }).length;
+  document.getElementById('t-ev').textContent    = _all.filter(function(a){ return a.category === 'Event'; }).length;
+  document.getElementById('t-recent').textContent = _all.filter(function(a){ return a.date && a.date.startsWith(monthStr); }).length;
+  document.getElementById('sb-all').textContent  = _all.length;
+}
+
+/* ═══════════════════════════════════════════════════
+   FILTER + RENDER
+═══════════════════════════════════════════════════ */
+function setFilter(f) {
+  _activeFilter = f;
+  // Sidebar active
+  document.querySelectorAll('.sl').forEach(function(l){ l.classList.remove('active'); });
+  var map = { all:'all', live:'live', draft:'draft',
+    Announcement:'Announcement', Achievement:'Achievement', Event:'Event',
+    Sports:'Sports', Cultural:'Cultural', General:'General' };
+  var sbl = document.querySelector('.sl[onclick="setFilter(\''+f+'\')"]');
+  if (sbl) sbl.classList.add('active');
+  // Category select
+  var sel = document.getElementById('cat-filter');
+  var cats = ['Announcement','Achievement','Event','Sports','Cultural','General'];
+  if (cats.indexOf(f) !== -1) sel.value = f;
+  else sel.value = '';
+  applyFilters();
+}
+
+function applyFilters() {
+  var q    = document.getElementById('search-input').value.toLowerCase();
+  var cat  = document.getElementById('cat-filter').value;
+  var sort = document.getElementById('sort-filter').value;
+
+  _filtered = _all.filter(function(a) {
+    var matchQ   = !q || (a.title||'').toLowerCase().includes(q) || (a.excerpt||'').toLowerCase().includes(q) || (a.category||'').toLowerCase().includes(q);
+    var matchCat = !cat || a.category === cat;
+    var matchF   = _activeFilter === 'all' || _activeFilter === 'live' || _activeFilter === 'draft'
+      ? true
+      : a.category === _activeFilter;
+    return matchQ && matchCat && matchF;
+  });
+
+  _filtered.sort(function(a,b){
+    if (sort === 'oldest') return (a.date||'') > (b.date||'') ? 1 : -1;
+    if (sort === 'title')  return (a.title||'').localeCompare(b.title||'');
+    return (a.date||'') < (b.date||'') ? 1 : -1;
+  });
+
+  document.getElementById('showing-count').textContent = _filtered.length;
+  document.getElementById('total-count').textContent   = _all.length;
+  renderTable(_filtered);
+}
+
+function renderTable(list) {
+  var loading = document.getElementById('news-loading');
+  var table   = document.getElementById('news-table');
+  var empty   = document.getElementById('news-empty');
+  loading.style.display = 'none';
+  if (!list.length) { table.style.display='none'; empty.style.display='block'; return; }
+  empty.style.display = 'none';
+  table.style.display = 'table';
+
+  document.getElementById('news-tbody').innerHTML = list.map(function(a) {
+    var catClass = (a.category||'general').toLowerCase();
+    var dateStr  = a.date ? new Date(a.date).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}) : '—';
+    var primaryImage = getPrimaryImage(a);
+    var imgHtml  = primaryImage
+      ? '<img class="news-thumb" src="'+esc(primaryImage)+'" alt="" onerror="this.style.display=\'none\'" />'
+      : '<div class="news-thumb-ph"></div>';
+
+    return '<tr data-id="'+a._id+'">'
+      + '<td><input type="checkbox" class="row-cb" value="'+a._id+'" onchange="updateBulkBtn()"/></td>'
+      + '<td>'+imgHtml+'</td>'
+      + '<td class="news-title-cell">'
+        + '<div class="ntitle">'+esc(a.title||'Untitled')+'</div>'
+        + '<div class="nexcerpt">'+esc(a.excerpt||'')+'</div>'
+      + '</td>'
+      + '<td><span class="cpill '+catClass+'">'+esc(a.category||'General')+'</span></td>'
+      + '<td style="white-space:nowrap;color:var(--text-muted);font-size:.78rem;">'+dateStr+'</td>'
+      + '<td><span class="spill live">Live</span></td>'
+      + '<td><div class="abtns">'
+        + '<button class="ab" title="Preview" aria-label="Preview article" onclick="viewArticle(\''+a._id+'\')">V</button>'
+        + '<button class="ab" title="Edit" aria-label="Edit article" onclick="editArticle(\''+a._id+'\')">E</button>'
+        + '<button class="ab del" title="Delete" aria-label="Delete article" onclick="deleteArticle(\''+a._id+'\')">×</button>'
+      + '</div></td>'
+      + '</tr>';
+  }).join('');
+}
+
+function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function setNewsSaveButtonsBusy(isBusy, label) {
+  document.querySelectorAll('#articleModal .modal-ft .btn').forEach(function(btn, index) {
+    if (index === 0) return;
+    btn.disabled = !!isBusy;
+    if (isBusy) {
+      btn.dataset.originalLabel = btn.dataset.originalLabel || btn.textContent;
+      btn.textContent = label || 'Uploading Images...';
+    } else if (btn.dataset.originalLabel) {
+      btn.textContent = btn.dataset.originalLabel;
+    }
+  });
+}
+
+function getPrimaryImage(article) {
+  if (article && article.image) return article.image;
+  if (article && Array.isArray(article.images) && article.images.length) return article.images[0];
+  return '';
+}
+
+function normalizeImages(list) {
+  return (Array.isArray(list) ? list : [])
+    .map(function(item){ return (item || '').trim(); })
+    .filter(Boolean);
+}
+
+function syncGalleryUrlsTextarea() {
+  var area = document.getElementById('f-gallery-urls');
+  if (!area) return;
+  area.value = normalizeImages(_galleryImages).join('\n');
+}
+
+function syncGalleryUrlsFromTextarea() {
+  var area = document.getElementById('f-gallery-urls');
+  if (!area) return;
+  _galleryImages = normalizeImages(area.value.split('\n'));
+  renderGalleryPreview();
+  updatePreview();
+}
+
+/* ═══════════════════════════════════════════════════
+   MODAL OPEN/CLOSE
+═══════════════════════════════════════════════════ */
+function openModal(article) {
+  var isEdit = !!article;
+  document.getElementById('modal-title-text').textContent = isEdit ? ' Edit Article' : ' New Article';
+  document.getElementById('edit-id').value     = isEdit ? article._id : '';
+  document.getElementById('f-title').value     = isEdit ? (article.title   || '') : '';
+  document.getElementById('f-category').value  = isEdit ? (article.category|| '') : '';
+  document.getElementById('f-date').value      = isEdit ? (article.date    ? article.date.split('T')[0] : '') : new Date().toISOString().split('T')[0];
+  document.getElementById('f-excerpt').value   = isEdit ? (article.excerpt || '') : '';
+  document.getElementById('f-content').value   = isEdit ? (article.content || '') : '';
+  document.getElementById('f-image').value     = isEdit ? (article.image   || getPrimaryImage(article) || '') : '';
+  _galleryImages = isEdit ? normalizeImages(article.images || []) : [];
+  document.getElementById('f-publish').checked = true;
+  updateCharCount('f-title','cc-title',120);
+  updateCharCount('f-excerpt','cc-exc',200);
+  previewImage();
+  renderGalleryPreview();
+  syncGalleryUrlsTextarea();
+  updatePreview();
+  document.getElementById('articleModal').classList.add('open');
+}
+
+function closeModal() { document.getElementById('articleModal').classList.remove('open'); }
+
+function editArticle(id) {
+  var a = _all.find(function(x){ return x._id === id; });
+  if (a) openModal(a);
+}
+
+/* ═══════════════════════════════════════════════════
+   SAVE ARTICLE
+═══════════════════════════════════════════════════ */
+async function saveArticle(asDraft) {
+  if (_newsGalleryUploadPromise) {
+    toast('Finishing image uploads before saving article...');
+    try {
+      await _newsGalleryUploadPromise;
+    } catch (e) {
+      toast('One or more gallery uploads failed. Please upload again before saving.', true);
+      return;
+    }
+  }
+
+  var id = document.getElementById('edit-id').value;
+  var title   = document.getElementById('f-title').value.trim();
+  var cat     = document.getElementById('f-category').value;
+  var date    = document.getElementById('f-date').value;
+  var excerpt = document.getElementById('f-excerpt').value.trim();
+  var content = document.getElementById('f-content').value.trim();
+  var image   = document.getElementById('f-image').value.trim();
+  var images  = normalizeImages(_galleryImages);
+
+  if (!title)   { toast('Title is required', true); return; }
+  if (!cat)     { toast('Please select a category', true); return; }
+  if (!date)    { toast('Date is required', true); return; }
+  if (!excerpt) { toast('Excerpt is required', true); return; }
+
+  var body = { title, category: cat, date, excerpt, content, image, images };
+
+  try {
+    var url    = id ? API_BASE + '/api/news/' + id : API_BASE + '/api/news';
+    var method = id ? 'PUT' : 'POST';
+    var res = await fetch(url, { method, headers: apiH(), body: JSON.stringify(body) });
+    var data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Save failed');
+    toast(id ? 'Article updated!' : (asDraft ? 'Saved as draft!' : 'Article published!'));
+    closeModal();
+    loadNews();
+  } catch(e) { toast(e.message, true); }
+}
+
+/* ═══════════════════════════════════════════════════
+   DELETE ARTICLE
+═══════════════════════════════════════════════════ */
+async function deleteArticle(id) {
+  var a = _all.find(function(x){ return x._id === id; });
+  if (!confirm('Delete "' + (a ? a.title : 'this article') + '"?\n\nThis cannot be undone.')) return;
+  try {
+    var res = await fetch(API_BASE + '/api/news/' + id, { method:'DELETE', headers: apiH() });
+    if (!res.ok) throw new Error('Delete failed');
+    toast('Article deleted!');
+    loadNews();
+  } catch(e) { toast(e.message, true); }
+}
+
+/* ═══════════════════════════════════════════════════
+   BULK DELETE
+═══════════════════════════════════════════════════ */
+function updateBulkBtn() {
+  var any = document.querySelectorAll('.row-cb:checked').length > 0;
+  document.getElementById('bulk-del-btn').style.display = any ? 'inline-flex' : 'none';
+}
+function toggleSelectAll(cb) {
+  document.querySelectorAll('.row-cb').forEach(function(c){ c.checked = cb.checked; });
+  updateBulkBtn();
+}
+async function bulkDelete() {
+  var ids = Array.from(document.querySelectorAll('.row-cb:checked')).map(function(c){ return c.value; });
+  if (!ids.length) return;
+  if (!confirm('Delete ' + ids.length + ' selected article(s)?')) return;
+  try {
+    await Promise.all(ids.map(function(id){
+      return fetch(API_BASE + '/api/news/' + id, { method:'DELETE', headers: apiH() });
+    }));
+    toast(ids.length + ' articles deleted!');
+    document.getElementById('bulk-del-btn').style.display = 'none';
+    loadNews();
+  } catch(e) { toast(e.message, true); }
+}
+
+/* ═══════════════════════════════════════════════════
+   VIEW ARTICLE
+═══════════════════════════════════════════════════ */
+function viewArticle(id) {
+  var a = _all.find(function(x){ return x._id === id; });
+  if (!a) return;
+  var dateStr = a.date ? new Date(a.date).toLocaleDateString('en-IN',{day:'2-digit',month:'long',year:'numeric'}) : '—';
+  var catClass = (a.category||'general').toLowerCase();
+  var paras = (a.content || a.excerpt || '').split('\n').filter(function(l){ return l.trim(); })
+    .map(function(l){ return '<p style="font-size:.92rem;color:var(--text-muted);line-height:1.8;margin-bottom:14px;">'+esc(l)+'</p>'; }).join('');
+
+  var primaryImage = getPrimaryImage(a);
+  var galleryImages = normalizeImages(a.images || []);
+  document.getElementById('view-body').innerHTML =
+    (primaryImage ? '<img src="'+esc(primaryImage)+'" style="width:100%;height:200px;object-fit:cover;border-radius:9px;margin-bottom:16px;display:block"/>' : '')
+    + (galleryImages.length ? '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:10px;margin:0 0 16px;">'
+      + galleryImages.map(function(url){
+          return '<img src="'+esc(url)+'" style="width:100%;height:90px;object-fit:cover;border-radius:8px;border:1px solid var(--border);" onerror="this.style.display=\'none\'"/>';
+        }).join('')
+      + '</div>' : '')
+    + '<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px;">'
+      + '<span style="font-size:.73rem;color:var(--gold);font-weight:700;text-transform:uppercase;letter-spacing:.08em;">'+dateStr+'</span>'
+      + '<span class="cpill '+catClass+'">'+esc(a.category||'General')+'</span>'
+    + '</div>'
+    + '<h2 style="font-family:\'Playfair Display\',serif;font-size:1.4rem;font-weight:800;color:var(--text);margin-bottom:12px;line-height:1.3;">'+esc(a.title||'Untitled')+'</h2>'
+    + '<div style="width:44px;height:3px;background:linear-gradient(90deg,var(--gold),var(--gold-light));border-radius:2px;margin-bottom:18px;"></div>'
+    + paras;
+
+  document.getElementById('view-edit-btn').onclick = function(){ closeView(); editArticle(id); };
+  document.getElementById('viewModal').classList.add('open');
+}
+function closeView() { document.getElementById('viewModal').classList.remove('open'); }
+
+/* ═══════════════════════════════════════════════════
+   IMAGE UPLOAD
+═══════════════════════════════════════════════════ */
+async function uploadImage(input) {
+  if (!input.files[0]) return;
+  toast('Uploading to Cloudinary...');
+  var fd = new FormData();
+  fd.append('file', input.files[0]);
+  try {
+    var res = await fetch(API_BASE + '/api/upload', { method:'POST', body:fd });
+    var data = await res.json();
+    if (!res.ok || !data.url) throw new Error(data.error || 'Upload failed');
+    document.getElementById('f-image').value = data.url;
+    previewImage();
+    updatePreview();
+    toast('Image uploaded!');
+  } catch(e) { toast(e.message, true); }
+}
+
+async function uploadGalleryImages(input) {
+  var files = Array.from(input.files || []);
+  if (!files.length) return;
+  _newsGalleryUploading = true;
+  setNewsSaveButtonsBusy(true, 'Uploading Images...');
+  _newsGalleryUploadPromise = (async function () {
+    for (var i = 0; i < files.length; i += 1) {
+      var fd = new FormData();
+      fd.append('file', files[i]);
+      toast('Uploading image ' + (i + 1) + ' of ' + files.length + '...');
+      var res = await fetch(API_BASE + '/api/upload', { method:'POST', body:fd });
+      var data = await res.json();
+      if (!res.ok || !data.url) throw new Error(data.error || 'Upload failed');
+      _galleryImages.push(data.url);
+      renderGalleryPreview();
+      syncGalleryUrlsTextarea();
+      updatePreview();
+    }
+  })();
+
+  try {
+    await _newsGalleryUploadPromise;
+    toast('Gallery images uploaded!');
+  } catch(e) {
+    toast(e.message, true);
+  } finally {
+    _newsGalleryUploadPromise = null;
+    _newsGalleryUploading = false;
+    setNewsSaveButtonsBusy(false);
+    input.value = '';
+  }
+}
+
+function addGalleryUrl() {
+  var input = document.getElementById('f-gallery-url');
+  var url = input.value.trim();
+  if (!url) return;
+  _galleryImages.push(url);
+  input.value = '';
+  renderGalleryPreview();
+  syncGalleryUrlsTextarea();
+  updatePreview();
+}
+
+function removeGalleryImage(index) {
+  _galleryImages.splice(index, 1);
+  renderGalleryPreview();
+  syncGalleryUrlsTextarea();
+  updatePreview();
+}
+
+function renderGalleryPreview() {
+  var wrap = document.getElementById('gallery-preview-wrap');
+  if (!wrap) return;
+  if (!_galleryImages.length) {
+    wrap.innerHTML = '<div style="grid-column:1/-1;padding:12px;border:1px dashed var(--border);border-radius:8px;color:var(--text-muted);font-size:.75rem;text-align:center;">No additional images added yet.</div>';
+    return;
+  }
+  wrap.innerHTML = _galleryImages.map(function(url, index) {
+    return '<div style="position:relative;border:1px solid var(--border);border-radius:8px;overflow:hidden;background:var(--bg);">'
+      + '<img src="'+esc(url)+'" style="width:100%;height:92px;object-fit:cover;display:block;" onerror="this.style.display=\'none\'"/>'
+      + '<button type="button" onclick="removeGalleryImage('+index+')" style="position:absolute;top:6px;right:6px;width:24px;height:24px;border:none;border-radius:50%;background:rgba(0,0,0,.68);color:#fff;cursor:pointer;">×</button>'
+      + '</div>';
+  }).join('');
+}
+
+function previewImage() {
+  var url  = document.getElementById('f-image').value.trim();
+  var wrap = document.getElementById('img-preview-wrap');
+  var img  = document.getElementById('img-preview');
+  if (url) { img.src = url; wrap.style.display = 'block'; }
+  else { wrap.style.display = 'none'; }
+}
+
+/* ═══════════════════════════════════════════════════
+   LIVE PREVIEW
+═══════════════════════════════════════════════════ */
+function updatePreview() {
+  var title   = document.getElementById('f-title').value   || 'Article title will appear here...';
+  var excerpt = document.getElementById('f-excerpt').value || 'Excerpt will appear here...';
+  var date    = document.getElementById('f-date').value;
+  var cat     = document.getElementById('f-category').value || 'Category';
+  var image   = document.getElementById('f-image').value.trim();
+  var images  = normalizeImages(_galleryImages);
+
+  document.getElementById('prev-title').textContent  = title;
+  document.getElementById('prev-exc').textContent    = excerpt;
+  document.getElementById('prev-cat').textContent    = cat;
+  document.getElementById('prev-date').textContent   = date ? new Date(date+'T00:00:00').toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}) : '—';
+
+  var imgWrap = document.getElementById('prev-img-wrap');
+  if (image) {
+    imgWrap.innerHTML = '<img src="'+esc(image)+'" style="width:100%;height:150px;object-fit:cover;display:block" onerror="this.style.display=\'none\'"/>';
+  } else {
+    imgWrap.innerHTML = '<span id="prev-img-em" style="font-size:2.5rem;color:rgba(255,255,255,.35)"></span>';
+    imgWrap.style.cssText = 'display:flex;align-items:center;justify-content:center;height:150px;background:linear-gradient(135deg,var(--navy-dark),var(--navy))';
+  }
+
+  // JSON preview
+  var pub = document.getElementById('f-publish').checked;
+  document.getElementById('pub-label').textContent = pub ? 'Live' : 'Draft';
+  document.getElementById('pub-label').style.color = pub ? 'var(--green)' : 'var(--text-muted)';
+  document.getElementById('json-preview').textContent = JSON.stringify({
+    title: document.getElementById('f-title').value,
+    category: cat,
+    date: date,
+    excerpt: document.getElementById('f-excerpt').value,
+    content: document.getElementById('f-content').value.substring(0,60) + (document.getElementById('f-content').value.length > 60 ? '…' : ''),
+    image: image || null,
+    images: images
+  }, null, 2);
+}
+
+function updateCharCount(inputId, countId, max) {
+  var el = document.getElementById(inputId);
+  var cl = document.getElementById(countId);
+  if (!el || !cl) return;
+  var len = el.value.length;
+  cl.textContent = len;
+  cl.style.color = len > max * .9 ? 'var(--red)' : 'var(--text-muted)';
+}
+
+/* ═══════════════════════════════════════════════════
+   ADMIN TOKEN + BOOT
+═══════════════════════════════════════════════════ */
+// Admin token prompt removed
+
+document.addEventListener('keydown', function(e) {
+  if ((e.ctrlKey||e.metaKey) && e.key==='n') { e.preventDefault(); openModal(); }
+  if (e.key === 'Escape') { closeModal(); closeView(); }
+});
+
+document.getElementById('f-publish').addEventListener('change', updatePreview);
+
+window.addEventListener('DOMContentLoaded', function() {
+  document.getElementById('f-date').value = new Date().toISOString().split('T')[0];
+  loadNews();
+});
+</script>
+</body>
+</html>

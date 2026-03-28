@@ -1,0 +1,1075 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>E-Magazine — Admin | Loretto Central School</title>
+  <script src="/admin/admin-auth.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800&family=Nunito:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <script src="/admin/adminfooter.js"></script>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --navy:#0e6b6b;--navy-dark:#094f4f;--navy-deep:#062f2f;
+      --gold:#c8960c;--gold-light:#e8b020;--gold-pale:#f5e6c0;
+      --white:#fff;--bg:#f4f1eb;--bg2:#edeae2;
+      --text:#1a2e2e;--text-muted:#5a6e6e;--border:#ddd6c0;
+      --green:#27ae60;--red:#e74c3c;--orange:#e67e22;
+      --sidebar-w:240px;--radius:13px;--shadow:0 4px 24px rgba(9,79,79,.10);
+    }
+    html{scroll-behavior:smooth}
+    body{font-family:'Nunito',sans-serif;color:var(--text);background:var(--bg);min-height:100vh;overflow-x:hidden}
+    .shell{display:flex;min-height:100vh}
+
+    /* ── SIDEBAR ── */
+    .sidebar{width:var(--sidebar-w);background:var(--navy-deep);display:flex;flex-direction:column;flex-shrink:0;position:sticky;top:0;height:100vh;overflow-y:auto;scrollbar-width:thin;scrollbar-color:rgba(200,150,12,.3) transparent;z-index:100}
+    .sidebar::-webkit-scrollbar{width:4px}.sidebar::-webkit-scrollbar-thumb{background:rgba(200,150,12,.3);border-radius:4px}
+    .sb-brand{padding:18px 15px 14px;border-bottom:1px solid rgba(255,255,255,.07);display:flex;align-items:center;gap:10px}
+    .sb-ic{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--gold),var(--gold-light));display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0;box-shadow:0 3px 10px rgba(200,150,12,.4)}
+    .sb-brand .sbn{font-family:'Playfair Display',serif;font-size:.84rem;font-weight:700;color:#fff}
+    .sb-brand .sbs{font-size:.57rem;color:var(--gold-light);font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-top:1px}
+    .sb-sec{font-size:.57rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.28);padding:14px 14px 5px}
+    .sb-nav{padding:4px 8px;flex:1}
+    .sl{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:9px;font-size:.8rem;font-weight:600;color:rgba(255,255,255,.58);text-decoration:none;cursor:pointer;transition:all .2s;margin-bottom:2px;position:relative}
+    .sl:hover{background:rgba(255,255,255,.06);color:rgba(255,255,255,.9)}
+    .sl.active{background:linear-gradient(135deg,rgba(200,150,12,.22),rgba(200,150,12,.12));color:var(--gold-light);border:1px solid rgba(200,150,12,.3)}
+    .sl.active::before{content:'';position:absolute;left:0;top:22%;bottom:22%;width:3px;background:var(--gold-light);border-radius:0 3px 3px 0}
+    .sl .ic{font-size:.88rem;width:18px;text-align:center;flex-shrink:0}
+    .sb-cnt{margin-left:auto;font-size:.58rem;font-weight:800;background:rgba(200,150,12,.22);color:var(--gold-light);padding:1px 7px;border-radius:10px}
+    .sb-footer{padding:11px 8px 14px;border-top:1px solid rgba(255,255,255,.07)}
+    .sb-user{display:flex;align-items:center;gap:8px;padding:9px 10px;border-radius:9px;background:rgba(255,255,255,.05)}
+    .sb-av{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold-light));display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:800;color:var(--navy-deep);flex-shrink:0}
+
+    /* ── MAIN ── */
+    .main{flex:1;min-width:0;display:flex;flex-direction:column}
+
+    /* ── TOPBAR ── */
+    .atbar{height:56px;background:var(--white);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 22px;gap:10px;position:sticky;top:0;z-index:50;box-shadow:0 2px 10px rgba(9,79,79,.06)}
+    .at-title{font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:700;color:var(--navy-dark);flex:1}
+    .at-title span{font-family:'Nunito',sans-serif;font-size:.66rem;font-weight:600;color:var(--text-muted);display:block;margin-top:1px}
+    .at-acts{display:flex;align-items:center;gap:8px;flex-shrink:0}
+    .btn{display:inline-flex;align-items:center;gap:5px;padding:6px 14px;border-radius:8px;cursor:pointer;font-family:'Nunito',sans-serif;font-size:.73rem;font-weight:700;border:none;transition:all .2s;white-space:nowrap}
+    .btn.out{background:transparent;border:1.5px solid var(--border);color:var(--text-muted)}.btn.out:hover{border-color:var(--navy);color:var(--navy)}
+    .btn.tl{background:var(--navy);color:#fff;box-shadow:0 3px 12px rgba(9,79,79,.22)}.btn.tl:hover{background:var(--navy-dark);transform:translateY(-1px)}
+    .btn.gd{background:linear-gradient(135deg,var(--gold),var(--gold-light));color:var(--navy-deep);box-shadow:0 3px 12px rgba(200,150,12,.28)}.btn.gd:hover{transform:translateY(-1px)}
+    .btn.rd{background:var(--red);color:#fff}.btn.rd:hover{background:#c0392b;transform:translateY(-1px)}
+    .at-div{width:1px;height:24px;background:var(--border);flex-shrink:0}
+    .api-dot{width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse 2s infinite;flex-shrink:0}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+    /* ── BODY ── */
+    .pbody{padding:22px;flex:1}
+
+    /* ── STAT ROW ── */
+    .stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:13px;margin-bottom:20px}
+    .sc{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:16px 14px;text-align:center;box-shadow:var(--shadow);position:relative;overflow:hidden}
+    .sc::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+    .sc.s0::before{background:linear-gradient(90deg,var(--navy),var(--navy-dark))}
+    .sc.s1::before{background:linear-gradient(90deg,var(--gold),var(--gold-light))}
+    .sc.s2::before{background:linear-gradient(90deg,var(--green),#2ecc71)}
+    .sc.s3::before{background:linear-gradient(90deg,var(--orange),#f39c12)}
+    .sc-ic{font-size:1.5rem;margin-bottom:6px}
+    .sc-val{font-family:'Playfair Display',serif;font-size:1.9rem;font-weight:800;color:var(--text);line-height:1}
+    .sc-lbl{font-size:.63rem;font-weight:700;color:var(--text-muted);margin-top:3px}
+
+    /* ── LAYOUT ── */
+    .two-col{display:grid;grid-template-columns:1fr 380px;gap:20px;align-items:start}
+
+    /* ── BLOCK ── */
+    .block{background:var(--white);border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow);margin-bottom:20px;overflow:hidden}
+    .bh{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--border);background:linear-gradient(135deg,var(--white),var(--bg));flex-wrap:wrap;gap:8px}
+    .bt{font-family:'Playfair Display',serif;font-size:.92rem;font-weight:700;color:var(--navy-dark);display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+    .dbc{font-family:'Nunito',sans-serif;font-size:.56rem;font-weight:800;background:rgba(14,107,107,.1);color:var(--navy);border:1px solid rgba(14,107,107,.18);padding:2px 7px;border-radius:7px}
+    .ba{display:flex;gap:7px;flex-shrink:0}
+    .bb{padding:18px}
+
+    /* ── MAGAZINE CARD (admin version) ── */
+    .mag-list{display:grid;gap:14px;padding:16px 18px}
+    .mag-item{display:flex;gap:14px;align-items:stretch;background:var(--bg);border:1.5px solid var(--border);border-radius:11px;overflow:hidden;transition:all .2s;position:relative}
+    .mag-item:hover{border-color:rgba(14,107,107,.3);box-shadow:0 4px 16px rgba(9,79,79,.08)}
+    .mag-item.featured-item{border-color:rgba(200,150,12,.4);background:linear-gradient(135deg,rgba(200,150,12,.05),var(--bg))}
+
+    /* Cover strip */
+    .mag-cover-strip{width:72px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:12px 8px;gap:4px;position:relative}
+    .mag-cover-strip .issue-num{font-size:.55rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.7);text-align:center}
+    .mag-cover-strip .issue-em{font-size:1.4rem;line-height:1}
+    .mag-item-body{flex:1;padding:12px 14px 12px 0;min-width:0;display:flex;flex-direction:column;gap:4px}
+    .mag-item-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+    .mag-item-title{font-family:'Playfair Display',serif;font-size:.92rem;font-weight:700;color:var(--navy-dark);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .mag-item-date{font-size:.68rem;color:var(--text-muted);font-weight:600}
+    .mag-item-desc{font-size:.77rem;color:var(--text-muted);line-height:1.55;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;line-clamp:2;-webkit-box-orient:vertical}
+    .mag-item-url{font-size:.65rem;color:var(--navy);font-family:monospace;background:rgba(14,107,107,.07);padding:2px 7px;border-radius:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:260px;display:inline-block}
+    .mag-item-acts{display:flex;gap:5px;align-items:center;padding:10px 10px 10px 0;flex-shrink:0}
+
+    /* Status pills */
+    .spill{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:20px;font-size:.6rem;font-weight:800}
+    .spill::before{content:'●';font-size:.44rem}
+    .spill.live{background:rgba(39,174,96,.1);color:#1e7a3a;border:1px solid rgba(39,174,96,.2)}
+    .spill.draft{background:var(--bg2);color:var(--text-muted);border:1px solid var(--border)}
+    .spill.featured{background:rgba(200,150,12,.12);color:var(--gold);border:1px solid rgba(200,150,12,.3)}
+    .spill.latest{background:rgba(14,107,107,.12);color:var(--navy);border:1px solid rgba(14,107,107,.22)}
+
+    /* Action buttons */
+    .ab{width:28px;height:28px;border-radius:6px;border:1.5px solid var(--border);background:var(--white);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.76rem;transition:all .15s;flex-shrink:0}
+    .ab:hover{border-color:var(--navy);background:var(--bg)}
+    .ab.del:hover{border-color:var(--red);background:rgba(231,76,60,.06)}
+
+    /* Drag handle */
+    .drag-handle{cursor:grab;color:var(--text-muted);font-size:.9rem;padding:0 8px;display:flex;align-items:center;user-select:none}
+    .drag-handle:active{cursor:grabbing}
+    .mag-item.dragging{opacity:.4;border-style:dashed}
+    .mag-item.drag-over{border-color:var(--gold);background:rgba(200,150,12,.07)}
+
+    /* Empty state */
+    .empty-state{text-align:center;padding:52px 20px;color:var(--text-muted)}
+    .empty-state .em{font-size:3rem;margin-bottom:10px}
+    .empty-state p{font-size:.88rem;margin-bottom:16px}
+
+    /* ── FORM ── */
+    .fg{display:grid;gap:13px}
+    .fg.c2{grid-template-columns:1fr 1fr}
+    .f label{display:block;font-size:.72rem;font-weight:700;color:var(--navy-dark);margin-bottom:4px}
+    .f label .req{color:var(--gold);margin-left:2px}
+    .f label .dbh{font-size:.55rem;font-weight:700;color:var(--text-muted);background:var(--bg2);padding:1px 5px;border-radius:4px;margin-left:4px}
+    .f input,.f textarea,.f select{width:100%;padding:8px 12px;border:1.5px solid var(--border);border-radius:9px;font-family:'Nunito',sans-serif;font-size:.84rem;color:var(--text);background:var(--white);outline:none;transition:border .2s,box-shadow .2s}
+    .f input:focus,.f textarea:focus,.f select:focus{border-color:var(--navy);box-shadow:0 0 0 3px rgba(14,107,107,.09)}
+    .f textarea{resize:vertical;min-height:76px}
+    .fhint{font-size:.61rem;color:var(--text-muted);margin-top:3px}
+    .fhint code{background:var(--bg2);padding:1px 4px;border-radius:4px;font-family:monospace;font-size:.8em;color:#b35e00}
+
+    /* ── COLOR GRADIENT PICKER ── */
+    .grad-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin-top:6px}
+    .grad-swatch{height:36px;border-radius:8px;cursor:pointer;border:2.5px solid transparent;transition:all .2s;position:relative}
+    .grad-swatch:hover{transform:scale(1.08)}
+    .grad-swatch.selected{border-color:#fff;box-shadow:0 0 0 2.5px var(--navy)}
+    .grad-swatch .tick{display:none;position:absolute;inset:0;align-items:center;justify-content:center;font-size:.8rem}
+    .grad-swatch.selected .tick{display:flex}
+    .grad-custom{height:36px;border-radius:8px;overflow:hidden;border:1.5px solid var(--border);cursor:pointer;position:relative;margin-top:7px}
+    .grad-custom input[type=color]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+    .grad-custom .grad-lbl{display:flex;align-items:center;justify-content:center;height:100%;font-size:.7rem;font-weight:700;color:var(--text-muted);gap:5px;pointer-events:none}
+
+    /* ── LIVE CARD PREVIEW ── */
+    .prev-card{border-radius:12px;overflow:hidden;border:1px solid var(--border);box-shadow:var(--shadow)}
+    .prev-cover{height:120px;display:flex;flex-direction:column;justify-content:flex-end;padding:14px 16px;position:relative;overflow:hidden}
+    .prev-cover::after{content:'';position:absolute;top:10px;right:12px;font-size:2rem;opacity:.22}
+    .prev-vol{font-size:.58rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.65);margin-bottom:3px;position:relative;z-index:1}
+    .prev-title{font-family:'Playfair Display',serif;font-size:1rem;font-weight:800;color:#fff;line-height:1.2;position:relative;z-index:1}
+    .prev-date-pill{display:inline-flex;align-items:center;gap:4px;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.28);border-radius:20px;padding:2px 8px;font-size:.62rem;font-weight:700;color:#fff;margin-top:6px;position:relative;z-index:1;width:fit-content}
+    .prev-body{padding:14px 16px;background:var(--white)}
+    .prev-desc{font-size:.78rem;color:var(--text-muted);line-height:1.6;margin-bottom:12px;min-height:42px}
+    .prev-btns{display:flex;gap:8px}
+    .prev-btn-p{display:inline-flex;align-items:center;gap:5px;background:var(--navy);color:#fff;padding:7px 14px;border-radius:6px;font-size:.72rem;font-weight:700}
+    .prev-btn-o{display:inline-flex;align-items:center;gap:5px;background:transparent;color:var(--navy);border:1.5px solid var(--border);padding:7px 12px;border-radius:6px;font-size:.72rem;font-weight:700}
+
+    /* ── PAGE SETTINGS ── */
+    .tog-row{display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--bg2)}.tog-row:last-child{border-bottom:none}
+    .tln{font-size:.81rem;font-weight:700;color:var(--text)}.tld{font-size:.67rem;color:var(--text-muted);margin-top:1px}
+    .tog{position:relative;width:40px;height:22px;flex-shrink:0}.tog input{display:none}
+    .togt{position:absolute;inset:0;background:var(--bg2);border-radius:12px;border:1.5px solid var(--border);cursor:pointer;transition:all .2s}
+    .togt::after{content:'';position:absolute;width:14px;height:14px;border-radius:50%;background:#fff;top:3px;left:3px;box-shadow:0 2px 5px rgba(0,0,0,.18);transition:transform .2s}
+    .tog input:checked~.togt{background:var(--navy);border-color:var(--navy-dark)}.tog input:checked~.togt::after{transform:translateX(18px)}
+
+    /* ── UPLOAD AREA ── */
+    .upload-area{border:2px dashed var(--border);border-radius:10px;padding:18px;text-align:center;cursor:pointer;transition:all .2s;position:relative;background:var(--bg)}
+    .upload-area:hover,.upload-area.drag{border-color:var(--navy);background:rgba(14,107,107,.04)}
+    .upload-area input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+    .upload-icon{font-size:1.8rem;margin-bottom:6px}
+    .upload-hint{font-size:.72rem;color:var(--text-muted)}
+    .upload-hint strong{color:var(--navy)}
+
+    /* ── MODAL ── */
+    .modal-ov{display:none;position:fixed;inset:0;background:rgba(6,47,47,.65);backdrop-filter:blur(4px);z-index:99999;align-items:center;justify-content:center;padding:20px}
+    .modal-ov.open{display:flex}
+    .modal{background:#fff;border-radius:16px;max-width:860px;width:100%;max-height:92vh;overflow-y:auto;box-shadow:0 28px 70px rgba(0,0,0,.3);animation:mIn .24s cubic-bezier(.22,1,.36,1)}
+    @keyframes mIn{from{opacity:0;transform:scale(.95) translateY(14px)}to{opacity:1;transform:scale(1) translateY(0)}}
+    .modal-hd{display:flex;align-items:center;justify-content:space-between;padding:17px 22px;border-bottom:1px solid var(--border);background:linear-gradient(135deg,var(--white),var(--bg));position:sticky;top:0;z-index:2}
+    .modal-title{font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:700;color:var(--navy-dark)}
+    .modal-x{width:28px;height:28px;border-radius:50%;background:var(--bg2);border:none;cursor:pointer;font-size:.86rem;display:flex;align-items:center;justify-content:center;color:var(--text-muted);transition:all .2s;flex-shrink:0}
+    .modal-x:hover{background:#fde8e8;color:var(--red)}
+    .modal-body{padding:22px;display:grid;grid-template-columns:1.3fr 1fr;gap:20px}
+    .modal-ft{display:flex;gap:9px;justify-content:flex-end;padding:14px 22px;border-top:1px solid var(--border);background:var(--bg)}
+
+    /* ── TOAST ── */
+    .toast{position:fixed;bottom:24px;right:24px;background:var(--navy-deep);color:#fff;padding:11px 18px;border-radius:10px;font-size:.79rem;font-weight:700;display:flex;align-items:center;gap:8px;box-shadow:0 8px 28px rgba(0,0,0,.22);transform:translateY(80px);opacity:0;transition:all .3s cubic-bezier(.34,1.56,.64,1);z-index:99997;border-left:4px solid var(--gold-light);pointer-events:none}
+    .toast.show{transform:translateY(0);opacity:1}
+
+    @media(max-width:1100px){.two-col{grid-template-columns:1fr}.stat-row{grid-template-columns:1fr 1fr}}
+    @media(max-width:768px){.sidebar{display:none}.modal-body{grid-template-columns:1fr}.fg.c2{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+
+<script src="adminnavbar.js"></script>
+
+<div class="shell">
+
+  <!-- ══ SIDEBAR ══ -->
+  <aside class="sidebar">
+    <div class="sb-brand">
+      <div class="sb-ic"></div>
+      <div><div class="sbn">Loretto Admin</div><div class="sbs">E-Magazine</div></div>
+    </div>
+    <div class="sb-nav">
+      <div class="sb-sec">Magazine</div>
+      <a class="sl active"><span class="ic"></span> All Issues <span class="sb-cnt" id="sb-total">0</span></a>
+      <a class="sl" onclick="filterView('published')"><span class="ic"></span> Published</a>
+      <a class="sl" onclick="filterView('draft')"><span class="ic"></span> Drafts</a>
+      <div class="sb-sec">Page Content</div>
+      <a class="sl" onclick="scrollTo(0,0)"><span class="ic"></span> Page Settings</a>
+      <a class="sl" onclick="document.getElementById('notice-section').scrollIntoView({behavior:'smooth'})"><span class="ic"></span> Notice Box</a>
+      <div class="sb-sec">Other</div>
+      <a class="sl" href="admin-panel.html"><span class="ic"></span> Dashboard</a>
+      <a class="sl" href="admin-news.html"><span class="ic"></span> News &amp; Events</a>
+      <a class="sl" href="admin-academics.html"><span class="ic"></span> Academics</a>
+    </div>
+    <div class="sb-footer">
+      <div class="sb-user">
+        <div class="sb-av">A</div>
+        <div><div style="font-size:.74rem;font-weight:700;color:#fff;">Administrator</div><div style="font-size:.58rem;color:rgba(255,255,255,.4);">Super Admin</div></div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ══ MAIN ══ -->
+  <main class="main">
+
+    <!-- Topbar -->
+    <div class="atbar">
+      <div class="at-title">
+        E-Magazine
+        <span>Collection: <code style="font-family:monospace;font-size:.75em;color:var(--navy)">documents</code> · filter: <code style="font-family:monospace;font-size:.75em;color:var(--navy)">category = "e-magazine"</code> · GET/POST/PUT/DELETE /api/documents</span>
+      </div>
+      <div class="at-acts">
+        <div style="display:flex;align-items:center;gap:5px;font-size:.68rem;font-weight:700;color:var(--green);background:rgba(39,174,96,.08);border:1px solid rgba(39,174,96,.2);padding:4px 10px;border-radius:20px;flex-shrink:0">
+          <span class="api-dot"></span> API Live
+        </div>
+        <div class="at-div"></div>
+        <button class="btn out" onclick="window.open('../e-magazine.html','_blank')"> Preview Page</button>
+        <button class="btn tl" onclick="loadIssues()"> Refresh</button>
+        <button class="btn gd" onclick="openModal()">＋ Add Issue</button>
+      </div>
+    </div>
+
+    <div class="pbody">
+
+      <!-- Stat tiles -->
+      <div class="stat-row">
+        <div class="sc s0"><div class="sc-ic"></div><div class="sc-val" id="t-total">—</div><div class="sc-lbl">Total Issues</div></div>
+        <div class="sc s1"><div class="sc-ic">⭐</div><div class="sc-val" id="t-featured">—</div><div class="sc-lbl">Featured</div></div>
+        <div class="sc s2"><div class="sc-ic"></div><div class="sc-val" id="t-pub">—</div><div class="sc-lbl">Published</div></div>
+        <div class="sc s3"><div class="sc-ic"></div><div class="sc-val" id="t-year">—</div><div class="sc-lbl">This Year</div></div>
+      </div>
+
+      <div class="two-col">
+        <!-- LEFT: Issues list + page settings -->
+        <div>
+
+          <!-- Issues list -->
+          <div class="block">
+            <div class="bh">
+              <div class="bt"> Magazine Issues <span class="dbc">documents · category: e-magazine</span></div>
+              <div class="ba">
+                <button class="btn out" onclick="openModal()">＋ Add Issue</button>
+              </div>
+            </div>
+
+            <div id="issues-loading" style="text-align:center;padding:44px;color:var(--text-muted);font-size:.86rem;">
+              <div style="font-size:1.8rem;margin-bottom:8px">⏳</div>Connecting to MongoDB...
+            </div>
+
+            <div class="mag-list" id="issues-list" style="display:none"></div>
+
+            <div class="empty-state" id="issues-empty" style="display:none">
+              <div class="em"></div>
+              <p>No magazine issues yet. Click <strong>+ Add Issue</strong> to publish your first edition.</p>
+              <button class="btn gd" onclick="openModal()">＋ Add First Issue</button>
+            </div>
+          </div>
+
+          <!-- Page banner settings -->
+          <div class="block">
+            <div class="bh"><div class="bt"> Page Banner & Intro Strip <span class="dbc">e_magazine_settings.banner</span></div><div class="ba"><button class="btn gd" onclick="saveSettings()"> Save</button></div></div>
+            <div class="bb">
+              <div class="fg">
+                <div class="fg c2">
+                  <div class="f"><label>Banner Heading <span class="dbh">banner.heading</span></label><input type="text" value="E-Magazine" id="s-heading"/></div>
+                  <div class="f"><label>Banner Sub-heading <span class="dbh">banner.subheading</span></label><input type="text" value="Student voices · School stories · Monthly editions" id="s-sub"/></div>
+                </div>
+                <div class="f"><label>Intro Strip Text <span class="dbh">banner.introText</span></label>
+                  <textarea id="s-intro">The school has planned to bring out the school E-Magazine every month. We are proud and happy to present before you our growing collection of editions — filled with student articles, school news, achievements and more. Read and share!</textarea>
+                </div>
+                <div class="fg c2">
+                  <div class="f"><label>Section Heading <span class="dbh">section.heading</span></label><input type="text" value="School E-Magazine Collection" id="s-sechead"/></div>
+                  <div class="f"><label>Academic Year Badge <span class="dbh">section.yearBadge</span></label><input type="text" value="All Issues — Academic Year 2025–26" id="s-yearbadge"/></div>
+                </div>
+                <div class="f"><label>Section Description <span class="dbh">section.desc</span></label><textarea id="s-desc">Browse and download all published editions of the Loretto Central School E-Magazine. Each issue is packed with student achievements, school events, articles, and creative writing.</textarea></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Notice Box -->
+          <div class="block" id="notice-section">
+            <div class="bh"><div class="bt"> Notice Box <span class="dbc">e_magazine_settings.noticeBox</span></div><div class="ba"><button class="btn gd" onclick="saveSettings()"> Save</button></div></div>
+            <div class="bb">
+              <div class="tog-row" style="margin-bottom:12px;">
+                <div><div class="tln">Show Notice Box</div><div class="tld">Gold dashed callout at bottom of page</div></div>
+                <label class="tog"><input type="checkbox" id="s-notice-show" checked/><span class="togt"></span></label>
+              </div>
+              <div class="fg">
+                <div class="f"><label>Icon <span class="dbh">noticeBox.icon</span></label><input type="text" value="" id="s-nicon" style="max-width:80px"/></div>
+                <div class="f"><label>Title <span class="dbh">noticeBox.title</span></label><input type="text" value="Contribute to the E-Magazine" id="s-ntitle"/></div>
+                <div class="f"><label>Body Text <span class="dbh">noticeBox.body</span></label><textarea id="s-nbody">Students, parents and staff are invited to contribute articles, photographs, artwork, poems, and stories to the Loretto E-Magazine. Submit your contributions to the school office or email the magazine committee.</textarea></div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- RIGHT: Add/edit form & settings -->
+        <div>
+
+          <!-- Quick form -->
+          <div class="block">
+            <div class="bh"><div class="bt"> Quick Add Issue</div></div>
+            <div class="bb">
+              <p style="font-size:.76rem;color:var(--text-muted);margin-bottom:14px;">For a full editor with live preview, use the <strong>+ Add Issue</strong> button above.</p>
+              <div class="fg">
+                <div class="f"><label>Issue Title <span class="req">*</span></label><input type="text" id="q-title" placeholder="e.g. E-Magazine February 2026"/></div>
+                <div class="fg c2">
+                  <div class="f"><label>Issue No.</label><input type="text" id="q-issue" placeholder="e.g. Issue No. 7"/></div>
+                  <div class="f"><label>Date</label><input type="date" id="q-date"/></div>
+                </div>
+                <div class="f"><label>PDF URL (Cloudinary) <span class="req">*</span></label>
+                  <div style="display:flex;gap:7px;">
+                    <input type="url" id="q-url" placeholder="https://res.cloudinary.com/your-cloud/raw/upload/..."/>
+                    <button style="flex-shrink:0;padding:7px 11px;border-radius:8px;cursor:pointer;background:rgba(200,150,12,.1);border:1.5px solid rgba(200,150,12,.25);color:var(--gold);font-family:Nunito;font-size:.7rem;font-weight:700;white-space:nowrap" onclick="document.getElementById('q-pdf-file').click()"> Upload</button>
+                    <input type="file" id="q-pdf-file" accept="application/pdf" style="display:none" onchange="quickUploadPDF(this)"/>
+                  </div>
+                  <div class="fhint">Upload as <code>raw</code> resource type in Cloudinary · max 10 MB</div>
+                </div>
+                <button class="btn gd" style="width:100%;justify-content:center;" onclick="quickAdd()">＋ Add Issue</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Page toggles -->
+          <div class="block">
+            <div class="bh"><div class="bt"> Page Settings <span class="dbc">e_magazine_settings</span></div><div class="ba"><button class="btn gd" onclick="saveSettings()"> Save</button></div></div>
+            <div class="bb">
+              <div class="tog-row"><div><div class="tln">Page Live</div><div class="tld">E-Magazine page visible to public</div></div><label class="tog"><input type="checkbox" id="s-page-live" checked/><span class="togt"></span></label></div>
+              <div class="tog-row"><div><div class="tln">Show Intro Strip</div><div class="tld">Gold strip below banner</div></div><label class="tog"><input type="checkbox" id="s-show-intro" checked/><span class="togt"></span></label></div>
+              <div class="tog-row"><div><div class="tln">Show Section Heading</div><div class="tld">Heading and description above grid</div></div><label class="tog"><input type="checkbox" id="s-show-section" checked/><span class="togt"></span></label></div>
+              <div class="tog-row"><div><div class="tln">Featured Issue (Wide Card)</div><div class="tld">First issue spans full width</div></div><label class="tog"><input type="checkbox" id="s-featured-issue" checked/><span class="togt"></span></label></div>
+              <div class="tog-row"><div><div class="tln">Show Download Button</div><div class="tld">PDF download button on each card</div></div><label class="tog"><input type="checkbox" id="s-show-download" checked/><span class="togt"></span></label></div>
+              <div class="tog-row"><div><div class="tln">Show View Online Button</div><div class="tld">Second button opens PDF in browser</div></div><label class="tog"><input type="checkbox" id="s-show-view" checked/><span class="togt"></span></label></div>
+            </div>
+          </div>
+
+          <!-- SEO -->
+          <div class="block">
+            <div class="bh"><div class="bt"> SEO <span class="dbc">e_magazine_settings.seo</span></div><div class="ba"><button class="btn gd" onclick="saveSettings()"> Save</button></div></div>
+            <div class="bb"><div class="fg">
+              <div class="f"><label>Meta Title</label><input type="text" value="E-Magazine | Loretto Central School" id="s-meta-title"/></div>
+              <div class="f"><label>Meta Description</label><textarea rows="2" id="s-meta-desc">Browse and download all editions of the Loretto Central School E-Magazine — student voices, school stories, and monthly highlights.</textarea></div>
+            </div></div>
+          </div>
+
+        </div>
+      </div>
+
+    </div><!-- /pbody -->
+  </main>
+</div><!-- /shell -->
+
+<!-- ══════════════════════════════════
+     ADD / EDIT MODAL
+══════════════════════════════════ -->
+<div class="modal-ov" id="issueModal" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="modal-hd">
+      <div class="modal-title" id="modal-title-text"> Add New Issue</div>
+      <button class="modal-x" onclick="closeModal()"></button>
+    </div>
+
+    <div class="modal-body">
+
+      <!-- LEFT: form -->
+      <div>
+        <input type="hidden" id="edit-id"/>
+        <div class="fg">
+
+          <div class="f"><label>Issue Title <span class="req">*</span> <span class="dbh">documents.title</span></label>
+            <input type="text" id="f-title" placeholder="e.g. E-Magazine February 2026" oninput="updatePreview()"/>
+          </div>
+
+          <div class="fg c2">
+            <div class="f"><label>Issue Number <span class="dbh">stored in title/url</span></label>
+              <input type="text" id="f-issue" placeholder="Issue No. 7" oninput="updatePreview()"/>
+            </div>
+            <div class="f"><label>Date <span class="req">*</span> <span class="dbh">documents.date</span></label>
+              <input type="date" id="f-date" oninput="updatePreview()"/>
+            </div>
+          </div>
+
+          <div class="f"><label>Description <span class="dbh">stored in title field as extended info</span></label>
+            <textarea id="f-desc" placeholder="Brief description shown on the magazine card..." rows="3" oninput="updatePreview()"></textarea>
+          </div>
+
+          <div class="f"><label>PDF URL (Cloudinary) <span class="req">*</span> <span class="dbh">documents.url</span></label>
+            <div style="display:flex;gap:7px;align-items:center;">
+              <input type="url" id="f-url" placeholder="https://res.cloudinary.com/your-cloud/raw/upload/..." oninput="updatePreview()"/>
+              <button style="flex-shrink:0;padding:7px 11px;border-radius:8px;cursor:pointer;background:rgba(200,150,12,.1);border:1.5px solid rgba(200,150,12,.25);color:var(--gold);font-family:Nunito;font-size:.7rem;font-weight:700;white-space:nowrap" onclick="document.getElementById('modal-pdf-file').click()"> Upload PDF</button>
+              <input type="file" id="modal-pdf-file" accept="application/pdf" style="display:none" onchange="uploadPDF(this,'f-url')"/>
+            </div>
+            <div class="fhint">Upload as Cloudinary <code>raw</code> resource. Students will see Download + View Online buttons.</div>
+          </div>
+
+          <!-- Gradient picker -->
+          <div class="f">
+            <label>Cover Gradient <span class="dbh">documents.url — encoded in meta</span></label>
+            <div class="grad-grid" id="grad-grid">
+              <!-- Built by JS -->
+            </div>
+            <input type="hidden" id="f-gradient" value="teal"/>
+            <div class="grad-custom">
+              <input type="color" id="f-grad-custom" oninput="setCustomGrad(this.value)"/>
+              <div class="grad-lbl"> Custom colour</div>
+            </div>
+          </div>
+
+          <!-- Flags -->
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+            <div style="display:flex;align-items:center;gap:9px;background:var(--bg);border-radius:9px;padding:10px 13px;border:1px solid var(--border);">
+              <label class="tog"><input type="checkbox" id="f-featured"/><span class="togt"></span></label>
+              <div><div style="font-size:.77rem;font-weight:700;color:var(--text);">Featured Issue</div><div style="font-size:.63rem;color:var(--text-muted);">Displays as wide card</div></div>
+            </div>
+            <div style="display:flex;align-items:center;gap:9px;background:var(--bg);border-radius:9px;padding:10px 13px;border:1px solid var(--border);">
+              <label class="tog"><input type="checkbox" id="f-latest"/><span class="togt"></span></label>
+              <div><div style="font-size:.77rem;font-weight:700;color:var(--text);">Latest Issue</div><div style="font-size:.63rem;color:var(--text-muted);">Shows 🆕 Latest badge</div></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- RIGHT: live preview -->
+      <div>
+        <div style="font-size:.67rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:9px;">Live Preview</div>
+        <div class="prev-card">
+          <div class="prev-cover" id="prev-cover" style="background:linear-gradient(135deg,#094f4f 0%,#0e6b6b 60%,#1a8a8a 100%)">
+            <div class="prev-vol" id="prev-vol">Issue No. —</div>
+            <div class="prev-title" id="prev-title">Issue title here</div>
+            <div class="prev-date-pill" id="prev-date"> —</div>
+          </div>
+          <div class="prev-body">
+            <div class="prev-desc" id="prev-desc">Description will appear here on the public magazine card...</div>
+            <div class="prev-btns">
+              <div class="prev-btn-p">↓ Download PDF</div>
+              <div class="prev-btn-o"> View Online</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top:14px;background:var(--bg);border-radius:9px;border:1px solid var(--border);padding:12px 14px;">
+          <div style="font-size:.64rem;font-weight:700;color:var(--navy);margin-bottom:6px;">MongoDB Document</div>
+          <pre id="json-prev" style="font-family:monospace;font-size:.6rem;color:var(--text-muted);white-space:pre-wrap;word-break:break-all;line-height:1.5">{}</pre>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="modal-ft">
+      <button class="btn out" onclick="closeModal()">Cancel</button>
+      <button class="btn gd" onclick="saveIssue()"> Save Issue</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ═══════════════════════════════════════════
+   CONFIG
+═══════════════════════════════════════════ */
+var API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://loretto-cbse-school.onrender.com';
+var SETTINGS_KEY = 'e-magazine';
+// Admin token logic removed
+function apiH(){ return {'Content-Type':'application/json'}; }
+
+/* ═══════════════════════════════════════════
+   GRADIENTS PALETTE
+═══════════════════════════════════════════ */
+var GRADS = [
+  {id:'teal',    label:'Teal',    css:'linear-gradient(135deg,#094f4f 0%,#0e6b6b 60%,#1a8a8a 100%)'},
+  {id:'amber',   label:'Amber',   css:'linear-gradient(135deg,#7c3a00 0%,#b35900 55%,#d97706 100%)'},
+  {id:'blue',    label:'Blue',    css:'linear-gradient(135deg,#1e3a5f 0%,#2d5f8f 55%,#3b82c4 100%)'},
+  {id:'rust',    label:'Rust',    css:'linear-gradient(135deg,#5c2d00 0%,#92480a 55%,#c8680f 100%)'},
+  {id:'forest',  label:'Forest',  css:'linear-gradient(135deg,#1a4a2e 0%,#246b42 55%,#2e8c58 100%)'},
+  {id:'purple',  label:'Purple',  css:'linear-gradient(135deg,#2d1a4f 0%,#4c2d8f 55%,#6b44c8 100%)'},
+  {id:'crimson', label:'Crimson', css:'linear-gradient(135deg,#4f1a1a 0%,#8f2d2d 55%,#c84444 100%)'},
+  {id:'slate',   label:'Slate',   css:'linear-gradient(135deg,#1a2a3f 0%,#2d4a6b 55%,#3d6490 100%)'},
+  {id:'olive',   label:'Olive',   css:'linear-gradient(135deg,#2e3a00 0%,#506600 55%,#708d00 100%)'},
+  {id:'plum',    label:'Plum',    css:'linear-gradient(135deg,#3a0a2a 0%,#6b1a52 55%,#9c2d7a 100%)'},
+];
+
+var _selectedGrad = GRADS[0].css;
+var _customGradCss = null;
+
+function buildGradGrid(){
+  var el = document.getElementById('grad-grid');
+  el.innerHTML = GRADS.map(function(g){
+    return '<div class="grad-swatch'+(g.css===_selectedGrad?' selected':'')+'" style="background:'+g.css+'" title="'+g.label+'" onclick="selectGrad(\''+g.id+'\')">'
+      +'<span class="tick"></span>'
+    +'</div>';
+  }).join('');
+}
+
+function selectGrad(id){
+  var g = GRADS.find(function(x){ return x.id===id; });
+  if (!g) return;
+  _selectedGrad = g.css;
+  _customGradCss = null;
+  buildGradGrid();
+  updatePreview();
+}
+
+function setCustomGrad(hex){
+  _customGradCss = 'linear-gradient(135deg,'+hex+'aa 0%,'+hex+' 55%,'+hex+'dd 100%)';
+  _selectedGrad = _customGradCss;
+  document.querySelectorAll('.grad-swatch').forEach(function(s){ s.classList.remove('selected'); });
+  updatePreview();
+}
+
+/* ═══════════════════════════════════════════
+   STATE
+═══════════════════════════════════════════ */
+var _all = [];
+var _filter = 'all';
+
+function issueSortValue(item){
+  var ts = Date.parse(item && (item.date || item.createdAt || item.updatedAt) ? (item.date || item.createdAt || item.updatedAt) : '');
+  if (!Number.isNaN(ts)) return ts;
+  var id = item && item._id ? String(item._id) : '';
+  var hex = id.slice(0, 8);
+  return /^[0-9a-fA-F]{8}$/.test(hex) ? parseInt(hex, 16) * 1000 : 0;
+}
+
+function readText(id){
+  var el = document.getElementById(id);
+  return el ? (el.value || '').trim() : '';
+}
+
+function readChecked(id){
+  var el = document.getElementById(id);
+  return !!(el && el.checked);
+}
+
+function writeText(id, value){
+  var el = document.getElementById(id);
+  if (el) el.value = value == null ? '' : String(value);
+}
+
+function writeChecked(id, value){
+  var el = document.getElementById(id);
+  if (el) el.checked = !!value;
+}
+
+function defaultSettingsData(){
+  return {
+    banner: {
+      heading: 'E-Magazine',
+      subheading: 'Student voices · School stories · Monthly editions',
+      introText: 'The school has planned to bring out the school E-Magazine every month. We are proud and happy to present before you our growing collection of editions — filled with student articles, school news, achievements and more. Read and share!'
+    },
+    section: {
+      heading: 'School E-Magazine Collection',
+      yearBadge: 'All Issues — Academic Year 2025–26',
+      desc: 'Browse and download all published editions of the Loretto Central School E-Magazine. Each issue is packed with student achievements, school events, articles, and creative writing.'
+    },
+    noticeBox: {
+      show: false,
+      icon: '',
+      title: 'Contribute to the E-Magazine',
+      body: 'Students, parents and staff are invited to contribute articles, photographs, artwork, poems, and stories to the Loretto E-Magazine. Submit your contributions to the school office or email the magazine committee.'
+    },
+    page: {
+      live: true,
+      showIntroStrip: true,
+      showSectionHeading: true,
+      featuredIssue: true,
+      showDownloadButton: true,
+      showViewOnlineButton: true
+    },
+    seo: {
+      title: 'E-Magazine | Loretto Central School',
+      description: 'Browse and download all editions of the Loretto Central School E-Magazine — student voices, school stories, and monthly highlights.'
+    }
+  };
+}
+
+function normalizeSettingsData(raw){
+  var source = raw && typeof raw === 'object' ? raw : {};
+  var defaults = defaultSettingsData();
+  var banner = source.banner && typeof source.banner === 'object' ? source.banner : {};
+  var section = source.section && typeof source.section === 'object' ? source.section : {};
+  var noticeBox = source.noticeBox && typeof source.noticeBox === 'object' ? source.noticeBox : {};
+  var page = source.page && typeof source.page === 'object' ? source.page : {};
+  var seo = source.seo && typeof source.seo === 'object' ? source.seo : {};
+
+  return {
+    banner: {
+      heading: banner.heading || defaults.banner.heading,
+      subheading: banner.subheading || defaults.banner.subheading,
+      introText: banner.introText || defaults.banner.introText
+    },
+    section: {
+      heading: section.heading || defaults.section.heading,
+      yearBadge: section.yearBadge || defaults.section.yearBadge,
+      desc: section.desc || defaults.section.desc
+    },
+    noticeBox: {
+      show: !!noticeBox.show,
+      icon: noticeBox.icon || defaults.noticeBox.icon,
+      title: noticeBox.title || defaults.noticeBox.title,
+      body: noticeBox.body || defaults.noticeBox.body
+    },
+    page: {
+      live: page.live !== false,
+      showIntroStrip: page.showIntroStrip !== false,
+      showSectionHeading: page.showSectionHeading !== false,
+      featuredIssue: page.featuredIssue !== false,
+      showDownloadButton: page.showDownloadButton !== false,
+      showViewOnlineButton: page.showViewOnlineButton !== false
+    },
+    seo: {
+      title: seo.title || defaults.seo.title,
+      description: seo.description || defaults.seo.description
+    }
+  };
+}
+
+function collectSettingsData(){
+  return {
+    banner: {
+      heading: readText('s-heading'),
+      subheading: readText('s-sub'),
+      introText: readText('s-intro')
+    },
+    section: {
+      heading: readText('s-sechead'),
+      yearBadge: readText('s-yearbadge'),
+      desc: readText('s-desc')
+    },
+    noticeBox: {
+      show: readChecked('s-notice-show'),
+      icon: readText('s-nicon'),
+      title: readText('s-ntitle'),
+      body: readText('s-nbody')
+    },
+    page: {
+      live: readChecked('s-page-live'),
+      showIntroStrip: readChecked('s-show-intro'),
+      showSectionHeading: readChecked('s-show-section'),
+      featuredIssue: readChecked('s-featured-issue'),
+      showDownloadButton: readChecked('s-show-download'),
+      showViewOnlineButton: readChecked('s-show-view')
+    },
+    seo: {
+      title: readText('s-meta-title'),
+      description: readText('s-meta-desc')
+    }
+  };
+}
+
+function populateSettings(data){
+  var settings = normalizeSettingsData(data);
+
+  writeText('s-heading', settings.banner.heading);
+  writeText('s-sub', settings.banner.subheading);
+  writeText('s-intro', settings.banner.introText);
+  writeText('s-sechead', settings.section.heading);
+  writeText('s-yearbadge', settings.section.yearBadge);
+  writeText('s-desc', settings.section.desc);
+  writeChecked('s-notice-show', settings.noticeBox.show);
+  writeText('s-nicon', settings.noticeBox.icon);
+  writeText('s-ntitle', settings.noticeBox.title);
+  writeText('s-nbody', settings.noticeBox.body);
+  writeChecked('s-page-live', settings.page.live);
+  writeChecked('s-show-intro', settings.page.showIntroStrip);
+  writeChecked('s-show-section', settings.page.showSectionHeading);
+  writeChecked('s-featured-issue', settings.page.featuredIssue);
+  writeChecked('s-show-download', settings.page.showDownloadButton);
+  writeChecked('s-show-view', settings.page.showViewOnlineButton);
+  writeText('s-meta-title', settings.seo.title);
+  writeText('s-meta-desc', settings.seo.description);
+}
+
+async function loadSettings(){
+  try {
+    var res = await fetch('/api/settings/' + SETTINGS_KEY);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    var item = await res.json();
+    populateSettings(item && item.data ? item.data : item);
+  } catch (e) {
+    toast('Could not load page settings: ' + e.message, true);
+  }
+}
+
+/* ═══════════════════════════════════════════
+   TOAST
+═══════════════════════════════════════════ */
+function toast(msg, err){
+  var t = document.getElementById('toast');
+  t.textContent = (err?' ':' ') + msg;
+  t.style.borderLeftColor = err ? 'var(--red)' : 'var(--gold-light)';
+  t.classList.add('show');
+  setTimeout(function(){ t.classList.remove('show'); }, 3200);
+}
+
+/* ═══════════════════════════════════════════
+   LOAD
+═══════════════════════════════════════════ */
+async function loadIssues(){
+  document.getElementById('issues-loading').style.display = 'block';
+  document.getElementById('issues-list').style.display   = 'none';
+  document.getElementById('issues-empty').style.display  = 'none';
+  try {
+    var res  = await fetch(API_BASE + '/api/documents?category=e-magazine');
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    var data = await res.json();
+    _all = (Array.isArray(data) ? data : [])
+      .sort(function(a, b){ return issueSortValue(b) - issueSortValue(a); });
+    updateStats();
+    renderList();
+  } catch(e) {
+    document.getElementById('issues-loading').innerHTML = '<div style="font-size:1.4rem;margin-bottom:6px"></div><p style="font-size:.82rem">Cannot reach /api/documents</p><button class="btn tl" style="margin-top:10px" onclick="loadIssues()">Retry</button>';
+    toast('API error: ' + e.message, true);
+  }
+}
+
+/* ═══════════════════════════════════════════
+   STATS
+═══════════════════════════════════════════ */
+function updateStats(){
+  var year = new Date().getFullYear().toString();
+  document.getElementById('t-total').textContent    = _all.length;
+  document.getElementById('t-featured').textContent = _all.filter(function(d){ return (d.title||'').toLowerCase().includes('inaugural') || (d.title||'').toLowerCase().includes('featured'); }).length || '—';
+  document.getElementById('t-pub').textContent      = _all.length;
+  document.getElementById('t-year').textContent     = _all.filter(function(d){ return d.date && d.date.includes(year); }).length;
+  document.getElementById('sb-total').textContent   = _all.length;
+}
+
+/* ═══════════════════════════════════════════
+   RENDER LIST
+═══════════════════════════════════════════ */
+function filterView(f){ _filter = f; renderList(); }
+
+function renderList(){
+  var list = _filter === 'all' ? _all : _all;
+  var loading = document.getElementById('issues-loading');
+  var listEl  = document.getElementById('issues-list');
+  var empty   = document.getElementById('issues-empty');
+  loading.style.display = 'none';
+
+  if (!list.length){
+    listEl.style.display  = 'none';
+    empty.style.display   = 'block';
+    return;
+  }
+  empty.style.display   = 'none';
+  listEl.style.display  = 'grid';
+
+  listEl.innerHTML = list.map(function(d, i){
+    var meta = d && d.meta && typeof d.meta === 'object' ? d.meta : {};
+    var grad  = meta.gradient || gradFromMeta(d) || GRADS[i % GRADS.length].css;
+    var dateStr = d.date ? new Date(d.date).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}) : '—';
+    var titleParts = (d.title||'').split(' — ');
+    var displayTitle = titleParts[0];
+    var issueNum = meta.issueLabel || titleParts[1] || ('Issue No. ' + (i+1));
+    var isFirst = i === 0;
+    var isLatest = i === 0 && list.length > 1;
+    var desc = d.description || d.title || '';
+
+    return '<div class="mag-item'+(isFirst?' featured-item':'')+'" data-id="'+d._id+'" draggable="true" ondragstart="dragStart(event)" ondragover="dragOver(event)" ondrop="dragDrop(event)" ondragleave="dragLeave(event)">'
+      + '<span class="drag-handle" title="Drag to reorder">⠿</span>'
+      + '<div class="mag-cover-strip" style="background:'+grad+'">'
+        + '<span class="issue-em"></span>'
+        + '<span class="issue-num">'+(issueNum.replace('Issue No.','#'))+'</span>'
+      + '</div>'
+      + '<div class="mag-item-body">'
+        + '<div class="mag-item-row">'
+          + '<div class="mag-item-title">'+esc(displayTitle)+'</div>'
+          + (meta.featured || isFirst ? '<span class="spill featured">⭐ Featured</span>' : '')
+          + (isLatest ? '<span class="spill latest">🆕 Latest</span>' : '')
+          + '<span class="spill live">Live</span>'
+        + '</div>'
+        + '<div class="mag-item-date">'+dateStr+' · PDF ready</div>'
+        + '<div class="mag-item-desc">'+esc(desc)+'</div>'
+        + (d.url ? '<div class="mag-item-url">'+esc(d.url)+'</div>' : '<div style="font-size:.68rem;color:var(--red);font-weight:700;"> No PDF URL</div>')
+      + '</div>'
+      + '<div class="mag-item-acts">'
+        + '<a href="'+(d.url||'#')+'" target="_blank" class="ab" title="View PDF" aria-label="View PDF">V</a>'
+        + '<button class="ab" title="Edit" aria-label="Edit issue" onclick="editIssue(\''+d._id+'\')">E</button>'
+        + '<button class="ab del" title="Delete" aria-label="Delete issue" onclick="deleteIssue(\''+d._id+'\',\''+esc(displayTitle)+'\')">×</button>'
+      + '</div>'
+    + '</div>';
+  }).join('');
+}
+
+function gradFromMeta(d){
+  // We encode gradient as JSON in the title field after " — " separator, or just use rotation
+  return null;
+}
+
+function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+/* ═══════════════════════════════════════════
+   MODAL
+═══════════════════════════════════════════ */
+function openModal(issue){
+  var isEdit = !!issue;
+  var meta = issue && issue.meta && typeof issue.meta === 'object' ? issue.meta : {};
+  document.getElementById('modal-title-text').textContent = isEdit ? ' Edit Issue' : ' Add New Issue';
+  document.getElementById('edit-id').value   = isEdit ? issue._id       : '';
+  document.getElementById('f-title').value   = isEdit ? (issue.title||'').split(' — ')[0] : '';
+  document.getElementById('f-issue').value   = isEdit ? (meta.issueLabel || (issue.title||'').split(' — ')[1] || '') : 'Issue No. ' + (_all.length + 1);
+  document.getElementById('f-date').value    = isEdit ? (issue.date ? issue.date.split('T')[0] : '') : new Date().toISOString().split('T')[0];
+  document.getElementById('f-url').value     = isEdit ? (issue.url||'') : '';
+  document.getElementById('f-desc').value    = isEdit ? (issue.description || '') : '';
+  document.getElementById('f-featured').checked = isEdit ? !!meta.featured : false;
+  document.getElementById('f-latest').checked   = isEdit ? !!meta.latest : false;
+  _selectedGrad = isEdit && meta.gradient ? meta.gradient : GRADS[_all.length % GRADS.length].css;
+  _customGradCss = isEdit && meta.gradient && !GRADS.some(function(g){ return g.css === meta.gradient; }) ? meta.gradient : null;
+  buildGradGrid();
+  updatePreview();
+  document.getElementById('issueModal').classList.add('open');
+}
+
+function closeModal(){ document.getElementById('issueModal').classList.remove('open'); }
+
+function editIssue(id){
+  var d = _all.find(function(x){ return x._id === id; });
+  if (d) openModal(d);
+}
+
+/* ═══════════════════════════════════════════
+   SAVE ISSUE
+═══════════════════════════════════════════ */
+async function saveIssue(){
+  var id    = document.getElementById('edit-id').value;
+  var title = document.getElementById('f-title').value.trim();
+  var issue = document.getElementById('f-issue').value.trim();
+  var date  = document.getElementById('f-date').value;
+  var url   = document.getElementById('f-url').value.trim();
+  var desc  = document.getElementById('f-desc').value.trim();
+  var featured = document.getElementById('f-featured').checked;
+  var latest = document.getElementById('f-latest').checked;
+
+  if (!title){ toast('Title is required', true); return; }
+  if (!date) { toast('Date is required',  true); return; }
+  if (!url)  { toast('PDF URL is required — upload to Cloudinary first', true); return; }
+
+  // Encode issue number into title for easy retrieval
+  var fullTitle = title + (issue ? ' — ' + issue : '');
+  var body = {
+    title: fullTitle,
+    category: 'e-magazine',
+    date: date,
+    url: url,
+    description: desc,
+    visible: true,
+    meta: {
+      issueLabel: issue,
+      gradient: _selectedGrad,
+      featured: featured,
+      latest: latest
+    }
+  };
+
+  try {
+    var endpoint = id ? API_BASE+'/api/documents/'+id : API_BASE+'/api/documents';
+    var method   = id ? 'PUT' : 'POST';
+    var res = await fetch(endpoint, { method, headers: apiH(), body: JSON.stringify(body) });
+    var data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Save failed');
+    toast(id ? 'Issue updated!' : 'Issue added!');
+    closeModal();
+    loadIssues();
+  } catch(e){ toast(e.message, true); }
+}
+
+/* ═══════════════════════════════════════════
+   QUICK ADD
+═══════════════════════════════════════════ */
+async function quickAdd(){
+  var title = document.getElementById('q-title').value.trim();
+  var issue = document.getElementById('q-issue').value.trim();
+  var date  = document.getElementById('q-date').value;
+  var url   = document.getElementById('q-url').value.trim();
+  if (!title){ toast('Title is required', true); return; }
+  if (!url)  { toast('PDF URL is required', true); return; }
+  var fullTitle = title + (issue ? ' — ' + issue : '');
+  try {
+    var res = await fetch(API_BASE+'/api/documents', { method:'POST', headers:apiH(), body:JSON.stringify({
+      title:fullTitle,
+      category:'e-magazine',
+      date:date||new Date().toISOString().split('T')[0],
+      url:url,
+      description:'',
+      visible:true,
+      meta:{ issueLabel: issue || '' }
+    }) });
+    var data = await res.json();
+    if (!res.ok) throw new Error(data.error||'Failed');
+    toast('Issue added!');
+    document.getElementById('q-title').value='';
+    document.getElementById('q-issue').value='';
+    document.getElementById('q-url').value='';
+    loadIssues();
+  } catch(e){ toast(e.message, true); }
+}
+
+/* ═══════════════════════════════════════════
+   DELETE
+═══════════════════════════════════════════ */
+async function deleteIssue(id, name){
+  if (!confirm('Delete "'+name+'"?\n\nThis cannot be undone.')) return;
+  try {
+    var res = await fetch(API_BASE+'/api/documents/'+id, { method:'DELETE', headers:apiH() });
+    if (!res.ok) throw new Error('Delete failed');
+    toast('Issue deleted!');
+    loadIssues();
+  } catch(e){ toast(e.message, true); }
+}
+
+/* ═══════════════════════════════════════════
+   UPLOAD PDF
+═══════════════════════════════════════════ */
+async function uploadPDF(input, targetId){
+  if (!input.files[0]) return;
+  toast('Uploading PDF to Cloudinary...');
+  var fd = new FormData();
+  fd.append('file', input.files[0]);
+  try {
+  var res = await fetch(API_BASE+'/api/upload', { method:'POST', body:fd });
+    var data = await res.json();
+    if (!res.ok || !data.url) throw new Error(data.error || 'Upload failed');
+    document.getElementById(targetId).value = data.url;
+    updatePreview();
+    toast('PDF uploaded to Cloudinary!');
+  } catch(e){ toast(e.message, true); }
+}
+
+async function quickUploadPDF(input){
+  if (!input.files[0]) return;
+  toast('Uploading PDF...');
+  var fd = new FormData();
+  fd.append('file', input.files[0]);
+  try {
+  var res = await fetch(API_BASE+'/api/upload', { method:'POST', body:fd });
+    var data = await res.json();
+    if (!res.ok || !data.url) throw new Error(data.error || 'Upload failed');
+    document.getElementById('q-url').value = data.url;
+    toast('PDF uploaded!');
+  } catch(e){ toast(e.message, true); }
+}
+
+/* ═══════════════════════════════════════════
+   LIVE PREVIEW
+═══════════════════════════════════════════ */
+function updatePreview(){
+  var title  = document.getElementById('f-title').value  || 'Issue title here';
+  var issue  = document.getElementById('f-issue').value  || 'Issue No. —';
+  var date   = document.getElementById('f-date').value;
+  var desc   = document.getElementById('f-desc').value   || 'Description will appear here on the public magazine card...';
+  var url    = document.getElementById('f-url').value;
+
+  document.getElementById('prev-cover').style.background = _selectedGrad;
+  document.getElementById('prev-vol').textContent   = issue;
+  document.getElementById('prev-title').textContent = title;
+  document.getElementById('prev-date').textContent  = ' ' + (date ? new Date(date+'T00:00:00').toLocaleDateString('en-IN',{month:'long',year:'numeric'}) : '—');
+  document.getElementById('prev-desc').textContent  = desc;
+
+  document.getElementById('json-prev').textContent = JSON.stringify({
+    title: title + (document.getElementById('f-issue').value ? ' — ' + document.getElementById('f-issue').value : ''),
+    category: 'e-magazine',
+    date: date || null,
+    url: url || null,
+    description: desc,
+    meta: {
+      issueLabel: document.getElementById('f-issue').value || '',
+      gradient: _selectedGrad || null,
+      featured: !!document.getElementById('f-featured').checked,
+      latest: !!document.getElementById('f-latest').checked
+    }
+  }, null, 2);
+}
+
+/* ═══════════════════════════════════════════
+   DRAG & DROP REORDER
+═══════════════════════════════════════════ */
+var _dragId = null;
+
+function dragStart(e){
+  _dragId = e.currentTarget.dataset.id;
+  e.currentTarget.classList.add('dragging');
+}
+function dragOver(e){
+  e.preventDefault();
+  e.currentTarget.classList.add('drag-over');
+}
+function dragLeave(e){ e.currentTarget.classList.remove('drag-over'); }
+function dragDrop(e){
+  e.preventDefault();
+  e.currentTarget.classList.remove('drag-over');
+  var targetId = e.currentTarget.dataset.id;
+  if (_dragId && _dragId !== targetId){
+    var fromIdx = _all.findIndex(function(x){ return x._id===_dragId; });
+    var toIdx   = _all.findIndex(function(x){ return x._id===targetId; });
+    var item = _all.splice(fromIdx,1)[0];
+    _all.splice(toIdx,0,item);
+    renderList();
+    toast('Order updated! Save to persist.');
+  }
+  _dragId = null;
+  document.querySelectorAll('.mag-item').forEach(function(el){ el.classList.remove('dragging'); });
+}
+
+/* ═══════════════════════════════════════════
+   SAVE PAGE SETTINGS
+═══════════════════════════════════════════ */
+async function saveSettings(){
+  try {
+    var res = await fetch('/api/settings/' + SETTINGS_KEY, {
+      method: 'PUT',
+      headers: apiH(),
+      body: JSON.stringify(collectSettingsData())
+    });
+    var data = await res.json().catch(function(){ return {}; });
+    if (!res.ok) throw new Error(data.error || ('HTTP ' + res.status));
+    toast('Page settings saved!');
+  } catch (e) {
+    toast('Could not save page settings: ' + e.message, true);
+  }
+}
+
+/* ═══════════════════════════════════════════
+   ADMIN TOKEN + BOOT
+═══════════════════════════════════════════ */
+// Admin token prompt removed
+
+document.addEventListener('keydown', function(e){
+  if ((e.ctrlKey||e.metaKey) && e.key==='n'){ e.preventDefault(); openModal(); }
+  if (e.key==='Escape') closeModal();
+});
+
+window.addEventListener('DOMContentLoaded', function(){
+  buildGradGrid();
+  document.getElementById('f-date').value = new Date().toISOString().split('T')[0];
+  document.getElementById('q-date').value = new Date().toISOString().split('T')[0];
+  loadSettings();
+  loadIssues();
+});
+</script>
+</body>
+</html>

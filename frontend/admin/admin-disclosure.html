@@ -1,0 +1,1829 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mandatory Disclosure — Admin | Loretto Central School</title>
+  <script src="/admin/admin-auth.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800&family=Nunito:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <script src="/admin/adminfooter.js"></script>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--navy:#0e6b6b;--navy-dark:#094f4f;--navy-deep:#062f2f;--gold:#c8960c;--gold-light:#e8b020;--gold-pale:#f5e6c0;--white:#fff;--bg:#f4f1eb;--bg2:#edeae2;--text:#1a2e2e;--text-muted:#5a6e6e;--border:#ddd6c0;--green:#27ae60;--red:#e74c3c;--orange:#e67e22;--sidebar-w:256px;--radius:13px;--shadow:0 4px 24px rgba(9,79,79,.10)}
+    html{scroll-behavior:smooth}body{font-family:'Nunito',sans-serif;color:var(--text);background:var(--bg);min-height:100vh;overflow-x:hidden}
+    .shell{display:flex;min-height:100vh}
+    .sidebar{width:var(--sidebar-w);background:var(--navy-deep);display:flex;flex-direction:column;flex-shrink:0;position:sticky;top:0;height:100vh;overflow-y:auto;scrollbar-width:thin;scrollbar-color:rgba(200,150,12,.3) transparent;z-index:100}
+    .sidebar::-webkit-scrollbar{width:4px}.sidebar::-webkit-scrollbar-thumb{background:rgba(200,150,12,.3);border-radius:4px}
+    .sb-brand{padding:16px 14px 12px;border-bottom:1px solid rgba(255,255,255,.07);display:flex;align-items:center;gap:9px}
+    .sb-ic{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,var(--gold),var(--gold-light));display:flex;align-items:center;justify-content:center;font-size:.82rem;flex-shrink:0}
+    .sb-brand .sbn{font-family:'Playfair Display',serif;font-size:.82rem;font-weight:700;color:#fff}.sb-brand .sbs{font-size:.55rem;color:var(--gold-light);font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-top:1px}
+    .sb-sec{font-size:.54rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.25);padding:12px 13px 3px}
+    .sb-nav{padding:3px 7px;flex:1}
+    .sl{display:flex;align-items:center;gap:7px;padding:6px 9px;border-radius:8px;font-size:.75rem;font-weight:600;color:rgba(255,255,255,.54);text-decoration:none;cursor:pointer;transition:all .2s;margin-bottom:1px;position:relative;line-height:1.3}
+    .sl:hover{background:rgba(255,255,255,.06);color:rgba(255,255,255,.88)}
+    .sl.active{background:linear-gradient(135deg,rgba(200,150,12,.22),rgba(200,150,12,.12));color:var(--gold-light);border:1px solid rgba(200,150,12,.28)}
+    .sl.active::before{content:'';position:absolute;left:0;top:20%;bottom:20%;width:3px;background:var(--gold-light);border-radius:0 3px 3px 0}
+    .sl .ic{font-size:.78rem;width:16px;text-align:center;flex-shrink:0}.sl .num{font-size:.52rem;color:rgba(255,255,255,.28);font-weight:800;width:18px;text-align:right;flex-shrink:0}.sl.active .num{color:rgba(200,150,12,.6)}
+    .sl.stype{color:rgba(255,220,100,.55)}.sl.stype.active{color:var(--gold-light)}
+    .sb-footer{padding:10px 7px 12px;border-top:1px solid rgba(255,255,255,.07)}
+    .sb-user{display:flex;align-items:center;gap:8px;padding:8px 9px;border-radius:8px;background:rgba(255,255,255,.05)}
+    .sb-av{width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold-light));display:flex;align-items:center;justify-content:center;font-size:.68rem;font-weight:800;color:var(--navy-deep);flex-shrink:0}
+    .main{flex:1;min-width:0;display:flex;flex-direction:column}
+    .atbar{height:54px;background:var(--white);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:10px;position:sticky;top:0;z-index:50;box-shadow:0 2px 10px rgba(9,79,79,.06)}
+    .at-title{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:var(--navy-dark);flex:1;min-width:0}
+    .at-title span{font-family:'Nunito',sans-serif;font-size:.63rem;font-weight:600;color:var(--text-muted);display:block;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .at-acts{display:flex;align-items:center;gap:7px;flex-shrink:0}
+    .btn{display:inline-flex;align-items:center;gap:5px;padding:6px 13px;border-radius:8px;cursor:pointer;font-family:'Nunito',sans-serif;font-size:.72rem;font-weight:700;border:none;transition:all .2s;white-space:nowrap}
+    .btn.out{background:transparent;border:1.5px solid var(--border);color:var(--text-muted)}.btn.out:hover{border-color:var(--navy);color:var(--navy)}
+    .btn.tl{background:var(--navy);color:#fff}.btn.tl:hover{background:var(--navy-dark);transform:translateY(-1px)}
+    .btn.gd{background:linear-gradient(135deg,var(--gold),var(--gold-light));color:var(--navy-deep);box-shadow:0 3px 12px rgba(200,150,12,.28)}.btn.gd:hover{transform:translateY(-1px)}
+    .at-div{width:1px;height:22px;background:var(--border);flex-shrink:0}
+    .pbody{padding:20px;flex:1}.panel{display:none}.panel.active{display:block}
+    .block{background:var(--white);border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow);margin-bottom:16px;overflow:hidden}
+    .bh{display:flex;align-items:center;justify-content:space-between;padding:13px 17px;border-bottom:1px solid var(--border);background:linear-gradient(135deg,var(--white),var(--bg));flex-wrap:wrap;gap:8px}
+    .bt{font-family:'Playfair Display',serif;font-size:.9rem;font-weight:700;color:var(--navy-dark);display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+    .dbc{font-family:'Nunito',sans-serif;font-size:.55rem;font-weight:800;background:rgba(14,107,107,.1);color:var(--navy);border:1px solid rgba(14,107,107,.18);padding:2px 6px;border-radius:6px}
+    .cbse-badge{font-family:'Nunito',sans-serif;font-size:.55rem;font-weight:800;background:rgba(231,76,60,.1);color:var(--red);border:1px solid rgba(231,76,60,.2);padding:2px 6px;border-radius:6px}
+    .ba{display:flex;gap:6px;flex-shrink:0}.bb{padding:17px}
+    .two-col{display:grid;grid-template-columns:1.4fr 1fr;gap:18px;align-items:start}
+    .fg{display:grid;gap:11px}.fg.c2{grid-template-columns:1fr 1fr}.fg.c3{grid-template-columns:1fr 1fr 1fr}
+    .f label{display:block;font-size:.7rem;font-weight:700;color:var(--navy-dark);margin-bottom:3px}
+    .f label .req{color:var(--gold);margin-left:2px}.f label .dbh{font-size:.54rem;font-weight:700;color:var(--text-muted);background:var(--bg2);padding:1px 5px;border-radius:4px;margin-left:4px}
+    .f input,.f textarea,.f select{width:100%;padding:7px 11px;border:1.5px solid var(--border);border-radius:8px;font-family:'Nunito',sans-serif;font-size:.84rem;color:var(--text);background:var(--white);outline:none;transition:border .2s,box-shadow .2s}
+    .f input:focus,.f textarea:focus,.f select:focus{border-color:var(--navy);box-shadow:0 0 0 3px rgba(14,107,107,.09)}
+    .f textarea{resize:vertical;min-height:72px}.fhint{font-size:.6rem;color:var(--text-muted);margin-top:3px}
+    .fhint code{background:var(--bg2);padding:1px 4px;border-radius:4px;font-family:monospace;font-size:.8em;color:#b35e00}
+    .cld{display:flex;gap:7px;align-items:center;margin-top:5px}.cld input{flex:1;padding:7px 10px;border:1.5px solid var(--border);border-radius:8px;font-family:'Nunito',sans-serif;font-size:.8rem;color:var(--text);background:var(--white);outline:none;transition:border .2s}.cld input:focus{border-color:var(--navy)}
+    .cld-btn{flex-shrink:0;padding:6px 11px;border-radius:7px;cursor:pointer;background:rgba(200,150,12,.1);border:1.5px solid rgba(200,150,12,.25);color:var(--gold);font-family:'Nunito',sans-serif;font-size:.68rem;font-weight:700;transition:all .2s;white-space:nowrap}.cld-btn:hover{background:rgba(200,150,12,.2)}
+    .te{width:100%;border-collapse:collapse}
+    .te thead th{font-size:.61rem;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--text-muted);padding:8px 10px;text-align:left;background:var(--bg);border-bottom:2px solid var(--border)}
+    .te tbody tr{border-bottom:1px solid var(--bg2)}.te tbody tr:hover{background:rgba(14,107,107,.025)}
+    .te tbody td{padding:6px 5px;vertical-align:middle}.te tbody td:first-child{padding-left:10px}
+    .te tbody td input,.te tbody td select,.te tbody td textarea{width:100%;padding:5px 8px;border:1.5px solid var(--border);border-radius:7px;font-family:'Nunito',sans-serif;font-size:.8rem;color:var(--text);background:var(--white);outline:none;transition:border .2s}.te tbody td input:focus{border-color:var(--navy)}
+    .ab{width:26px;height:26px;border-radius:5px;border:1.5px solid var(--border);background:var(--white);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.72rem;transition:all .15s;flex-shrink:0}
+    .ab:hover{border-color:var(--navy);background:var(--bg)}.ab.del:hover{border-color:var(--red);background:rgba(231,76,60,.06)}
+    .add-row-btn{display:inline-flex;align-items:center;gap:5px;padding:5px 10px;border-radius:6px;background:rgba(14,107,107,.07);border:1.5px dashed rgba(14,107,107,.22);color:var(--navy);font-family:'Nunito',sans-serif;font-size:.7rem;font-weight:700;cursor:pointer;transition:all .2s;margin-top:8px}.add-row-btn:hover{background:rgba(14,107,107,.12);border-color:var(--navy)}
+    .tog-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--bg2)}.tog-row:last-child{border-bottom:none}
+    .tln{font-size:.8rem;font-weight:700;color:var(--text)}.tld{font-size:.65rem;color:var(--text-muted);margin-top:1px}
+    .tog{position:relative;width:38px;height:20px;flex-shrink:0}.tog input{display:none}
+    .togt{position:absolute;inset:0;background:var(--bg2);border-radius:12px;border:1.5px solid var(--border);cursor:pointer;transition:all .2s}.togt::after{content:'';position:absolute;width:12px;height:12px;border-radius:50%;background:#fff;top:3px;left:3px;box-shadow:0 2px 4px rgba(0,0,0,.18);transition:transform .2s}
+    .tog input:checked~.togt{background:var(--navy);border-color:var(--navy-dark)}.tog input:checked~.togt::after{transform:translateX(18px)}
+    .spill{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:20px;font-size:.58rem;font-weight:800}
+    .spill::before{content:'●';font-size:.42rem}
+    .spill.live{background:rgba(39,174,96,.1);color:#1e7a3a;border:1px solid rgba(39,174,96,.18)}
+    .spill.pending{background:rgba(230,126,34,.1);color:var(--orange);border:1px solid rgba(230,126,34,.2)}
+    .spill.na{background:var(--bg2);color:var(--text-muted);border:1px solid var(--border)}
+    .stat-row{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:18px}
+    .sc{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:14px 12px;text-align:center;box-shadow:var(--shadow);position:relative;overflow:hidden}
+    .sc::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+    .sc.s0::before{background:linear-gradient(90deg,var(--navy),var(--navy-dark))}.sc.s1::before{background:linear-gradient(90deg,var(--gold),var(--gold-light))}.sc.s2::before{background:linear-gradient(90deg,var(--green),#2ecc71)}.sc.s3::before{background:linear-gradient(90deg,var(--red),#e74c3c)}.sc.s4::before{background:linear-gradient(90deg,var(--orange),#f39c12)}
+    .sc-ic{font-size:1.3rem;margin-bottom:5px}.sc-val{font-family:'Playfair Display',serif;font-size:1.75rem;font-weight:800;color:var(--text);line-height:1}.sc-lbl{font-size:.6rem;font-weight:700;color:var(--text-muted);margin-top:3px}
+    .ov-tbl{width:100%;border-collapse:collapse}
+    .ov-tbl thead th{font-size:.62rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted);padding:8px 12px;text-align:left;background:var(--bg);border-bottom:2px solid var(--border)}
+    .ov-tbl tbody tr{border-bottom:1px solid var(--bg2);transition:background .15s;cursor:pointer}.ov-tbl tbody tr:hover{background:rgba(14,107,107,.04)}
+    .ov-tbl tbody td{padding:9px 12px;font-size:.8rem;vertical-align:middle}
+    .ov-num{font-size:.7rem;font-weight:800;color:var(--text-muted);width:28px}.ov-name{font-weight:700;color:var(--navy-dark)}
+    .ov-type{font-size:.65rem;font-weight:700;background:var(--bg2);color:var(--text-muted);padding:1px 7px;border-radius:8px}
+    .ov-type.special{background:rgba(200,150,12,.12);color:var(--gold)}.ov-type.master{background:rgba(14,107,107,.12);color:var(--navy)}
+    .legal-chip{display:inline-flex;align-items:center;gap:5px;background:rgba(231,76,60,.08);border:1px solid rgba(231,76,60,.2);color:var(--red);font-size:.63rem;font-weight:700;padding:3px 9px;border-radius:20px;margin-bottom:14px}
+    .toast{position:fixed;bottom:22px;right:22px;background:var(--navy-deep);color:#fff;padding:10px 16px;border-radius:9px;font-size:.77rem;font-weight:700;display:flex;align-items:center;gap:7px;box-shadow:0 8px 28px rgba(0,0,0,.22);transform:translateY(80px);opacity:0;transition:all .3s cubic-bezier(.34,1.56,.64,1);z-index:99998;border-left:4px solid var(--gold-light);pointer-events:none}
+    .toast.show{transform:translateY(0);opacity:1}
+    @media(max-width:1100px){.two-col{grid-template-columns:1fr}.stat-row{grid-template-columns:repeat(3,1fr)}}
+    @media(max-width:768px){.sidebar{display:none}.fg.c2,.fg.c3{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<script src="adminnavbar.js"></script>
+<div class="shell">
+
+<aside class="sidebar">
+  <div class="sb-brand"><div class="sb-ic"></div><div><div class="sbn">Loretto Admin</div><div class="sbs">Mandatory Disclosure</div></div></div>
+  <div class="sb-nav">
+    <div class="sb-sec">Overview</div>
+    <a class="sl active" onclick="go('overview')"><span class="ic"></span> All 23 Pages</a>
+    <div class="sb-sec">CBSE Documents (1–16)</div><a class="sl " onclick="go('doc-1')"><span class="num">1</span><span class="ic"></span> School Name Change Order</a>
+<a class="sl " onclick="go('doc-2')"><span class="num">2</span><span class="ic"></span> Affiliation Letter</a>
+<a class="sl " onclick="go('doc-3')"><span class="num">3</span><span class="ic"></span> SARAS Mandatory Document</a>
+<a class="sl " onclick="go('doc-4')"><span class="num">4</span><span class="ic"></span> Building Plan</a>
+<a class="sl " onclick="go('doc-5')"><span class="num">5</span><span class="ic"></span> Affidavit</a>
+<a class="sl " onclick="go('doc-6')"><span class="num">6</span><span class="ic"></span> Building Safety Certificate</a>
+<a class="sl " onclick="go('doc-7')"><span class="num">7</span><span class="ic"></span> Land Certificate</a>
+<a class="sl " onclick="go('doc-8')"><span class="num">8</span><span class="ic"></span> Fire Safety Certificate</a>
+<a class="sl " onclick="go('doc-9')"><span class="num">9</span><span class="ic"></span> DEO Certificate</a>
+<a class="sl " onclick="go('doc-10')"><span class="num">10</span><span class="ic"></span> Recognition Renewal Certific…</a>
+<a class="sl stype" onclick="go('doc-11')"><span class="num">11</span><span class="ic">⭐</span> Mandatory Disclosure Link</a>
+<a class="sl " onclick="go('doc-12')"><span class="num">12</span><span class="ic"></span> No Objection Certificate</a>
+<a class="sl " onclick="go('doc-13')"><span class="num">13</span><span class="ic"></span> Lease Deed Certificate</a>
+<a class="sl " onclick="go('doc-14')"><span class="num">14</span><span class="ic"></span> Safe Drinking Water Certific…</a>
+<a class="sl " onclick="go('doc-15')"><span class="num">15</span><span class="ic"></span> Society Registration Certifi…</a>
+<a class="sl " onclick="go('doc-16')"><span class="num">16</span><span class="ic"></span> Water Health & Sanitation</a>
+<div class="sb-sec">Data Pages (17–23)</div><a class="sl stype" onclick="go('doc-17')"><span class="num">17</span><span class="ic"></span> Academic Calendar</a>
+<a class="sl stype" onclick="go('doc-18')"><span class="num">18</span><span class="ic"></span> Management Committee</a>
+<a class="sl stype" onclick="go('doc-19')"><span class="num">19</span><span class="ic"></span> PTA Committee</a>
+<a class="sl stype" onclick="go('doc-20')"><span class="num">20</span><span class="ic"></span> School Fee Structure</a>
+<a class="sl stype" onclick="go('doc-21')"><span class="num">21</span><span class="ic"></span> SSLC / Board Results</a>
+<a class="sl stype" onclick="go('doc-22')"><span class="num">22</span><span class="ic"></span> Local Mgmt Committee</a>
+<a class="sl stype" onclick="go('doc-23')"><span class="num">23</span><span class="ic"></span> Teachers Information</a>
+    <div class="sb-sec">Other</div>
+    <a class="sl" href="admin-panel.html"><span class="ic"></span> Dashboard</a>
+    <a class="sl" href="admin-schoolinfo.html"><span class="ic"></span> School Info</a>
+  </div>
+  <div class="sb-footer"><div class="sb-user"><div class="sb-av">A</div><div><div style="font-size:.72rem;font-weight:700;color:#fff;">Administrator</div><div style="font-size:.56rem;color:rgba(255,255,255,.4);">Super Admin</div></div></div></div>
+</aside>
+
+<main class="main">
+  <div class="atbar">
+    <div class="at-title" id="atTitle">Mandatory Disclosure — Overview
+      <span id="atSub">23 pages · documents collection · category: "e-mandatory-disclosure"</span>
+    </div>
+    <div class="at-acts">
+      <button class="btn out" id="prevBtn" onclick="window.open('../mandatory-disclosure/11-mandatory-disclosure-link.html','_blank')"> Preview</button>
+      <div class="at-div"></div>
+      <button class="btn tl" onclick="save()"> Save</button>
+      <button class="btn gd" onclick="publish()"> Publish</button>
+    </div>
+  </div>
+  <div class="pbody">
+
+<div class="panel active" id="tab-overview">
+  <div class="stat-row">
+    <div class="sc s0"><div class="sc-ic"></div><div class="sc-val">23</div><div class="sc-lbl">Total Pages</div></div>
+    <div class="sc s1"><div class="sc-ic"></div><div class="sc-val">16</div><div class="sc-lbl">Document Pages</div></div>
+    <div class="sc s2"><div class="sc-ic"></div><div class="sc-val">7</div><div class="sc-lbl">Data Pages</div></div>
+    <div class="sc s3"><div class="sc-ic"></div><div class="sc-val" id="ov-pending">—</div><div class="sc-lbl">Need PDF</div></div>
+    <div class="sc s4"><div class="sc-ic"></div><div class="sc-val" id="ov-done">—</div><div class="sc-lbl">PDF Uploaded</div></div>
+  </div>
+  <div class="block">
+    <div class="bh"><div class="bt"> All 23 Mandatory Disclosure Pages <span class="cbse-badge">CBSE Required · Circular 09 / 21.05.2021</span></div></div>
+    <table class="ov-tbl">
+      <thead><tr><th>#</th><th>Page Title</th><th>Type</th><th>PDF Status</th><th>Action</th></tr></thead>
+      <tbody id="ov-tbody"></tbody>
+    </table>
+  </div>
+</div>
+
+<div class="panel" id="tab-doc-1">
+  <div class="two-col">
+    <div>
+      <div class="block">
+        <div class="bh"><div class="bt"> School Name Change Order <span class="cbse-badge">CBSE Required</span></div><div class="ba"><button class="btn gd" onclick="save()"> Save</button></div></div>
+        <div class="bb"><div class="fg">
+          <div class="f"><label>Badge Label <span class="dbh">pages[1].badge</span></label><input value="School Change Records"/></div>
+          <div class="f"><label>Page Description <span class="dbh">pages[1].description</span></label><textarea rows="2">Document confirming official change of school name. Issued by CBSE / State authority.</textarea></div>
+        </div></div>
+      </div>
+      <div class="block">
+        <div class="bh"><div class="bt"> Document Details Table <span class="dbc">pages[1].details[]</span></div><div class="ba"><button class="btn out" onclick="addTR('dtbl-1',2)">＋ Row</button><button class="btn gd" onclick="save()"> Save</button></div></div>
+        <div class="bb" style="padding:0">
+          <table class="te"><thead><tr><th>Particulars</th><th>Details</th><th style="width:32px"></th></tr></thead>
+          <tbody id="dtbl-1">
+            <tr><td><input value="Document Title"/></td><td><input value="School Name Change Order"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="Issuing Authority"/></td><td><input value="To be updated"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="Date of Issue"/></td><td><input value="To be updated"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="Valid Until"/></td><td><input value="To be updated"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="Reference No."/></td><td><input value="To be updated"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+          </tbody></table>
+          <div style="padding:8px 10px"><button class="add-row-btn" onclick="addTR('dtbl-1',2)">＋ Add Row</button></div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="block">
+        <div class="bh"><div class="bt"> Official PDF <span class="dbc">documents · category:"disclosure-1"</span></div></div>
+        <div class="bb">
+          <p style="font-size:.76rem;color:var(--text-muted);margin-bottom:11px;">Upload the official PDF to Cloudinary. Students see a Download button on the public page.</p>
+          <div id="pdf-status-1" class="pdf-status-box pending-box"><span></span><span style="font-size:.74rem;font-weight:700;color:var(--orange);">No PDF uploaded yet</span></div>
+          <div class="cld">
+            <input type="url" id="pdf-1" placeholder="https://res.cloudinary.com/your-cloud/raw/upload/..." oninput="updatePdfStatus(1)"/>
+            <button class="cld-btn" onclick="document.getElementById('pdf-file-1').click()"> Upload PDF</button>
+            <input type="file" id="pdf-file-1" accept="application/pdf" style="display:none" onchange="uploadPDF(this,'pdf-1',1)"/>
+          </div>
+          <div class="fhint" style="margin-top:6px">Upload as <code>raw</code> resource type · max 10MB</div>
+        </div>
+      </div>
+      <div class="block">
+        <div class="bh"><div class="bt"> Page Settings</div></div>
+        <div class="bb">
+          <div class="tog-row"><div><div class="tln">Page Live</div><div class="tld">Visible to public</div></div><label class="tog"><input type="checkbox" checked/><span class="togt"></span></label></div>
+          <div class="tog-row"><div><div class="tln">Show Download Button</div></div><label class="tog"><input type="checkbox" checked/><span class="togt"></span></label></div>
+          <div style="margin-top:10px;font-family:monospace;font-size:.67rem;color:var(--text-muted);background:var(--bg2);padding:7px 10px;border-radius:7px;">mandatory-disclosure/1-school-name-change-order.html</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="panel" id="tab-doc-2">
+  <div class="two-col">
+    <div>
+      <div class="block">
+        <div class="bh"><div class="bt"> Affiliation Letter <span class="cbse-badge">CBSE Required</span></div><div class="ba"><button class="btn gd" onclick="save()"> Save</button></div></div>
+        <div class="bb"><div class="fg">
+          <div class="f"><label>Badge Label <span class="dbh">pages[2].badge</span></label><input value="CBSE Affiliation No. 831368"/></div>
+          <div class="f"><label>Page Description <span class="dbh">pages[2].description</span></label><textarea rows="2">Official CBSE affiliation letter — affiliation status, period of validity, and conditions.</textarea></div>
+        </div></div>
+      </div>
+      <div class="block">
+        <div class="bh"><div class="bt"> Document Details Table <span class="dbc">pages[2].details[]</span></div><div class="ba"><button class="btn out" onclick="addTR('dtbl-2',2)">＋ Row</button><button class="btn gd" onclick="save()"> Save</button></div></div>
+        <div class="bb" style="padding:0">
+          <table class="te"><thead><tr><th>Particulars</th><th>Details</th><th style="width:32px"></th></tr></thead>
+          <tbody id="dtbl-2">
+            <tr><td><input value="Document Title"/></td><td><input value="Affiliation Letter"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="Issuing Authority"/></td><td><input value="To be updated"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="Date of Issue"/></td><td><input value="To be updated"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="Valid Until"/></td><td><input value="To be updated"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="Reference No."/></td><td><input value="To be updated"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+          </tbody></table>
+          <div style="padding:8px 10px"><button class="add-row-btn" onclick="addTR('dtbl-2',2)">＋ Add Row</button></div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="block">
+        <div class="bh"><div class="bt"> Official PDF <span class="dbc">documents · category:"disclosure-2"</span></div></div>
+        <div class="bb">
+          <p style="font-size:.76rem;color:var(--text-muted);margin-bottom:11px;">Upload the official PDF to Cloudinary. Students see a Download button on the public page.</p>
+          <div id="pdf-status-2" class="pdf-status-box pending-box"><span></span><span style="font-size:.74rem;font-weight:700;color:var(--orange);">No PDF uploaded yet</span></div>
+          <div class="cld">
+            <input type="url" id="pdf-2" placeholder="https://res.cloudinary.com/your-cloud/raw/upload/..." oninput="updatePdfStatus(2)"/>
+            <button class="cld-btn" onclick="document.getElementById('pdf-file-2').click()"> Upload PDF</button>
+            <input type="file" id="pdf-file-2" accept="application/pdf" style="display:none" onchange="uploadPDF(this,'pdf-2',2)"/>
+          </div>
+          <div class="fhint" style="margin-top:6px">Upload as <code>raw</code> resource type · max 10MB</div>
+        </div>
+      </div>
+      <div class="block">
+        <div class="bh"><div class="bt"> Page Settings</div></div>
+        <div class="bb">
+          <div class="tog-row"><div><div class="tln">Page Live</div><div class="tld">Visible to public</div></div><label class="tog"><input type="checkbox" checked/><span class="togt"></span></label></div>
+          <div class="tog-row"><div><div class="tln">Show Download Button</div></div><label class="tog"><input type="checkbox" checked/><span class="togt"></span></label></div>
+          <div style="margin-top:10px;font-family:monospace;font-size:.67rem;color:var(--text-muted);background:var(--bg2);padding:7px 10px;border-radius:7px;">mandatory-disclosure/2-affiliation-letter.html</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="panel" id="tab-doc-3">
+  <div class="two-col">
+    <div>
+      <div class="block">
+        <div class="bh"><div class="bt"> SARAS Mandatory Document <span class="cbse-badge">CBSE Required</span></div><div class="ba"><button class="btn gd" onclick="save()"> Save</button></div></div>
+        <div class="bb"><div class="fg">
+          <div class="f"><label>Badge Label <span class="dbh">pages[3].badge</span></label><input value="SARAS 4.0 Portal"/></div>
+          <div class="f"><label>Page Description <span class="dbh">pages[3].description</span></label><textarea rows="2">Mandatory disclosure as submitted through the CBSE SARAS online portal.</textarea></div>
+        </div></div>
+      </div>
+      <div class="block">
+        <div class="bh"><div class="bt"> Document Details Table <span class="dbc">pages[3].details[]</span></div><div class="ba"><button class="btn out" onclick="addTR('dtbl-3',2)">＋ Row</button><button class="btn gd" onclick="save()"> Save</button></div></div>
+        <div class="bb" style="padding:0">
+          <table class="te"><thead><tr><th>Particulars</th><th>Details</th><th style="width:32px"></th></tr></thead>
+          <tbody id="dtbl-3">
+            <tr><td><input value="Document Title"/></td><td><input value="SARAS Mandatory Document"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="Issuing Authority"/></td><td><input value="To be updated"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="Date of Issue"/></td><td><input value="To be updated"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="Valid Until"/></td><td><input value="To be updated"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="Reference No."/></td><td><input value="To be updated"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+          </tbody></table>
+          <div style="padding:8px 10px"><button class="add-row-btn" onclick="addTR('dtbl-3',2)">＋ Add Row</button></div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="block">
+        <div class="bh"><div class="bt"> Official PDF <span class="dbc">documents · category:"disclosure-3"</span></div></div>
+        <div class="bb">
+          <p style="font-size:.76rem;color:var(--text-muted);margin-bottom:11px;">Upload the official PDF to Cloudinary. Students see a Download button on the public page.</p>
+          <div id="pdf-status-3" class="pdf-status-box pending-box"><span></span><span style="font-size:.74rem;font-weight:700;color:var(--orange);">No PDF uploaded yet</span></div>
+          <div class="cld">
+            <input type="url" id="pdf-3" placeholder="https://res.cloudinary.com/your-cloud/raw/upload/..." oninput="updatePdfStatus(3)"/>
+            <button class="cld-btn" onclick="document.getElementById('pdf-file-3').click()"> Upload PDF</button>
+            <input type="file" id="pdf-file-3" accept="application/pdf" style="display:none" onchange="uploadPDF(this,'pdf-3',3)"/>
+          </div>
+          <div class="fhint" style="margin-top:6px">Upload as <code>raw</code> resource type · max 10MB</div>
+        </div>
+      </div>
+      <div class="block">
+        <div class="bh"><div class="bt"> Page Settings</div></div>
+        <div class="bb">
+          <div class="tog-row"><div><div class="tln">Page Live</div><div class="tld">Visible to public</div></div><label class="tog"><input type="checkbox" checked/><span class="togt"></span></label></div>
+          <div class="tog-row"><div><div class="tln">Show Download Button</div></div><label class="tog"><input type="checkbox" checked/><span class="togt"></span></label></div>
+          <div style="margin-top:10px;font-family:monospace;font-size:.67rem;color:var(--text-muted);background:var(--bg2);padding:7px 10px;border-radius:7px;">mandatory-disclosure/3-saras-mandatory-document.html</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="panel" id="tab-doc-4">
+  <div class="two-col">
+    <div>
+      <div class="block">
+        <div class="bh"><div class="bt"> Building Plan <span class="cbse-badge">CBSE Required</span></div><div class="ba"><button class="btn gd" onclick="save()"> Save</button></div></div>
+        <div class="bb"><div class="fg">
+          <div class="f"><label>Badge Label <span class="dbh">pages[4].badge</span></label><input value="Infrastructure Plan"/></div>
+          <div class="f"><label>Page Description <span class="dbh">pages[4].description</span></label><textarea rows="2">Approved structural building plan and school infrastructure layout as per CBSE norms.</textarea></div>
+        </div></div>
+      </div>
+      <div class="block">
+        <div class="bh"><div class="bt"> Document Details Table <span class="dbc">pages[4].details[]</span></div><div class="ba"><button class="btn out" onclick="addTR('dtbl-4',2)">＋ Row</button><button class="btn gd" onclick="save()"> Save</button></div></div>
+        <div class="bb" style="padding:0">
+          <table class="te"><thead><tr><th>Particulars</th><th>Details</th><th style="width:32px"></th></tr></thead>
+          <tbody id="dtbl-4">
+            <tr><td><input value="Document Title"/></td><td><input value="Building Plan"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="Issuing Authority"/></td><td><input value="To be updated"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="Date of Issue"/></td><td><input value="To be updated"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="Valid Until"/></td><td><input value="To be updated"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="Reference No."/></td><td><input value="To be updated"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+          </tbody></table>
+          <div style="padding:8px 10px"><button class="add-row-btn" onclick="addTR('dtbl-4',2)">＋ Add Row</button></div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="block">
+        <div class="bh"><div class="bt"> Official PDF <span class="dbc">documents · category:"disclosure-4"</span></div></div>
+        <div class="bb">
+          <p style="font-size:.76rem;color:var(--text-muted);margin-bottom:11px;">Upload the official PDF to Cloudinary. Students see a Download button on the public page.</p>
+          <div id="pdf-status-4" class="pdf-status-box pending-box"><span></span><span style="font-size:.74rem;font-weight:700;color:var(--orange);">No PDF uploaded yet</span></div>
+          <div class="cld">
+            <input type="url" id="pdf-4" placeholder="https://res.cloudinary.com/your-cloud/raw/upload/..." oninput="updatePdfStatus(4)"/>
+            <button class="cld-btn" onclick="document.getElementById('pdf-file-4').click()"> Upload PDF</button>
+            <input type="file" id="pdf-file-4" accept="application/pdf" style="display:none" onchange="uploadPDF(this,'pdf-4',4)"/>
+          </div>
+          <div class="fhint" style="margin-top:6px">Upload as <code>raw</code> resource type · max 10MB</div>
+        </div>
+      </div>
+      <div class="block">
+        <div class="bh"><div class="bt"> Page Settings</div></div>
+        <div class="bb">
+          <div class="tog-row"><div><div class="tln">Page Live</div><div class="tld">Visible to public</div></div><label class="tog"><input type="checkbox" checked/><span class="togt"></span></label></div>
+          <div class="tog-row"><div><div class="tln">Show Download Button</div></div><label class="tog"><input type="checkbox" checked/><span class="togt"></span></label></div>
+          <div style="margin-top:10px;font-family:monospace;font-size:.67rem;color:var(--text-muted);background:var(--bg2);padding:7px 10px;border-radius:7px;">mandatory-disclosure/4-building-plan.html</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="panel" id="tab-doc-5">
+  <div class="two-col">
+    <div>
+      <div class="block">
+        <div class="bh"><div class="bt"> Affidavit <span class="cbse-badge">CBSE Required</span></div><div class="ba"><button class="btn gd" onclick="save()"> Save</button></div></div>
+        <div class="bb"><div class="fg">
+          <div class="f"><label>Badge Label <span class="dbh">pages[5].badge</span></label><input value="CBSE Affiliation Compliance"/></div>
+          <div class="f"><label>Page Description <span class="dbh">pages[5].description</span></label><textarea rows="2">Sworn affidavit by school management affirming adherence to CBSE Affiliation Bye-Laws.</textarea></div>
+        </div></div>
+      </div>
+      <div class="block">
+        <div class="bh"><div class="bt"> Document Details Table <span class="dbc">pages[5].details[]</span></div><div class="ba"><button class="btn out" onclick="addTR('dtbl-5',2)">＋ Row</button><button class="btn gd" onclick="save()"> Save</button></div></div>
+        <div class="bb" style="padding:0">
+          <table class="te"><thead><tr><th>Particulars</th><th>Details</th><th style="width:32px"></th></tr></thead>
+          <tbody id="dtbl-5">
+            <tr><td><input value="Document Title"/></td><td><input value="Affidavit"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="Issuing Authority"/></td><td><input value="To be updated"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="Date of Issue"/></td><td><input value="To be updated"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="Valid Until"/></td><td><input value="To be updated"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="Reference No."/></td><td><input value="To be updated"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+          </tbody></table>
+          <div style="padding:8px 10px"><button class="add-row-btn" onclick="addTR('dtbl-5',2)">＋ Add Row</button></div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="block">
+        <div class="bh"><div class="bt"> Official PDF <span class="dbc">documents · category:"disclosure-5"</span></div></div>
+        <div class="bb">
+          <p style="font-size:.76rem;color:var(--text-muted);margin-bottom:11px;">Upload the official PDF to Cloudinary. Students see a Download button on the public page.</p>
+          <div id="pdf-status-5" class="pdf-status-box pending-box"><span></span><span style="font-size:.74rem;font-weight:700;color:var(--orange);">No PDF uploaded yet</span></div>
+          <div class="cld">
+            <input type="url" id="pdf-5" placeholder="https://res.cloudinary.com/your-cloud/raw/upload/..." oninput="updatePdfStatus(5)"/>
+            <button class="cld-btn" onclick="document.getElementById('pdf-file-5').click()"> Upload PDF</button>
+            <input type="file" id="pdf-file-5" accept="application/pdf" style="display:none" onchange="uploadPDF(this,'pdf-5',5)"/>
+          </div>
+          <div class="fhint" style="margin-top:6px">Upload as <code>raw</code> resource type · max 10MB</div>
+        </div>
+      </div>
+      <div class="block">
+        <div class="bh"><div class="bt"> Page Settings</div></div>
+        <div class="bb">
+          <div class="tog-row"><div><div class="tln">Page Live</div><div class="tld">Visible to public</div></div><label class="tog"><input type="checkbox" checked/><span class="togt"></span></label></div>
+          <div class="tog-row"><div><div class="tln">Show Download Button</div></div><label class="tog"><input type="checkbox" checked/><span class="togt"></span></label></div>
+          <div style="margin-top:10px;font-family:monospace;font-size:.67rem;color:var(--text-muted);background:var(--bg2);padding:7px 10px;border-radius:7px;">mandatory-disclosure/5-affidavit.html</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="panel" id="tab-doc-6">
+  <div class="two-col">
+    <div>
+      <div class="block">
+        <div class="bh"><div class="bt"> Building Safety Certificate <span class="cbse-badge">CBSE Required</span></div><div class="ba"><button class="btn gd" onclick="save()"> Save</button></div></div>
+        <div class="bb"><div class="fg">
+          <div class="f"><label>Badge Label <span class="dbh">pages[6].badge</span></label><input value="Structural Safety"/></div>
+          <div class="f"><label>Page Description <span class="dbh">pages[6].description</span></label><textarea rows="2">Certificate confirming school building meets all structural safety norms from competent authority.</textarea></div>
+        </div></div>
+      </div>
+      <div class="block">
+        <div class="bh"><div class="bt"> Document Details Table <span class="dbc">pages[6].details[]</span></div><div class="ba"><button class="btn out" onclick="addTR('dtbl-6',2)">＋ Row</button><button class="btn gd" onclick="save()"> Save</button></div></div>
+        <div class="bb" style="padding:0">
+          <table class="te"><thead><tr><th>Particulars</th><th>Details</th><th style="width:32px"></th></tr></thead>
+          <tbody id="dtbl-6">
+            <tr><td><input value="Document Title"/></td><td><input value="Building Safety Certificate"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="Issuing Authority"/></td><td><input value="To be updated"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="Date of Issue"/></td><td><input value="To be updated"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="Valid Until"/></td><td><input value="To be updated"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="Reference No."/></td><td><input value="To be updated"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+          </tbody></table>
+          <div style="padding:8px 10px"><button class="add-row-btn" onclick="addTR('dtbl-6',2)">＋ Add Row</button></div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="block">
+        <div class="bh"><div class="bt"> Official PDF <span class="dbc">documents · category:"disclosure-6"</span></div></div>
+        <div class="bb">
+          <p style="font-size:.76rem;color:var(--text-muted);margin-bottom:11px;">Upload the official PDF to Cloudinary. Students see a Download button on the public page.</p>
+          <div id="pdf-status-6" class="pdf-status-box pending-box"><span></span><span style="font-size:.74rem;font-weight:700;color:var(--orange);">No PDF uploaded yet</span></div>
+          <div class="cld">
+            <input type="url" id="pdf-6" placeholder="https://res.cloudinary.com/your-cloud/raw/upload/..." oninput="updatePdfStatus(6)"/>
+            <button class="cld-btn" onclick="document.getElementById('pdf-file-6').click()"> Upload PDF</button>
+            <input type="file" id="pdf-file-6" accept="application/pdf" style="display:none" onchange="uploadPDF(this,'pdf-6',6)"/>
+          </div>
+          <div class="fhint" style="margin-top:6px">Upload as <code>raw</code> resource type · max 10MB</div>
+        </div>
+      </div>
+      <div class="block">
+        <div class="bh"><div class="bt"> Page Settings</div></div>
+        <div class="bb">
+          <div class="tog-row"><div><div class="tln">Page Live</div><div class="tld">Visible to public</div></div><label class="tog"><input type="checkbox" checked/><span class="togt"></span></label></div>
+          <div class="tog-row"><div><div class="tln">Show Download Button</div></div><label class="tog"><input type="checkbox" checked/><span class="togt"></span></label></div>
+          <div style="margin-top:10px;font-family:monospace;font-size:.67rem;color:var(--text-muted);background:var(--bg2);padding:7px 10px;border-radius:7px;">mandatory-disclosure/6-building-safety.html</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="panel" id="tab-doc-7">
+  <div class="two-col">
+    <div>
+      <div class="block">
+        <div class="bh"><div class="bt"> Land Certificate <span class="cbse-badge">CBSE Required</span></div><div class="ba"><button class="btn gd" onclick="save()"> Save</button></div></div>
+        <div class="bb"><div class="fg">
+          <div class="f"><label>Badge Label <span class="dbh">pages[7].badge</span></label><input value="Land Ownership"/></div>
+          <div class="f"><label>Page Description <span class="dbh">pages[7].description</span></label><textarea rows="2">Land ownership and title documents for school premises as required for CBSE affiliation.</textarea></div>
+        </div></div>
+      </div>
+      <div class="block">
+        <div class="bh"><div class="bt"> Document Details Table <span class="dbc">pages[7].details[]</span></div><div class="ba"><button class="btn out" onclick="addTR('dtbl-7',2)">＋ Row</button><button class="btn gd" onclick="save()"> Save</button></div></div>
+        <div class="bb" style="padding:0">
+          <table class="te"><thead><tr><th>Particulars</th><th>Details</th><th style="width:32px"></th></tr></thead>
+          <tbody id="dtbl-7">
+            <tr><td><input value="Document Title"/></td><td><input value="Land Certificate"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="Issuing Authority"/></td><td><input value="To be updated"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="Date of Issue"/></td><td><input value="To be updated"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="Valid Until"/></td><td><input value="To be updated"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="Reference No."/></td><td><input value="To be updated"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+          </tbody></table>
+          <div style="padding:8px 10px"><button class="add-row-btn" onclick="addTR('dtbl-7',2)">＋ Add Row</button></div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="block">
+        <div class="bh"><div class="bt"> Official PDF <span class="dbc">documents · category:"disclosure-7"</span></div></div>
+        <div class="bb">
+          <p style="font-size:.76rem;color:var(--text-muted);margin-bottom:11px;">Upload the official PDF to Cloudinary. Students see a Download button on the public page.</p>
+          <div id="pdf-status-7" class="pdf-status-box pending-box"><span></span><span style="font-size:.74rem;font-weight:700;color:var(--orange);">No PDF uploaded yet</span></div>
+          <div class="cld">
+            <input type="url" id="pdf-7" placeholder="https://res.cloudinary.com/your-cloud/raw/upload/..." oninput="updatePdfStatus(7)"/>
+            <button class="cld-btn" onclick="document.getElementById('pdf-file-7').click()"> Upload PDF</button>
+            <input type="file" id="pdf-file-7" accept="application/pdf" style="display:none" onchange="uploadPDF(this,'pdf-7',7)"/>
+          </div>
+          <div class="fhint" style="margin-top:6px">Upload as <code>raw</code> resource type · max 10MB</div>
+        </div>
+      </div>
+      <div class="block">
+        <div class="bh"><div class="bt"> Page Settings</div></div>
+        <div class="bb">
+          <div class="tog-row"><div><div class="tln">Page Live</div><div class="tld">Visible to public</div></div><label class="tog"><input type="checkbox" checked/><span class="togt"></span></label></div>
+          <div class="tog-row"><div><div class="tln">Show Download Button</div></div><label class="tog"><input type="checkbox" checked/><span class="togt"></span></label></div>
+          <div style="margin-top:10px;font-family:monospace;font-size:.67rem;color:var(--text-muted);background:var(--bg2);padding:7px 10px;border-radius:7px;">mandatory-disclosure/7-land-certificate.html</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="panel" id="tab-doc-8">
+  <div class="two-col">
+    <div>
+      <div class="block">
+        <div class="bh"><div class="bt"> Fire Safety Certificate <span class="cbse-badge">CBSE Required</span></div><div class="ba"><button class="btn gd" onclick="save()"> Save</button></div></div>
+        <div class="bb"><div class="fg">
+          <div class="f"><label>Badge Label <span class="dbh">pages[8].badge</span></label><input value="Fire Safety Compliance"/></div>
+          <div class="f"><label>Page Description <span class="dbh">pages[8].description</span></label><textarea rows="2">Fire safety compliance certificate issued by the competent Fire Department authority.</textarea></div>
+        </div></div>
+      </div>
+      <div class="block">
+        <div class="bh"><div class="bt"> Document Details Table <span class="dbc">pages[8].details[]</span></div><div class="ba"><button class="btn out" onclick="addTR('dtbl-8',2)">＋ Row</button><button class="btn gd" onclick="save()"> Save</button></div></div>
+        <div class="bb" style="padding:0">
+          <table class="te"><thead><tr><th>Particulars</th><th>Details</th><th style="width:32px"></th></tr></thead>
+          <tbody id="dtbl-8">
+            <tr><td><input value="Document Title"/></td><td><input value="Fire Safety Certificate"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="Issuing Authority"/></td><td><input value="To be updated"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="Date of Issue"/></td><td><input value="To be updated"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="Valid Until"/></td><td><input value="To be updated"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="Reference No."/></td><td><input value="To be updated"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+          </tbody></table>
+          <div style="padding:8px 10px"><button class="add-row-btn" onclick="addTR('dtbl-8',2)">＋ Add Row</button></div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="block">
+        <div class="bh"><div class="bt"> Official PDF <span class="dbc">documents · category:"disclosure-8"</span></div></div>
+        <div class="bb">
+          <p style="font-size:.76rem;color:var(--text-muted);margin-bottom:11px;">Upload the official PDF to Cloudinary. Students see a Download button on the public page.</p>
+          <div id="pdf-status-8" class="pdf-status-box pending-box"><span></span><span style="font-size:.74rem;font-weight:700;color:var(--orange);">No PDF uploaded yet</span></div>
+          <div class="cld">
+            <input type="url" id="pdf-8" placeholder="https://res.cloudinary.com/your-cloud/raw/upload/..." oninput="updatePdfStatus(8)"/>
+            <button class="cld-btn" onclick="document.getElementById('pdf-file-8').click()"> Upload PDF</button>
+            <input type="file" id="pdf-file-8" accept="application/pdf" style="display:none" onchange="uploadPDF(this,'pdf-8',8)"/>
+          </div>
+          <div class="fhint" style="margin-top:6px">Upload as <code>raw</code> resource type · max 10MB</div>
+        </div>
+      </div>
+      <div class="block">
+        <div class="bh"><div class="bt"> Page Settings</div></div>
+        <div class="bb">
+          <div class="tog-row"><div><div class="tln">Page Live</div><div class="tld">Visible to public</div></div><label class="tog"><input type="checkbox" checked/><span class="togt"></span></label></div>
+          <div class="tog-row"><div><div class="tln">Show Download Button</div></div><label class="tog"><input type="checkbox" checked/><span class="togt"></span></label></div>
+          <div style="margin-top:10px;font-family:monospace;font-size:.67rem;color:var(--text-muted);background:var(--bg2);padding:7px 10px;border-radius:7px;">mandatory-disclosure/8-fire-safety.html</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="panel" id="tab-doc-9">
+  <div class="two-col">
+    <div>
+      <div class="block">
+        <div class="bh"><div class="bt"> DEO Certificate <span class="cbse-badge">CBSE Required</span></div><div class="ba"><button class="btn gd" onclick="save()"> Save</button></div></div>
+        <div class="bb"><div class="fg">
+          <div class="f"><label>Badge Label <span class="dbh">pages[9].badge</span></label><input value="State Govt. Recognition"/></div>
+          <div class="f"><label>Page Description <span class="dbh">pages[9].description</span></label><textarea rows="2">District Education Officer certificate confirming state recognition and regulatory compliance.</textarea></div>
+        </div></div>
+      </div>
+      <div class="block">
+        <div class="bh"><div class="bt"> Document Details Table <span class="dbc">pages[9].details[]</span></div><div class="ba"><button class="btn out" onclick="addTR('dtbl-9',2)">＋ Row</button><button class="btn gd" onclick="save()"> Save</button></div></div>
+        <div class="bb" style="padding:0">
+          <table class="te"><thead><tr><th>Particulars</th><th>Details</th><th style="width:32px"></th></tr></thead>
+          <tbody id="dtbl-9">
+            <tr><td><input value="Document Title"/></td><td><input value="DEO Certificate"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="Issuing Authority"/></td><td><input value="To be updated"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="Date of Issue"/></td><td><input value="To be updated"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="Valid Until"/></td><td><input value="To be updated"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="Reference No."/></td><td><input value="To be updated"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+          </tbody></table>
+          <div style="padding:8px 10px"><button class="add-row-btn" onclick="addTR('dtbl-9',2)">＋ Add Row</button></div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="block">
+        <div class="bh"><div class="bt"> Official PDF <span class="dbc">documents · category:"disclosure-9"</span></div></div>
+        <div class="bb">
+          <p style="font-size:.76rem;color:var(--text-muted);margin-bottom:11px;">Upload the official PDF to Cloudinary. Students see a Download button on the public page.</p>
+          <div id="pdf-status-9" class="pdf-status-box pending-box"><span></span><span style="font-size:.74rem;font-weight:700;color:var(--orange);">No PDF uploaded yet</span></div>
+          <div class="cld">
+            <input type="url" id="pdf-9" placeholder="https://res.cloudinary.com/your-cloud/raw/upload/..." oninput="updatePdfStatus(9)"/>
+            <button class="cld-btn" onclick="document.getElementById('pdf-file-9').click()"> Upload PDF</button>
+            <input type="file" id="pdf-file-9" accept="application/pdf" style="display:none" onchange="uploadPDF(this,'pdf-9',9)"/>
+          </div>
+          <div class="fhint" style="margin-top:6px">Upload as <code>raw</code> resource type · max 10MB</div>
+        </div>
+      </div>
+      <div class="block">
+        <div class="bh"><div class="bt"> Page Settings</div></div>
+        <div class="bb">
+          <div class="tog-row"><div><div class="tln">Page Live</div><div class="tld">Visible to public</div></div><label class="tog"><input type="checkbox" checked/><span class="togt"></span></label></div>
+          <div class="tog-row"><div><div class="tln">Show Download Button</div></div><label class="tog"><input type="checkbox" checked/><span class="togt"></span></label></div>
+          <div style="margin-top:10px;font-family:monospace;font-size:.67rem;color:var(--text-muted);background:var(--bg2);padding:7px 10px;border-radius:7px;">mandatory-disclosure/9-deo-certificate.html</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="panel" id="tab-doc-10">
+  <div class="two-col">
+    <div>
+      <div class="block">
+        <div class="bh"><div class="bt"> Recognition Renewal Certificate <span class="cbse-badge">CBSE Required</span></div><div class="ba"><button class="btn gd" onclick="save()"> Save</button></div></div>
+        <div class="bb"><div class="fg">
+          <div class="f"><label>Badge Label <span class="dbh">pages[10].badge</span></label><input value="RTE Recognition"/></div>
+          <div class="f"><label>Page Description <span class="dbh">pages[10].description</span></label><textarea rows="2">Certificate confirming renewal of school recognition under the RTE Act by state government.</textarea></div>
+        </div></div>
+      </div>
+      <div class="block">
+        <div class="bh"><div class="bt"> Document Details Table <span class="dbc">pages[10].details[]</span></div><div class="ba"><button class="btn out" onclick="addTR('dtbl-10',2)">＋ Row</button><button class="btn gd" onclick="save()"> Save</button></div></div>
+        <div class="bb" style="padding:0">
+          <table class="te"><thead><tr><th>Particulars</th><th>Details</th><th style="width:32px"></th></tr></thead>
+          <tbody id="dtbl-10">
+            <tr><td><input value="Document Title"/></td><td><input value="Recognition Renewal Certificate"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="Issuing Authority"/></td><td><input value="To be updated"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="Date of Issue"/></td><td><input value="To be updated"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="Valid Until"/></td><td><input value="To be updated"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="Reference No."/></td><td><input value="To be updated"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+          </tbody></table>
+          <div style="padding:8px 10px"><button class="add-row-btn" onclick="addTR('dtbl-10',2)">＋ Add Row</button></div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="block">
+        <div class="bh"><div class="bt"> Official PDF <span class="dbc">documents · category:"disclosure-10"</span></div></div>
+        <div class="bb">
+          <p style="font-size:.76rem;color:var(--text-muted);margin-bottom:11px;">Upload the official PDF to Cloudinary. Students see a Download button on the public page.</p>
+          <div id="pdf-status-10" class="pdf-status-box pending-box"><span></span><span style="font-size:.74rem;font-weight:700;color:var(--orange);">No PDF uploaded yet</span></div>
+          <div class="cld">
+            <input type="url" id="pdf-10" placeholder="https://res.cloudinary.com/your-cloud/raw/upload/..." oninput="updatePdfStatus(10)"/>
+            <button class="cld-btn" onclick="document.getElementById('pdf-file-10').click()"> Upload PDF</button>
+            <input type="file" id="pdf-file-10" accept="application/pdf" style="display:none" onchange="uploadPDF(this,'pdf-10',10)"/>
+          </div>
+          <div class="fhint" style="margin-top:6px">Upload as <code>raw</code> resource type · max 10MB</div>
+        </div>
+      </div>
+      <div class="block">
+        <div class="bh"><div class="bt"> Page Settings</div></div>
+        <div class="bb">
+          <div class="tog-row"><div><div class="tln">Page Live</div><div class="tld">Visible to public</div></div><label class="tog"><input type="checkbox" checked/><span class="togt"></span></label></div>
+          <div class="tog-row"><div><div class="tln">Show Download Button</div></div><label class="tog"><input type="checkbox" checked/><span class="togt"></span></label></div>
+          <div style="margin-top:10px;font-family:monospace;font-size:.67rem;color:var(--text-muted);background:var(--bg2);padding:7px 10px;border-radius:7px;">mandatory-disclosure/10-recognition-renewal-certificate.html</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="panel" id="tab-doc-12">
+  <div class="two-col">
+    <div>
+      <div class="block">
+        <div class="bh"><div class="bt"> No Objection Certificate <span class="cbse-badge">CBSE Required</span></div><div class="ba"><button class="btn gd" onclick="save()"> Save</button></div></div>
+        <div class="bb"><div class="fg">
+          <div class="f"><label>Badge Label <span class="dbh">pages[12].badge</span></label><input value="State Govt. Approval"/></div>
+          <div class="f"><label>Page Description <span class="dbh">pages[12].description</span></label><textarea rows="2">NOC issued by Karnataka Dept. of Public Instruction allowing CBSE affiliation.</textarea></div>
+        </div></div>
+      </div>
+      <div class="block">
+        <div class="bh"><div class="bt"> Document Details Table <span class="dbc">pages[12].details[]</span></div><div class="ba"><button class="btn out" onclick="addTR('dtbl-12',2)">＋ Row</button><button class="btn gd" onclick="save()"> Save</button></div></div>
+        <div class="bb" style="padding:0">
+          <table class="te"><thead><tr><th>Particulars</th><th>Details</th><th style="width:32px"></th></tr></thead>
+          <tbody id="dtbl-12">
+            <tr><td><input value="Document Title"/></td><td><input value="No Objection Certificate"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="Issuing Authority"/></td><td><input value="To be updated"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="Date of Issue"/></td><td><input value="To be updated"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="Valid Until"/></td><td><input value="To be updated"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="Reference No."/></td><td><input value="To be updated"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+          </tbody></table>
+          <div style="padding:8px 10px"><button class="add-row-btn" onclick="addTR('dtbl-12',2)">＋ Add Row</button></div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="block">
+        <div class="bh"><div class="bt"> Official PDF <span class="dbc">documents · category:"disclosure-12"</span></div></div>
+        <div class="bb">
+          <p style="font-size:.76rem;color:var(--text-muted);margin-bottom:11px;">Upload the official PDF to Cloudinary. Students see a Download button on the public page.</p>
+          <div id="pdf-status-12" class="pdf-status-box pending-box"><span></span><span style="font-size:.74rem;font-weight:700;color:var(--orange);">No PDF uploaded yet</span></div>
+          <div class="cld">
+            <input type="url" id="pdf-12" placeholder="https://res.cloudinary.com/your-cloud/raw/upload/..." oninput="updatePdfStatus(12)"/>
+            <button class="cld-btn" onclick="document.getElementById('pdf-file-12').click()"> Upload PDF</button>
+            <input type="file" id="pdf-file-12" accept="application/pdf" style="display:none" onchange="uploadPDF(this,'pdf-12',12)"/>
+          </div>
+          <div class="fhint" style="margin-top:6px">Upload as <code>raw</code> resource type · max 10MB</div>
+        </div>
+      </div>
+      <div class="block">
+        <div class="bh"><div class="bt"> Page Settings</div></div>
+        <div class="bb">
+          <div class="tog-row"><div><div class="tln">Page Live</div><div class="tld">Visible to public</div></div><label class="tog"><input type="checkbox" checked/><span class="togt"></span></label></div>
+          <div class="tog-row"><div><div class="tln">Show Download Button</div></div><label class="tog"><input type="checkbox" checked/><span class="togt"></span></label></div>
+          <div style="margin-top:10px;font-family:monospace;font-size:.67rem;color:var(--text-muted);background:var(--bg2);padding:7px 10px;border-radius:7px;">mandatory-disclosure/12-no-objection-certificate.html</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="panel" id="tab-doc-13">
+  <div class="two-col">
+    <div>
+      <div class="block">
+        <div class="bh"><div class="bt"> Lease Deed Certificate <span class="cbse-badge">CBSE Required</span></div><div class="ba"><button class="btn gd" onclick="save()"> Save</button></div></div>
+        <div class="bb"><div class="fg">
+          <div class="f"><label>Badge Label <span class="dbh">pages[13].badge</span></label><input value="Premises Document"/></div>
+          <div class="f"><label>Page Description <span class="dbh">pages[13].description</span></label><textarea rows="2">Registered lease deed / ownership document for school premises at Loretto Padavu, Bantwal.</textarea></div>
+        </div></div>
+      </div>
+      <div class="block">
+        <div class="bh"><div class="bt"> Document Details Table <span class="dbc">pages[13].details[]</span></div><div class="ba"><button class="btn out" onclick="addTR('dtbl-13',2)">＋ Row</button><button class="btn gd" onclick="save()"> Save</button></div></div>
+        <div class="bb" style="padding:0">
+          <table class="te"><thead><tr><th>Particulars</th><th>Details</th><th style="width:32px"></th></tr></thead>
+          <tbody id="dtbl-13">
+            <tr><td><input value="Document Title"/></td><td><input value="Lease Deed Certificate"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="Issuing Authority"/></td><td><input value="To be updated"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="Date of Issue"/></td><td><input value="To be updated"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="Valid Until"/></td><td><input value="To be updated"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="Reference No."/></td><td><input value="To be updated"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+          </tbody></table>
+          <div style="padding:8px 10px"><button class="add-row-btn" onclick="addTR('dtbl-13',2)">＋ Add Row</button></div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="block">
+        <div class="bh"><div class="bt"> Official PDF <span class="dbc">documents · category:"disclosure-13"</span></div></div>
+        <div class="bb">
+          <p style="font-size:.76rem;color:var(--text-muted);margin-bottom:11px;">Upload the official PDF to Cloudinary. Students see a Download button on the public page.</p>
+          <div id="pdf-status-13" class="pdf-status-box pending-box"><span></span><span style="font-size:.74rem;font-weight:700;color:var(--orange);">No PDF uploaded yet</span></div>
+          <div class="cld">
+            <input type="url" id="pdf-13" placeholder="https://res.cloudinary.com/your-cloud/raw/upload/..." oninput="updatePdfStatus(13)"/>
+            <button class="cld-btn" onclick="document.getElementById('pdf-file-13').click()"> Upload PDF</button>
+            <input type="file" id="pdf-file-13" accept="application/pdf" style="display:none" onchange="uploadPDF(this,'pdf-13',13)"/>
+          </div>
+          <div class="fhint" style="margin-top:6px">Upload as <code>raw</code> resource type · max 10MB</div>
+        </div>
+      </div>
+      <div class="block">
+        <div class="bh"><div class="bt"> Page Settings</div></div>
+        <div class="bb">
+          <div class="tog-row"><div><div class="tln">Page Live</div><div class="tld">Visible to public</div></div><label class="tog"><input type="checkbox" checked/><span class="togt"></span></label></div>
+          <div class="tog-row"><div><div class="tln">Show Download Button</div></div><label class="tog"><input type="checkbox" checked/><span class="togt"></span></label></div>
+          <div style="margin-top:10px;font-family:monospace;font-size:.67rem;color:var(--text-muted);background:var(--bg2);padding:7px 10px;border-radius:7px;">mandatory-disclosure/13-lease-deed-certificate.html</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="panel" id="tab-doc-14">
+  <div class="two-col">
+    <div>
+      <div class="block">
+        <div class="bh"><div class="bt"> Safe Drinking Water Certificate <span class="cbse-badge">CBSE Required</span></div><div class="ba"><button class="btn gd" onclick="save()"> Save</button></div></div>
+        <div class="bb"><div class="fg">
+          <div class="f"><label>Badge Label <span class="dbh">pages[14].badge</span></label><input value="Water Quality Certificate"/></div>
+          <div class="f"><label>Page Description <span class="dbh">pages[14].description</span></label><textarea rows="2">Certificate confirming potable water supply and water quality for the school.</textarea></div>
+        </div></div>
+      </div>
+      <div class="block">
+        <div class="bh"><div class="bt"> Document Details Table <span class="dbc">pages[14].details[]</span></div><div class="ba"><button class="btn out" onclick="addTR('dtbl-14',2)">＋ Row</button><button class="btn gd" onclick="save()"> Save</button></div></div>
+        <div class="bb" style="padding:0">
+          <table class="te"><thead><tr><th>Particulars</th><th>Details</th><th style="width:32px"></th></tr></thead>
+          <tbody id="dtbl-14">
+            <tr><td><input value="Document Title"/></td><td><input value="Safe Drinking Water Certificate"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="Issuing Authority"/></td><td><input value="To be updated"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="Date of Issue"/></td><td><input value="To be updated"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="Valid Until"/></td><td><input value="To be updated"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="Reference No."/></td><td><input value="To be updated"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+          </tbody></table>
+          <div style="padding:8px 10px"><button class="add-row-btn" onclick="addTR('dtbl-14',2)">＋ Add Row</button></div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="block">
+        <div class="bh"><div class="bt"> Official PDF <span class="dbc">documents · category:"disclosure-14"</span></div></div>
+        <div class="bb">
+          <p style="font-size:.76rem;color:var(--text-muted);margin-bottom:11px;">Upload the official PDF to Cloudinary. Students see a Download button on the public page.</p>
+          <div id="pdf-status-14" class="pdf-status-box pending-box"><span></span><span style="font-size:.74rem;font-weight:700;color:var(--orange);">No PDF uploaded yet</span></div>
+          <div class="cld">
+            <input type="url" id="pdf-14" placeholder="https://res.cloudinary.com/your-cloud/raw/upload/..." oninput="updatePdfStatus(14)"/>
+            <button class="cld-btn" onclick="document.getElementById('pdf-file-14').click()"> Upload PDF</button>
+            <input type="file" id="pdf-file-14" accept="application/pdf" style="display:none" onchange="uploadPDF(this,'pdf-14',14)"/>
+          </div>
+          <div class="fhint" style="margin-top:6px">Upload as <code>raw</code> resource type · max 10MB</div>
+        </div>
+      </div>
+      <div class="block">
+        <div class="bh"><div class="bt"> Page Settings</div></div>
+        <div class="bb">
+          <div class="tog-row"><div><div class="tln">Page Live</div><div class="tld">Visible to public</div></div><label class="tog"><input type="checkbox" checked/><span class="togt"></span></label></div>
+          <div class="tog-row"><div><div class="tln">Show Download Button</div></div><label class="tog"><input type="checkbox" checked/><span class="togt"></span></label></div>
+          <div style="margin-top:10px;font-family:monospace;font-size:.67rem;color:var(--text-muted);background:var(--bg2);padding:7px 10px;border-radius:7px;">mandatory-disclosure/14-safe-drinking-water.html</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="panel" id="tab-doc-15">
+  <div class="two-col">
+    <div>
+      <div class="block">
+        <div class="bh"><div class="bt"> Society Registration Certificate <span class="cbse-badge">CBSE Required</span></div><div class="ba"><button class="btn gd" onclick="save()"> Save</button></div></div>
+        <div class="bb"><div class="fg">
+          <div class="f"><label>Badge Label <span class="dbh">pages[15].badge</span></label><input value="Managing Society"/></div>
+          <div class="f"><label>Page Description <span class="dbh">pages[15].description</span></label><textarea rows="2">Registration certificate of managing society (Catholic Board of Education) under Societies Act.</textarea></div>
+        </div></div>
+      </div>
+      <div class="block">
+        <div class="bh"><div class="bt"> Document Details Table <span class="dbc">pages[15].details[]</span></div><div class="ba"><button class="btn out" onclick="addTR('dtbl-15',2)">＋ Row</button><button class="btn gd" onclick="save()"> Save</button></div></div>
+        <div class="bb" style="padding:0">
+          <table class="te"><thead><tr><th>Particulars</th><th>Details</th><th style="width:32px"></th></tr></thead>
+          <tbody id="dtbl-15">
+            <tr><td><input value="Document Title"/></td><td><input value="Society Registration Certificate"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="Issuing Authority"/></td><td><input value="To be updated"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="Date of Issue"/></td><td><input value="To be updated"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="Valid Until"/></td><td><input value="To be updated"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="Reference No."/></td><td><input value="To be updated"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+          </tbody></table>
+          <div style="padding:8px 10px"><button class="add-row-btn" onclick="addTR('dtbl-15',2)">＋ Add Row</button></div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="block">
+        <div class="bh"><div class="bt"> Official PDF <span class="dbc">documents · category:"disclosure-15"</span></div></div>
+        <div class="bb">
+          <p style="font-size:.76rem;color:var(--text-muted);margin-bottom:11px;">Upload the official PDF to Cloudinary. Students see a Download button on the public page.</p>
+          <div id="pdf-status-15" class="pdf-status-box pending-box"><span></span><span style="font-size:.74rem;font-weight:700;color:var(--orange);">No PDF uploaded yet</span></div>
+          <div class="cld">
+            <input type="url" id="pdf-15" placeholder="https://res.cloudinary.com/your-cloud/raw/upload/..." oninput="updatePdfStatus(15)"/>
+            <button class="cld-btn" onclick="document.getElementById('pdf-file-15').click()"> Upload PDF</button>
+            <input type="file" id="pdf-file-15" accept="application/pdf" style="display:none" onchange="uploadPDF(this,'pdf-15',15)"/>
+          </div>
+          <div class="fhint" style="margin-top:6px">Upload as <code>raw</code> resource type · max 10MB</div>
+        </div>
+      </div>
+      <div class="block">
+        <div class="bh"><div class="bt"> Page Settings</div></div>
+        <div class="bb">
+          <div class="tog-row"><div><div class="tln">Page Live</div><div class="tld">Visible to public</div></div><label class="tog"><input type="checkbox" checked/><span class="togt"></span></label></div>
+          <div class="tog-row"><div><div class="tln">Show Download Button</div></div><label class="tog"><input type="checkbox" checked/><span class="togt"></span></label></div>
+          <div style="margin-top:10px;font-family:monospace;font-size:.67rem;color:var(--text-muted);background:var(--bg2);padding:7px 10px;border-radius:7px;">mandatory-disclosure/15-society-registration.html</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="panel" id="tab-doc-16">
+  <div class="two-col">
+    <div>
+      <div class="block">
+        <div class="bh"><div class="bt"> Water Health & Sanitation <span class="cbse-badge">CBSE Required</span></div><div class="ba"><button class="btn gd" onclick="save()"> Save</button></div></div>
+        <div class="bb"><div class="fg">
+          <div class="f"><label>Badge Label <span class="dbh">pages[16].badge</span></label><input value="Health & Sanitation"/></div>
+          <div class="f"><label>Page Description <span class="dbh">pages[16].description</span></label><textarea rows="2">Certificate of compliance with health, sanitation, and hygiene norms as per CBSE requirements.</textarea></div>
+        </div></div>
+      </div>
+      <div class="block">
+        <div class="bh"><div class="bt"> Document Details Table <span class="dbc">pages[16].details[]</span></div><div class="ba"><button class="btn out" onclick="addTR('dtbl-16',2)">＋ Row</button><button class="btn gd" onclick="save()"> Save</button></div></div>
+        <div class="bb" style="padding:0">
+          <table class="te"><thead><tr><th>Particulars</th><th>Details</th><th style="width:32px"></th></tr></thead>
+          <tbody id="dtbl-16">
+            <tr><td><input value="Document Title"/></td><td><input value="Water Health & Sanitation"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="Issuing Authority"/></td><td><input value="To be updated"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="Date of Issue"/></td><td><input value="To be updated"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="Valid Until"/></td><td><input value="To be updated"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="Reference No."/></td><td><input value="To be updated"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+          </tbody></table>
+          <div style="padding:8px 10px"><button class="add-row-btn" onclick="addTR('dtbl-16',2)">＋ Add Row</button></div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="block">
+        <div class="bh"><div class="bt"> Official PDF <span class="dbc">documents · category:"disclosure-16"</span></div></div>
+        <div class="bb">
+          <p style="font-size:.76rem;color:var(--text-muted);margin-bottom:11px;">Upload the official PDF to Cloudinary. Students see a Download button on the public page.</p>
+          <div id="pdf-status-16" class="pdf-status-box pending-box"><span></span><span style="font-size:.74rem;font-weight:700;color:var(--orange);">No PDF uploaded yet</span></div>
+          <div class="cld">
+            <input type="url" id="pdf-16" placeholder="https://res.cloudinary.com/your-cloud/raw/upload/..." oninput="updatePdfStatus(16)"/>
+            <button class="cld-btn" onclick="document.getElementById('pdf-file-16').click()"> Upload PDF</button>
+            <input type="file" id="pdf-file-16" accept="application/pdf" style="display:none" onchange="uploadPDF(this,'pdf-16',16)"/>
+          </div>
+          <div class="fhint" style="margin-top:6px">Upload as <code>raw</code> resource type · max 10MB</div>
+        </div>
+      </div>
+      <div class="block">
+        <div class="bh"><div class="bt"> Page Settings</div></div>
+        <div class="bb">
+          <div class="tog-row"><div><div class="tln">Page Live</div><div class="tld">Visible to public</div></div><label class="tog"><input type="checkbox" checked/><span class="togt"></span></label></div>
+          <div class="tog-row"><div><div class="tln">Show Download Button</div></div><label class="tog"><input type="checkbox" checked/><span class="togt"></span></label></div>
+          <div style="margin-top:10px;font-family:monospace;font-size:.67rem;color:var(--text-muted);background:var(--bg2);padding:7px 10px;border-radius:7px;">mandatory-disclosure/16-water-health-sanitation.html</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="panel" id="tab-doc-11">
+  <div class="two-col">
+    <div>
+      <div class="block">
+        <div class="bh"><div class="bt"> Section A — General Information <span class="dbc">mandatory_disclosure.generalInfo[]</span></div><div class="ba"><button class="btn out" onclick="addTR('p11a',3)">＋ Row</button><button class="btn gd" onclick="save()"> Save</button></div></div>
+        <div class="bb" style="padding:0">
+          <table class="te"><thead><tr><th style="width:40px">Sl.</th><th>Particulars</th><th>Details</th><th style="width:32px"></th></tr></thead>
+          <tbody id="p11a">
+            <tr><td><input value="1"/></td><td><input value="NAME OF THE SCHOOL"/></td><td><input value="LORETTO CENTRAL SCHOOL"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="2"/></td><td><input value="AFFILIATION NO."/></td><td><input value="831368"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="3"/></td><td><input value="SCHOOL CODE"/></td><td><input value="To be updated"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="4"/></td><td><input value="COMPLETE ADDRESS"/></td><td><input value="Loretto Padavu, Bantwal, Dakshina Kannada, Karnataka – 574219"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="5"/></td><td><input value="PRINCIPAL NAME &amp; QUALIFICATION"/></td><td><input value="Rev. Fr. Jason Vijay Monis"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="6"/></td><td><input value="SCHOOL EMAIL ID"/></td><td><input value="info@school.edu"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="7"/></td><td><input value="CONTACT DETAILS"/></td><td><input value="To be updated"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+          </tbody></table>
+          <div style="padding:8px 10px"><button class="add-row-btn" onclick="addTR('p11a',3)">＋ Add Row</button></div>
+        </div>
+      </div>
+      <div class="block">
+        <div class="bh"><div class="bt"> Section B — Document Links <span class="dbc">mandatory_disclosure.documentLinks[]</span></div><div class="ba"><button class="btn out" onclick="addTR('p11b',3)">＋ Row</button><button class="btn gd" onclick="save()"> Save</button></div></div>
+        <div class="bb" style="padding:0">
+          <table class="te"><thead><tr><th style="width:36px">Sl.</th><th>Document</th><th>Link / File</th><th style="width:32px"></th></tr></thead>
+          <tbody id="p11b">
+            <tr><td><input value="1"/></td><td><input value="Copies of Affiliation / Upgradation Letter"/></td><td><input value="2-affiliation-letter.html"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="2"/></td><td><input value="Copies of Society / Trust Registration"/></td><td><input value="15-society-registration.html"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="3"/></td><td><input value="Copy of NOC issued by State Government"/></td><td><input value="12-no-objection-certificate.html"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="4"/></td><td><input value="Copy of Recognition Certificate under RTE Act"/></td><td><input value="10-recognition-renewal-certificate.html"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="5"/></td><td><input value="Copy of Valid Building Safety Certificate"/></td><td><input value="6-building-safety.html"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="6"/></td><td><input value="Copy of Valid Fire Safety Certificate"/></td><td><input value="8-fire-safety.html"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="7"/></td><td><input value="Copy of DEO Certificate"/></td><td><input value="9-deo-certificate.html"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="8"/></td><td><input value="Valid Water, Health &amp; Sanitation Certificates"/></td><td><input value="16-water-health-sanitation.html"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="9"/></td><td><input value="Fee Structure"/></td><td><input value="20-school-fee-structure.html"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="10"/></td><td><input value="Annual Academic Calendar"/></td><td><input value="17-calendar.html"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="11"/></td><td><input value="List of Management Committee (SMC)"/></td><td><input value="18-management-committee.html"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="12"/></td><td><input value="PTA Members"/></td><td><input value="19-pta-committee.html"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="13"/></td><td><input value="Last Three-Year Board Results"/></td><td><input value="21-sslc-results.html"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+          </tbody></table>
+          <div style="padding:8px 10px"><button class="add-row-btn" onclick="addTR('p11b',3)">＋ Add Document</button></div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="block"><div class="bh"><div class="bt"> Page Intro</div><div class="ba"><button class="btn gd" onclick="save()"> Save</button></div></div>
+        <div class="bb"><div class="f"><label>Intro Paragraph</label>
+          <textarea>As per CBSE Affiliation Bye-Laws and Circular No. 09 dated 21.05.2021, all CBSE affiliated schools are required to publish a comprehensive Mandatory Public Disclosure on their official website. The complete CBSE-format disclosure for Loretto Central School is presented below.</textarea>
+        </div></div>
+      </div>
+      <div class="block"><div class="bh"><div class="bt"> Settings</div></div><div class="bb">
+        <div class="tog-row"><div><div class="tln">Page Live</div></div><label class="tog"><input type="checkbox" checked/><span class="togt"></span></label></div>
+      </div></div>
+    </div>
+  </div>
+</div>
+<div class="panel" id="tab-doc-17">
+  <div class="two-col">
+    <div>
+      <div class="block">
+        <div class="bh"><div class="bt"> Key Academic Events <span class="dbc">disclosure.calendar.events[]</span></div><div class="ba"><button class="btn out" onclick="addTR('p17ev',3)">＋ Row</button><button class="btn gd" onclick="save()"> Save</button></div></div>
+        <div class="bb" style="padding:0">
+          <table class="te"><thead><tr><th>Event / Activity</th><th>Approx. Period</th><th>Remarks</th><th style="width:32px"></th></tr></thead>
+          <tbody id="p17ev">
+            <tr><td><input value="New Academic Year Begins"/></td><td><input value="April"/></td><td><input value="All classes"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="Parent-Teacher Meeting – I"/></td><td><input value="May"/></td><td><input value="Orientation"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="Periodic Test – I (PT-1)"/></td><td><input value="June"/></td><td><input value="Classes I–X"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="Independence Day Celebration"/></td><td><input value="August"/></td><td><input value="15 Aug — School Function"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="Half-Yearly Examinations"/></td><td><input value="September"/></td><td><input value="Classes I–X"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="Periodic Test – II (PT-2)"/></td><td><input value="November"/></td><td><input value="Classes I–X"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="Annual Day / Christmas Celebration"/></td><td><input value="December"/></td><td><input value="Cultural programme"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="Republic Day &amp; Pre-Board Exams"/></td><td><input value="January"/></td><td><input value="Class X"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="Annual Examinations / Board Exams"/></td><td><input value="Feb – March"/></td><td><input value="All classes; CBSE Boards (X)"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+          </tbody></table>
+          <div style="padding:8px 10px"><button class="add-row-btn" onclick="addTR('p17ev',3)">＋ Add Event</button></div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="block"><div class="bh"><div class="bt"> Intro Text <span class="dbc">disclosure.calendar.intro</span></div><div class="ba"><button class="btn gd" onclick="save()"> Save</button></div></div>
+        <div class="bb"><div class="fg">
+          <div class="f"><label>Intro Para</label><textarea rows="3">The academic calendar for Loretto Central School is published here for the information of students, parents, and staff. The calendar is prepared at the beginning of each academic year and is subject to revision.</textarea></div>
+          <div class="f"><label>Holidays Note</label><textarea rows="3">The school observes all national holidays, state government holidays, and significant religious festivals. A detailed holiday list is provided at the start of each academic year through the school diary / circular.</textarea></div>
+        </div></div>
+      </div>
+      <div class="block"><div class="bh"><div class="bt"> PDF Calendar</div></div>
+        <div class="bb">
+          <p style="font-size:.76rem;color:var(--text-muted);margin-bottom:11px;">Upload the official PDF to Cloudinary. Visitors will see View and Download buttons on the public page.</p>
+          <div id="pdf-status-17" class="pdf-status-box pending-box"><span></span><span style="font-size:.74rem;font-weight:700;color:var(--orange);">No PDF uploaded yet</span></div>
+          <div class="cld"><input type="url" id="cal-pdf" placeholder="https://res.cloudinary.com/..." oninput="updatePdfStatus(17)"/><button class="cld-btn" onclick="document.getElementById('cal-pdf-f').click()"> Upload</button><input type="file" id="cal-pdf-f" accept="application/pdf" style="display:none" onchange="uploadPDF(this,'cal-pdf',17)"/></div>
+          <div class="fhint" style="margin-top:6px">Upload as <code>raw</code> resource type · max 10MB</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="panel" id="tab-doc-18">
+  <div class="two-col">
+    <div>
+      <div class="block">
+        <div class="bh"><div class="bt"> Management Committee (SMC) <span class="dbc">management collection</span></div><div class="ba"><button class="btn out" onclick="addTR('p18smc',3)">＋ Row</button><button class="btn gd" onclick="save()"> Save</button></div></div>
+        <div class="bb" style="padding:0">
+          <table class="te"><thead><tr><th style="width:36px">Sl.</th><th>Name</th><th>Designation / Role</th><th style="width:32px"></th></tr></thead><tbody id="p18smc"><tr><td><input value="1"/></td><td><input value="Rev. Fr. Francis Crasta"/></td><td><input value="Manager / Chairperson"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr><tr><td><input value="2"/></td><td><input value="Rev. Fr. Jason Vijay Monis"/></td><td><input value="Principal / Member Secretary"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr><tr><td><input value="3"/></td><td><input value="To be updated"/></td><td><input value="Parent Representative"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr><tr><td><input value="4"/></td><td><input value="To be updated"/></td><td><input value="Teacher Representative"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr><tr><td><input value="5"/></td><td><input value="To be updated"/></td><td><input value="Community Representative"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr></tbody></table>
+          <div style="padding:8px 10px"><button class="add-row-btn" onclick="addTR('p18smc',3)">＋ Add Member</button></div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="block"><div class="bh"><div class="bt"> Intro</div><div class="ba"><button class="btn gd" onclick="save()"> Save</button></div></div>
+        <div class="bb"><div class="f"><label>Intro Para</label><textarea rows="4">As required under CBSE Affiliation Bye-Laws, the School Management Committee (SMC) of Loretto Central School is constituted as per prescribed norms.</textarea></div></div>
+      </div>
+      <div class="block"><div class="bh"><div class="bt"> Official PDF <span class="dbc">documents · category:"disclosure-18"</span></div></div>
+        <div class="bb">
+          <p style="font-size:.76rem;color:var(--text-muted);margin-bottom:11px;">Upload the official committee PDF to Cloudinary. Visitors will see View and Download buttons on the public page.</p>
+          <div id="pdf-status-18" class="pdf-status-box pending-box"><span></span><span style="font-size:.74rem;font-weight:700;color:var(--orange);">No PDF uploaded yet</span></div>
+          <div class="cld">
+            <input type="url" id="pdf-18" placeholder="https://res.cloudinary.com/your-cloud/raw/upload/..." oninput="updatePdfStatus(18)"/>
+            <button class="cld-btn" onclick="document.getElementById('pdf-file-18').click()"> Upload PDF</button>
+            <input type="file" id="pdf-file-18" accept="application/pdf" style="display:none" onchange="uploadPDF(this,'pdf-18',18)"/>
+          </div>
+          <div class="fhint" style="margin-top:6px">Upload as <code>raw</code> resource type · max 10MB</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="panel" id="tab-doc-19">
+  <div class="two-col">
+    <div>
+      <div class="block">
+        <div class="bh"><div class="bt"> PTA Executive Committee <span class="dbc">management collection</span></div><div class="ba"><button class="btn out" onclick="addTR('p19pta',4)">＋ Row</button><button class="btn gd" onclick="save()"> Save</button></div></div>
+        <div class="bb" style="padding:0">
+          <table class="te"><thead><tr><th style="width:36px">Sl.</th><th>Name</th><th>Role</th><th>Class / Area</th><th style="width:32px"></th></tr></thead><tbody id="p19pta"><tr><td><input value="1"/></td><td><input value="Rev. Fr. Jason Vijay Monis"/></td><td><input value="President (Ex-officio)"/></td><td><input value="—"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr><tr><td><input value="2"/></td><td><input value="To be updated"/></td><td><input value="Vice President"/></td><td><input value="—"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr><tr><td><input value="3"/></td><td><input value="To be updated"/></td><td><input value="Secretary"/></td><td><input value="—"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr><tr><td><input value="4"/></td><td><input value="To be updated"/></td><td><input value="Treasurer"/></td><td><input value="—"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr></tbody></table>
+          <div style="padding:8px 10px"><button class="add-row-btn" onclick="addTR('p19pta',4)">＋ Add Member</button></div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="block"><div class="bh"><div class="bt"> Intro</div><div class="ba"><button class="btn gd" onclick="save()"> Save</button></div></div>
+        <div class="bb"><div class="f"><label>Intro Para</label><textarea rows="4">The Parent Teacher Association (PTA) at Loretto Central School promotes open communication between home and school.</textarea></div></div>
+      </div>
+      <div class="block"><div class="bh"><div class="bt"> Official PDF <span class="dbc">documents · category:"disclosure-19"</span></div></div>
+        <div class="bb">
+          <p style="font-size:.76rem;color:var(--text-muted);margin-bottom:11px;">Upload the official PTA committee PDF to Cloudinary. Visitors will see View and Download buttons on the public page.</p>
+          <div id="pdf-status-19" class="pdf-status-box pending-box"><span></span><span style="font-size:.74rem;font-weight:700;color:var(--orange);">No PDF uploaded yet</span></div>
+          <div class="cld">
+            <input type="url" id="pdf-19" placeholder="https://res.cloudinary.com/your-cloud/raw/upload/..." oninput="updatePdfStatus(19)"/>
+            <button class="cld-btn" onclick="document.getElementById('pdf-file-19').click()"> Upload PDF</button>
+            <input type="file" id="pdf-file-19" accept="application/pdf" style="display:none" onchange="uploadPDF(this,'pdf-19',19)"/>
+          </div>
+          <div class="fhint" style="margin-top:6px">Upload as <code>raw</code> resource type · max 10MB</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="panel" id="tab-doc-22">
+  <div class="two-col">
+    <div>
+      <div class="block">
+        <div class="bh"><div class="bt"> Local Management Committee (LMC) <span class="dbc">management collection</span></div><div class="ba"><button class="btn out" onclick="addTR('p22lmc',3)">＋ Row</button><button class="btn gd" onclick="save()"> Save</button></div></div>
+        <div class="bb" style="padding:0">
+          <table class="te"><thead><tr><th style="width:36px">Sl.</th><th>Name</th><th>Designation / Role</th><th style="width:32px"></th></tr></thead><tbody id="p22lmc"><tr><td><input value="1"/></td><td><input value="Rev. Fr. Francis Crasta"/></td><td><input value="Manager / Chairperson"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr><tr><td><input value="2"/></td><td><input value="Rev. Fr. Jason Vijay Monis"/></td><td><input value="Principal / Member Secretary"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr><tr><td><input value="3"/></td><td><input value="To be updated"/></td><td><input value="Parent Representative"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr><tr><td><input value="4"/></td><td><input value="To be updated"/></td><td><input value="Teacher Representative"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr></tbody></table>
+          <div style="padding:8px 10px"><button class="add-row-btn" onclick="addTR('p22lmc',3)">＋ Add Member</button></div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="block"><div class="bh"><div class="bt"> Intro</div><div class="ba"><button class="btn gd" onclick="save()"> Save</button></div></div>
+        <div class="bb"><div class="f"><label>Intro Para</label><textarea rows="4">As per CBSE Affiliation Bye-Laws, a School Local Management Committee (LMC) has been constituted at Loretto Central School.</textarea></div></div>
+      </div>
+      <div class="block"><div class="bh"><div class="bt"> Official PDF <span class="dbc">documents · category:"disclosure-22"</span></div></div>
+        <div class="bb">
+          <p style="font-size:.76rem;color:var(--text-muted);margin-bottom:11px;">Upload the official LMC PDF to Cloudinary. Visitors will see View and Download buttons on the public page.</p>
+          <div id="pdf-status-22" class="pdf-status-box pending-box"><span></span><span style="font-size:.74rem;font-weight:700;color:var(--orange);">No PDF uploaded yet</span></div>
+          <div class="cld">
+            <input type="url" id="pdf-22" placeholder="https://res.cloudinary.com/your-cloud/raw/upload/..." oninput="updatePdfStatus(22)"/>
+            <button class="cld-btn" onclick="document.getElementById('pdf-file-22').click()"> Upload PDF</button>
+            <input type="file" id="pdf-file-22" accept="application/pdf" style="display:none" onchange="uploadPDF(this,'pdf-22',22)"/>
+          </div>
+          <div class="fhint" style="margin-top:6px">Upload as <code>raw</code> resource type · max 10MB</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="panel" id="tab-doc-20">
+  <div class="legal-chip"> Fee data — review with management before publishing</div>
+  <div class="block">
+    <div class="bh"><div class="bt"> Fee Structure by Class <span class="dbc">disclosure.feeStructure[]</span></div><div class="ba"><button class="btn out" onclick="addTR('p20fees',5)">＋ Row</button><button class="btn gd" onclick="save()"> Save</button></div></div>
+    <div class="bb" style="padding:0">
+      <table class="te"><thead><tr><th>Class</th><th>Tuition Fee (per term)</th><th>Annual / Dev. Fee</th><th>Other Charges</th><th>Approx. Annual Total</th><th style="width:32px"></th></tr></thead>
+      <tbody id="p20fees">
+        <tr><td><input value="LKG &amp; UKG"/></td><td><input value="To be updated"/></td><td><input value="To be updated"/></td><td><input value="To be updated"/></td><td><input value="To be updated"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+        <tr><td><input value="Class I – III"/></td><td><input value="To be updated"/></td><td><input value="To be updated"/></td><td><input value="To be updated"/></td><td><input value="To be updated"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+        <tr><td><input value="Class IV – V"/></td><td><input value="To be updated"/></td><td><input value="To be updated"/></td><td><input value="To be updated"/></td><td><input value="To be updated"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+        <tr><td><input value="Class VI – VIII"/></td><td><input value="To be updated"/></td><td><input value="To be updated"/></td><td><input value="To be updated"/></td><td><input value="To be updated"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+        <tr><td><input value="Class IX – X"/></td><td><input value="To be updated"/></td><td><input value="To be updated"/></td><td><input value="To be updated"/></td><td><input value="To be updated"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+      </tbody></table>
+      <div style="padding:8px 10px"><button class="add-row-btn" onclick="addTR('p20fees',5)">＋ Add Row</button></div>
+    </div>
+  </div>
+  <div class="two-col">
+    <div>
+      <div class="block"><div class="bh"><div class="bt"> Fee Components <span class="dbc">disclosure.feeComponents[]</span></div><div class="ba"><button class="btn out" onclick="addTR('p20comp',2)">＋ Row</button><button class="btn gd" onclick="save()"> Save</button></div></div>
+        <div class="bb" style="padding:0">
+          <table class="te"><thead><tr><th>Component</th><th>Description</th><th style="width:32px"></th></tr></thead>
+          <tbody id="p20comp">
+            <tr><td><input value="Tuition Fee"/></td><td><input value="Core academic fee charged per term (3 terms per year)"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="Admission Fee"/></td><td><input value="One-time charge for new admissions"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="Annual / Development Fee"/></td><td><input value="Covers annual events, examinations, and infrastructure maintenance"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="Library Fee"/></td><td><input value="Access to school library and reading resources"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="Computer Lab Fee"/></td><td><input value="Digital learning and computer lab access"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="Transport Fee"/></td><td><input value="Optional school transport (if availed)"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+          </tbody></table>
+          <div style="padding:8px 10px"><button class="add-row-btn" onclick="addTR('p20comp',2)">＋ Add</button></div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="block"><div class="bh"><div class="bt"> Payment Policy <span class="dbc">disclosure.feePolicy[]</span></div><div class="ba"><button class="btn gd" onclick="save()"> Save</button></div></div>
+        <div class="bb" style="padding:0">
+          <table class="te"><thead><tr><th>Particulars</th><th>Details</th><th style="width:32px"></th></tr></thead>
+          <tbody id="p20policy">
+            <tr><td><input value="Payment Mode"/></td><td><input value="Cash / DD / Online Transfer"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="Fee Due Dates"/></td><td><input value="As per term-wise circular"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="Late Payment Penalty"/></td><td><input value="As per school policy"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="Fee Concession"/></td><td><input value="Available for meritorious and economically weaker students"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="Refund Policy"/></td><td><input value="As per CBSE guidelines; caution deposit refundable on leaving"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+          </tbody></table>
+          <div style="padding:8px 10px"><button class="add-row-btn" onclick="addTR('p20policy',2)">＋ Add Row</button></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="block"><div class="bh"><div class="bt"> Official PDF <span class="dbc">documents · category:"disclosure-20"</span></div></div>
+    <div class="bb">
+      <p style="font-size:.76rem;color:var(--text-muted);margin-bottom:11px;">Upload the official fee structure PDF to Cloudinary. Visitors will see View and Download buttons on the public page.</p>
+      <div id="pdf-status-20" class="pdf-status-box pending-box"><span></span><span style="font-size:.74rem;font-weight:700;color:var(--orange);">No PDF uploaded yet</span></div>
+      <div class="cld">
+        <input type="url" id="pdf-20" placeholder="https://res.cloudinary.com/your-cloud/raw/upload/..." oninput="updatePdfStatus(20)"/>
+        <button class="cld-btn" onclick="document.getElementById('pdf-file-20').click()"> Upload PDF</button>
+        <input type="file" id="pdf-file-20" accept="application/pdf" style="display:none" onchange="uploadPDF(this,'pdf-20',20)"/>
+      </div>
+      <div class="fhint" style="margin-top:6px">Upload as <code>raw</code> resource type · max 10MB</div>
+    </div>
+  </div>
+</div>
+<div class="panel" id="tab-doc-21">
+  <div class="block">
+    <div class="bh"><div class="bt"> Class X Board Results — Last 3 Years <span class="dbc">disclosure.boardResults[]</span></div><div class="ba"><button class="btn out" onclick="addTR('p21res',6)">＋ Year</button><button class="btn gd" onclick="save()"> Save</button></div></div>
+    <div class="bb" style="padding:0">
+      <table class="te"><thead><tr><th>Academic Year</th><th>Registered</th><th>Appeared</th><th>Passed</th><th>Pass %</th><th>Distinction / 90%+</th><th style="width:32px"></th></tr></thead>
+      <tbody id="p21res">
+        <tr><td><input value="2024–25"/></td><td><input value="To be updated"/></td><td><input value="To be updated"/></td><td><input value="To be updated"/></td><td><input value="To be updated"/></td><td><input value="To be updated"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+        <tr><td><input value="2023–24"/></td><td><input value="To be updated"/></td><td><input value="To be updated"/></td><td><input value="To be updated"/></td><td><input value="To be updated"/></td><td><input value="To be updated"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+        <tr><td><input value="2022–23"/></td><td><input value="To be updated"/></td><td><input value="To be updated"/></td><td><input value="To be updated"/></td><td><input value="To be updated"/></td><td><input value="To be updated"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+      </tbody></table>
+      <div style="padding:8px 10px"><button class="add-row-btn" onclick="addTR('p21res',6)">＋ Add Year</button></div>
+    </div>
+  </div>
+  <div class="block">
+    <div class="bh"><div class="bt"> Subject-wise Performance (Latest Year) <span class="dbc">disclosure.subjectResults[]</span></div><div class="ba"><button class="btn out" onclick="addTR('p21subj',3)">＋ Subject</button><button class="btn gd" onclick="save()"> Save</button></div></div>
+    <div class="bb" style="padding:0">
+      <table class="te"><thead><tr><th>Subject</th><th>Average Marks / Grade</th><th>Pass %</th><th style="width:32px"></th></tr></thead>
+      <tbody id="p21subj">
+        <tr><td><input value="English"/></td><td><input value="To be updated"/></td><td><input value="To be updated"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+        <tr><td><input value="Hindi / Second Language"/></td><td><input value="To be updated"/></td><td><input value="To be updated"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+        <tr><td><input value="Mathematics"/></td><td><input value="To be updated"/></td><td><input value="To be updated"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+        <tr><td><input value="Science"/></td><td><input value="To be updated"/></td><td><input value="To be updated"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+        <tr><td><input value="Social Science"/></td><td><input value="To be updated"/></td><td><input value="To be updated"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+      </tbody></table>
+      <div style="padding:8px 10px"><button class="add-row-btn" onclick="addTR('p21subj',3)">＋ Add Subject</button></div>
+    </div>
+  </div>
+  <div class="block"><div class="bh"><div class="bt"> Official PDF <span class="dbc">documents · category:"disclosure-21"</span></div></div>
+    <div class="bb">
+      <p style="font-size:.76rem;color:var(--text-muted);margin-bottom:11px;">Upload the official board results PDF to Cloudinary. Visitors will see View and Download buttons on the public page.</p>
+      <div id="pdf-status-21" class="pdf-status-box pending-box"><span></span><span style="font-size:.74rem;font-weight:700;color:var(--orange);">No PDF uploaded yet</span></div>
+      <div class="cld">
+        <input type="url" id="pdf-21" placeholder="https://res.cloudinary.com/your-cloud/raw/upload/..." oninput="updatePdfStatus(21)"/>
+        <button class="cld-btn" onclick="document.getElementById('pdf-file-21').click()"> Upload PDF</button>
+        <input type="file" id="pdf-file-21" accept="application/pdf" style="display:none" onchange="uploadPDF(this,'pdf-21',21)"/>
+      </div>
+      <div class="fhint" style="margin-top:6px">Upload as <code>raw</code> resource type · max 10MB</div>
+    </div>
+  </div>
+</div>
+<div class="panel" id="tab-doc-23">
+  <div class="two-col">
+    <div>
+      <div class="block"><div class="bh"><div class="bt"> Teaching Staff Summary <span class="dbc">faculty collection · aggregated</span></div><div class="ba"><button class="btn gd" onclick="save()"> Save</button></div></div>
+        <div class="bb" style="padding:0">
+          <table class="te"><thead><tr><th>Particulars</th><th>Details</th><th style="width:32px"></th></tr></thead>
+          <tbody id="p23sum">
+            <tr><td><input value="Total Teaching Staff"/></td><td><input value="To be updated"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="PGT (Post Graduate Teachers)"/></td><td><input value="To be updated"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="TGT (Trained Graduate Teachers)"/></td><td><input value="To be updated"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="PRT (Primary Teachers)"/></td><td><input value="To be updated"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="Non-Teaching Staff"/></td><td><input value="To be updated"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="Student–Teacher Ratio"/></td><td><input value="As per CBSE norms (approx. 1:30)"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+          </tbody></table>
+          <div style="padding:8px 10px"><button class="add-row-btn" onclick="addTR('p23sum',2)">＋ Add Row</button></div>
+        </div>
+      </div>
+      <div class="block"><div class="bh"><div class="bt"> Subject-wise Allocation <span class="dbc">faculty · by subject</span></div><div class="ba"><button class="btn out" onclick="addTR('p23subj',3)">＋ Row</button><button class="btn gd" onclick="save()"> Save</button></div></div>
+        <div class="bb" style="padding:0">
+          <table class="te"><thead><tr><th>Subject / Department</th><th>No. of Teachers</th><th>Level</th><th style="width:32px"></th></tr></thead>
+          <tbody id="p23subj">
+            <tr><td><input value="English"/></td><td><input value="To be updated"/></td><td><input value="PGT / TGT"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="Hindi"/></td><td><input value="To be updated"/></td><td><input value="TGT"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="Mathematics"/></td><td><input value="To be updated"/></td><td><input value="PGT / TGT"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="Science"/></td><td><input value="To be updated"/></td><td><input value="PGT / TGT"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="Social Science"/></td><td><input value="To be updated"/></td><td><input value="TGT"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="Computer Science"/></td><td><input value="To be updated"/></td><td><input value="PGT / TGT"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="Physical Education"/></td><td><input value="To be updated"/></td><td><input value="Specialised"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="Pre-Primary (LKG / UKG)"/></td><td><input value="To be updated"/></td><td><input value="Trained"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+          </tbody></table>
+          <div style="padding:8px 10px"><button class="add-row-btn" onclick="addTR('p23subj',3)">＋ Add Subject</button></div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="block"><div class="bh"><div class="bt"> Qualifications Profile <span class="dbc">disclosure.teacherQual[]</span></div><div class="ba"><button class="btn gd" onclick="save()"> Save</button></div></div>
+        <div class="bb" style="padding:0">
+          <table class="te"><thead><tr><th>Qualification</th><th>No. of Staff</th><th style="width:32px"></th></tr></thead>
+          <tbody id="p23qual">
+            <tr><td><input value="Post Graduate (M.A. / M.Sc. / M.Com. etc.)"/></td><td><input value="To be updated"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="Graduate (B.A. / B.Sc. / B.Com. etc.)"/></td><td><input value="To be updated"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="B.Ed. / M.Ed."/></td><td><input value="To be updated"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+            <tr><td><input value="D.Ed. / D.El.Ed."/></td><td><input value="To be updated"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+          </tbody></table>
+          <div style="padding:8px 10px"><button class="add-row-btn" onclick="addTR('p23qual',2)">＋ Add Row</button></div>
+        </div>
+      </div>
+      <div class="block"><div class="bh"><div class="bt"> Intro</div><div class="ba"><button class="btn gd" onclick="save()"> Save</button></div></div>
+        <div class="bb"><div class="f"><label>Intro Para</label><textarea rows="4">As required under CBSE Mandatory Disclosure norms, the following information about the teaching faculty of Loretto Central School is published here. The school maintains a qualified and experienced team of educators.</textarea></div></div>
+      </div>
+      <div class="block"><div class="bh"><div class="bt"> Official PDF <span class="dbc">documents · category:"disclosure-23"</span></div></div>
+        <div class="bb">
+          <p style="font-size:.76rem;color:var(--text-muted);margin-bottom:11px;">Upload the official teachers information PDF to Cloudinary. Visitors will see View and Download buttons on the public page.</p>
+          <div id="pdf-status-23" class="pdf-status-box pending-box"><span></span><span style="font-size:.74rem;font-weight:700;color:var(--orange);">No PDF uploaded yet</span></div>
+          <div class="cld">
+            <input type="url" id="pdf-23" placeholder="https://res.cloudinary.com/your-cloud/raw/upload/..." oninput="updatePdfStatus(23)"/>
+            <button class="cld-btn" onclick="document.getElementById('pdf-file-23').click()"> Upload PDF</button>
+            <input type="file" id="pdf-file-23" accept="application/pdf" style="display:none" onchange="uploadPDF(this,'pdf-23',23)"/>
+          </div>
+          <div class="fhint" style="margin-top:6px">Upload as <code>raw</code> resource type · max 10MB</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+  </div></main>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+var PAGES = [[1,'School Name Change Order','doc'],[2,'Affiliation Letter','doc'],[3,'SARAS Mandatory Document','doc'],[4,'Building Plan','doc'],[5,'Affidavit','doc'],[6,'Building Safety Certificate','doc'],[7,'Land Certificate','doc'],[8,'Fire Safety Certificate','doc'],[9,'DEO Certificate','doc'],[10,'Recognition Renewal Certificate','doc'],[11,'Mandatory Disclosure Link','doc'],[12,'No Objection Certificate','doc'],[13,'Lease Deed Certificate','doc'],[14,'Safe Drinking Water Certificate','doc'],[15,'Society Registration Certificate','doc'],[16,'Water Health & Sanitation','doc'],[17,'Academic Calendar','special'],[18,'Management Committee','special'],[19,'PTA Committee','special'],[20,'School Fee Structure','special'],[21,'SSLC / Board Results','special'],[22,'Local Mgmt Committee','special'],[23,'Teachers Information','special']];
+var PAGE_FILES = {1: '1-school-name-change-order.html', 2: '2-affiliation-letter.html', 3: '3-saras-mandatory-document.html', 4: '4-building-plan.html', 5: '5-affidavit.html', 6: '6-building-safety.html', 7: '7-land-certificate.html', 8: '8-fire-safety.html', 9: '9-deo-certificate.html', 10: '10-recognition-renewal-certificate.html', 11: '11-mandatory-disclosure-link.html', 12: '12-no-objection-certificate.html', 13: '13-lease-deed-certificate.html', 14: '14-safe-drinking-water.html', 15: '15-society-registration.html', 16: '16-water-health-sanitation.html', 17: '17-calendar.html', 18: '18-management-committee.html', 19: '19-pta-committee.html', 20: '20-school-fee-structure.html', 21: '21-sslc-results.html', 22: '22-school-local-management-committee.html', 23: '23-teachers-information.html'};
+var SETTINGS_KEY = 'disclosure-pages';
+var PDF_PAGE_NUMBERS = [1,2,3,4,5,6,7,8,9,10,12,13,14,15,16,17,18,19,20,21,22,23];
+var _pdfUrls = {};
+var _pdfDocs = {};
+var API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://loretto-cbse-school.onrender.com';
+var _saveInFlight = false;
+
+/* ── OVERVIEW TABLE ── */
+function buildOverview() {
+  var tbody = document.getElementById('ov-tbody');
+  var needsPdf = 0, hasPdf = 0;
+  tbody.innerHTML = PAGES.map(function(row) {
+    var n=row[0], title=row[1], type=row[2];
+    var typeLabel = type==='special' ? 'Data Page' : (n===11 ? 'Master' : 'Document');
+    var typeClass = type==='special' ? 'special' : (n===11 ? 'master' : '');
+    var status;
+    var supportsPdf = PDF_PAGE_NUMBERS.indexOf(n) !== -1;
+    if (!supportsPdf) {
+      status = '<span class="spill na">N/A</span>';
+    } else if (_pdfUrls[n]) {
+      hasPdf++; status = '<span class="spill live">PDF Ready</span>';
+    } else {
+      needsPdf++; status = '<span class="spill pending">Needs PDF</span>';
+    }
+    return '<tr onclick="go(\'doc-'+n+'\')"><td class="ov-num">'+n+'</td><td class="ov-name">'+title+'</td>'
+      +'<td><span class="ov-type '+typeClass+'">'+typeLabel+'</span></td>'
+      +'<td>'+status+'</td>'
+      +'<td><button class="btn tl" style="padding:4px 10px;font-size:.66rem" onclick="event.stopPropagation();go(\'doc-'+n+'\')">Edit →</button></td>'
+      +'</tr>';
+  }).join('');
+  document.getElementById('ov-pending').textContent = needsPdf;
+  document.getElementById('ov-done').textContent = hasPdf;
+}
+
+/* ── TAB SYSTEM ── */
+var ALL_IDS = ['overview'].concat(PAGES.map(function(p){return 'doc-'+p[0];}));
+
+function go(id) {
+  ALL_IDS.forEach(function(t){ var el=document.getElementById('tab-'+t); if(el) el.classList.toggle('active',t===id); });
+  document.querySelectorAll('.sl').forEach(function(l){ l.classList.remove('active'); });
+  var sbl = document.querySelector('.sl[onclick="go(\''+id+'\')"]');
+  if (sbl) sbl.classList.add('active');
+  var page = PAGES.find(function(p){ return 'doc-'+p[0]===id; });
+  if (id==='overview') {
+    document.getElementById('atTitle').childNodes[0].textContent = 'Mandatory Disclosure — Overview ';
+    document.getElementById('atSub').textContent = '23 pages · documents collection · MongoDB';
+    document.getElementById('prevBtn').onclick = function(){window.open('../mandatory-disclosure/11-mandatory-disclosure-link.html','_blank');};
+  } else if (page) {
+    var n=page[0], title=page[1], f=PAGE_FILES[n]||'';
+    document.getElementById('atTitle').childNodes[0].textContent = 'Disclosure #'+n+' — '+title+' ';
+    document.getElementById('atSub').textContent = 'documents · category: disclosure-'+n+' · '+f;
+    document.getElementById('prevBtn').onclick = function(){window.open('../mandatory-disclosure/'+f,'_blank');};
+  }
+}
+
+/* ── TOAST + SAVE ── */
+function showToast(msg,err){
+  var t=document.getElementById('toast');
+  t.textContent=(err?' ':' ')+msg;
+  t.style.borderLeftColor=err?'var(--red)':'var(--gold-light)';
+  t.classList.add('show');
+  setTimeout(function(){t.classList.remove('show');},3000);
+}
+
+function normalizeText(value) {
+  return value == null ? '' : String(value).trim();
+}
+
+function apiH(extra) {
+  if (typeof window.apiHeaders === 'function') {
+    return window.apiHeaders(Object.assign({ 'Content-Type': 'application/json' }, extra || {}));
+  }
+  return Object.assign({
+    'Content-Type': 'application/json',
+    'x-admin-token': window.ADMIN_TOKEN || ''
+  }, extra || {});
+}
+
+function pageMeta(n) {
+  return PAGES.find(function (page) { return page[0] === n; }) || null;
+}
+
+function pagePanel(n) {
+  return document.getElementById('tab-doc-' + n);
+}
+
+function rowValues(tbodyId, columns) {
+  var tb = document.getElementById(tbodyId);
+  if (!tb) return [];
+  return Array.prototype.slice.call(tb.querySelectorAll('tr')).map(function (row) {
+    var cells = Array.prototype.slice.call(row.querySelectorAll('td')).slice(0, columns);
+    return cells.map(function (cell) {
+      var field = cell.querySelector('input, textarea, select');
+      return normalizeText(field ? field.value : cell.textContent);
+    });
+  }).filter(function (values) {
+    return values.some(function (value) { return value; });
+  });
+}
+
+function populateRows(tbodyId, rows, columns) {
+  var tb = document.getElementById(tbodyId);
+  if (!tb || !Array.isArray(rows)) return;
+  tb.innerHTML = '';
+  rows.forEach(function (values) {
+    var tr = document.createElement('tr');
+    for (var i = 0; i < columns; i += 1) {
+      var td = document.createElement('td');
+      var input = document.createElement('input');
+      input.value = values && values[i] != null ? String(values[i]) : '';
+      td.appendChild(input);
+      tr.appendChild(td);
+    }
+    var actionTd = document.createElement('td');
+    var button = document.createElement('button');
+    button.className = 'ab del';
+    button.onclick = function () { tr.remove(); };
+    actionTd.appendChild(button);
+    tr.appendChild(actionTd);
+    tb.appendChild(tr);
+  });
+}
+
+function panelFieldInput(panel, index) {
+  return panel ? panel.querySelectorAll('.f input')[index] || null : null;
+}
+
+function panelFieldTextarea(panel, index) {
+  return panel ? panel.querySelectorAll('.f textarea')[index] || null : null;
+}
+
+function toggleInputs(panel) {
+  return panel ? panel.querySelectorAll('.tog-row input') : [];
+}
+
+function readChecked(input, fallback) {
+  return input ? !!input.checked : fallback !== false;
+}
+
+function writeChecked(input, value, fallback) {
+  if (input) input.checked = value !== false && (value != null || fallback !== false);
+}
+
+function setFieldValue(field, value) {
+  if (field) field.value = value == null ? '' : String(value);
+}
+
+function setPdfInputValue(pageNum, value) {
+  if (pageNum === 17) {
+    setFieldValue(document.getElementById('cal-pdf'), value);
+    updatePdfStatus(pageNum);
+    return;
+  }
+  setFieldValue(document.getElementById('pdf-' + pageNum), value);
+  updatePdfStatus(pageNum);
+}
+
+function currentPdfValue(pageNum) {
+  if (pageNum === 17) return normalizeText((document.getElementById('cal-pdf') || {}).value);
+  return normalizeText((document.getElementById('pdf-' + pageNum) || {}).value);
+}
+
+function collectDocPage(n) {
+  var panel = pagePanel(n);
+  var toggles = toggleInputs(panel);
+  return {
+    kind: n === 11 ? 'master' : 'document',
+    badge: normalizeText((panelFieldInput(panel, 0) || {}).value),
+    description: normalizeText((panelFieldTextarea(panel, 0) || {}).value),
+    details: rowValues('dtbl-' + n, 2),
+    pdfUrl: currentPdfValue(n),
+    page: {
+      live: readChecked(toggles[0], true),
+      showDownloadButton: readChecked(toggles[1], true)
+    }
+  };
+}
+
+function collectPage11() {
+  var panel = pagePanel(11);
+  var toggles = toggleInputs(panel);
+  return {
+    kind: 'master',
+    intro: normalizeText((panelFieldTextarea(panel, 0) || {}).value),
+    generalInfo: rowValues('p11a', 3),
+    documentLinks: rowValues('p11b', 3),
+    page: {
+      live: readChecked(toggles[0], true)
+    }
+  };
+}
+
+function collectPage17() {
+  var panel = pagePanel(17);
+  return {
+    kind: 'calendar',
+    intro: normalizeText((panelFieldTextarea(panel, 0) || {}).value),
+    holidaysNote: normalizeText((panelFieldTextarea(panel, 1) || {}).value),
+    events: rowValues('p17ev', 3),
+    pdfUrl: currentPdfValue(17),
+    page: {
+      live: true,
+      showDownloadButton: true
+    }
+  };
+}
+
+function collectPage18() {
+  var panel = pagePanel(18);
+  return {
+    kind: 'management-committee',
+    intro: normalizeText((panelFieldTextarea(panel, 0) || {}).value),
+    members: rowValues('p18smc', 3),
+    pdfUrl: currentPdfValue(18),
+    page: { live: true, showDownloadButton: true }
+  };
+}
+
+function collectPage19() {
+  var panel = pagePanel(19);
+  return {
+    kind: 'pta-committee',
+    intro: normalizeText((panelFieldTextarea(panel, 0) || {}).value),
+    members: rowValues('p19pta', 4),
+    pdfUrl: currentPdfValue(19),
+    page: { live: true, showDownloadButton: true }
+  };
+}
+
+function collectPage20() {
+  return {
+    kind: 'fee-structure',
+    feeRows: rowValues('p20fees', 5),
+    components: rowValues('p20comp', 2),
+    policies: rowValues('p20policy', 2),
+    pdfUrl: currentPdfValue(20),
+    page: { live: true, showDownloadButton: true }
+  };
+}
+
+function collectPage21() {
+  return {
+    kind: 'board-results',
+    results: rowValues('p21res', 6),
+    subjectResults: rowValues('p21subj', 3),
+    pdfUrl: currentPdfValue(21),
+    page: { live: true, showDownloadButton: true }
+  };
+}
+
+function collectPage22() {
+  var panel = pagePanel(22);
+  return {
+    kind: 'local-management-committee',
+    intro: normalizeText((panelFieldTextarea(panel, 0) || {}).value),
+    members: rowValues('p22lmc', 3),
+    pdfUrl: currentPdfValue(22),
+    page: { live: true, showDownloadButton: true }
+  };
+}
+
+function collectPage23() {
+  var panel = pagePanel(23);
+  return {
+    kind: 'teachers-information',
+    intro: normalizeText((panelFieldTextarea(panel, 0) || {}).value),
+    summary: rowValues('p23sum', 2),
+    subjects: rowValues('p23subj', 3),
+    qualifications: rowValues('p23qual', 2),
+    pdfUrl: currentPdfValue(23),
+    page: { live: true, showDownloadButton: true }
+  };
+}
+
+function collectPageData(n) {
+  if (n === 11) return collectPage11();
+  if (n >= 1 && n <= 16) return collectDocPage(n);
+  if (n === 17) return collectPage17();
+  if (n === 18) return collectPage18();
+  if (n === 19) return collectPage19();
+  if (n === 20) return collectPage20();
+  if (n === 21) return collectPage21();
+  if (n === 22) return collectPage22();
+  if (n === 23) return collectPage23();
+  return {};
+}
+
+function collectSettingsData() {
+  var pages = {};
+  PAGES.forEach(function (page) {
+    pages[String(page[0])] = collectPageData(page[0]);
+  });
+  return {
+    pages: pages,
+    updatedAt: new Date().toISOString()
+  };
+}
+
+function populateDocPage(n, data) {
+  var panel = pagePanel(n);
+  if (!panel || !data) return;
+  var toggles = toggleInputs(panel);
+  setFieldValue(panelFieldInput(panel, 0), data.badge);
+  setFieldValue(panelFieldTextarea(panel, 0), data.description);
+  populateRows('dtbl-' + n, Array.isArray(data.details) ? data.details : [], 2);
+  if (Object.prototype.hasOwnProperty.call(data, 'pdfUrl')) setPdfInputValue(n, data.pdfUrl);
+  if (data.page) {
+    writeChecked(toggles[0], data.page.live, true);
+    writeChecked(toggles[1], data.page.showDownloadButton, true);
+  }
+}
+
+function populatePage11(data) {
+  var panel = pagePanel(11);
+  if (!panel || !data) return;
+  var toggles = toggleInputs(panel);
+  setFieldValue(panelFieldTextarea(panel, 0), data.intro);
+  populateRows('p11a', Array.isArray(data.generalInfo) ? data.generalInfo : [], 3);
+  populateRows('p11b', Array.isArray(data.documentLinks) ? data.documentLinks : [], 3);
+  if (data.page) writeChecked(toggles[0], data.page.live, true);
+}
+
+function populatePage17(data) {
+  var panel = pagePanel(17);
+  if (!panel || !data) return;
+  setFieldValue(panelFieldTextarea(panel, 0), data.intro);
+  setFieldValue(panelFieldTextarea(panel, 1), data.holidaysNote);
+  populateRows('p17ev', Array.isArray(data.events) ? data.events : [], 3);
+  if (Object.prototype.hasOwnProperty.call(data, 'pdfUrl')) setPdfInputValue(17, data.pdfUrl);
+}
+
+function populatePage18(data) {
+  var panel = pagePanel(18);
+  if (!panel || !data) return;
+  setFieldValue(panelFieldTextarea(panel, 0), data.intro);
+  populateRows('p18smc', Array.isArray(data.members) ? data.members : [], 3);
+  if (Object.prototype.hasOwnProperty.call(data, 'pdfUrl')) setPdfInputValue(18, data.pdfUrl);
+}
+
+function populatePage19(data) {
+  var panel = pagePanel(19);
+  if (!panel || !data) return;
+  setFieldValue(panelFieldTextarea(panel, 0), data.intro);
+  populateRows('p19pta', Array.isArray(data.members) ? data.members : [], 4);
+  if (Object.prototype.hasOwnProperty.call(data, 'pdfUrl')) setPdfInputValue(19, data.pdfUrl);
+}
+
+function populatePage20(data) {
+  if (!data) return;
+  populateRows('p20fees', Array.isArray(data.feeRows) ? data.feeRows : [], 5);
+  populateRows('p20comp', Array.isArray(data.components) ? data.components : [], 2);
+  populateRows('p20policy', Array.isArray(data.policies) ? data.policies : [], 2);
+  if (Object.prototype.hasOwnProperty.call(data, 'pdfUrl')) setPdfInputValue(20, data.pdfUrl);
+}
+
+function populatePage21(data) {
+  if (!data) return;
+  populateRows('p21res', Array.isArray(data.results) ? data.results : [], 6);
+  populateRows('p21subj', Array.isArray(data.subjectResults) ? data.subjectResults : [], 3);
+  if (Object.prototype.hasOwnProperty.call(data, 'pdfUrl')) setPdfInputValue(21, data.pdfUrl);
+}
+
+function populatePage22(data) {
+  var panel = pagePanel(22);
+  if (!panel || !data) return;
+  setFieldValue(panelFieldTextarea(panel, 0), data.intro);
+  populateRows('p22lmc', Array.isArray(data.members) ? data.members : [], 3);
+  if (Object.prototype.hasOwnProperty.call(data, 'pdfUrl')) setPdfInputValue(22, data.pdfUrl);
+}
+
+function populatePage23(data) {
+  var panel = pagePanel(23);
+  if (!panel || !data) return;
+  setFieldValue(panelFieldTextarea(panel, 0), data.intro);
+  populateRows('p23sum', Array.isArray(data.summary) ? data.summary : [], 2);
+  populateRows('p23subj', Array.isArray(data.subjects) ? data.subjects : [], 3);
+  populateRows('p23qual', Array.isArray(data.qualifications) ? data.qualifications : [], 2);
+  if (Object.prototype.hasOwnProperty.call(data, 'pdfUrl')) setPdfInputValue(23, data.pdfUrl);
+}
+
+function populatePageData(n, data) {
+  if (!data || typeof data !== 'object') return;
+  if (n === 11) return populatePage11(data);
+  if (n >= 1 && n <= 16) return populateDocPage(n, data);
+  if (n === 17) return populatePage17(data);
+  if (n === 18) return populatePage18(data);
+  if (n === 19) return populatePage19(data);
+  if (n === 20) return populatePage20(data);
+  if (n === 21) return populatePage21(data);
+  if (n === 22) return populatePage22(data);
+  if (n === 23) return populatePage23(data);
+}
+
+function populateDisclosureSettings(payload) {
+  var data = payload && payload.data && typeof payload.data === 'object' ? payload.data : (payload || {});
+  var pages = data && data.pages && typeof data.pages === 'object' ? data.pages : {};
+  Object.keys(pages).forEach(function (key) {
+    var pageNum = parseInt(key, 10);
+    if (pageNum) populatePageData(pageNum, pages[key]);
+  });
+  buildOverview();
+}
+
+async function loadDisclosureSettings() {
+  try {
+    var res = await fetch('/api/settings/' + SETTINGS_KEY);
+    if (!res.ok) return;
+    var item = await res.json().catch(function () { return {}; });
+    populateDisclosureSettings(item);
+  } catch (e) {
+    /* silent */
+  }
+}
+
+async function syncDisclosurePdf(pageNum, pageData) {
+  var pdfUrl = normalizeText(pageData && pageData.pdfUrl);
+  if (!pdfUrl) return null;
+
+  var meta = pageMeta(pageNum);
+  var existing = _pdfDocs[pageNum] || null;
+  var body = {
+    title: meta ? meta[1] : ('Disclosure ' + pageNum),
+    name: meta ? meta[1] : ('Disclosure ' + pageNum),
+    category: 'disclosure-' + pageNum,
+    date: new Date().toISOString().split('T')[0],
+    url: pdfUrl,
+    description: normalizeText(pageData.description || pageData.intro || ''),
+    visible: true,
+    order: pageNum,
+    meta: {
+      pageNumber: pageNum,
+      file: PAGE_FILES[pageNum] || '',
+      kind: pageData.kind || ''
+    }
+  };
+
+  var endpoint = existing ? (API_BASE + '/api/documents/' + existing._id) : (API_BASE + '/api/documents');
+  var method = existing ? 'PUT' : 'POST';
+  var res = await fetch(endpoint, {
+    method: method,
+    headers: apiH(),
+    body: JSON.stringify(body)
+  });
+  var item = await res.json().catch(function () { return {}; });
+  if (!res.ok) throw new Error(item.error || ('Failed to save PDF for disclosure ' + pageNum));
+  _pdfDocs[pageNum] = item;
+  _pdfUrls[pageNum] = pdfUrl;
+  return item;
+}
+
+async function persistDisclosureSettings(successMessage) {
+  if (_saveInFlight) return;
+  _saveInFlight = true;
+  try {
+    var payload = collectSettingsData();
+    var res = await fetch('/api/settings/' + SETTINGS_KEY, {
+      method: 'PUT',
+      headers: apiH(),
+      body: JSON.stringify(payload)
+    });
+    var data = await res.json().catch(function () { return {}; });
+    if (!res.ok) throw new Error(data.error || ('HTTP ' + res.status));
+
+    for (var i = 0; i < PDF_PAGE_NUMBERS.length; i += 1) {
+      var pageNum = PDF_PAGE_NUMBERS[i];
+      await syncDisclosurePdf(pageNum, payload.pages[String(pageNum)] || {});
+    }
+
+    buildOverview();
+    showToast(successMessage || 'Disclosure settings saved!');
+  } catch (e) {
+    showToast(e.message || 'Could not save disclosure settings', true);
+  } finally {
+    _saveInFlight = false;
+  }
+}
+
+function save(){ return persistDisclosureSettings('Disclosure settings saved!'); }
+function publish(){ return persistDisclosureSettings('Disclosure changes published!'); }
+
+/* ── TABLE ROW HELPER ── */
+function addTR(tbodyId, cols) {
+  var tb=document.getElementById(tbodyId); if(!tb) return;
+  var tr=document.createElement('tr'); var c='';
+  for(var i=0;i<cols;i++) c+='<td><input placeholder="Enter value..."/></td>';
+  c+='<td><button class="ab del" onclick="this.closest(\'tr\').remove()"></button></td>';
+  tr.innerHTML=c; tb.appendChild(tr); tr.querySelector('input').focus();
+}
+
+/* ── PDF STATUS ── */
+function updatePdfStatus(n) {
+  var url = currentPdfValue(n);
+  var el = document.getElementById('pdf-status-'+n); if (!el) return;
+  if (url) {
+    _pdfUrls[n]=url;
+    el.style.background='rgba(39,174,96,.06)'; el.style.borderColor='rgba(39,174,96,.2)';
+    el.innerHTML='<span></span><span style="font-size:.74rem;font-weight:700;color:var(--green)">PDF URL set</span>'
+      +'<a href="'+url+'" target="_blank" style="font-size:.67rem;margin-left:auto;color:var(--navy);font-weight:700;text-decoration:none">Preview →</a>';
+  } else {
+    _pdfUrls[n]=null;
+    el.style.background='rgba(230,126,34,.06)'; el.style.borderColor='rgba(230,126,34,.2)';
+    el.innerHTML='<span></span><span style="font-size:.74rem;font-weight:700;color:var(--orange)">No PDF uploaded yet</span>';
+  }
+  buildOverview();
+}
+
+/* ── CLOUDINARY UPLOAD ── */
+async function uploadPDF(input, urlInputId, pageNum) {
+  if (!input.files[0]) return;
+  showToast('Uploading PDF to Cloudinary...');
+  var fd=new FormData(); fd.append('file',input.files[0]);
+  try {
+    var res=await fetch(API_BASE+'/api/upload',{method:'POST',headers:{'x-admin-token':ADMIN_TOKEN},body:fd});
+    var data=await res.json();
+    if (!res.ok||!data.url) throw new Error(data.error||'Upload failed');
+    var el=document.getElementById(urlInputId); if(el) el.value=data.url;
+    if (pageNum) updatePdfStatus(pageNum);
+    showToast('PDF uploaded!');
+  } catch(e){showToast(e.message,true);}
+}
+
+/* ── LOAD EXISTING PDFs ── */
+async function loadExistingPDFs() {
+  try {
+    var res=await fetch(API_BASE+'/api/documents');
+    if(!res.ok) return;
+    var docs=await res.json();
+    (Array.isArray(docs)?docs:[]).forEach(function(d){
+      if (d.category&&d.category.startsWith('disclosure-')) {
+        var n=parseInt(d.category.replace('disclosure-',''));
+        if (n&&d.url) {
+          _pdfDocs[n]=d;
+          _pdfUrls[n]=d.url;
+          setPdfInputValue(n, d.url);
+        }
+      }
+    });
+    buildOverview();
+  } catch(e){/* silent */}
+}
+
+/* ── PDF STATUS BOX STYLES ── */
+document.addEventListener('DOMContentLoaded',function(){
+  document.querySelectorAll('.pdf-status-box').forEach(function(el){
+    el.style.cssText='display:flex;align-items:center;gap:8px;border-radius:8px;padding:9px 12px;margin-bottom:12px;';
+    if (el.classList.contains('pending-box')) {
+      el.style.background='rgba(230,126,34,.06)'; el.style.border='1px solid rgba(230,126,34,.2)';
+    }
+  });
+});
+
+// Admin token prompt removed
+document.addEventListener('keydown',function(e){if(e.key==='Escape')go('overview');if((e.ctrlKey||e.metaKey)&&e.key==='s'){e.preventDefault();save();}});;
+window.addEventListener('DOMContentLoaded',async function(){ buildOverview(); await loadExistingPDFs(); await loadDisclosureSettings(); go('overview'); });
+</script>
+</body>
+</html>

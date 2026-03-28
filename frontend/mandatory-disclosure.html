@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mandatory Disclosure | Loretto Central School</title>
+  <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800&family=Nunito:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet" />
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --navy: #0e6b6b;
+      --navy-dark: #094f4f;
+      --gold: #c8960c;
+      --gold-light: #e8b020;
+      --gold-pale: #f5e6c0;
+      --white: #ffffff;
+      --light-bg: #f9f6ef;
+      --text: #1a2e2e;
+      --text-muted: #5a6e6e;
+      --border: #e2d5b0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      color: var(--text);
+      background: var(--white);
+      overflow-x: hidden;
+    }
+
+    .container {
+      max-width: 1160px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* ── PAGE HERO ── */
+    .page-hero {
+      background: linear-gradient(135deg, var(--navy-dark) 0%, var(--navy) 60%, #0a4f4f 100%);
+      padding: 70px 0;
+      text-align: center;
+      color: var(--white);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .page-hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 20% 80%, rgba(200, 150, 12, 0.12) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(200, 150, 12, 0.08) 0%, transparent 50%);
+      pointer-events: none;
+    }
+
+    .page-hero-content {
+      position: relative;
+      z-index: 2;
+    }
+
+    .page-hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.2rem, 6vw, 3.5rem);
+      font-weight: 800;
+      margin-bottom: 16px;
+      line-height: 1.15;
+      letter-spacing: -0.01em;
+    }
+
+    .page-hero-sub {
+      font-size: 1.05rem;
+      color: rgba(255, 255, 255, 0.85);
+      margin-bottom: 0;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+    }
+
+    /* ── MAIN CONTENT ── */
+    .page-content {
+      padding: 70px 0;
+    }
+
+    /* ── SCHOOL INFO SECTION ── */
+    .school-info {
+      background: var(--light-bg);
+      padding: 50px 0;
+      margin-bottom: 70px;
+      border-top: 2px solid var(--border);
+      border-bottom: 2px solid var(--border);
+    }
+
+    .school-info-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem;
+      color: var(--navy);
+      margin-bottom: 32px;
+      text-align: center;
+      font-weight: 800;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 20px;
+    }
+
+    .info-card {
+      background: var(--white);
+      padding: 24px;
+      border-radius: 12px;
+      border-left: 5px solid var(--gold);
+      box-shadow: 0 2px 12px rgba(14, 107, 107, 0.08);
+      transition: all 0.3s ease;
+    }
+
+    .info-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(14, 107, 107, 0.12);
+      border-left-color: var(--gold-light);
+    }
+
+    .info-label {
+      font-size: 0.75rem;
+      color: var(--gold);
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .info-value {
+      font-size: 1.15rem;
+      color: var(--navy);
+      font-weight: 700;
+      line-height: 1.4;
+    }
+
+    /* ── DOCUMENTS SECTION ── */
+    .section-title {
+      margin-bottom: 50px;
+      text-align: center;
+    }
+
+    .section-title h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.2rem;
+      color: var(--navy);
+      font-weight: 800;
+      margin-bottom: 16px;
+      letter-spacing: -0.01em;
+    }
+
+    .section-title p {
+      font-size: 1rem;
+      color: var(--text-muted);
+      max-width: 650px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    /* ── DOCUMENT GRID ── */
+    .document-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 24px;
+    }
+
+    .doc-card {
+      background: var(--white);
+      border: 1.5px solid var(--border);
+      border-radius: 14px;
+      padding: 28px 24px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      color: inherit;
+      min-height: 240px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .doc-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--gold), var(--gold-light));
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.3s ease;
+    }
+
+    .doc-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 16px 40px rgba(14, 107, 107, 0.18);
+      border-color: var(--gold);
+    }
+
+    .doc-card:hover::before {
+      transform: scaleX(1);
+    }
+
+    .doc-icon-box {
+      width: 70px;
+      height: 70px;
+      background: linear-gradient(135deg, var(--light-bg) 0%, #f0e8d8 100%);
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      margin-bottom: 18px;
+      transition: all 0.3s ease;
+      border: 2px solid rgba(200, 150, 12, 0.1);
+    }
+
+    .doc-card:hover .doc-icon-box {
+      background: linear-gradient(135deg, var(--gold-pale) 0%, #fef3e0 100%);
+      transform: scale(1.15) rotate(5deg);
+      border-color: rgba(200, 150, 12, 0.3);
+      box-shadow: 0 8px 20px rgba(200, 150, 12, 0.15);
+    }
+
+    .doc-title {
+      font-size: 1.05rem;
+      color: var(--navy);
+      font-weight: 750;
+      margin-bottom: 10px;
+      line-height: 1.35;
+    }
+
+    .doc-desc {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      line-height: 1.55;
+    }
+    .doc-card.has-live-pdf {
+      border-color: rgba(14, 107, 107, 0.28);
+      box-shadow: 0 12px 28px rgba(14, 107, 107, 0.12);
+    }
+    .doc-meta {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 12px;
+      padding: 5px 10px;
+      border-radius: 999px;
+      background: rgba(14, 107, 107, 0.1);
+      color: var(--navy);
+      font-size: 0.7rem;
+      font-weight: 800;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+    }
+
+    /* ── CATEGORY STYLING ── */
+    .doc-card.official .doc-icon-box {
+      background: linear-gradient(135deg, rgba(200, 150, 12, 0.08) 0%, rgba(232, 176, 32, 0.05) 100%);
+      border-color: rgba(200, 150, 12, 0.15);
+    }
+
+    .doc-card.infrastructure .doc-icon-box {
+      background: linear-gradient(135deg, rgba(14, 107, 107, 0.08) 0%, rgba(26, 138, 138, 0.05) 100%);
+      border-color: rgba(14, 107, 107, 0.15);
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 1024px) {
+      .page-content {
+        padding: 50px 0;
+      }
+
+      .section-title {
+        margin-bottom: 40px;
+      }
+
+      .section-title h2 {
+        font-size: 1.9rem;
+      }
+
+      .document-grid {
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 20px;
+      }
+
+      .doc-card {
+        min-height: 230px;
+        padding: 24px 20px;
+      }
+
+      .doc-icon-box {
+        width: 64px;
+        height: 64px;
+        font-size: 1.8rem;
+        margin-bottom: 14px;
+      }
+
+      .doc-title {
+        font-size: 1rem;
+      }
+
+      .doc-desc {
+        font-size: 0.85rem;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 0 20px;
+      }
+
+      .page-hero {
+        padding: 50px 0;
+      }
+
+      .page-hero h1 {
+        font-size: 2rem;
+        margin-bottom: 12px;
+      }
+
+      .page-hero-sub {
+        font-size: 1rem;
+      }
+
+      .page-content {
+        padding: 40px 0;
+      }
+
+      .school-info {
+        padding: 35px 0;
+        margin-bottom: 50px;
+      }
+
+      .school-info-title {
+        font-size: 1.5rem;
+        margin-bottom: 24px;
+      }
+
+      .info-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+      }
+
+      .info-card {
+        padding: 18px;
+        border-left-width: 4px;
+      }
+
+      .info-label {
+        font-size: 0.7rem;
+        margin-bottom: 6px;
+      }
+
+      .info-value {
+        font-size: 1rem;
+      }
+
+      .section-title {
+        margin-bottom: 32px;
+      }
+
+      .section-title h2 {
+        font-size: 1.6rem;
+        margin-bottom: 12px;
+      }
+
+      .section-title p {
+        font-size: 0.95rem;
+      }
+
+      .document-grid {
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        gap: 16px;
+      }
+
+      .doc-card {
+        min-height: 220px;
+        padding: 20px 16px;
+      }
+
+      .doc-icon-box {
+        width: 58px;
+        height: 58px;
+        font-size: 1.6rem;
+        margin-bottom: 12px;
+      }
+
+      .doc-title {
+        font-size: 0.95rem;
+        margin-bottom: 8px;
+      }
+
+      .doc-desc {
+        font-size: 0.8rem;
+        line-height: 1.5;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        padding: 0 16px;
+      }
+
+      .page-hero {
+        padding: 35px 0;
+      }
+
+      .page-hero h1 {
+        font-size: 1.7rem;
+        margin-bottom: 10px;
+      }
+
+      .page-hero-sub {
+        font-size: 0.95rem;
+      }
+
+      .page-content {
+        padding: 30px 0;
+      }
+
+      .school-info {
+        padding: 25px 0;
+        margin-bottom: 35px;
+      }
+
+      .school-info-title {
+        font-size: 1.3rem;
+        margin-bottom: 18px;
+      }
+
+      .info-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+
+      .info-card {
+        padding: 16px;
+      }
+
+      .section-title {
+        margin-bottom: 25px;
+      }
+
+      .section-title h2 {
+        font-size: 1.4rem;
+        margin-bottom: 10px;
+      }
+
+      .section-title p {
+        font-size: 0.9rem;
+      }
+
+      .document-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+
+      .doc-card {
+        min-height: auto;
+        padding: 18px;
+      }
+
+      .doc-icon-box {
+        width: 52px;
+        height: 52px;
+        font-size: 1.4rem;
+        margin-bottom: 10px;
+      }
+
+      .doc-title {
+        font-size: 0.9rem;
+        margin-bottom: 6px;
+      }
+
+      .doc-desc {
+        font-size: 0.8rem;
+      }
+    }
+
+    @media (max-width: 400px) {
+      .page-hero h1 {
+        font-size: 1.5rem;
+      }
+
+      .section-title h2 {
+        font-size: 1.2rem;
+      }
+
+      .doc-icon-box {
+        width: 48px;
+        height: 48px;
+        font-size: 1.2rem;
+      }
+
+      .doc-title {
+        font-size: 0.85rem;
+      }
+
+      .doc-desc {
+        font-size: 0.75rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- TOP BAR -->
+
+  <!-- PAGE HERO -->
+  <section class="page-hero">
+    <div class="container">
+      <div class="page-hero-content">
+        <h1>Mandatory Disclosure</h1>
+        <p class="page-hero-sub">Official documents, certificates, and compliance information</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- MAIN CONTENT -->
+  <section class="page-content">
+    <div class="container">
+
+      <!-- School Info -->
+      <section class="school-info">
+        <div class="container">
+          <h2 class="school-info-title">School Information</h2>
+          <div class="info-grid">
+            <div class="info-card">
+              <div class="info-label">School Name</div>
+              <div class="info-value">Loretto Central School</div>
+            </div>
+            <div class="info-card">
+              <div class="info-label">CBSE Affiliation No.</div>
+              <div class="info-value">831368</div>
+            </div>
+            <div class="info-card">
+              <div class="info-label">Location</div>
+              <div class="info-value">Loretto, Bantwal<br>Dakshina Kannada</div>
+            </div>
+            <div class="info-card">
+              <div class="info-label">Affiliation Level</div>
+              <div class="info-value">LKG to Class X</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Documents Section -->
+      <div class="section-title">
+        <h2>Required Documents & Certificates</h2>
+        <p>Access all mandatory disclosure documents and official certificates required by CBSE</p>
+      </div>
+
+      <div class="document-grid">
+
+        <!-- Official Documents -->
+        <a href="mandatory-disclosure/1-school-name-change-order.html" class="doc-card official">
+          <div class="doc-icon-box"><i class="fas fa-clipboard-list"></i></div>
+          <div class="doc-title">School Name Change Order</div>
+          <div class="doc-desc">Official name change documentation</div>
+        </a>
+
+        <a href="mandatory-disclosure/2-affiliation-letter.html" class="doc-card official">
+          <div class="doc-icon-box"><i class="fas fa-school"></i></div>
+          <div class="doc-title">CBSE Affiliation Letter</div>
+          <div class="doc-desc">Affiliation certificate no. 831368</div>
+        </a>
+
+        <a href="mandatory-disclosure/3-saras-mandatory-document.html" class="doc-card official">
+          <div class="doc-icon-box"><i class="fas fa-check-circle"></i></div>
+          <div class="doc-title">SARAS Mandatory Document</div>
+          <div class="doc-desc">Compliance and disclosure details</div>
+        </a>
+
+        <!-- Infrastructure & Safety -->
+        <a href="mandatory-disclosure/4-building-plan.html" class="doc-card infrastructure">
+          <div class="doc-icon-box"><i class="fas fa-building"></i></div>
+          <div class="doc-title">Building Plan</div>
+          <div class="doc-desc">Approved infrastructure layout</div>
+        </a>
+
+        <a href="mandatory-disclosure/5-affidavit.html" class="doc-card official">
+          <div class="doc-icon-box"><i class="fas fa-file-alt"></i></div>
+          <div class="doc-title">Affidavit</div>
+          <div class="doc-desc">School management affidavit</div>
+        </a>
+
+        <a href="mandatory-disclosure/6-building-safety.html" class="doc-card infrastructure">
+          <div class="doc-icon-box"><i class="fas fa-shield-alt"></i></div>
+          <div class="doc-title">Building Safety Certificate</div>
+          <div class="doc-desc">Structural safety compliance</div>
+        </a>
+
+        <!-- Land & Property -->
+        <a href="mandatory-disclosure/7-land-certificate.html" class="doc-card infrastructure">
+          <div class="doc-icon-box"><i class="fas fa-home"></i></div>
+          <div class="doc-title">Land Certificate</div>
+          <div class="doc-desc">Land ownership documentation</div>
+        </a>
+
+        <a href="mandatory-disclosure/13-lease-deed-certificate.html" class="doc-card infrastructure">
+          <div class="doc-icon-box"><i class="fas fa-scroll"></i></div>
+          <div class="doc-title">Lease Deed Certificate</div>
+          <div class="doc-desc">Land lease deed documentation</div>
+        </a>
+
+        <!-- Safety & Health -->
+        <a href="mandatory-disclosure/8-fire-safety.html" class="doc-card infrastructure">
+          <div class="doc-icon-box"><i class="fas fa-fire-extinguisher"></i></div>
+          <div class="doc-title">Fire Safety Certificate</div>
+          <div class="doc-desc">Fire safety compliance certificate</div>
+        </a>
+
+        <a href="mandatory-disclosure/14-safe-drinking-water.html" class="doc-card infrastructure">
+          <div class="doc-icon-box"><i class="fas fa-tint"></i></div>
+          <div class="doc-title">Safe Drinking Water</div>
+          <div class="doc-desc">Water quality & safety report</div>
+        </a>
+
+        <a href="mandatory-disclosure/16-water-health-sanitation.html" class="doc-card infrastructure">
+          <div class="doc-icon-box"><i class="fas fa-hand-holding-water"></i></div>
+          <div class="doc-title">Water, Health & Sanitation</div>
+          <div class="doc-desc">Health & sanitation compliance</div>
+        </a>
+
+        <!-- Government Approvals -->
+        <a href="mandatory-disclosure/9-deo-certificate.html" class="doc-card official">
+          <div class="doc-icon-box"><i class="fas fa-star"></i></div>
+          <div class="doc-title">DEO Certificate</div>
+          <div class="doc-desc">District Education Officer</div>
+        </a>
+
+        <a href="mandatory-disclosure/10-recognition-renewal-certificate.html" class="doc-card official">
+          <div class="doc-icon-box"><i class="fas fa-medal"></i></div>
+          <div class="doc-title">Recognition Renewal</div>
+          <div class="doc-desc">School recognition renewal</div>
+        </a>
+
+        <a href="mandatory-disclosure/12-no-objection-certificate.html" class="doc-card official">
+          <div class="doc-icon-box"><i class="fas fa-check"></i></div>
+          <div class="doc-title">No Objection Certificate</div>
+          <div class="doc-desc">Government NOC for school</div>
+        </a>
+
+        <a href="mandatory-disclosure/11-mandatory-disclosure-link.html" class="doc-card official">
+          <div class="doc-icon-box"><i class="fas fa-link"></i></div>
+          <div class="doc-title">CBSE Disclosure Portal</div>
+          <div class="doc-desc">Official CBSE portal link</div>
+        </a>
+
+        <!-- Administration -->
+        <a href="mandatory-disclosure/15-society-registration.html" class="doc-card official">
+          <div class="doc-icon-box"><i class="fas fa-book"></i></div>
+          <div class="doc-title">Society Registration</div>
+          <div class="doc-desc">Organization registration</div>
+        </a>
+
+        <a href="mandatory-disclosure/17-calendar.html" class="doc-card official" data-disclosure-page="17">
+          <div class="doc-icon-box"><i class="fas fa-calendar-alt"></i></div>
+          <div class="doc-title">Academic Calendar</div>
+          <div class="doc-desc">2025-26 academic calendar</div>
+        </a>
+
+        <a href="mandatory-disclosure/18-management-committee.html" class="doc-card official" data-disclosure-page="18">
+          <div class="doc-icon-box"><i class="fas fa-users-cog"></i></div>
+          <div class="doc-title">Management Committee</div>
+          <div class="doc-desc">Governing body members</div>
+        </a>
+
+        <a href="mandatory-disclosure/19-pta-committee.html" class="doc-card official" data-disclosure-page="19">
+          <div class="doc-icon-box"><i class="fas fa-users"></i></div>
+          <div class="doc-title">PTA Committee</div>
+          <div class="doc-desc">Parent-Teacher Association</div>
+        </a>
+
+        <a href="mandatory-disclosure/22-school-local-management-committee.html" class="doc-card official" data-disclosure-page="22">
+          <div class="doc-icon-box"><i class="fas fa-handshake"></i></div>
+          <div class="doc-title">Local Management Committee</div>
+          <div class="doc-desc">School local management</div>
+        </a>
+
+        <!-- Academic & Financial -->
+        <a href="mandatory-disclosure/20-school-fee-structure.html" class="doc-card official" data-disclosure-page="20">
+          <div class="doc-icon-box"><i class="fas fa-coins"></i></div>
+          <div class="doc-title">Fee Structure</div>
+          <div class="doc-desc">Complete fee details & payment</div>
+        </a>
+
+        <a href="mandatory-disclosure/21-sslc-results.html" class="doc-card official" data-disclosure-page="21">
+          <div class="doc-icon-box"><i class="fas fa-chart-line"></i></div>
+          <div class="doc-title">Board Results (3 Years)</div>
+          <div class="doc-desc">SSLC exam results summary</div>
+        </a>
+
+        <a href="mandatory-disclosure/23-teachers-information.html" class="doc-card official" data-disclosure-page="23">
+          <div class="doc-icon-box"><i class="fas fa-chalkboard-teacher"></i></div>
+          <div class="doc-title">Teachers Information</div>
+          <div class="doc-desc">Faculty qualifications & details</div>
+        </a>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+
+  <script src="/shared-data-loader.js"></script>
+  <script>
+    (function () {
+      'use strict';
+
+      function findDisclosurePdf(docs, pageNum) {
+        return (Array.isArray(docs) ? docs : []).find(function (item) {
+          return item
+            && item.category === 'disclosure-' + pageNum
+            && item.url
+            && item.visible !== false;
+        }) || null;
+      }
+
+      async function initDisclosureCards() {
+        var cards = Array.prototype.slice.call(document.querySelectorAll('.doc-card[data-disclosure-page]'));
+        if (!cards.length || typeof window.loadDocumentsData !== 'function') return;
+
+        var docs = await window.loadDocumentsData();
+        if (!Array.isArray(docs)) return;
+
+        cards.forEach(function (card) {
+          var pageNum = parseInt(card.getAttribute('data-disclosure-page'), 10);
+          if (!pageNum) return;
+
+          var doc = findDisclosurePdf(docs, pageNum);
+          if (!doc) return;
+
+          card.classList.add('has-live-pdf');
+          card.setAttribute('title', 'Official PDF available on this disclosure page');
+
+          var meta = card.querySelector('.doc-meta');
+          if (!meta) {
+            meta = document.createElement('div');
+            meta.className = 'doc-meta';
+            meta.textContent = 'Official PDF Available';
+            var desc = card.querySelector('.doc-desc');
+            if (desc && desc.parentNode) {
+              desc.parentNode.insertBefore(meta, desc.nextSibling);
+            } else {
+              card.appendChild(meta);
+            }
+          }
+        });
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initDisclosureCards);
+      } else {
+        initDisclosureCards();
+      }
+    }());
+  </script>
+  <script src="components/Navbar.js"></script>
+  <script src="components/Footer.js"></script>
+
+</body>
+
+</html>

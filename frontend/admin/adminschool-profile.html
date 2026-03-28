@@ -1,0 +1,2009 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About Us — Admin | Loretto Central School</title>
+  <script src="/admin/admin-auth.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800&family=Nunito:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy:       #0e6b6b;
+      --navy-dark:  #094f4f;
+      --navy-deep:  #062f2f;
+      --gold:       #c8960c;
+      --gold-light: #e8b020;
+      --gold-pale:  #f5e6c0;
+      --white:      #ffffff;
+      --bg:         #f4f1eb;
+      --bg2:        #edeae2;
+      --text:       #1a2e2e;
+      --text-muted: #5a6e6e;
+      --border:     #ddd6c0;
+      --sidebar-w:  258px;
+      --radius:     13px;
+      --shadow:     0 4px 24px rgba(9,79,79,.10);
+      --shadow-lg:  0 12px 48px rgba(9,79,79,.16);
+      --green:      #27ae60;
+      --red:        #e74c3c;
+    }
+
+    html { scroll-behavior: smooth; }
+    body { font-family:'Nunito',sans-serif; color:var(--text); background:var(--bg); min-height:100vh; overflow-x:hidden; }
+
+    /* ══ LAYOUT ══ */
+    .admin-shell { display:flex; min-height:100vh; }
+
+    /* ══ SIDEBAR ══ */
+    .sidebar {
+      width:var(--sidebar-w); background:var(--navy-deep);
+      display:flex; flex-direction:column; flex-shrink:0;
+      position:sticky; top:0; height:100vh;
+      overflow-y:auto; overflow-x:hidden;
+      scrollbar-width:thin; scrollbar-color:rgba(200,150,12,.3) transparent;
+      z-index:100;
+    }
+    .sidebar::-webkit-scrollbar { width:4px; }
+    .sidebar::-webkit-scrollbar-thumb { background:rgba(200,150,12,.3); border-radius:4px; }
+
+    .sb-brand { padding:20px 18px 15px; border-bottom:1px solid rgba(255,255,255,.07); display:flex; align-items:center; gap:10px; }
+    .sb-brand-icon { width:35px; height:35px; border-radius:9px; flex-shrink:0; background:linear-gradient(135deg,var(--gold),var(--gold-light)); display:flex; align-items:center; justify-content:center; font-size:.95rem; box-shadow:0 3px 10px rgba(200,150,12,.4); }
+    .sb-brand .sbn { font-family:'Playfair Display',serif; font-size:.86rem; font-weight:700; color:#fff; line-height:1.2; }
+    .sb-brand .sbs { font-size:.58rem; color:var(--gold-light); font-weight:700; letter-spacing:.1em; text-transform:uppercase; margin-top:1px; }
+
+    .sb-section { font-size:.58rem; font-weight:800; letter-spacing:.14em; text-transform:uppercase; color:rgba(255,255,255,.28); padding:15px 18px 4px; }
+    .sb-nav { padding:4px 10px; flex:1; }
+    .sb-link {
+      display:flex; align-items:center; gap:9px;
+      padding:9px 11px; border-radius:9px; font-size:.81rem; font-weight:600;
+      color:rgba(255,255,255,.58); text-decoration:none; cursor:pointer;
+      transition:all .2s; margin-bottom:2px; position:relative;
+    }
+    .sb-link:hover { background:rgba(255,255,255,.06); color:rgba(255,255,255,.9); }
+    .sb-link.active { background:linear-gradient(135deg,rgba(200,150,12,.22),rgba(200,150,12,.12)); color:var(--gold-light); border:1px solid rgba(200,150,12,.3); }
+    .sb-link.active::before { content:''; position:absolute; left:0; top:20%; bottom:20%; width:3px; background:var(--gold-light); border-radius:0 3px 3px 0; }
+    .sb-link .ic { font-size:.9rem; width:20px; text-align:center; flex-shrink:0; }
+    .sb-link .badge { margin-left:auto; font-size:.58rem; font-weight:800; background:var(--gold); color:var(--navy-deep); padding:1px 6px; border-radius:8px; }
+    .sb-link .badge.active-badge { background:var(--green); color:#fff; }
+
+    .sb-footer { padding:12px 10px 16px; border-top:1px solid rgba(255,255,255,.07); }
+    .sb-user { display:flex; align-items:center; gap:9px; padding:9px 11px; border-radius:9px; background:rgba(255,255,255,.05); }
+    .sb-avatar { width:29px; height:29px; border-radius:50%; background:linear-gradient(135deg,var(--gold),var(--gold-light)); display:flex; align-items:center; justify-content:center; font-size:.75rem; font-weight:800; color:var(--navy-deep); flex-shrink:0; }
+    .sb-uname { font-size:.75rem; font-weight:700; color:#fff; }
+    .sb-urole { font-size:.6rem; color:rgba(255,255,255,.4); }
+
+    /* ══ MAIN ══ */
+    .main { flex:1; min-width:0; display:flex; flex-direction:column; }
+
+    /* ══ ADMIN TOPBAR ══ */
+    .admin-topbar {
+      height:58px; background:var(--white); border-bottom:1px solid var(--border);
+      display:flex; align-items:center; padding:0 24px; gap:12px;
+      position:sticky; top:0; z-index:50;
+      box-shadow:0 2px 10px rgba(9,79,79,.06);
+    }
+    .atb-title { font-family:'Playfair Display',serif; font-size:1.08rem; font-weight:700; color:var(--navy-dark); flex:1; }
+    .atb-title span { font-family:'Nunito',sans-serif; font-size:.7rem; font-weight:600; color:var(--text-muted); display:block; margin-top:1px; }
+    .atb-actions { display:flex; align-items:center; gap:8px; }
+    .abtn {
+      display:inline-flex; align-items:center; gap:5px; padding:7px 14px;
+      border-radius:8px; cursor:pointer; font-family:'Nunito',sans-serif;
+      font-size:.74rem; font-weight:700; border:none; transition:all .2s;
+    }
+    .abtn.out { background:transparent; border:1.5px solid var(--border); color:var(--text-muted); }
+    .abtn.out:hover { border-color:var(--navy); color:var(--navy); }
+    .abtn.teal { background:var(--navy); color:#fff; box-shadow:0 3px 12px rgba(9,79,79,.22); }
+    .abtn.teal:hover { background:var(--navy-dark); transform:translateY(-1px); }
+    .abtn.gold { background:linear-gradient(135deg,var(--gold),var(--gold-light)); color:var(--navy-deep); box-shadow:0 3px 12px rgba(200,150,12,.28); }
+    .abtn.gold:hover { transform:translateY(-1px); box-shadow:0 5px 18px rgba(200,150,12,.42); }
+    .atb-divider { width:1px; height:26px; background:var(--border); }
+
+    /* ══ SUB-NAV (mirrors public about-subnav exactly) ══ */
+    .admin-subnav {
+      background:var(--white); border-bottom:2px solid var(--border);
+      display:flex; overflow-x:auto; padding:0 24px;
+      scrollbar-width:none; position:sticky; top:58px; z-index:40;
+    }
+    .admin-subnav::-webkit-scrollbar { display:none; }
+    .admin-subnav a {
+      display:flex; align-items:center; gap:6px;
+      padding:12px 15px; font-size:.77rem; font-weight:700;
+      color:var(--text-muted); text-decoration:none; white-space:nowrap;
+      border-bottom:3px solid transparent; transition:all .2s; cursor:pointer;
+    }
+    .admin-subnav a:hover { color:var(--navy); border-color:var(--navy); }
+    .admin-subnav a.active { color:var(--navy); border-color:var(--gold); background:rgba(200,150,12,.04); }
+    .admin-subnav a .sn-dot { width:6px; height:6px; border-radius:50%; background:var(--green); flex-shrink:0; }
+    .admin-subnav a .sn-dot.draft { background:var(--border); }
+
+    /* ══ PAGE BODY ══ */
+    .page-body { padding:24px; flex:1; }
+
+    /* ══ SUB-PANELS ══ */
+    .sub-panel { display:none; }
+    .sub-panel.active { display:block; }
+
+    /* ══ MONGODB STATUS BAR ══ */
+    .db-bar {
+      display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+      padding:9px 14px; border-radius:9px; margin-bottom:18px;
+      background:rgba(39,174,96,.07); border:1px solid rgba(39,174,96,.2);
+      font-size:.72rem; font-weight:600; color:#1a7a45;
+    }
+    .db-dot { width:7px; height:7px; border-radius:50%; background:var(--green); flex-shrink:0; animation:dbp 2s ease-in-out infinite; }
+    @keyframes dbp { 0%,100%{opacity:1}50%{opacity:.35} }
+    .db-bar code { background:rgba(39,174,96,.13); padding:1px 7px; border-radius:4px; font-family:monospace; font-size:.78em; }
+    .db-bar .db-ep { margin-left:auto; font-family:monospace; font-size:.65rem; color:var(--text-muted); background:var(--bg2); padding:2px 8px; border-radius:5px; }
+
+    /* ══ BLOCK ══ */
+    .block { background:var(--white); border-radius:var(--radius); border:1px solid var(--border); box-shadow:var(--shadow); margin-bottom:18px; overflow:hidden; }
+    .block-hd { display:flex; align-items:center; justify-content:space-between; padding:15px 20px; border-bottom:1px solid var(--border); background:linear-gradient(135deg,var(--white),var(--bg)); }
+    .block-title { font-family:'Playfair Display',serif; font-size:.94rem; font-weight:700; color:var(--navy-dark); display:flex; align-items:center; gap:7px; }
+    .block-title .ic { font-size:.98rem; }
+    .db-chip { font-family:'Nunito',sans-serif; font-size:.57rem; font-weight:800; background:rgba(14,107,107,.1); color:var(--navy); border:1px solid rgba(14,107,107,.18); padding:2px 8px; border-radius:8px; letter-spacing:.03em; }
+    .block-acts { display:flex; gap:7px; }
+    .block-body { padding:18px 20px; }
+
+    /* ══ FORM ══ */
+    .fg { display:grid; gap:13px; }
+    .fg.c2 { grid-template-columns:1fr 1fr; }
+    .fg.c3 { grid-template-columns:1fr 1fr 1fr; }
+      /* .f {} removed: empty ruleset */
+    .f label { display:block; font-size:.73rem; font-weight:700; color:var(--navy-dark); margin-bottom:5px; }
+    .f label .req { color:var(--gold); margin-left:2px; }
+    .f label .dbh { font-family:'Nunito',sans-serif; font-size:.57rem; font-weight:700; color:var(--text-muted); background:var(--bg2); padding:1px 6px; border-radius:4px; margin-left:5px; font-style:normal; }
+    .f input, .f textarea, .f select {
+      width:100%; padding:9px 12px; border:1.5px solid var(--border); border-radius:9px;
+      font-family:'Nunito',sans-serif; font-size:.86rem; color:var(--text);
+      background:var(--white); outline:none; transition:border .2s, box-shadow .2s;
+    }
+    .f input:focus, .f textarea:focus, .f select:focus { border-color:var(--navy); box-shadow:0 0 0 3px rgba(14,107,107,.09); }
+    .f textarea { resize:vertical; min-height:88px; }
+    .f-hint { font-size:.63rem; color:var(--text-muted); margin-top:3px; }
+    .f-hint code { background:var(--bg2); padding:1px 5px; border-radius:4px; font-family:monospace; font-size:.78em; color:var(--navy); }
+
+    /* ══ CLOUDINARY IMAGE WIDGET ══ */
+      /* .cld-widget {} removed: empty ruleset */
+    .cld-label { font-size:.73rem; font-weight:700; color:var(--navy-dark); margin-bottom:8px; display:flex; align-items:center; gap:6px; }
+    .cld-label .cld-badge { font-size:.55rem; font-weight:800; background:rgba(255,140,0,.14); color:#b35e00; border:1px solid rgba(255,140,0,.3); padding:1px 7px; border-radius:8px; }
+    .cld-thumbs { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:10px; }
+    .cld-thumb {
+      width:100px; height:82px; border-radius:9px; overflow:hidden;
+      border:1.5px solid var(--border); position:relative; flex-shrink:0;
+      background:var(--bg2); cursor:pointer;
+    }
+    .cld-thumb img { width:100%; height:100%; object-fit:cover; display:block; }
+    .cld-thumb-overlay {
+      position:absolute; inset:0; background:rgba(0,0,0,.5);
+      display:flex; flex-direction:column; align-items:center; justify-content:center;
+      gap:4px; opacity:0; transition:opacity .2s;
+    }
+    .cld-thumb:hover .cld-thumb-overlay { opacity:1; }
+    .cld-thumb-overlay button {
+      background:rgba(255,255,255,.9); border:none; cursor:pointer;
+      border-radius:5px; padding:3px 8px; font-family:'Nunito',sans-serif;
+      font-size:.62rem; font-weight:700; color:var(--text);
+    }
+    .cld-thumb-overlay button.del { background:rgba(231,76,60,.9); color:#fff; }
+    .cld-thumb .cld-transform-tag {
+      position:absolute; bottom:0; left:0; right:0;
+      background:rgba(0,0,0,.6); color:rgba(255,255,255,.8);
+      font-size:.5rem; padding:2px 5px; text-align:center; font-family:monospace;
+    }
+    .cld-add {
+      width:100px; height:82px; border-radius:9px; flex-shrink:0;
+      border:2px dashed var(--border); background:var(--bg);
+      display:flex; flex-direction:column; align-items:center; justify-content:center;
+      gap:3px; cursor:pointer; transition:all .2s;
+    }
+    .cld-add:hover { border-color:var(--navy); background:rgba(14,107,107,.04); }
+    .cld-add .cld-add-ic { font-size:1.4rem; }
+    .cld-add .cld-add-txt { font-size:.63rem; font-weight:700; color:var(--text-muted); }
+    .cld-url-row { display:flex; gap:8px; align-items:center; }
+    .cld-url-row input { flex:1; font-size:.8rem; }
+    .cld-paste-btn {
+      flex-shrink:0; padding:8px 12px; border-radius:8px; cursor:pointer;
+      background:rgba(14,107,107,.1); border:1.5px solid rgba(14,107,107,.2);
+      color:var(--navy); font-family:'Nunito',sans-serif; font-size:.7rem; font-weight:700;
+      transition:all .2s; white-space:nowrap;
+    }
+    .cld-paste-btn:hover { background:rgba(14,107,107,.18); }
+    .cld-transforms { display:flex; gap:6px; flex-wrap:wrap; margin-top:8px; }
+    .cld-t {
+      font-size:.6rem; font-weight:700; padding:3px 8px; border-radius:10px; cursor:pointer;
+      background:var(--bg2); border:1px solid var(--border); color:var(--text-muted); transition:all .15s;
+    }
+    .cld-t:hover, .cld-t.on { background:rgba(200,150,12,.15); border-color:var(--gold); color:var(--gold); }
+    .cld-hint { font-size:.62rem; color:var(--text-muted); margin-top:6px; }
+    .cld-hint code { background:var(--bg2); padding:1px 5px; border-radius:4px; font-family:monospace; font-size:.8em; color:#b35e00; }
+
+    /* ══ KEY-VALUE TABLE EDITOR ══ */
+    .kv-row { display:grid; grid-template-columns:210px 1fr auto; gap:8px; align-items:center; margin-bottom:8px; }
+    .kv-row input { padding:7px 11px; border:1.5px solid var(--border); border-radius:8px; font-family:'Nunito',sans-serif; font-size:.83rem; color:var(--text); outline:none; transition:border .2s; background:var(--white); }
+    .kv-row input:focus { border-color:var(--navy); }
+    .kv-key { background:var(--bg) !important; font-weight:700 !important; }
+
+    /* ══ PERSON CARD ══ */
+    .person-card { background:var(--bg); border-radius:10px; border:1.5px solid var(--border); padding:16px; margin-bottom:12px; }
+    .pc-head { display:flex; align-items:center; gap:12px; margin-bottom:14px; }
+    .pc-avatar { width:50px; height:50px; border-radius:50%; flex-shrink:0; background:var(--navy); border:2px solid var(--gold); display:flex; align-items:center; justify-content:center; font-size:1.2rem; color:rgba(255,255,255,.8); overflow:hidden; }
+    .pc-avatar img { width:100%; height:100%; object-fit:cover; }
+    .pc-name { font-size:.84rem; font-weight:700; color:var(--navy); }
+    .pc-role { font-size:.7rem; color:var(--text-muted); margin-top:2px; }
+    .pc-actions { margin-left:auto; display:flex; gap:5px; }
+
+    /* ══ TABLE ══ */
+    .data-table { width:100%; border-collapse:collapse; }
+    .data-table thead th { font-size:.65rem; font-weight:800; letter-spacing:.08em; text-transform:uppercase; color:var(--text-muted); padding:9px 13px; text-align:left; background:var(--bg); border-bottom:2px solid var(--border); }
+    .data-table tbody tr { border-bottom:1px solid var(--bg2); transition:background .15s; }
+    .data-table tbody tr:hover { background:rgba(14,107,107,.03); }
+    .data-table tbody td { padding:11px 13px; font-size:.81rem; color:var(--text); vertical-align:middle; }
+
+    /* ══ PILL ══ */
+    .pill { display:inline-flex; align-items:center; gap:4px; padding:3px 10px; border-radius:20px; font-size:.62rem; font-weight:800; }
+    .pill::before { content:'●'; font-size:.46rem; }
+    .pill.live { background:rgba(39,174,96,.12); color:#1e8449; border:1px solid rgba(39,174,96,.22); }
+    .pill.draft { background:var(--bg2); color:var(--text-muted); border:1px solid var(--border); }
+
+    /* ══ ACT BTNS ══ */
+    .act-btns { display:flex; gap:5px; }
+    .ab { width:28px; height:28px; border-radius:6px; border:1.5px solid var(--border); background:var(--white); cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:.78rem; transition:all .15s; }
+    .ab:hover { border-color:var(--navy); background:var(--bg); }
+    .ab.del:hover { border-color:var(--red); background:rgba(231,76,60,.06); }
+
+    /* ══ TOGGLE ══ */
+    .tog { position:relative; width:42px; height:23px; flex-shrink:0; }
+    .tog input { display:none; }
+    .tog-track { position:absolute; inset:0; background:var(--bg2); border-radius:12px; border:1.5px solid var(--border); cursor:pointer; transition:all .2s; }
+    .tog-track::after { content:''; position:absolute; width:15px; height:15px; border-radius:50%; background:#fff; top:3px; left:3px; box-shadow:0 2px 5px rgba(0,0,0,.18); transition:transform .2s; }
+    .tog input:checked ~ .tog-track { background:var(--navy); border-color:var(--navy-dark); }
+    .tog input:checked ~ .tog-track::after { transform:translateX(19px); }
+
+    /* ══ TOGGLE ROW ══ */
+    .tog-row { display:flex; align-items:center; justify-content:space-between; padding:12px 0; border-bottom:1px solid var(--bg2); }
+    .tog-row:last-child { border-bottom:none; }
+    .tl-name { font-size:.83rem; font-weight:700; color:var(--text); }
+    .tl-desc { font-size:.69rem; color:var(--text-muted); margin-top:2px; }
+
+    /* ══ TWO COL ══ */
+    .two-col { display:grid; grid-template-columns:1.6fr 1fr; gap:18px; align-items:start; }
+
+    /* ══ MODAL ══ */
+    .modal-overlay { display:none; position:fixed; inset:0; background:rgba(6,47,47,.65); backdrop-filter:blur(4px); z-index:99999; align-items:center; justify-content:center; padding:20px; }
+    .modal-overlay.open { display:flex; }
+    .modal { background:#fff; border-radius:15px; max-width:560px; width:100%; max-height:90vh; overflow-y:auto; box-shadow:0 28px 70px rgba(0,0,0,.28); animation:mIn .25s cubic-bezier(.22,1,.36,1); }
+    @keyframes mIn { from{opacity:0;transform:scale(.95) translateY(14px)} to{opacity:1;transform:scale(1) translateY(0)} }
+    .modal-hd { display:flex; align-items:center; justify-content:space-between; padding:18px 22px; border-bottom:1px solid var(--border); background:linear-gradient(135deg,var(--white),var(--bg)); }
+    .modal-title { font-family:'Playfair Display',serif; font-size:1.05rem; font-weight:700; color:var(--navy-dark); }
+    .modal-close { width:28px; height:28px; border-radius:50%; background:var(--bg2); border:none; cursor:pointer; font-size:.88rem; display:flex; align-items:center; justify-content:center; color:var(--text-muted); transition:all .2s; }
+    .modal-close:hover { background:#fde8e8; color:var(--red); }
+    .modal-body { padding:22px; }
+    .modal-foot { display:flex; gap:9px; justify-content:flex-end; padding:14px 22px; border-top:1px solid var(--border); }
+
+    /* ══ SAVE TOAST ══ */
+    .save-toast { position:fixed; bottom:26px; right:26px; background:var(--navy-deep); color:#fff; padding:11px 20px; border-radius:10px; font-size:.8rem; font-weight:700; display:flex; align-items:center; gap:8px; box-shadow:0 8px 28px rgba(0,0,0,.22); transform:translateY(80px); opacity:0; transition:all .3s cubic-bezier(.34,1.56,.64,1); z-index:99998; border-left:4px solid var(--gold-light); }
+    .save-toast.show { transform:translateY(0); opacity:1; }
+
+    /* ══ SECTION DIVIDER ══ */
+    .sec-divider { display:flex; align-items:center; gap:12px; margin:22px 0 16px; }
+    .sec-divider span { font-size:.68rem; font-weight:800; letter-spacing:.1em; text-transform:uppercase; color:var(--text-muted); white-space:nowrap; }
+    .sec-divider::before, .sec-divider::after { content:''; flex:1; height:1px; background:var(--border); }
+
+    /* ══ RESPONSIVE ══ */
+    @media(max-width:1100px) { .two-col { grid-template-columns:1fr; } }
+    @media(max-width:900px)  { .fg.c3 { grid-template-columns:1fr 1fr; } }
+    @media(max-width:768px)  { .sidebar{display:none;} .fg.c2,.fg.c3{grid-template-columns:1fr;} .kv-row{grid-template-columns:1fr 1fr auto;} }
+  </style>
+</head>
+<body>
+
+<!-- AdminNavbar.js injected here -->
+<script src="adminnavbar.js"></script>
+
+<div class="admin-shell">
+
+  <!-- ══ SIDEBAR ══ -->
+  <aside class="sidebar">
+    <div class="sb-brand">
+      <div class="sb-brand-icon"></div>
+      <div><div class="sbn">Loretto Admin</div><div class="sbs">Control Panel</div></div>
+    </div>
+    <div class="sb-nav">
+      <div class="sb-section">Main</div>
+      <a class="sb-link" href="admin-panel.html"><span class="ic"></span> Dashboard</a>
+      <div class="sb-section">About Us</div>
+      <a class="sb-link active" onclick="switchTab('profile')"><span class="ic"></span> School Profile</a>
+      <a class="sb-link" onclick="switchTab('management')"><span class="ic"></span> Management</a>
+      <a class="sb-link" onclick="switchTab('manager')"><span class="ic"></span> Manager Speaks</a>
+      <a class="sb-link" onclick="switchTab('principal')"><span class="ic"></span> Principal's Message</a>
+      <a class="sb-link" onclick="switchTab('pta')"><span class="ic"></span> PTA Executive Body</a>
+      <a class="sb-link" onclick="switchTab('cbse')"><span class="ic"></span> CBSE Details</a>
+      <a class="sb-link" onclick="switchTab('report')"><span class="ic"></span> Annual Report</a>
+      <div class="sb-section">Other Sections</div>
+      <a class="sb-link" href="admin-admissions.html"><span class="ic"></span> Admissions</a>
+      <a class="sb-link" href="admin-news.html"><span class="ic"></span> News &amp; Events <span class="badge active-badge">NEW</span></a>
+      <a class="sb-link" href="admin-academics.html"><span class="ic"></span> Academics</a>
+      <a class="sb-link" href="admin-panel.html#seo"><span class="ic"></span> SEO &amp; Meta</a>
+    </div>
+    <div class="sb-footer">
+      <div class="sb-user">
+        <div class="sb-avatar">A</div>
+        <div><div class="sb-uname">Administrator</div><div class="sb-urole">Super Admin</div></div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ══ MAIN ══ -->
+  <main class="main">
+
+    <!-- Admin Topbar -->
+    <div class="admin-topbar">
+      <div class="atb-title">
+        About Us — Admin
+        <span id="atbSub">School Profile · Collection: <code style="font-family:monospace;font-size:.7em;color:var(--navy);">about_us</code></span>
+      </div>
+      <div class="atb-actions">
+        <button class="abtn out" onclick="window.open('../about-us/1-school-profile.html','_blank')"> Preview Page</button>
+        <div class="atb-divider"></div>
+        <button class="abtn teal" onclick="saveToDB()"> Save to DB</button>
+        <button class="abtn gold" onclick="publishSection()"> Publish</button>
+      </div>
+    </div>
+
+    <!-- Sub-Nav (mirrors public about-subnav) -->
+    <nav class="admin-subnav" id="adminSubnav">
+      <a class="active" onclick="switchTab('profile')"    ><span class="sn-dot"></span> School Profile</a>
+      <a onclick="switchTab('management')"  ><span class="sn-dot"></span> Management</a>
+      <a onclick="switchTab('manager')"     ><span class="sn-dot"></span> Manager Speaks</a>
+      <a onclick="switchTab('principal')"   ><span class="sn-dot"></span> Principal's Message</a>
+      <a onclick="switchTab('pta')"         ><span class="sn-dot draft"></span> PTA Executive Body</a>
+      <a onclick="switchTab('cbse')"        ><span class="sn-dot"></span> CBSE Details</a>
+      <a onclick="switchTab('report')"      ><span class="sn-dot draft"></span> Annual Report</a>
+    </nav>
+
+    <!-- Page Body -->
+    <div class="page-body">
+
+      <!-- ══════════════════════════════════════════
+           TAB 1 — SCHOOL PROFILE
+      ══════════════════════════════════════════ -->
+      <div class="sub-panel active" id="tab-profile">
+
+        <!-- MongoDB Status -->
+        <div class="db-bar">
+          <span class="db-dot"></span>
+          Connected to MongoDB &nbsp;·&nbsp;
+          Collection: <code>about_us</code> &nbsp;·&nbsp;
+          Document: <code>school_profile</code>
+          <span class="db-ep">POST /api/about/school-profile</span>
+        </div>
+
+        <div class="two-col">
+          <div>
+
+            <!-- Page Banner -->
+            <div class="block">
+              <div class="block-hd">
+                <div class="block-title"><span class="ic"></span> Page Banner <span class="db-chip">about_us.profile.banner</span></div>
+                <div class="block-acts"><button class="abtn gold" onclick="saveBlock('Banner')"> Save</button></div>
+              </div>
+              <div class="block-body">
+                <div class="fg">
+                  <div class="f">
+                    <label>Page Title <span class="req">*</span> <span class="dbh">profile.pageTitle</span></label>
+                    <input type="text" value="School Profile" />
+                  </div>
+                  <div class="f">
+                    <label>Banner Background Image <span class="dbh">profile.bannerImage</span></label>
+                    <div class="cld-widget">
+                      <div class="cld-thumbs">
+                        <div class="cld-thumb" id="bannerThumb">
+                          <img id="bannerImg" src="https://res.cloudinary.com/demo/image/upload/w_200,q_auto,f_auto/sample" alt="Banner" onerror="this.src=''" />
+                          <div class="cld-thumb-overlay">
+                            <button onclick="removeCldImg('bannerImg','bannerThumb')"> Remove</button>
+                          </div>
+                          <div class="cld-transform-tag">w_1600,q_auto,f_auto</div>
+                        </div>
+                        <div class="cld-add" onclick="document.getElementById('bannerUrlInput').focus()">
+                          <span class="cld-add-ic"></span>
+                          <span class="cld-add-txt">Cloudinary URL</span>
+                        </div>
+                      </div>
+                      <div class="cld-url-row">
+                        <input type="url" id="bannerUrlInput" placeholder="https://res.cloudinary.com/your-cloud/image/upload/..." />
+                        <button class="cld-paste-btn" onclick="applyCldUrl('bannerUrlInput','bannerImg')">Apply</button>
+                      </div>
+                      <div class="cld-transforms">
+                        <span class="cld-t on">w_1600</span>
+                        <span class="cld-t on">q_auto</span>
+                        <span class="cld-t on">f_auto</span>
+                        <span class="cld-t">c_fill</span>
+                        <span class="cld-t">g_auto</span>
+                      </div>
+                      <div class="cld-hint">Recommended: <code>w_1600,q_auto,f_auto</code> · Upload via Cloudinary dashboard then paste URL</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Gallery Images -->
+            <div class="block">
+              <div class="block-hd">
+                <div class="block-title"><span class="ic"></span> Profile Gallery <span class="db-chip">profile.gallery[ ]</span></div>
+                <div class="block-acts">
+                  <button class="abtn out" onclick="addGallerySlot()">+ Add Image</button>
+                  <button class="abtn gold" onclick="saveBlock('Gallery')"> Save</button>
+                </div>
+              </div>
+              <div class="block-body">
+                <p class="f-hint" style="margin-bottom:12px;">Each image is stored as <code>{ url, altText, transform }</code> in the <code>gallery</code> array. Cloudinary transforms applied at render time.</p>
+                <div id="gallerySlots" style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
+
+                  <!-- Slot 1 -->
+                  <div class="cld-gallery-slot" style="background:var(--bg);border-radius:10px;border:1.5px solid var(--border);padding:12px;">
+                    <div class="cld-thumb" style="width:100%;height:90px;margin-bottom:8px;">
+                      <img src="https://school.edu/wp-content/uploads/2023/06/cropped-20230601_095851-1.jpg" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none'" />
+                      <div class="cld-thumb-overlay"><button class="del" onclick="this.closest('.cld-gallery-slot').remove()"> Remove</button></div>
+                      <div class="cld-transform-tag">w_800,q_auto,f_auto</div>
+                    </div>
+                    <input type="text" placeholder="Alt text..." value="Loretto Central School Campus" style="width:100%;padding:5px 9px;border:1.5px solid var(--border);border-radius:7px;font-family:Nunito;font-size:.76rem;margin-bottom:6px;background:var(--white);color:var(--text);outline:none;" />
+                    <input type="url" placeholder="Cloudinary URL..." style="width:100%;padding:5px 9px;border:1.5px solid var(--border);border-radius:7px;font-family:Nunito;font-size:.72rem;background:var(--white);color:var(--text);outline:none;" value="https://school.edu/wp-content/uploads/2023/06/cropped-20230601_095851-1.jpg"/>
+                  </div>
+
+                  <!-- Slot 2 -->
+                  <div class="cld-gallery-slot" style="background:var(--bg);border-radius:10px;border:1.5px solid var(--border);padding:12px;">
+                    <div class="cld-thumb" style="width:100%;height:90px;margin-bottom:8px;">
+                      <img src="https://school.edu/wp-content/uploads/2023/06/20230620_145648.jpg" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none'" />
+                      <div class="cld-thumb-overlay"><button class="del" onclick="this.closest('.cld-gallery-slot').remove()"> Remove</button></div>
+                      <div class="cld-transform-tag">w_800,q_auto,f_auto</div>
+                    </div>
+                    <input type="text" placeholder="Alt text..." value="School Campus" style="width:100%;padding:5px 9px;border:1.5px solid var(--border);border-radius:7px;font-family:Nunito;font-size:.76rem;margin-bottom:6px;background:var(--white);color:var(--text);outline:none;" />
+                    <input type="url" placeholder="Cloudinary URL..." style="width:100%;padding:5px 9px;border:1.5px solid var(--border);border-radius:7px;font-family:Nunito;font-size:.72rem;background:var(--white);color:var(--text);outline:none;" value="https://school.edu/wp-content/uploads/2023/06/20230620_145648.jpg"/>
+                  </div>
+
+                  <!-- Slot 3 -->
+                  <div class="cld-gallery-slot" style="background:var(--bg);border-radius:10px;border:1.5px solid var(--border);padding:12px;">
+                    <div class="cld-thumb" style="width:100%;height:90px;margin-bottom:8px;">
+                      <img src="https://school.edu/wp-content/uploads/2023/06/20230621_103346.jpg" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none'" />
+                      <div class="cld-thumb-overlay"><button class="del" onclick="this.closest('.cld-gallery-slot').remove()"> Remove</button></div>
+                      <div class="cld-transform-tag">w_800,q_auto,f_auto</div>
+                    </div>
+                    <input type="text" placeholder="Alt text..." value="School Grounds" style="width:100%;padding:5px 9px;border:1.5px solid var(--border);border-radius:7px;font-family:Nunito;font-size:.76rem;margin-bottom:6px;background:var(--white);color:var(--text);outline:none;" />
+                    <input type="url" placeholder="Cloudinary URL..." style="width:100%;padding:5px 9px;border:1.5px solid var(--border);border-radius:7px;font-family:Nunito;font-size:.72rem;background:var(--white);color:var(--text);outline:none;" value="https://school.edu/wp-content/uploads/2023/06/20230621_103346.jpg"/>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+
+            <!-- Content Paragraphs -->
+            <div class="block">
+              <div class="block-hd">
+                <div class="block-title"><span class="ic"></span> Content Paragraphs <span class="db-chip">profile.paragraphs[ ]</span></div>
+                <div class="block-acts">
+                  <button class="abtn out" onclick="addParagraph()">+ Add Para</button>
+                  <button class="abtn gold" onclick="saveBlock('Content')"> Save</button>
+                </div>
+              </div>
+              <div class="block-body">
+                <p class="f-hint" style="margin-bottom:12px;">Each paragraph is stored as a string in the <code>paragraphs</code> array. Order = display order on the public page.</p>
+                <div id="paraList" class="fg">
+
+                  <div class="para-item">
+                    <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+                      <span style="font-size:.68rem;font-weight:800;color:var(--text-muted);">¶ 1</span>
+                      <button class="ab del" style="margin-left:auto;" onclick="this.closest('.para-item').remove()"></button>
+                    </div>
+                    <textarea style="min-height:80px;">The Loretto Central School, a leading Educational Institution in the vicinity of Loretto Padavu and Bantwal. The natural aura of the beautiful serene environment blended with its passion to provide the best for the students to learn and explore has truly created a powerful atmosphere for every child to learn and excel.</textarea>
+                  </div>
+
+                  <div class="para-item">
+                    <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+                      <span style="font-size:.68rem;font-weight:800;color:var(--text-muted);">¶ 2</span>
+                      <button class="ab del" style="margin-left:auto;" onclick="this.closest('.para-item').remove()"></button>
+                    </div>
+                    <textarea style="min-height:70px;">The school is under the management of the Catholic Board of Education with Most Rev. Dr. Peter Paul Saldanha as the Bishop, Rev. Fr. Antony Shera as the Secretary, and Rev. Fr. Francis Crasta as the Manager of the school.</textarea>
+                  </div>
+
+                  <div class="para-item" style="background:rgba(200,150,12,.06);border-radius:8px;padding:10px;border:1px solid rgba(200,150,12,.2);">
+                    <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+                      <span style="font-size:.68rem;font-weight:800;color:var(--gold);"> HIGHLIGHT BOX</span>
+                      <span style="font-size:.6rem;color:var(--text-muted);">profile.highlightBox</span>
+                      <button class="ab del" style="margin-left:auto;" onclick="this.closest('.para-item').remove()"></button>
+                    </div>
+                    <textarea style="min-height:80px;border-color:rgba(200,150,12,.3);">In the year 2010, Loreto English Medium Higher Primary School with 6th and 7th standard comprising of 21 students came into existence. On the very next year the High School section was begun and 58 students enrolled for Class 8th. During the same time the new building construction was taken up with the help of donors.</textarea>
+                  </div>
+
+                  <div class="para-item">
+                    <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+                      <span style="font-size:.68rem;font-weight:800;color:var(--text-muted);">¶ 3</span>
+                      <button class="ab del" style="margin-left:auto;" onclick="this.closest('.para-item').remove()"></button>
+                    </div>
+                    <textarea style="min-height:70px;">As time passed, additions were made and the school has now come to a position of completing the extended building. At present, the Correspondent of the School, Rev. Fr. Francis Crasta, has taken up the challenge of completing the extended building work that was stopped during the Covid period.</textarea>
+                  </div>
+
+                  <div class="para-item">
+                    <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+                      <span style="font-size:.68rem;font-weight:800;color:var(--text-muted);">¶ 4</span>
+                      <button class="ab del" style="margin-left:auto;" onclick="this.closest('.para-item').remove()"></button>
+                    </div>
+                    <textarea style="min-height:70px;">This year the LKG and UKG sections are newly started and students are happy and peaceful in the campus. The dedicated teachers are always willing to take up the challenge and to impart knowledge.</textarea>
+                  </div>
+
+                  <div class="para-item">
+                    <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+                      <span style="font-size:.68rem;font-weight:800;color:var(--text-muted);">¶ 5</span>
+                      <button class="ab del" style="margin-left:auto;" onclick="this.closest('.para-item').remove()"></button>
+                    </div>
+                    <textarea style="min-height:70px;">The school has received the CBSE affiliation in the month of May, up to the secondary level — that is, from LKG to Xth standard. The school is marching ahead under the leadership of Rev. Fr. Jason Monis as the Principal.</textarea>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Right col -->
+          <div>
+
+            <!-- Key School Facts -->
+            <div class="block">
+              <div class="block-hd">
+                <div class="block-title"><span class="ic"></span> Key School Facts <span class="db-chip">profile.keyFacts{ }</span></div>
+                <div class="block-acts">
+                  <button class="abtn out" onclick="addKeyFact()">+ Add Row</button>
+                  <button class="abtn gold" onclick="saveBlock('Key Facts')"> Save</button>
+                </div>
+              </div>
+              <div class="block-body">
+                <p class="f-hint" style="margin-bottom:12px;">Stored as key-value object. Each field maps to <code>profile.keyFacts.fieldName</code></p>
+                <div id="keyFactRows">
+
+                  <div class="kv-row">
+                    <input class="kv-key" type="text" value="School Name" readonly />
+                    <input type="text" value="Loretto Central School" />
+                    <button class="ab del" onclick="this.closest('.kv-row').remove()"></button>
+                  </div>
+                  <div class="kv-row">
+                    <input class="kv-key" type="text" value="Affiliation" readonly />
+                    <input type="text" value="CBSE (Central Board of Secondary Education)" />
+                    <button class="ab del" onclick="this.closest('.kv-row').remove()"></button>
+                  </div>
+                  <div class="kv-row">
+                    <input class="kv-key" type="text" value="Affiliation No." readonly />
+                    <input type="text" value="831368" />
+                    <button class="ab del" onclick="this.closest('.kv-row').remove()"></button>
+                  </div>
+                  <div class="kv-row">
+                    <input class="kv-key" type="text" value="Affiliation Period" readonly />
+                    <input type="text" value="01/04/2024 to 31/03/2029" />
+                    <button class="ab del" onclick="this.closest('.kv-row').remove()"></button>
+                  </div>
+                  <div class="kv-row">
+                    <input class="kv-key" type="text" value="Classes Offered" readonly />
+                    <input type="text" value="LKG to Class X" />
+                    <button class="ab del" onclick="this.closest('.kv-row').remove()"></button>
+                  </div>
+                  <div class="kv-row">
+                    <input class="kv-key" type="text" value="Management" readonly />
+                    <input type="text" value="Catholic Board of Education, Diocese of Mangalore" />
+                    <button class="ab del" onclick="this.closest('.kv-row').remove()"></button>
+                  </div>
+                  <div class="kv-row">
+                    <input class="kv-key" type="text" value="Location" readonly />
+                    <input type="text" value="Loretto Padavu, Bantwal, Karnataka" />
+                    <button class="ab del" onclick="this.closest('.kv-row').remove()"></button>
+                  </div>
+                  <div class="kv-row">
+                    <input class="kv-key" type="text" value="Year Established" readonly />
+                    <input type="text" value="2010 (Higher Primary); High School from 2011" />
+                    <button class="ab del" onclick="this.closest('.kv-row').remove()"></button>
+                  </div>
+                  <div class="kv-row">
+                    <input class="kv-key" type="text" value="Principal" readonly />
+                    <input type="text" value="Rev. Fr. Jason Vijay Monis" />
+                    <button class="ab del" onclick="this.closest('.kv-row').remove()"></button>
+                  </div>
+                  <div class="kv-row">
+                    <input class="kv-key" type="text" value="Manager / Correspondent" readonly />
+                    <input type="text" value="Rev. Fr. Francis Crasta" />
+                    <button class="ab del" onclick="this.closest('.kv-row').remove()"></button>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+
+            <!-- Page Visibility -->
+            <div class="block">
+              <div class="block-hd">
+                <div class="block-title"><span class="ic"></span> Page Settings</div>
+              </div>
+              <div class="block-body">
+                <div class="tog-row">
+                  <div><div class="tl-name">Page Live</div><div class="tl-desc">Visible to public</div></div>
+                  <label class="tog"><input type="checkbox" checked /><span class="tog-track"></span></label>
+                </div>
+                <div class="tog-row">
+                  <div><div class="tl-name">Show Gallery</div><div class="tl-desc">Display 3-photo grid</div></div>
+                  <label class="tog"><input type="checkbox" checked /><span class="tog-track"></span></label>
+                </div>
+                <div class="tog-row">
+                  <div><div class="tl-name">Show Highlight Box</div><div class="tl-desc">Gold bordered quote block</div></div>
+                  <label class="tog"><input type="checkbox" checked /><span class="tog-track"></span></label>
+                </div>
+                <div class="tog-row">
+                  <div><div class="tl-name">Show Key Facts Table</div><div class="tl-desc">School information table</div></div>
+                  <label class="tog"><input type="checkbox" checked /><span class="tog-track"></span></label>
+                </div>
+              </div>
+            </div>
+
+            <!-- SEO for this page -->
+            <div class="block">
+              <div class="block-hd">
+                <div class="block-title"><span class="ic"></span> SEO <span class="db-chip">profile.seo{ }</span></div>
+                <div class="block-acts"><button class="abtn gold" onclick="saveBlock('SEO')"> Save</button></div>
+              </div>
+              <div class="block-body">
+                <div class="fg">
+                  <div class="f">
+                    <label>Meta Title <span class="dbh">seo.title</span></label>
+                    <input type="text" value="School Profile | Loretto Central School" />
+                  </div>
+                  <div class="f">
+                    <label>Meta Description <span class="dbh">seo.description</span></label>
+                    <textarea style="min-height:68px;">Learn about Loretto Central School — a CBSE affiliated institution in Bantwal, Karnataka, nurturing students from LKG to Class X.</textarea>
+                  </div>
+                  <div class="f">
+                    <label>OG Image (Cloudinary URL) <span class="dbh">seo.ogImage</span></label>
+                    <input type="url" placeholder="https://res.cloudinary.com/your-cloud/..." />
+                    <div class="f-hint">Recommended: <code>w_1200,h_630,c_fill,q_auto,f_auto</code></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════════════
+           TAB 2 — MANAGEMENT
+      ══════════════════════════════════════════ -->
+      <div class="sub-panel" id="tab-management">
+        <div class="db-bar">
+          <span class="db-dot"></span> Collection: <code>about_us</code> · Document: <code>management</code>
+          <span class="db-ep">POST /api/about/management</span>
+        </div>
+        <div class="block">
+          <div class="block-hd">
+            <div class="block-title"><span class="ic"></span> Management Intro Sentence <span class="db-chip">management.intro</span></div>
+            <div class="block-acts">
+              <button class="abtn gold" onclick="saveBlock('Management Intro')"> Save</button>
+            </div>
+          </div>
+          <div class="block-body">
+            <div class="f">
+              <label>Intro Text / Sentence <span class="dbh">management.introText</span></label>
+              <textarea id="managementIntroText" placeholder="Enter the sentence you want to show on the public Management page..." style="min-height:96px;">The management team of Loretto Central School guides the institution with a shared commitment to faith, service, academic excellence, and the holistic growth of every student.</textarea>
+              <div class="f-hint">This text appears above the Management Team cards on the public page.</div>
+            </div>
+          </div>
+        </div>
+        <div class="block">
+          <div class="block-hd">
+            <div class="block-title"><span class="ic"></span> Management Team <span class="db-chip">management.members[ ]</span></div>
+            <div class="block-acts">
+              <button class="abtn out" onclick="openPersonModal()">+ Add Person</button>
+              <button class="abtn gold" onclick="saveBlock('Management')"> Save</button>
+            </div>
+          </div>
+          <div class="block-body" style="padding:0;">
+            <table class="data-table">
+              <thead><tr><th>Photo</th><th>Name</th><th>Designation</th><th>Order</th><th>Visible</th><th>Actions</th></tr></thead>
+              <tbody>
+                <tr>
+                  <td><div style="width:40px;height:40px;border-radius:50%;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:1rem;color:rgba(255,255,255,.8);"></div></td>
+                  <td style="font-weight:700;">Most Rev. Dr. Peter Paul Saldanha</td>
+                  <td style="color:var(--text-muted);font-size:.8rem;">Bishop, Diocese of Mangalore</td>
+                  <td><input type="number" value="1" style="width:52px;border:1.5px solid var(--border);border-radius:6px;padding:4px 8px;font-family:Nunito;font-size:.8rem;background:var(--white);color:var(--text);outline:none;" /></td>
+                  <td><label class="tog"><input type="checkbox" checked /><span class="tog-track"></span></label></td>
+                  <td><div class="act-btns"><button class="ab" aria-label="Edit person" onclick="openPersonModal(this.closest('tr'))">E</button><button class="ab del" aria-label="Delete person">×</button></div></td>
+                </tr>
+                <tr>
+                  <td><div style="width:40px;height:40px;border-radius:50%;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:1rem;color:rgba(255,255,255,.8);"></div></td>
+                  <td style="font-weight:700;">Rev. Fr. Antony Shera</td>
+                  <td style="color:var(--text-muted);font-size:.8rem;">Secretary, Catholic Board of Education</td>
+                  <td><input type="number" value="2" style="width:52px;border:1.5px solid var(--border);border-radius:6px;padding:4px 8px;font-family:Nunito;font-size:.8rem;background:var(--white);color:var(--text);outline:none;" /></td>
+                  <td><label class="tog"><input type="checkbox" checked /><span class="tog-track"></span></label></td>
+                  <td><div class="act-btns"><button class="ab" aria-label="Edit person" onclick="openPersonModal(this.closest('tr'))">E</button><button class="ab del" aria-label="Delete person">×</button></div></td>
+                </tr>
+                <tr>
+                  <td><div style="width:40px;height:40px;border-radius:50%;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:1rem;color:rgba(255,255,255,.8);"></div></td>
+                  <td style="font-weight:700;">Rev. Fr. Francis Crasta</td>
+                  <td style="color:var(--text-muted);font-size:.8rem;">Manager / Correspondent</td>
+                  <td><input type="number" value="3" style="width:52px;border:1.5px solid var(--border);border-radius:6px;padding:4px 8px;font-family:Nunito;font-size:.8rem;background:var(--white);color:var(--text);outline:none;" /></td>
+                  <td><label class="tog"><input type="checkbox" checked /><span class="tog-track"></span></label></td>
+                  <td><div class="act-btns"><button class="ab" aria-label="Edit person" onclick="openPersonModal(this.closest('tr'))">E</button><button class="ab del" aria-label="Delete person">×</button></div></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════════════
+           TAB 3 — MANAGER SPEAKS
+      ══════════════════════════════════════════ -->
+      <div class="sub-panel" id="tab-manager">
+        <div class="db-bar">
+          <span class="db-dot"></span> Collection: <code>about_us</code> · Document: <code>manager_speaks</code>
+          <span class="db-ep">POST /api/about/manager-speaks</span>
+        </div>
+        <div class="two-col">
+          <div class="block">
+            <div class="block-hd">
+              <div class="block-title"><span class="ic"></span> Manager's Message <span class="db-chip">manager_speaks.message</span></div>
+              <div class="block-acts"><button class="abtn gold" onclick="saveBlock('Manager Speaks')"> Save</button></div>
+            </div>
+            <div class="block-body">
+              <div class="fg">
+                <div class="f">
+                  <label>Heading <span class="dbh">manager_speaks.heading</span></label>
+                  <input type="text" value="Manager Speaks" />
+                </div>
+                <div class="f">
+                  <label>Sub-heading <span class="dbh">manager_speaks.subHeading</span></label>
+                  <input type="text" value="A message from our School Manager" />
+                </div>
+                <div class="f">
+                  <label>Message Body <span class="req">*</span> <span class="dbh">manager_speaks.body</span></label>
+                  <textarea style="min-height:180px;" placeholder="Enter the manager's message here...">Dear Students, Parents, and Well-wishers,
+
+It is with great joy and pride that I welcome you to Loretto Central School. Our institution stands as a beacon of quality education, rooted in values, discipline, and the pursuit of excellence...</textarea>
+                </div>
+                <div class="f">
+                  <label>Signature / Sign-off <span class="dbh">manager_speaks.signature</span></label>
+                  <input type="text" value="Rev. Fr. Francis Crasta, Manager" />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="block">
+              <div class="block-hd">
+                <div class="block-title"><span class="ic"></span> Manager Photo <span class="db-chip">manager_speaks.photo</span></div>
+              </div>
+              <div class="block-body">
+                <div class="cld-widget">
+                  <div class="cld-thumbs">
+                    <div class="cld-add" style="width:100%;height:120px;" onclick="document.getElementById('managerUrlInput').focus()">
+                      <span class="cld-add-ic"></span>
+                      <span class="cld-add-txt">Upload via Cloudinary</span>
+                    </div>
+                  </div>
+                  <div class="cld-url-row">
+                    <input type="url" id="managerUrlInput" placeholder="https://res.cloudinary.com/your-cloud/image/upload/..." />
+                    <button class="cld-paste-btn">Apply</button>
+                  </div>
+                  <div class="cld-transforms">
+                    <span class="cld-t on">w_400</span>
+                    <span class="cld-t on">q_auto</span>
+                    <span class="cld-t on">f_auto</span>
+                    <span class="cld-t">r_max</span>
+                    <span class="cld-t">g_face</span>
+                  </div>
+                  <div class="cld-hint">Recommended: <code>w_400,h_400,c_fill,g_face,r_max,q_auto,f_auto</code></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════════════
+           TAB 4 — PRINCIPAL'S MESSAGE
+      ══════════════════════════════════════════ -->
+      <div class="sub-panel" id="tab-principal">
+        <div class="db-bar">
+          <span class="db-dot"></span> Collection: <code>about_us</code> · Document: <code>principals_message</code>
+          <span class="db-ep">POST /api/about/principals-message</span>
+        </div>
+        <div class="two-col">
+          <div class="block">
+            <div class="block-hd">
+              <div class="block-title"><span class="ic"></span> Principal's Message <span class="db-chip">principals_message.message</span></div>
+                <div class="block-acts"><button class="abtn gold" onclick="saveBlock('Principal')"> Save</button></div>
+            </div>
+            <div class="block-body">
+              <div class="fg">
+                <div class="f">
+                  <label>Heading <span class="dbh">principals_message.heading</span></label>
+                  <input type="text" value="Principal's Message" />
+                </div>
+                <div class="f">
+                  <label>Highlighted Quote <span class="dbh">principals_message.subHeading</span></label>
+                  <input type="text" id="principalQuoteInput" value="&quot;Learning allows us to make sense of the world around us, the world inside of us, and where we fit within the world.&quot;" />
+                  <div class="f-hint">This text appears in the highlighted quote box on the public Principal's Message page.</div>
+                </div>
+                <div class="f">
+                  <label>Message Body <span class="req">*</span> <span class="dbh">principals_message.body</span></label>
+                  <textarea style="min-height:180px;" placeholder="Enter the principal's message here...">Dear Students and Parents,
+
+Welcome to Loretto Central School. As your Principal, it is my mission to ensure that every child who walks through our doors receives not just education, but a transformative experience...</textarea>
+                </div>
+                <div class="f">
+                  <label>Signature / Sign-off <span class="dbh">principals_message.signature</span></label>
+                  <input type="text" value="Rev. Fr. Jason Vijay Monis, Principal" />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="block">
+              <div class="block-hd">
+                <div class="block-title"><span class="ic"></span> Principal Photo <span class="db-chip">principals_message.photo</span></div>
+              </div>
+              <div class="block-body">
+                <div class="cld-widget">
+                  <div class="cld-thumbs">
+                    <div class="cld-add" style="width:100%;height:120px;">
+                      <span class="cld-add-ic"></span><span class="cld-add-txt">Upload via Cloudinary</span>
+                    </div>
+                  </div>
+                  <div class="cld-url-row">
+                    <input type="url" placeholder="https://res.cloudinary.com/..." />
+                    <button class="cld-paste-btn">Apply</button>
+                  </div>
+                  <div class="cld-transforms">
+                    <span class="cld-t on">w_400</span><span class="cld-t on">q_auto</span><span class="cld-t on">f_auto</span><span class="cld-t">r_max</span><span class="cld-t">g_face</span>
+                  </div>
+                  <div class="cld-hint">Recommended: <code>w_400,h_400,c_fill,g_face,r_max,q_auto,f_auto</code></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════════════
+           TAB 5 — PTA EXECUTIVE BODY
+      ══════════════════════════════════════════ -->
+      <div class="sub-panel" id="tab-pta">
+        <div class="db-bar">
+          <span class="db-dot"></span> Collection: <code>about_us</code> · Document: <code>pta_executive_body</code>
+          <span class="db-ep">POST /api/about/pta</span>
+        </div>
+        <div class="block">
+          <div class="block-hd">
+            <div class="block-title"><span class="ic"></span> PTA Intro Text <span class="db-chip">pta.intro</span></div>
+            <div class="block-acts">
+              <button class="abtn gold" onclick="saveBlock('PTA Intro')"> Save</button>
+            </div>
+          </div>
+          <div class="block-body">
+            <div class="f">
+              <label>PTA Intro / Description <span class="dbh">pta.introText</span></label>
+              <textarea id="ptaIntroText" placeholder="Enter the sentences that should appear on the public PTA Executive Body page..." style="min-height:120px;">The Parent-Teacher Association (PTA) plays a vital supportive role in the functioning of the school. The main motive of the PTA is to build a strong relationship between the school and the children's families, supporting holistic development and a nurturing community. The PTA general body meets once a year. During the year, the executive committee meets regularly. Various activities are conducted under the leadership of the PTA.</textarea>
+              <div class="f-hint">This text appears above the PTA leadership and members on the public page.</div>
+            </div>
+          </div>
+        </div>
+        <div class="block">
+          <div class="block-hd">
+            <div class="block-title"><span class="ic"></span> PTA Executive Body Members <span class="db-chip">pta.members[ ]</span></div>
+            <div class="block-acts">
+              <button class="abtn out" onclick="openPersonModal()">+ Add Member</button>
+              <button class="abtn gold" onclick="saveBlock('PTA')"> Save</button>
+            </div>
+          </div>
+          <div class="block-body" style="padding:0;">
+            <table class="data-table">
+              <thead><tr><th>Photo</th><th>Name</th><th>Role / Designation</th><th>Contact</th><th>Order</th><th>Actions</th></tr></thead>
+              <tbody>
+                <tr>
+                  <td><div style="width:38px;height:38px;border-radius:50%;background:var(--bg2);display:flex;align-items:center;justify-content:center;font-size:1rem;"></div></td>
+                  <td style="font-weight:700;">Mr. Rodney Ivan D'Souza</td>
+                  <td style="color:var(--text-muted);font-size:.8rem;">PTA Vice President</td>
+                  <td style="font-size:.78rem;color:var(--text-muted);">—</td>
+                  <td><input type="number" value="1" style="width:48px;border:1.5px solid var(--border);border-radius:6px;padding:4px 7px;font-family:Nunito;font-size:.8rem;background:var(--white);color:var(--text);outline:none;" /></td>
+                  <td><div class="act-btns"><button class="ab" aria-label="Edit record">E</button><button class="ab del" aria-label="Delete record">×</button></div></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════════════
+           TAB 6 — CBSE DETAILS
+      ══════════════════════════════════════════ -->
+      <div class="sub-panel" id="tab-cbse">
+        <div class="db-bar">
+          <span class="db-dot"></span> Collection: <code>about_us</code> · Document: <code>cbse_details</code>
+          <span class="db-ep">POST /api/about/cbse-details</span>
+        </div>
+        <div class="two-col">
+          <div class="block">
+            <div class="block-hd">
+              <div class="block-title"><span class="ic"></span> CBSE Details <span class="db-chip">cbse_details.info{ }</span></div>
+              <div class="block-acts"><button class="abtn gold" onclick="saveBlock('CBSE')"> Save</button></div>
+            </div>
+            <div class="block-body">
+              <div class="fg">
+                <div class="fg c2">
+                  <div class="f"><label>Affiliation Number <span class="dbh">cbse.affiliationNo</span></label><input type="text" value="831368" /></div>
+                  <div class="f"><label>Affiliation Type <span class="dbh">cbse.affiliationType</span></label><input type="text" value="Secondary (LKG to Class X)" /></div>
+                </div>
+                <div class="fg c2">
+                  <div class="f"><label>Affiliation Start Year <span class="dbh">cbse.validFrom</span></label><input id="cbseValidFromInput" type="number" min="1900" max="2100" step="1" inputmode="numeric" placeholder="2024" value="2024" /></div>
+                  <div class="f"><label>Affiliation End Year <span class="dbh">cbse.validTo</span></label><input id="cbseValidToInput" type="number" min="1900" max="2100" step="1" inputmode="numeric" placeholder="2029" value="2029" /></div>
+                </div>
+                <div class="f"><label>School Code <span class="dbh">cbse.schoolCode</span></label><input type="text" placeholder="Enter CBSE school code..." /></div>
+                <div class="f"><label>Additional Notes <span class="dbh">cbse.notes</span></label><textarea placeholder="Any additional CBSE information..."></textarea></div>
+              </div>
+            </div>
+          </div>
+          <div class="block">
+            <div class="block-hd">
+              <div class="block-title"><span class="ic"></span> CBSE Documents <span class="db-chip">cbse.documents[ ]</span></div>
+              <div class="block-acts"><button class="abtn out">+ Add Doc</button></div>
+            </div>
+            <div class="block-body">
+              <p class="f-hint" style="margin-bottom:12px;">Upload PDFs to Cloudinary and paste the URL. Stored as <code>{ name, url, type }</code></p>
+              <div style="display:grid;gap:8px;">
+                <div style="display:flex;gap:8px;align-items:center;background:var(--bg);padding:10px;border-radius:8px;border:1px solid var(--border);">
+                  <span style="font-size:1.1rem;"></span>
+                  <div style="flex:1;"><div style="font-size:.8rem;font-weight:700;">Affiliation Letter</div><div style="font-size:.68rem;color:var(--text-muted);">PDF · Cloudinary</div></div>
+                  <button class="ab" aria-label="Edit document">E</button><button class="ab del" aria-label="Delete document">×</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════════════
+           TAB 7 — ANNUAL REPORT
+      ══════════════════════════════════════════ -->
+      <div class="sub-panel" id="tab-report">
+        <div class="db-bar">
+          <span class="db-dot"></span> Collection: <code>about_us</code> · Document: <code>annual_report</code>
+          <span class="db-ep">POST /api/about/annual-report</span>
+        </div>
+        <div class="block">
+          <div class="block-hd">
+            <div class="block-title"><span class="ic"></span> Annual Reports <span class="db-chip">annual_report.reports[ ]</span></div>
+            <div class="block-acts">
+              <button class="abtn out" onclick="openReportModal()">+ Upload Report</button>
+              <button class="abtn gold" onclick="saveBlock('Annual Report')"> Save</button>
+            </div>
+          </div>
+          <div class="block-body" style="padding:0;">
+            <table class="data-table">
+              <thead><tr><th>Year</th><th>Title</th><th>File (Cloudinary PDF)</th><th>Size</th><th>Visible</th><th>Actions</th></tr></thead>
+              <tbody>
+                <tr>
+                  <td style="font-weight:700;">2024–25</td>
+                  <td>Annual Report 2024–25</td>
+                  <td style="font-size:.76rem;color:var(--text-muted);font-family:monospace;">res.cloudinary.com/.../annual-report-2425.pdf</td>
+                  <td style="font-size:.76rem;color:var(--text-muted);">2.4 MB</td>
+                  <td><label class="tog"><input type="checkbox" checked /><span class="tog-track"></span></label></td>
+                  <td><div class="act-btns"><button class="ab" aria-label="Edit report">E</button><button class="ab del" aria-label="Delete report">×</button></div></td>
+                </tr>
+                <tr>
+                  <td style="font-weight:700;">2023–24</td>
+                  <td>Annual Report 2023–24</td>
+                  <td style="font-size:.76rem;color:var(--text-muted);font-family:monospace;">res.cloudinary.com/.../annual-report-2324.pdf</td>
+                  <td style="font-size:.76rem;color:var(--text-muted);">1.8 MB</td>
+                  <td><label class="tog"><input type="checkbox" checked /><span class="tog-track"></span></label></td>
+                  <td><div class="act-btns"><button class="ab" aria-label="Edit report">E</button><button class="ab del" aria-label="Delete report">×</button></div></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="block">
+          <div class="block-hd">
+            <div class="block-title"><span class="ic"></span> Upload New Report to Cloudinary</div>
+          </div>
+          <div class="block-body">
+            <div class="fg c2">
+              <div class="f"><label>Academic Year <span class="req">*</span> <span class="dbh">report.year</span></label><input type="text" placeholder="e.g. 2025–26" /></div>
+              <div class="f"><label>Report Title <span class="dbh">report.title</span></label><input type="text" placeholder="Annual Report 2025–26" /></div>
+            </div>
+            <div class="f" style="margin-top:12px;">
+              <label>Cloudinary PDF URL <span class="req">*</span> <span class="dbh">report.url</span></label>
+              <div class="cld-url-row">
+                <input type="url" placeholder="https://res.cloudinary.com/your-cloud/raw/upload/..." />
+                <button class="cld-paste-btn">Apply</button>
+              </div>
+              <div class="f-hint">Upload PDF to Cloudinary as <code>raw</code> resource type, then paste URL. Stored in <code>annual_report.reports[ ]</code></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /page-body -->
+  </main>
+</div><!-- /admin-shell -->
+
+<!-- ══ PERSON MODAL ══ -->
+<div class="modal-overlay" id="personModal" onclick="if(event.target===this)closePersonModal()">
+  <div class="modal">
+    <div class="modal-hd">
+      <div class="modal-title"> Add / Edit Person</div>
+      <button class="modal-close" aria-label="Close modal" onclick="closePersonModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="fg">
+        <div class="f"><label>Full Name <span class="req">*</span> <span class="dbh">name</span></label><input id="personNameInput" type="text" placeholder="Rev. Fr. ..." /></div>
+        <div class="f" id="personDesignationSelectWrap">
+          <label>Designation <span class="req">*</span> <span class="dbh">designation</span></label>
+          <select id="personDesignationSelect" onchange="syncPersonDesignationMode()">
+            <option value="">Select designation</option>
+            <option value="Bishop, Diocese of Mangalore">Bishop, Diocese of Mangalore</option>
+            <option value="Secretary, Catholic Board of Education">Secretary, Catholic Board of Education</option>
+            <option value="Manager / Correspondent">Manager / Correspondent</option>
+            <option value="Correspondent">Correspondent</option>
+            <option value="Principal">Principal</option>
+            <option value="Vice Principal">Vice Principal</option>
+            <option value="Administrator">Administrator</option>
+            <option value="Chairperson">Chairperson</option>
+            <option value="Vice Chairperson">Vice Chairperson</option>
+            <option value="Treasurer">Treasurer</option>
+            <option value="Member">Member</option>
+            <option value="__custom__">Other / Custom</option>
+          </select>
+          <div class="f-hint">Choose from common management designations or use a custom one.</div>
+        </div>
+        <div class="f" id="personDesignationTextWrap" style="display:none;">
+          <label id="personDesignationTextLabel">Role / Designation <span class="req">*</span> <span class="dbh">designation</span></label>
+          <input id="personDesignationInput" type="text" placeholder="Manager, Principal, PTA Vice President, etc." />
+        </div>
+        <div class="f"><label>Photo (Cloudinary URL) <span class="dbh">photo.url</span></label>
+          <div class="cld-url-row">
+            <input id="personPhotoInput" type="url" placeholder="https://res.cloudinary.com/..." />
+            <button class="cld-paste-btn">Apply</button>
+          </div>
+          <div class="cld-transforms" style="margin-top:6px;">
+            <span class="cld-t on">w_400</span><span class="cld-t on">q_auto</span><span class="cld-t on">f_auto</span><span class="cld-t">r_max</span><span class="cld-t">g_face</span>
+          </div>
+          <div class="cld-hint">Recommended: <code>w_400,h_400,c_fill,g_face,r_max,q_auto,f_auto</code></div>
+        </div>
+        <div class="f"><label>Display Order <span class="dbh">order</span></label><input id="personOrderInput" type="number" value="1" /></div>
+        <div class="f"><label>Bio / Description <span class="dbh">bio</span></label><textarea id="personBioInput" placeholder="Short bio..." style="min-height:70px;"></textarea></div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="abtn out" onclick="closePersonModal()">Cancel</button>
+      <button class="abtn gold" onclick="savePersonFromModal()"> Save Person</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ REPORT MODAL ══ -->
+<div class="modal-overlay" id="reportModal" onclick="if(event.target===this)closeReportModal()">
+  <div class="modal">
+    <div class="modal-hd">
+      <div class="modal-title"> Upload Annual Report</div>
+      <button class="modal-close" aria-label="Close modal" onclick="closeReportModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="fg">
+        <div class="fg c2">
+          <div class="f"><label>Academic Year <span class="req">*</span></label><input type="text" placeholder="2025–26" /></div>
+          <div class="f"><label>Report Title</label><input type="text" placeholder="Annual Report 2025–26" /></div>
+        </div>
+        <div class="f">
+          <label>Cloudinary PDF URL <span class="req">*</span></label>
+          <div class="cld-url-row">
+            <input type="url" placeholder="https://res.cloudinary.com/your-cloud/raw/upload/..." />
+            <button class="cld-paste-btn">Apply</button>
+          </div>
+          <div class="cld-hint">Upload as PDF. New uploads will keep the uploaded file name in the Cloudinary URL.</div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="abtn out" onclick="closeReportModal()">Cancel</button>
+      <button class="abtn gold" onclick="saveReportFromModal()"> Save Report</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SAVE TOAST ══ -->
+<div class="save-toast" id="saveToast"> Saved to MongoDB!</div>
+
+<script>
+  /* ── TAB SWITCHING ── */
+  var TABS = ['profile','management','manager','principal','pta','cbse','report'];
+  var TAB_SECTION_KEYS = {
+    profile: 'school-profile',
+    management: 'management',
+    manager: 'manager-speaks',
+    principal: 'principals-message',
+    pta: 'pta',
+    cbse: 'cbse-details',
+    report: 'annual-report'
+  };
+  var API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://loretto-cbse-school.onrender.com';
+  var activeTab = 'profile';
+  var loadingTab = null;
+  var editingPersonRow = null;
+  var editingReportRow = null;
+  var PRINCIPAL_DEFAULT_QUOTE = '"Learning allows us to make sense of the world around us, the world inside of us, and where we fit within the world."';
+  var PTA_DEFAULT_INTRO = 'The Parent-Teacher Association (PTA) plays a vital supportive role in the functioning of the school. The main motive of the PTA is to build a strong relationship between the school and the children\'s families, supporting holistic development and a nurturing community. The PTA general body meets once a year. During the year, the executive committee meets regularly. Various activities are conducted under the leadership of the PTA.';
+  var MANAGEMENT_DESIGNATION_OPTIONS = [
+    'Bishop, Diocese of Mangalore',
+    'Secretary, Catholic Board of Education',
+    'Manager / Correspondent',
+    'Correspondent',
+    'Principal',
+    'Vice Principal',
+    'Administrator',
+    'Chairperson',
+    'Vice Chairperson',
+    'Treasurer',
+    'Member'
+  ];
+  var TAB_LABELS = {
+    profile:    ['School Profile',       'about_us → school_profile',     '../about-us/1-school-profile.html'],
+    management: ['Management',           'about_us → management',          '../about-us/2-management.html'],
+    manager:    ["Manager Speaks",       'about_us → manager_speaks',      '../about-us/3-manager-speaks.html'],
+    principal:  ["Principal's Message",  'about_us → principals_message',  '../about-us/4-principals-message.html'],
+    pta:        ['PTA Executive Body',   'about_us → pta_executive_body',  '../about-us/5-pta-executive-body.html'],
+    cbse:       ['CBSE Details',         'about_us → cbse_details',        '../about-us/6-cbse-details.html'],
+    report:     ['Annual Report',        'about_us → annual_report',       '../about-us/7-annual-report.html'],
+  };
+
+  function apiJson(url, options) {
+    return fetch(url, Object.assign({
+      headers: { 'Content-Type': 'application/json' }
+    }, options || {})).then(function(res) {
+      return res.json().catch(function() { return {}; }).then(function(data) {
+        if (!res.ok) {
+          throw new Error(data.error || 'Request failed');
+        }
+        return data;
+      });
+    });
+  }
+
+  async function uploadFile(file) {
+    var fd = new FormData();
+    fd.append('file', file);
+    var res = await fetch(API_BASE + '/api/upload', { method: 'POST', body: fd });
+    var data = await res.json().catch(function () { return {}; });
+    if (!res.ok || !data.url) {
+      throw new Error(data.error || 'Upload failed');
+    }
+    return data.url;
+  }
+
+  function getTabPanel(id) {
+    return document.getElementById('tab-' + id);
+  }
+
+  function text(node) {
+    return node ? (node.textContent || '').replace(/\s+/g, ' ').trim() : '';
+  }
+
+  function inputValue(node) {
+    return node ? (node.value || node.getAttribute('value') || '').trim() : '';
+  }
+
+  function clonePanelWithFormState(panel) {
+    if (!panel) return null;
+    var clone = panel.cloneNode(true);
+    var sourceFields = panel.querySelectorAll('input, textarea, select');
+    var cloneFields = clone.querySelectorAll('input, textarea, select');
+
+    sourceFields.forEach(function (field, index) {
+      var target = cloneFields[index];
+      if (!target) return;
+
+      if (field.tagName === 'TEXTAREA') {
+        target.textContent = field.value;
+        return;
+      }
+
+      if (field.tagName === 'SELECT') {
+        target.value = field.value;
+        Array.from(target.options).forEach(function (option) {
+          option.selected = option.value === field.value;
+        });
+        return;
+      }
+
+      if (field.type === 'checkbox' || field.type === 'radio') {
+        target.checked = field.checked;
+        if (field.checked) target.setAttribute('checked', 'checked');
+        else target.removeAttribute('checked');
+        return;
+      }
+
+      target.value = field.value;
+      target.setAttribute('value', field.value);
+    });
+
+    return clone;
+  }
+
+  function serializeTab(id) {
+    var panel = getTabPanel(id);
+    var clone = clonePanelWithFormState(panel);
+    return {
+      tab: id,
+      html: clone ? clone.innerHTML : '',
+      updatedAt: new Date().toISOString()
+    };
+  }
+
+  function hydrateTab(id, payload) {
+    var panel = getTabPanel(id);
+    if (!panel || !payload || !payload.html) return;
+    panel.innerHTML = payload.html;
+    enhancePanel(panel);
+  }
+
+  async function loadTabFromDB(id) {
+    if (!TAB_SECTION_KEYS[id]) return;
+    loadingTab = id;
+    try {
+      var item = await apiJson(API_BASE + '/api/about/' + TAB_SECTION_KEYS[id]);
+      if (item && item.data) {
+        hydrateTab(id, item.data);
+      }
+    } catch (err) {
+      toast('Could not load ' + (TAB_LABELS[id] ? TAB_LABELS[id][0] : id), true);
+    } finally {
+      loadingTab = null;
+    }
+  }
+
+  async function switchTab(id) {
+    activeTab = id;
+    /* panels */
+    TABS.forEach(function(t) {
+      document.getElementById('tab-'+t).classList.toggle('active', t === id);
+    });
+    /* subnav links */
+    var links = document.querySelectorAll('.admin-subnav a');
+    links.forEach(function(a, i) { a.classList.toggle('active', TABS[i] === id); });
+    /* sidebar links */
+    document.querySelectorAll('.sb-link').forEach(function(l) { l.classList.remove('active'); });
+    var sbl = document.querySelector('.sb-link[onclick="switchTab(\''+id+'\')"]');
+    if (sbl) sbl.classList.add('active');
+    /* topbar subtitle */
+    var info = TAB_LABELS[id];
+    if (info) {
+      document.querySelector('.atb-title').childNodes[0].textContent = 'About Us — ' + info[0] + ' ';
+      document.getElementById('atbSub').innerHTML = info[1].replace('→','·');
+      /* Update preview link */
+      var previewBtn = document.querySelector('.abtn.out');
+      if (previewBtn) previewBtn.onclick = function(){ window.open(info[2],'_blank'); };
+    }
+    await loadTabFromDB(id);
+    enhancePanel(getTabPanel(id));
+  }
+
+  /* ── SAVE / DB FUNCTIONS ── */
+  function showToast(msg, isError) {
+    var t = document.getElementById('saveToast');
+    t.textContent = ' ' + (msg || 'Saved to MongoDB!');
+    t.style.borderLeftColor = isError ? 'var(--red)' : 'var(--gold-light)';
+    t.classList.add('show');
+    setTimeout(function(){ t.classList.remove('show'); }, 3000);
+  }
+
+  function toast(msg, isError) {
+    showToast(msg, isError);
+  }
+
+  async function persistTab(id, successMessage) {
+    if (!TAB_SECTION_KEYS[id]) return;
+    try {
+      await apiJson(API_BASE + '/api/about/' + TAB_SECTION_KEYS[id], {
+        method: 'POST',
+        body: JSON.stringify(serializeTab(id))
+      });
+      showToast(successMessage || ((TAB_LABELS[id] ? TAB_LABELS[id][0] : id) + ' saved to MongoDB!'));
+    } catch (err) {
+      showToast(err.message || 'Failed to save changes', true);
+      throw err;
+    }
+  }
+
+  function saveBlock(section) {
+    return persistTab(activeTab, section + ' saved to MongoDB!');
+  }
+
+  function saveToDB() {
+    return persistTab(activeTab, 'All changes saved to MongoDB!');
+  }
+
+  async function publishSection() {
+    if (!confirm('Publish this section to the live site?')) return;
+    await persistTab(activeTab, 'Published successfully!');
+  }
+
+  /* ── CLOUDINARY HELPERS ── */
+  function applyCldUrl(inputId, imgId) {
+    var url = document.getElementById(inputId).value.trim();
+    if (!url) return;
+    var img = document.getElementById(imgId);
+    if (img) { img.src = url; img.style.display = 'block'; }
+    showToast('Image URL applied!');
+  }
+
+  function removeCldImg(imgId, thumbId) {
+    var img = document.getElementById(imgId);
+    if (img) img.src = '';
+  }
+
+  function updateImagePreviewFromInput(input, img) {
+    if (!input || !img) return;
+    var url = input.value.trim();
+    img.src = url;
+    img.style.display = url ? 'block' : 'none';
+  }
+
+  function ensureUploadPreview(container, urlInput, fileInput) {
+    if (!container || !urlInput) return null;
+    var thumbs = container.querySelector('.cld-thumbs');
+    if (!thumbs) return null;
+
+    var previewThumb = null;
+    Array.prototype.slice.call(thumbs.querySelectorAll('.cld-thumb')).forEach(function (thumb) {
+      if (!previewThumb && thumb.querySelector('img[data-generated-upload-preview="true"]')) {
+        previewThumb = thumb;
+      }
+    });
+    if (!previewThumb) {
+      var addTile = thumbs.querySelector('.cld-add');
+      previewThumb = document.createElement('div');
+      previewThumb.className = 'cld-thumb';
+      previewThumb.style.cssText = addTile && addTile.getAttribute('style')
+        ? addTile.getAttribute('style')
+        : 'width:100%;height:120px;';
+      previewThumb.style.display = 'none';
+      previewThumb.innerHTML = '<img data-generated-upload-preview="true" alt="Uploaded image preview" style="width:100%;height:100%;object-fit:cover;display:block;" />'
+        + '<div class="cld-thumb-overlay"><button type="button" class="change-btn">Change</button><button type="button" class="del">Remove</button></div>'
+        + '<div class="cld-transform-tag">preview</div>';
+      thumbs.insertBefore(previewThumb, thumbs.firstChild);
+    }
+
+    var previewImg = previewThumb.querySelector('img[data-generated-upload-preview="true"]');
+    var changeBtn = previewThumb.querySelector('.change-btn');
+    var removeBtn = previewThumb.querySelector('.del');
+
+    if (changeBtn && fileInput && !changeBtn.__uploadChangeBound) {
+      changeBtn.__uploadChangeBound = true;
+      changeBtn.addEventListener('click', function (e) {
+        e.preventDefault();
+        fileInput.click();
+      });
+    }
+
+    if (removeBtn && !removeBtn.__uploadRemoveBound) {
+      removeBtn.__uploadRemoveBound = true;
+      removeBtn.addEventListener('click', function (e) {
+        e.preventDefault();
+        urlInput.value = '';
+        urlInput.dispatchEvent(new Event('input', { bubbles: true }));
+      });
+    }
+
+    if (!urlInput.__uploadPreviewBound) {
+      urlInput.__uploadPreviewBound = true;
+      urlInput.addEventListener('input', function () {
+        var url = urlInput.value.trim();
+        previewThumb.style.display = url ? 'block' : 'none';
+        if (url) previewImg.src = url;
+      });
+    }
+
+    if (urlInput.value.trim()) {
+      previewThumb.style.display = 'block';
+      previewImg.src = urlInput.value.trim();
+    } else {
+      previewThumb.style.display = 'none';
+    }
+
+    return previewImg;
+  }
+
+  function buildManagementIntroBlock(initialValue) {
+    var block = document.createElement('div');
+    block.className = 'block management-intro-block';
+    block.innerHTML = '<div class="block-hd">'
+      + '<div class="block-title"><span class="ic"></span> Management Intro Sentence <span class="db-chip">management.intro</span></div>'
+      + '<div class="block-acts"><button class="abtn gold" onclick="saveBlock(\'Management Intro\')"> Save</button></div>'
+      + '</div>'
+      + '<div class="block-body">'
+      + '<div class="f">'
+      + '<label>Intro Text / Sentence <span class="dbh">management.introText</span></label>'
+      + '<textarea id="managementIntroText" placeholder="Enter the sentence you want to show on the public Management page..." style="min-height:96px;">' + (initialValue || '') + '</textarea>'
+      + '<div class="f-hint">This text appears above the Management Team cards on the public page.</div>'
+      + '</div>'
+      + '</div>';
+    return block;
+  }
+
+  function ensureManagementIntroBlock(panel) {
+    if (!panel || panel.id !== 'tab-management') return;
+    if (panel.querySelector('#managementIntroText')) return;
+
+    var blocks = panel.querySelectorAll('.block');
+    var teamBlock = null;
+    Array.prototype.slice.call(blocks).forEach(function (block) {
+      if (teamBlock) return;
+      var title = text(block.querySelector('.block-title'));
+      if (/management team/i.test(title)) teamBlock = block;
+    });
+
+    var introBlock = buildManagementIntroBlock('');
+    if (teamBlock) panel.insertBefore(introBlock, teamBlock);
+    else panel.appendChild(introBlock);
+  }
+
+  function ensurePrincipalQuoteField(panel) {
+    if (!panel || panel.id !== 'tab-principal') return;
+
+    var blocks = panel.querySelectorAll('.block');
+    var messageBlock = null;
+    Array.prototype.slice.call(blocks).forEach(function (block) {
+      if (messageBlock) return;
+      var title = text(block.querySelector('.block-title'));
+      if (/principal'?s message/i.test(title)) messageBlock = block;
+    });
+    if (!messageBlock) return;
+
+    var groups = messageBlock.querySelectorAll('.block-body .fg .f');
+    if (!groups[1]) return;
+
+    var label = groups[1].querySelector('label');
+    var input = groups[1].querySelector('input[type="text"]');
+    if (!label || !input) return;
+
+    label.innerHTML = 'Highlighted Quote <span class="dbh">principals_message.subHeading</span>';
+    input.id = 'principalQuoteInput';
+    input.placeholder = 'Enter the highlighted quote for the public Principal\'s Message page...';
+
+    if (!groups[1].querySelector('.f-hint')) {
+      var hint = document.createElement('div');
+      hint.className = 'f-hint';
+      hint.textContent = 'This text appears in the highlighted quote box on the public Principal\'s Message page.';
+      groups[1].appendChild(hint);
+    }
+
+    var currentValue = (input.value || '').trim();
+    if (!currentValue || currentValue === 'From the desk of our Principal') {
+      input.value = PRINCIPAL_DEFAULT_QUOTE;
+      input.setAttribute('value', PRINCIPAL_DEFAULT_QUOTE);
+    }
+  }
+
+  function buildPtaIntroBlock(initialValue) {
+    var block = document.createElement('div');
+    block.className = 'block pta-intro-block';
+    block.innerHTML = '<div class="block-hd">'
+      + '<div class="block-title"><span class="ic"></span> PTA Intro Text <span class="db-chip">pta.intro</span></div>'
+      + '<div class="block-acts"><button class="abtn gold" onclick="saveBlock(\'PTA Intro\')"> Save</button></div>'
+      + '</div>'
+      + '<div class="block-body">'
+      + '<div class="f">'
+      + '<label>PTA Intro / Description <span class="dbh">pta.introText</span></label>'
+      + '<textarea id="ptaIntroText" placeholder="Enter the sentences that should appear on the public PTA Executive Body page..." style="min-height:120px;">' + (initialValue || '') + '</textarea>'
+      + '<div class="f-hint">This text appears above the PTA leadership and members on the public page.</div>'
+      + '</div>'
+      + '</div>';
+    return block;
+  }
+
+  function ensurePtaIntroBlock(panel) {
+    if (!panel || panel.id !== 'tab-pta') return;
+    if (panel.querySelector('#ptaIntroText')) return;
+
+    var blocks = panel.querySelectorAll('.block');
+    var membersBlock = null;
+    Array.prototype.slice.call(blocks).forEach(function (block) {
+      if (membersBlock) return;
+      var title = text(block.querySelector('.block-title'));
+      if (/pta executive body members/i.test(title)) membersBlock = block;
+    });
+
+    var introBlock = buildPtaIntroBlock(PTA_DEFAULT_INTRO);
+    if (membersBlock) panel.insertBefore(introBlock, membersBlock);
+    else panel.appendChild(introBlock);
+  }
+
+  function extractYear(value) {
+    var match = String(value || '').trim().match(/\b(19|20)\d{2}\b/);
+    return match ? match[0] : '';
+  }
+
+  function ensureCbseYearFields(panel) {
+    if (!panel || panel.id !== 'tab-cbse') return;
+
+    var primaryBlock = panel.querySelector('.block');
+    if (!primaryBlock) return;
+    var groups = primaryBlock.querySelectorAll('.block-body .fg.c2');
+    var yearGroup = groups[1];
+    if (!yearGroup) return;
+
+    var fields = yearGroup.querySelectorAll('.f');
+    if (!fields[0] || !fields[1]) return;
+
+    var startLabel = fields[0].querySelector('label');
+    var endLabel = fields[1].querySelector('label');
+    var startInput = fields[0].querySelector('input');
+    var endInput = fields[1].querySelector('input');
+    if (!startLabel || !endLabel || !startInput || !endInput) return;
+
+    startLabel.innerHTML = 'Affiliation Start Year <span class="dbh">cbse.validFrom</span>';
+    endLabel.innerHTML = 'Affiliation End Year <span class="dbh">cbse.validTo</span>';
+
+    startInput.id = 'cbseValidFromInput';
+    endInput.id = 'cbseValidToInput';
+    startInput.type = 'number';
+    endInput.type = 'number';
+    startInput.min = '1900';
+    endInput.min = '1900';
+    startInput.max = '2100';
+    endInput.max = '2100';
+    startInput.step = '1';
+    endInput.step = '1';
+    startInput.inputMode = 'numeric';
+    endInput.inputMode = 'numeric';
+    startInput.placeholder = '2024';
+    endInput.placeholder = '2029';
+
+    var startYear = extractYear(startInput.value);
+    var endYear = extractYear(endInput.value);
+    if (startYear) {
+      startInput.value = startYear;
+      startInput.setAttribute('value', startYear);
+    }
+    if (endYear) {
+      endInput.value = endYear;
+      endInput.setAttribute('value', endYear);
+    }
+  }
+
+  function enhanceGallerySlot(slot) {
+    if (!slot) return;
+    var inputs = slot.querySelectorAll('input');
+    var urlInput = inputs[1] || inputs[0];
+    if (!urlInput) return;
+    slot.dataset.enhanced = 'true';
+
+    var preview = slot.querySelector('img');
+    if (!urlInput.__galleryPreviewBound) {
+      urlInput.__galleryPreviewBound = true;
+      urlInput.addEventListener('input', function () {
+        if (preview) updateImagePreviewFromInput(urlInput, preview);
+      });
+    }
+
+    var row = slot.querySelector('.gallery-upload-row');
+    if (!row) {
+      row = document.createElement('div');
+      row.className = 'gallery-upload-row';
+      row.style.cssText = 'display:flex;gap:6px;margin-top:6px;';
+      row.innerHTML = '<button type="button" class="cld-paste-btn" style="flex:1;">Upload</button><input type="file" accept="image/*" style="display:none;" />';
+      slot.appendChild(row);
+    }
+    var button = row.querySelector('button');
+    var fileInput = row.querySelector('input');
+    if (button && fileInput && !button.__galleryUploadBound) {
+      button.__galleryUploadBound = true;
+      button.addEventListener('click', function () { fileInput.click(); });
+    }
+    if (fileInput && !fileInput.__galleryUploadBound) {
+      fileInput.__galleryUploadBound = true;
+      fileInput.addEventListener('change', async function () {
+        if (!fileInput.files || !fileInput.files[0]) return;
+        try {
+          showToast('Uploading image to Cloudinary...');
+          var url = await uploadFile(fileInput.files[0]);
+          urlInput.value = url;
+          if (preview) updateImagePreviewFromInput(urlInput, preview);
+          showToast('Image uploaded successfully!');
+        } catch (err) {
+          showToast(err.message, true);
+        } finally {
+          fileInput.value = '';
+        }
+      });
+    }
+  }
+
+  function enhanceUploadRows(scope) {
+    Array.prototype.slice.call((scope || document).querySelectorAll('.cld-url-row')).forEach(function (row) {
+      var urlInput = row.querySelector('input[type="url"]');
+      if (!urlInput) return;
+      row.dataset.enhanced = 'true';
+
+      var isPdf = /raw\/upload|pdf/i.test(urlInput.placeholder || '') || /pdf/i.test(text(row.parentNode));
+      var buttons = row.querySelectorAll('button.cld-paste-btn');
+      var applyBtn = buttons[0] || null;
+      var uploadBtn = null;
+      Array.prototype.slice.call(buttons).forEach(function (btn) {
+        if (/upload/i.test(text(btn))) uploadBtn = btn;
+      });
+      if (!uploadBtn) {
+        uploadBtn = document.createElement('button');
+        uploadBtn.type = 'button';
+        uploadBtn.className = 'cld-paste-btn';
+        uploadBtn.textContent = isPdf ? 'Upload PDF' : 'Upload';
+        row.appendChild(uploadBtn);
+      } else {
+        uploadBtn.type = 'button';
+        uploadBtn.textContent = isPdf ? 'Upload PDF' : 'Upload';
+      }
+
+      var fileInput = row.querySelector('input[type="file"]');
+      if (!fileInput) {
+        fileInput = document.createElement('input');
+        fileInput.type = 'file';
+        fileInput.accept = isPdf ? 'application/pdf' : 'image/*';
+        fileInput.style.display = 'none';
+        row.appendChild(fileInput);
+      } else {
+        fileInput.accept = isPdf ? 'application/pdf' : 'image/*';
+      }
+
+      if (applyBtn && !applyBtn.__applyBound) {
+        applyBtn.__applyBound = true;
+        applyBtn.addEventListener('click', function (e) {
+          e.preventDefault();
+          urlInput.dispatchEvent(new Event('input', { bubbles: true }));
+          showToast(isPdf ? 'File URL applied!' : 'Image URL applied!');
+        });
+      }
+
+      if (!uploadBtn.__uploadBound) {
+        uploadBtn.__uploadBound = true;
+        uploadBtn.addEventListener('click', function () { fileInput.click(); });
+      }
+      if (!fileInput.__uploadBound) {
+        fileInput.__uploadBound = true;
+        fileInput.addEventListener('change', async function () {
+          if (!fileInput.files || !fileInput.files[0]) return;
+          try {
+            showToast('Uploading to Cloudinary...');
+            var url = await uploadFile(fileInput.files[0]);
+            urlInput.value = url;
+            urlInput.dispatchEvent(new Event('input', { bubbles: true }));
+            showToast((isPdf ? 'PDF' : 'File') + ' uploaded successfully!');
+          } catch (err) {
+            showToast(err.message, true);
+          } finally {
+            fileInput.value = '';
+          }
+        });
+      }
+
+      if (!isPdf) {
+        var container = row.closest('.block-body, .modal-body, .cld-gallery-slot');
+        var img = null;
+        if (container) img = container.querySelector('img');
+        if (!img && container) img = ensureUploadPreview(container, urlInput, fileInput);
+        var addTile = container ? container.querySelector('.cld-add') : null;
+        if (addTile && !addTile.__uploadBound) {
+          addTile.__uploadBound = true;
+          addTile.onclick = function () { fileInput.click(); };
+          var addText = addTile.querySelector('.cld-add-txt');
+          if (addText && /upload via cloudinary/i.test(addText.textContent || '')) {
+            addText.textContent = 'Click to Upload';
+          }
+        }
+        if (!urlInput.__imageInputBound) {
+          urlInput.__imageInputBound = true;
+          urlInput.addEventListener('input', function () {
+            if (img) updateImagePreviewFromInput(urlInput, img);
+          });
+        }
+        if (urlInput.value.trim()) {
+          urlInput.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+      }
+    });
+  }
+
+  function enhancePanel(panel) {
+    if (!panel) return;
+    ensureManagementIntroBlock(panel);
+    ensurePrincipalQuoteField(panel);
+    ensurePtaIntroBlock(panel);
+    ensureCbseYearFields(panel);
+    enhanceUploadRows(panel);
+    Array.prototype.slice.call(panel.querySelectorAll('.cld-gallery-slot')).forEach(enhanceGallerySlot);
+  }
+
+  /* Cloudinary transform chips */
+  document.addEventListener('click', function(e) {
+    var chip = e.target.closest('.cld-t');
+    if (!chip) return;
+    chip.classList.toggle('on');
+  });
+
+  /* ── ADD GALLERY SLOT ── */
+  function addGallerySlot() {
+    var slot = document.createElement('div');
+    slot.className = 'cld-gallery-slot';
+    slot.style.cssText = 'background:var(--bg);border-radius:10px;border:1.5px solid var(--border);padding:12px;';
+    slot.innerHTML = '<div class="cld-add" style="width:100%;height:90px;margin-bottom:8px;" onclick="this.nextSibling.focus()"><span class="cld-add-ic"></span><span class="cld-add-txt">Paste Cloudinary URL</span></div>'
+      + '<input type="text" placeholder="Alt text..." style="width:100%;padding:5px 9px;border:1.5px solid var(--border);border-radius:7px;font-family:Nunito;font-size:.76rem;margin-bottom:6px;background:var(--white);color:var(--text);outline:none;" />'
+      + '<input type="url" placeholder="Cloudinary URL..." style="width:100%;padding:5px 9px;border:1.5px solid var(--border);border-radius:7px;font-family:Nunito;font-size:.72rem;background:var(--white);color:var(--text);outline:none;" />';
+    document.getElementById('gallerySlots').appendChild(slot);
+    enhanceGallerySlot(slot);
+  }
+
+  /* ── ADD PARAGRAPH ── */
+  var paraCount = 6;
+  function addParagraph() {
+    paraCount++;
+    var item = document.createElement('div');
+    item.className = 'para-item';
+    item.innerHTML = '<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">'
+      + '<span style="font-size:.68rem;font-weight:800;color:var(--text-muted);">¶ ' + paraCount + '</span>'
+      + '<button class="ab del" style="margin-left:auto;" aria-label="Remove paragraph" onclick="this.closest(\'.para-item\').remove()">×</button>'
+      + '</div>'
+      + '<textarea style="min-height:80px;width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:9px;font-family:Nunito;font-size:.86rem;color:var(--text);background:var(--white);outline:none;resize:vertical;" placeholder="Enter paragraph text..."></textarea>';
+    document.getElementById('paraList').appendChild(item);
+  }
+
+  /* ── ADD KEY FACT ── */
+  function addKeyFact() {
+    var row = document.createElement('div');
+    row.className = 'kv-row';
+    row.innerHTML = '<input type="text" class="kv-key" placeholder="Field name..." style="padding:7px 11px;border:1.5px solid var(--border);border-radius:8px;font-family:Nunito;font-size:.83rem;color:var(--text);outline:none;background:var(--bg);font-weight:700;" />'
+      + '<input type="text" placeholder="Value..." style="padding:7px 11px;border:1.5px solid var(--border);border-radius:8px;font-family:Nunito;font-size:.83rem;color:var(--text);outline:none;background:var(--white);" />'
+      + '<button class="ab del" aria-label="Remove row" onclick="this.closest(\'.kv-row\').remove()">×</button>';
+    document.getElementById('keyFactRows').appendChild(row);
+  }
+
+  /* ── MODALS ── */
+  function syncPersonDesignationMode() {
+    var selectWrap = document.getElementById('personDesignationSelectWrap');
+    var textWrap = document.getElementById('personDesignationTextWrap');
+    var textLabel = document.getElementById('personDesignationTextLabel');
+    var textInput = document.getElementById('personDesignationInput');
+    var select = document.getElementById('personDesignationSelect');
+    var isManagement = activeTab === 'management';
+
+    if (!selectWrap || !textWrap || !textLabel || !textInput || !select) return;
+
+    if (isManagement) {
+      selectWrap.style.display = '';
+      textWrap.style.display = select.value === '__custom__' ? '' : 'none';
+      textLabel.innerHTML = 'Custom Designation <span class="req">*</span> <span class="dbh">designation</span>';
+      textInput.placeholder = 'Enter custom management designation';
+    } else {
+      selectWrap.style.display = 'none';
+      textWrap.style.display = '';
+      textLabel.innerHTML = 'Role / Designation <span class="req">*</span> <span class="dbh">designation</span>';
+      textInput.placeholder = 'PTA Vice President, Member, etc.';
+    }
+  }
+
+  function setPersonDesignationValue(value) {
+    var select = document.getElementById('personDesignationSelect');
+    var textInput = document.getElementById('personDesignationInput');
+    var cleanValue = String(value || '').trim();
+    if (!select || !textInput) return;
+
+    if (activeTab === 'management') {
+      if (cleanValue && MANAGEMENT_DESIGNATION_OPTIONS.indexOf(cleanValue) > -1) {
+        select.value = cleanValue;
+        textInput.value = '';
+      } else if (cleanValue) {
+        select.value = '__custom__';
+        textInput.value = cleanValue;
+      } else {
+        select.value = '';
+        textInput.value = '';
+      }
+    } else {
+      select.value = '';
+      textInput.value = cleanValue;
+    }
+
+    syncPersonDesignationMode();
+  }
+
+  function getPersonDesignationValue() {
+    var select = document.getElementById('personDesignationSelect');
+    var textInput = document.getElementById('personDesignationInput');
+    if (!select || !textInput) return '';
+    if (activeTab === 'management') {
+      return (select.value === '__custom__' ? textInput.value : select.value).trim();
+    }
+    return textInput.value.trim();
+  }
+
+  function resetPersonModal() {
+    var modal = document.getElementById('personModal');
+    if (!modal) return;
+    editingPersonRow = null;
+    var nameInput = document.getElementById('personNameInput');
+    var photoInput = document.getElementById('personPhotoInput');
+    var orderInput = document.getElementById('personOrderInput');
+    var bioInput = document.getElementById('personBioInput');
+    if (nameInput) nameInput.value = '';
+    if (photoInput) photoInput.value = '';
+    if (orderInput) orderInput.value = '1';
+    if (bioInput) bioInput.value = '';
+    setPersonDesignationValue('');
+  }
+
+  function openPersonModal(row)  {
+    var modal = document.getElementById('personModal');
+    if (!modal) return;
+    resetPersonModal();
+    enhanceUploadRows(modal);
+    if (row) {
+      editingPersonRow = row;
+      var cells = row.querySelectorAll('td');
+      var photo = row.querySelector('img');
+      var nameInput = document.getElementById('personNameInput');
+      var photoInput = document.getElementById('personPhotoInput');
+      var orderInput = document.getElementById('personOrderInput');
+      var bioInput = document.getElementById('personBioInput');
+      if (nameInput) nameInput.value = text(cells[1]);
+      setPersonDesignationValue(text(cells[2]));
+      if (photoInput) photoInput.value = photo ? (photo.getAttribute('src') || '') : '';
+      if (orderInput) orderInput.value = inputValue(row.querySelector('input[type="number"]')) || '1';
+      if (bioInput) {
+        var bioCell = activeTab === 'pta' ? cells[3] : null;
+        bioInput.value = bioCell ? text(bioCell).replace(/^—$/, '') : '';
+      }
+    }
+    syncPersonDesignationMode();
+    modal.classList.add('open');
+  }
+  function closePersonModal() { document.getElementById('personModal').classList.remove('open'); }
+
+  function personRowHtml(data, includeVisible) {
+    var photoHtml = data.photo ? '<img src="' + data.photo.replace(/"/g, '&quot;') + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" />' : '';
+    var row = '<tr>'
+      + '<td><div style="width:40px;height:40px;border-radius:50%;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:1rem;color:rgba(255,255,255,.8);overflow:hidden;">' + photoHtml + '</div></td>'
+      + '<td style="font-weight:700;">' + (data.name || '') + '</td>'
+      + '<td style="color:var(--text-muted);font-size:.8rem;">' + (data.designation || '') + '</td>'
+      + (includeVisible ? '' : '<td style="font-size:.78rem;color:var(--text-muted);">' + (data.bio || '—') + '</td>')
+      + '<td><input type="number" value="' + (data.order || 1) + '" style="width:52px;border:1.5px solid var(--border);border-radius:6px;padding:4px 8px;font-family:Nunito;font-size:.8rem;background:var(--white);color:var(--text);outline:none;" /></td>'
+      + (includeVisible ? '<td><label class="tog"><input type="checkbox" checked /><span class="tog-track"></span></label></td>' : '')
+      + '<td><div class="act-btns"><button class="ab" aria-label="Edit person">E</button><button class="ab del" aria-label="Delete person">×</button></div></td>'
+      + '</tr>';
+    return row;
+  }
+
+  function savePersonFromModal() {
+    var modal = document.getElementById('personModal');
+    if (!modal) return;
+    var nameInput = document.getElementById('personNameInput');
+    var photoInput = document.getElementById('personPhotoInput');
+    var orderInput = document.getElementById('personOrderInput');
+    var bioInput = document.getElementById('personBioInput');
+    var fields = modal.querySelectorAll('input:not([type="file"]), textarea');
+    var data = {
+      name: nameInput ? nameInput.value.trim() : '',
+      designation: getPersonDesignationValue(),
+      photo: photoInput ? photoInput.value.trim() : '',
+      order: orderInput ? orderInput.value.trim() : '1',
+      bio: bioInput ? bioInput.value.trim() : ''
+    };
+    if (!data.name || !data.designation) {
+      showToast('Name and designation are required.', true);
+      return;
+    }
+    var host = getTabPanel(activeTab);
+    var tbody = host ? host.querySelector('tbody') : null;
+    if (!tbody) return;
+    var includeVisible = activeTab === 'management';
+    var html = personRowHtml(data, includeVisible);
+    if (editingPersonRow) {
+      editingPersonRow.outerHTML = html;
+    } else {
+      tbody.insertAdjacentHTML('beforeend', html);
+    }
+    editingPersonRow = null;
+    closePersonModal();
+    showToast('Person added to ' + TAB_LABELS[activeTab][0] + '.');
+  }
+
+  function resetReportModal() {
+    var modal = document.getElementById('reportModal');
+    if (!modal) return;
+    editingReportRow = null;
+    Array.prototype.slice.call(modal.querySelectorAll('input:not([type="file"])')).forEach(function (field) { field.value = ''; });
+  }
+
+  function openReportModal(row)  {
+    var modal = document.getElementById('reportModal');
+    if (!modal) return;
+    resetReportModal();
+    enhanceUploadRows(modal);
+    if (row) {
+      editingReportRow = row;
+      var cells = row.querySelectorAll('td');
+      var fields = modal.querySelectorAll('input:not([type="file"])');
+      if (fields[0]) fields[0].value = text(cells[0]);
+      if (fields[1]) fields[1].value = text(cells[1]);
+      if (fields[2]) fields[2].value = text(cells[2]);
+    }
+    modal.classList.add('open');
+  }
+  function closeReportModal() { document.getElementById('reportModal').classList.remove('open'); }
+
+  function saveReportFromModal() {
+    var modal = document.getElementById('reportModal');
+    if (!modal) return;
+    var fields = modal.querySelectorAll('input:not([type="file"])');
+    var year = fields[0] ? fields[0].value.trim() : '';
+    var title = fields[1] ? fields[1].value.trim() : '';
+    var url = fields[2] ? fields[2].value.trim() : '';
+    if (!year || !url) {
+      showToast('Academic year and PDF URL are required.', true);
+      return;
+    }
+    var tbody = getTabPanel('report').querySelector('tbody');
+    if (!tbody) return;
+    var rowHtml = '<tr>'
+      + '<td style="font-weight:700;">' + year + '</td>'
+      + '<td>' + (title || ('Annual Report ' + year)) + '</td>'
+      + '<td style="font-size:.76rem;color:var(--text-muted);font-family:monospace;">' + url + '</td>'
+      + '<td style="font-size:.76rem;color:var(--text-muted);">PDF</td>'
+      + '<td><label class="tog"><input type="checkbox" checked /><span class="tog-track"></span></label></td>'
+      + '<td><div class="act-btns"><button class="ab" aria-label="Edit report">E</button><button class="ab del" aria-label="Delete report">×</button></div></td>'
+      + '</tr>';
+    if (editingReportRow) editingReportRow.outerHTML = rowHtml;
+    else tbody.insertAdjacentHTML('beforeend', rowHtml);
+    editingReportRow = null;
+    closeReportModal();
+    showToast('Annual report updated.');
+  }
+
+  document.addEventListener('click', function (e) {
+    var delBtn = e.target.closest('.ab.del');
+    if (delBtn) {
+      var row = delBtn.closest('tr');
+      if (row && row.closest('#tab-management, #tab-pta, #tab-report')) {
+        row.remove();
+        return;
+      }
+    }
+    var editBtn = e.target.closest('.ab:not(.del)');
+    if (!editBtn) return;
+    var editRow = editBtn.closest('tr');
+    if (!editRow) return;
+    if (editRow.closest('#tab-management, #tab-pta')) {
+      openPersonModal(editRow);
+    } else if (editRow.closest('#tab-report')) {
+      openReportModal(editRow);
+    }
+  });
+
+  /* ── KEYBOARD SHORTCUT ── */
+  document.addEventListener('keydown', function(e) {
+    if ((e.ctrlKey || e.metaKey) && e.key === 's') { e.preventDefault(); saveToDB(); }
+  });
+
+  enhancePanel(document);
+  loadTabFromDB(activeTab);
+
+  /* ── SIDEBAR STICKY OFFSET — sits below AdminNavbar ── */
+  /* AdminNavbar injects top-bar + sticky header.
+     Sidebar top is set to 0 so it's always full height.
+     The shell starts after navbar naturally. */
+</script>
+</body>
+</html>

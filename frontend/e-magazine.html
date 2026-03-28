@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>E-Magazine | Loretto Central School</title>
+  <link rel="shortcut icon" href="./favicon.ico" type="image/x-icon">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Nunito:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --navy: #0e6b6b; --navy-dark: #094f4f; --gold: #c8960c;
+      --gold-light: #e8b020; --gold-pale: #f5e6c0; --white: #ffffff;
+      --light-bg: #f9f6ef; --text: #1a2e2e; --text-muted: #5a6e6e; --border: #e2d5b0;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Nunito', sans-serif; color: var(--text); background: var(--white); overflow-x: hidden; }
+
+    /* ── TOP BAR ── */
+    .top-bar { background: var(--navy-dark); color: rgba(255,255,255,0.85); font-size: 0.78rem; padding: 0; }
+    .top-bar-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; }
+    .top-bar-brand { display: flex; align-items: center; gap: 14px; text-decoration: none; }
+    .top-bar-brand .tb-logo { width: 72px; height: 72px; border-radius: 50%; object-fit: cover; border: 3px solid var(--gold); flex-shrink: 0; }
+    .top-bar-brand .tb-text { text-align: left; }
+    .top-bar-brand .tb-name { font-family: 'Playfair Display', serif; font-size: 1.55rem; font-weight: 700; color: #ffffff; line-height: 1.2; letter-spacing: 0.01em; }
+    .top-bar-brand .tb-tagline { font-size: 0.72rem; color: var(--gold-light); font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; margin-top: 3px; }
+    .top-bar-login { display: flex; align-items: center; gap: 10px; }
+    .login-btn { display: inline-flex; align-items: center; gap: 5px; font-family: 'Nunito', sans-serif; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; padding: 4px 10px; border-radius: 4px; text-decoration: none; transition: all 0.2s ease; border: 1px solid transparent; }
+    .parent-btn { background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%); color: var(--navy-dark) !important; border: none; border-radius: 8px; padding: 8px 18px !important; font-size: 0.78rem !important; font-weight: 800 !important; letter-spacing: 0.05em; box-shadow: 0 3px 10px rgba(200,150,12,0.40), inset 0 1px 0 rgba(255,255,255,0.30); position: relative; overflow: hidden; }
+    .parent-btn::before { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.20) 50%, transparent 100%); transform: translateX(-100%); transition: transform 0.5s ease; }
+    .parent-btn:hover::before { transform: translateX(100%); }
+    .parent-btn:hover { background: linear-gradient(135deg, var(--gold-light) 0%, #f5c842 100%) !important; color: var(--navy-dark) !important; box-shadow: 0 5px 18px rgba(200,150,12,0.55), inset 0 1px 0 rgba(255,255,255,0.35) !important; transform: translateY(-1px); }
+
+    /* ── HEADER / NAV ── */
+    header { background: var(--white); border-bottom: 3px solid var(--gold); box-shadow: 0 2px 10px rgba(0,0,0,0.10); position: sticky; top: 0; z-index: 1000; }
+    .header-inner { display: flex; align-items: center; justify-content: center; }
+    nav { display: flex; align-items: stretch; gap: 0; width: 100%; justify-content: center; position: relative; max-width: 1160px; margin: 0 auto; }
+    /* ══════════════════════════════════════════════════════════════════ */
+    /* NAVBAR - MODERN HOVER EFFECT (Inspired by Vidya Sagar) */
+    /* ══════════════════════════════════════════════════════════════════ */
+    
+    nav {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      flex-wrap: wrap;
+    }
+
+    .nav-item {
+      position: relative;
+      display: flex;
+      align-items: stretch;
+      /* REMOVED: border-right: 1px solid rgba(0,0,0,0.07); */
+    }
+    
+    /* REMOVED: .nav-item:first-child { border-left: 1px solid rgba(0,0,0,0.07); } */
+
+    .nav-item > a {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--navy);
+      text-decoration: none;
+      padding: 12px 20px;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      letter-spacing: 0.01em;
+      
+      /* Modern hover properties */
+      border-radius: 8px;
+      background: transparent;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      margin: 0 2px;
+    }
+    
+    .nav-item > a .arrow {
+      font-size: 0.55rem;
+      opacity: 0.6;
+      transition: transform 0.3s, opacity 0.3s;
+      margin-left: 2px;
+    }
+    
+    /* MODERN HOVER EFFECT */
+    .nav-item:hover > a {
+      background: rgba(14, 107, 107, 0.12);  /* Teal with reduced transparency */
+      color: var(--navy-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(14, 107, 107, 0.15);
+    }
+    
+    .nav-item:hover > a .arrow {
+      transform: rotate(180deg);
+      opacity: 1;
+    }
+    
+    /* Active/Current Page Style */
+    .nav-item > a.active {
+      background: linear-gradient(135deg, var(--navy) 0%, var(--navy-dark) 100%);
+      color: white;
+      box-shadow: 0 4px 12px rgba(14, 107, 107, 0.25);
+    }
+    .dropdown { display: none; position: absolute; top: 100%; left: 0; min-width: 200px; background: var(--navy); box-shadow: 0 6px 24px rgba(0,0,0,0.18); z-index: 9999; border-top: 3px solid var(--gold);   overflow: visible;
+    }
+    .nav-item:hover .dropdown { display: block; }
+    .dropdown a { display: block; padding: 10px 18px; font-size: 0.76rem; font-weight: 500; color: rgba(255,255,255,0.88); text-decoration: none; border-bottom: 1px solid rgba(255,255,255,0.07); transition: background 0.15s, color 0.15s, padding-left 0.15s; white-space: nowrap; }
+    .dropdown a:last-child { border-bottom: none; }
+    .dropdown a:hover, .dropdown a.active { background: var(--gold); color: #ffffff; padding-left: 24px; }
+
+    /* ── LAYOUT ── */
+    .container { max-width: 1160px; margin: 0 auto; padding: 0 24px; }
+
+    /* ── PAGE BANNER ── */
+    .page-banner { background: linear-gradient(135deg, #094f4f 0%, #0e6b6b 60%, #127a7a 100%); padding: 60px 0 50px; position: relative; overflow: hidden; }
+    .page-banner::before { content: ''; position: absolute; inset: 0; background: url('https://school.edu/wp-content/uploads/2023/06/cropped-20230601_095851-1.jpg') center/cover no-repeat; opacity: 0.15; }
+    /* Decorative open-book / magazine silhouette behind banner text */
+    .page-banner::after {
+      content: '';
+      position: absolute; right: 8%; top: 50%; transform: translateY(-50%);
+      width: 220px; height: 160px;
+      background: rgba(255,255,255,0.04);
+      border-radius: 4px 80px 80px 4px / 4px 110px 110px 4px;
+      border: 1px solid rgba(200,150,12,0.18);
+    }
+    .page-banner-content { position: relative; z-index: 2; text-align: center; }
+    .page-banner h1 { font-family: 'Playfair Display', serif; font-size: 2.6rem; font-weight: 800; color: #fff; margin-bottom: 12px; }
+    .page-banner h1 em { color: var(--gold-light); font-style: italic; }
+    .page-banner-sub { font-size: 1rem; color: rgba(255,255,255,0.65); margin-bottom: 18px; }
+    .breadcrumb { display: flex; gap: 8px; align-items: center; justify-content: center; font-size: 0.82rem; color: rgba(255,255,255,0.75); }
+    .breadcrumb a { color: var(--gold-light); text-decoration: none; }
+    .breadcrumb span { color: rgba(255,255,255,0.45); }
+
+    /* ── INTRO STRIP ── */
+    .intro-strip {
+      background: linear-gradient(90deg, var(--gold-pale) 0%, #fff8e8 100%);
+      border-bottom: 2px solid var(--border);
+      padding: 22px 0;
+    }
+    .intro-strip-inner {
+      display: flex; align-items: center; gap: 16px;
+      max-width: 1160px; margin: 0 auto; padding: 0 24px;
+    }
+    .intro-strip-icon {
+      font-size: 2rem; flex-shrink: 0;
+      background: var(--navy); color: var(--gold-light);
+      width: 52px; height: 52px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .intro-strip-text p { font-size: 0.97rem; color: var(--text-muted); line-height: 1.6; }
+    .intro-strip-text strong { color: var(--navy); }
+
+    /* ── PAGE CONTENT ── */
+    .page-content { padding: 64px 0 80px; }
+
+    /* Section heading */
+    .section-heading { margin-bottom: 36px; }
+    .section-heading h2 { font-family: 'Playfair Display', serif; font-size: 1.9rem; font-weight: 800; color: var(--navy); line-height: 1.2; }
+    .section-heading h2::after { content: ''; display: block; width: 50px; height: 3px; background: linear-gradient(90deg, var(--gold), var(--gold-light)); border-radius: 2px; margin-top: 10px; }
+    .section-heading p { color: var(--text-muted); font-size: 0.97rem; margin-top: 12px; line-height: 1.7; }
+
+    /* Issue number badge */
+    .issue-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--navy); color: var(--gold-light);
+      font-size: 0.65rem; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase;
+      padding: 4px 10px; border-radius: 20px; margin-bottom: 20px;
+    }
+
+    /* ── MAGAZINE GRID ── */
+    .magazine-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 28px;
+    }
+
+    /* Magazine card */
+    .mag-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(14,107,107,0.07);
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+      display: flex; flex-direction: column;
+    }
+    .mag-card:hover { transform: translateY(-4px); box-shadow: 0 12px 36px rgba(14,107,107,0.14); }
+
+    /* Card cover — magazine-style colourful header */
+    .mag-cover {
+      position: relative; overflow: hidden;
+      height: 180px;
+      display: flex; flex-direction: column; justify-content: flex-end;
+      padding: 20px 22px;
+    }
+    /* Each issue gets a unique gradient via inline style on the card */
+    .mag-cover::before {
+      content: ''; position: absolute; inset: 0;
+      background: inherit; /* gradient set inline */
+    }
+    /* Decorative open-book shape */
+    .mag-cover::after {
+      content: '';
+      position: absolute; top: 14px; right: 18px;
+      font-size: 3rem; opacity: 0.25;
+    }
+    .mag-cover-inner { position: relative; z-index: 2; }
+    .mag-vol {
+      font-size: 0.65rem; font-weight: 800; letter-spacing: 0.16em; text-transform: uppercase;
+      color: rgba(255,255,255,0.65); margin-bottom: 4px;
+    }
+    .mag-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.25rem; font-weight: 800; color: #fff; line-height: 1.2;
+    }
+    .mag-date-pill {
+      display: inline-flex; align-items: center; gap: 5px;
+      background: rgba(255,255,255,0.18); border: 1px solid rgba(255,255,255,0.28);
+      border-radius: 20px; padding: 3px 10px;
+      font-size: 0.7rem; font-weight: 700; color: #fff;
+      margin-top: 8px; backdrop-filter: blur(4px);
+    }
+
+    /* Card body */
+    .mag-body { padding: 20px 22px 22px; flex: 1; display: flex; flex-direction: column; gap: 14px; }
+    .mag-desc { font-size: 0.88rem; color: var(--text-muted); line-height: 1.65; flex: 1; }
+    .mag-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+    .mag-btn-primary {
+      display: inline-flex; align-items: center; gap: 7px;
+      background: var(--navy); color: #fff;
+      padding: 9px 18px; border-radius: 7px;
+      font-size: 0.82rem; font-weight: 700;
+      text-decoration: none; transition: background 0.2s, transform 0.15s;
+      border: 1.5px solid var(--navy);
+    }
+    .mag-btn-primary:hover { background: var(--navy-dark); transform: translateY(-1px); }
+    .mag-btn-outline {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: transparent; color: var(--navy);
+      padding: 9px 16px; border-radius: 7px;
+      font-size: 0.82rem; font-weight: 700;
+      text-decoration: none; transition: all 0.2s;
+      border: 1.5px solid var(--border);
+    }
+    .mag-btn-outline:hover { border-color: var(--navy); background: var(--light-bg); }
+
+    /* ── FEATURED FIRST ISSUE (wider card) ── */
+    .mag-card.featured {
+      grid-column: 1 / -1;
+      flex-direction: row;
+      max-height: 240px;
+    }
+    .mag-card.featured .mag-cover { width: 340px; flex-shrink: 0; height: auto; }
+    .mag-card.featured .mag-body { justify-content: center; padding: 32px 36px; }
+    .mag-card.featured .mag-title-lg {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.55rem; font-weight: 800; color: var(--navy); line-height: 1.2;
+      margin-bottom: 10px;
+    }
+    .featured-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: linear-gradient(135deg, var(--gold), var(--gold-light));
+      color: var(--navy-dark); font-size: 0.65rem; font-weight: 800;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 4px 12px; border-radius: 20px; margin-bottom: 12px;
+    }
+
+    /* ── NOTICE BOX ── */
+    .notice-box {
+      margin-top: 48px;
+      background: linear-gradient(135deg, #f5e6c0 0%, #fdf6e3 100%);
+      border: 2px dashed var(--gold); border-radius: 12px;
+      padding: 32px 36px;
+      display: flex; align-items: flex-start; gap: 20px;
+    }
+    .notice-box-icon { font-size: 2.4rem; flex-shrink: 0; }
+    .notice-box-text h3 { font-family: 'Playfair Display', serif; font-size: 1.2rem; color: var(--navy); margin-bottom: 8px; }
+    .notice-box-text p { font-size: 0.92rem; color: var(--text-muted); line-height: 1.7; }
+
+    /* ── FOOTER ── */
+    footer { background: var(--navy-dark); color: rgba(255,255,255,0.7); padding: 48px 0 0; }
+    .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; padding-bottom: 40px; }
+    .footer-col h4 { font-family: 'Playfair Display', serif; font-size: 1.05rem; color: var(--gold-light); border-bottom: 1px solid rgba(200,150,12,0.25); padding-bottom: 8px; margin-bottom: 16px; }
+    .footer-col p, .footer-col li { font-size: 0.83rem; line-height: 1.7; }
+    .footer-col ul { list-style: none; }
+    .footer-col ul li { margin-bottom: 8px; }
+    .footer-col ul li a { color: rgba(255,255,255,0.65); text-decoration: none; transition: color 0.2s; }
+    .footer-col ul li a:hover { color: var(--gold-light); }
+    .footer-bottom { border-top: 1px solid rgba(255,255,255,0.1); padding: 18px 24px; text-align: center; font-size: 0.78rem; color: rgba(255,255,255,0.45); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      .mag-card.featured { flex-direction: column; max-height: none; }
+      .mag-card.featured .mag-cover { width: 100%; height: 180px; }
+      .mag-card.featured .mag-body { padding: 24px; }
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+      .page-banner h1 { font-size: 2rem; }
+      .intro-strip-inner { flex-direction: column; align-items: flex-start; gap: 12px; }
+      .notice-box { flex-direction: column; gap: 12px; }
+    }
+    @media (max-width: 480px) {
+      .magazine-grid { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr; }
+    }
+  
+    /* ── TOP-BAR SEARCH ── */
+    /* ── TOP-BAR SEARCH (icon-only, expands on click) ── */
+    .tb-search { position: relative; display: flex; align-items: center; }
+    .tb-search-toggle {
+      background: none; border: none; cursor: pointer;
+      color: rgba(255,255,255,0.7); font-size: 1.05rem;
+      padding: 6px 8px; border-radius: 50%;
+      transition: color 0.2s, background 0.2s;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .tb-search-toggle:hover { color: var(--gold-light); background: rgba(255,255,255,0.08); }
+    .tb-search-box {
+      display: flex; align-items: center;
+      position: absolute; right: 0; top: 50%;
+      transform: translateY(-50%);
+      background: var(--navy-dark);
+      border: 1.5px solid rgba(200,150,12,0.5);
+      border-radius: 22px;
+      overflow: hidden;
+      width: 0; opacity: 0; pointer-events: none;
+      transition: width 0.35s cubic-bezier(0.4,0,0.2,1), opacity 0.25s ease;
+      z-index: 100;
+    }
+    .tb-search-box.open {
+      width: 220px; opacity: 1; pointer-events: all;
+    }
+    .tb-search-input {
+      background: transparent; border: none; outline: none;
+      color: #fff; font-family: 'Nunito', sans-serif;
+      font-size: 0.82rem; font-weight: 500;
+      padding: 7px 32px 7px 14px;
+      width: 100%;
+    }
+    .tb-search-input::placeholder { color: rgba(255,255,255,0.4); }
+    .tb-search-clear {
+      background: none; border: none; cursor: pointer;
+      color: rgba(255,255,255,0.5); font-size: 0.75rem;
+      padding: 0 10px 0 0; flex-shrink: 0;
+      opacity: 0; transition: opacity 0.2s;
+    }
+    .tb-search-clear.show { opacity: 1; }
+    .tb-search-results {
+      position: absolute; top: calc(100% + 10px); right: 0;
+      width: 300px; max-height: 360px; overflow-y: auto;
+      background: #fff; border-radius: 10px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.18);
+      border: 2px solid var(--gold);
+      display: none; z-index: 99999;
+    }
+    .tb-search-results.show { display: block; }
+    .tb-res-item {
+      padding: 12px 16px; border-bottom: 1px solid var(--border);
+      cursor: pointer; transition: background 0.15s;
+      text-decoration: none; display: block;
+    }
+    .tb-res-item:last-child { border-bottom: none; }
+    .tb-res-item:hover { background: var(--gold-pale); }
+    .tb-res-cat { font-size: 0.65rem; color: var(--gold); text-transform: uppercase; font-weight: 800; letter-spacing: 0.08em; }
+    .tb-res-title { font-weight: 600; color: var(--navy); margin-top: 3px; font-size: 0.87rem; }
+/* ═══════════════════════════════════════════════════════════════════ */
+/* DESKTOP SEARCH BAR - ALWAYS VISIBLE */
+/* ═══════════════════════════════════════════════════════════════════ */
+
+/* ═══════════════════════════════════════════════════════════════════ */
+/* MOBILE RESPONSIV */
+/* ═══════════════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  .tb-search { display: none; }
+  nav { display: none !important; }
+  .mobile-menu-btn { display: block !important; }
+  .header-inner { justify-content: space-between; padding: 0 20px; }
+  .top-bar-row { flex-direction: column; padding: 15px 0; gap: 15px; }
+  .top-bar-brand { justify-content: center; }
+  .top-bar-login { display: none; }
+  .hero { min-height: 500px; }
+  .hero h1 { font-size: clamp(1.8rem,7vw,3rem); }
+  .prog-grid, .news-grid { grid-template-columns: 1fr; }
+  .gallery-grid { grid-template-columns: repeat(2,1fr); }
+}
+
+@media (max-width: 480px) {
+  .gallery-grid { grid-template-columns: 1fr; }
+  .mobile-menu { width: 100%; max-width: 100%; }
+}
+
+
+    /* ── MANDATORY DISCLOSURE FLYOUT (click-based) ── */
+    .has-flyout { position: relative; }
+    .has-flyout > a { display: flex; align-items: center; justify-content: space-between; gap: 6px; cursor: pointer; }
+    .flyout-arrow { font-size: 0.55rem; margin-left: auto; opacity: 0.7; flex-shrink: 0; transition: transform 0.2s; }
+    .has-flyout.open > a .flyout-arrow { transform: rotate(90deg); }
+    .flyout-panel {
+      display: none;
+      position: absolute;
+      left: 100%; top: -3px;
+      min-width: 230px;
+      background: var(--navy-dark);
+      border-top: 3px solid var(--gold);
+      border-left: 2px solid rgba(200,150,12,0.35);
+      box-shadow: 8px 8px 28px rgba(0,0,0,0.30);
+      z-index: 10001;
+    }
+    .has-flyout.open > .flyout-panel { display: block; }
+    /* fallback hover for non-JS */
+    @media (hover: hover) {
+      .has-flyout:hover > .flyout-panel { display: block; }
+    }
+    .flyout-panel a {
+      display: block; padding: 10px 16px;
+      font-size: 0.74rem; font-weight: 500;
+      color: rgba(255,255,255,0.85);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      transition: background 0.15s, padding-left 0.15s, color 0.15s;
+      white-space: nowrap;
+    }
+    .flyout-panel a:last-child { border-bottom: none; }
+    .flyout-panel a:hover { background: var(--gold); color: #fff; padding-left: 22px; }
+    .dropdown .has-flyout > a {
+      padding: 10px 12px;
+      background: rgba(255,255,255,0.05);
+      font-weight: 700; font-size: 0.75rem;
+      color: rgba(255,255,255,0.92); letter-spacing: 0.02em;
+    }
+    .dropdown .has-flyout > a:hover,
+    .dropdown .has-flyout.open > a { background: var(--gold); color: #fff; }
+    /* Make sure dropdown doesn't clip the flyout */
+    .dropdown { overflow: visible !important; }
+    .nav-item { overflow: visible !important; }
+  </style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+
+
+<!-- PAGE BANNER -->
+<div class="page-banner">
+  <div class="container">
+    <div class="page-banner-content">
+      <h1><em>E</em>-Magazine</h1>
+      <p class="page-banner-sub">Student voices · School stories · Monthly editions</p>
+      <div class="breadcrumb">
+        <a href="./index.html">Home</a><span>›</span>
+        <span>E-Magazine</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- INTRO STRIP -->
+<div class="intro-strip">
+  <div class="intro-strip-inner">
+    <div class="intro-strip-icon"></div>
+    <div class="intro-strip-text">
+      <p>The school has planned to bring out the school E-Magazine every month. We are <strong>proud and happy</strong> to present before you our growing collection of editions — filled with student articles, school news, achievements and more. <strong>Read and share!</strong></p>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE CONTENT -->
+<section class="page-content">
+  <div class="container">
+
+    <div class="section-heading">
+      <div class="issue-badge">
+        <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M2 2h5v12H2zM9 2h5v12H9z" fill="currentColor" opacity="0.9"/></svg>
+        All Issues — Academic Year 2025–26
+      </div>
+      <h2>School E-Magazine Collection</h2>
+      <p>Browse and download all published editions of the Loretto Central School E-Magazine. Each issue is packed with student achievements, school events, articles, and creative writing.</p>
+    </div>
+
+    <div class="magazine-grid" id="magazine-grid">
+
+      <!-- ISSUE 6 — JANUARY 2026 (LATEST — FEATURED) -->
+      <div class="mag-card featured">
+        <div class="mag-cover" style="background: linear-gradient(135deg, #2d1a4f 0%, #4c2d8f 55%, #6b44c8 100%);">
+          <div class="mag-cover-inner">
+            <div class="mag-vol">Issue No. 6 · Latest Edition</div>
+            <div class="mag-title">E-Magazine<br>January 2026</div>
+            <div class="mag-date-pill"> January 2026</div>
+          </div>
+        </div>
+        <div class="mag-body">
+          <div class="featured-badge">🆕 Latest Issue</div>
+          <div class="mag-title-lg">E-Magazine — January 2026</div>
+          <div class="mag-desc">Our newest edition for January 2026 — New Year reflections, Republic Day preparations, exam readiness tips, and inspiring student success stories from across the school.</div>
+          <div class="mag-actions">
+            <a href="https://school.edu/wp-content/uploads/2026/02/e-magazine-january-2026.pdf" class="mag-btn-primary" target="_blank" download>
+              <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M8 1v9M5 7l3 3 3-3M2 12v2h12v-2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Download PDF
+            </a>
+            <a href="https://school.edu/wp-content/uploads/2026/02/e-magazine-january-2026.pdf" class="mag-btn-outline" target="_blank">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M1 8s3-5 7-5 7 5 7 5-3 5-7 5-7-5-7-5z" stroke="currentColor" stroke-width="1.5"/><circle cx="8" cy="8" r="2" stroke="currentColor" stroke-width="1.5"/></svg>
+              View Online
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- ISSUE 5 — DECEMBER 2025 -->
+      <div class="mag-card">
+        <div class="mag-cover" style="background: linear-gradient(135deg, #1a4a2e 0%, #246b42 55%, #2e8c58 100%);">
+          <div class="mag-cover-inner">
+            <div class="mag-vol">Issue No. 5</div>
+            <div class="mag-title">E-Magazine<br>December 2025</div>
+            <div class="mag-date-pill"> December 2025</div>
+          </div>
+        </div>
+        <div class="mag-body">
+          <div class="mag-desc">A festive December 2025 edition filled with Christmas celebrations, carol singing events, end-of-term highlights, and reflections on a wonderful first semester of the academic year.</div>
+          <div class="mag-actions">
+            <a href="https://school.edu/wp-content/uploads/2026/01/e-magazine-december-2025.pdf" class="mag-btn-primary" target="_blank" download>
+              <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M8 1v9M5 7l3 3 3-3M2 12v2h12v-2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Download PDF
+            </a>
+            <a href="https://school.edu/wp-content/uploads/2026/01/e-magazine-december-2025.pdf" class="mag-btn-outline" target="_blank">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M1 8s3-5 7-5 7 5 7 5-3 5-7 5-7-5-7-5z" stroke="currentColor" stroke-width="1.5"/><circle cx="8" cy="8" r="2" stroke="currentColor" stroke-width="1.5"/></svg>
+              View Online
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- ISSUE 4 — OCTOBER 2025 -->
+      <div class="mag-card">
+        <div class="mag-cover" style="background: linear-gradient(135deg, #5c2d00 0%, #92480a 55%, #c8680f 100%);">
+          <div class="mag-cover-inner">
+            <div class="mag-vol">Issue No. 4</div>
+            <div class="mag-title">Magazine<br>October 2025</div>
+            <div class="mag-date-pill"> October 2025</div>
+          </div>
+        </div>
+        <div class="mag-body">
+          <div class="mag-desc">The October 2025 edition covering Diwali celebrations, Annual Sports Day preparations, science exhibitions, and the vibrant cultural activities of our talented students.</div>
+          <div class="mag-actions">
+            <a href="https://school.edu/wp-content/uploads/2025/10/magazine-october-2025.pdf" class="mag-btn-primary" target="_blank" download>
+              <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M8 1v9M5 7l3 3 3-3M2 12v2h12v-2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Download PDF
+            </a>
+            <a href="https://school.edu/wp-content/uploads/2025/10/magazine-october-2025.pdf" class="mag-btn-outline" target="_blank">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M1 8s3-5 7-5 7 5 7 5-3 5-7 5-7-5-7-5z" stroke="currentColor" stroke-width="1.5"/><circle cx="8" cy="8" r="2" stroke="currentColor" stroke-width="1.5"/></svg>
+              View Online
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- ISSUE 3 — SEPTEMBER 2025 -->
+      <div class="mag-card">
+        <div class="mag-cover" style="background: linear-gradient(135deg, #1e3a5f 0%, #2d5f8f 55%, #3b82c4 100%);">
+          <div class="mag-cover-inner">
+            <div class="mag-vol">Issue No. 3</div>
+            <div class="mag-title">E-Magazine<br>September 2025</div>
+            <div class="mag-date-pill"> September 2025</div>
+          </div>
+        </div>
+        <div class="mag-body">
+          <div class="mag-desc">September 2025 edition bringing you Teacher's Day tributes, Onam festivities, inter-school competitions, and heartfelt student articles from our creative writers.</div>
+          <div class="mag-actions">
+            <a href="https://school.edu/wp-content/uploads/2025/09/e-magazine-september-2025.pdf" class="mag-btn-primary" target="_blank" download>
+              <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M8 1v9M5 7l3 3 3-3M2 12v2h12v-2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Download PDF
+            </a>
+            <a href="https://school.edu/wp-content/uploads/2025/09/e-magazine-september-2025.pdf" class="mag-btn-outline" target="_blank">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M1 8s3-5 7-5 7 5 7 5-3 5-7 5-7-5-7-5z" stroke="currentColor" stroke-width="1.5"/><circle cx="8" cy="8" r="2" stroke="currentColor" stroke-width="1.5"/></svg>
+              View Online
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- ISSUE 2 — AUGUST 2025 -->
+      <div class="mag-card">
+        <div class="mag-cover" style="background: linear-gradient(135deg, #7c3a00 0%, #b35900 55%, #d97706 100%);">
+          <div class="mag-cover-inner">
+            <div class="mag-vol">Issue No. 2</div>
+            <div class="mag-title">E-Magazine<br>August 2025</div>
+            <div class="mag-date-pill"> August 2025</div>
+          </div>
+        </div>
+        <div class="mag-body">
+          <div class="mag-desc">The August 2025 edition of the Loretto E-Magazine — featuring Independence Day celebrations, student achievements, and highlights from the start of the new academic year.</div>
+          <div class="mag-actions">
+            <a href="https://school.edu/wp-content/uploads/2025/09/emagazie-august-2025.pdf" class="mag-btn-primary" target="_blank" download>
+              <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M8 1v9M5 7l3 3 3-3M2 12v2h12v-2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Download PDF
+            </a>
+            <a href="https://school.edu/wp-content/uploads/2025/09/emagazie-august-2025.pdf" class="mag-btn-outline" target="_blank">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M1 8s3-5 7-5 7 5 7 5-3 5-7 5-7-5-7-5z" stroke="currentColor" stroke-width="1.5"/><circle cx="8" cy="8" r="2" stroke="currentColor" stroke-width="1.5"/></svg>
+              View Online
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- ISSUE 1 — INAUGURAL EDITION (2024–25) -->
+      <div class="mag-card">
+        <div class="mag-cover" style="background: linear-gradient(135deg, #094f4f 0%, #0e6b6b 60%, #1a8a8a 100%);">
+          <div class="mag-cover-inner">
+            <div class="mag-vol">Issue No. 1 · Inaugural Edition</div>
+            <div class="mag-title">Loretto English Medium<br>High School</div>
+            <div class="mag-date-pill"> 2024–25</div>
+          </div>
+        </div>
+        <div class="mag-body">
+          <div class="issue-badge" style="margin-bottom:6px;">⭐ Inaugural Issue</div>
+          <div class="mag-desc">We are proud to present the very first edition of the Loretto Central School E-Magazine. Celebrating student voices, school milestones, and the spirit of "Love Through Service."</div>
+          <div class="mag-actions">
+            <a href="https://school.edu/wp-content/uploads/2025/08/loreto-english-medium-high-school-9-1.pdf" class="mag-btn-primary" target="_blank" download>
+              <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M8 1v9M5 7l3 3 3-3M2 12v2h12v-2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Download PDF
+            </a>
+            <a href="https://school.edu/wp-content/uploads/2025/08/loreto-english-medium-high-school-9-1.pdf" class="mag-btn-outline" target="_blank">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M1 8s3-5 7-5 7 5 7 5-3 5-7 5-7-5-7-5z" stroke="currentColor" stroke-width="1.5"/><circle cx="8" cy="8" r="2" stroke="currentColor" stroke-width="1.5"/></svg>
+              View Online
+            </a>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /magazine-grid -->
+
+    <!-- NOTICE -->
+    
+
+  </div>
+</section>
+
+<!-- FOOTER -->
+
+  <script src="/components/Navbar.js"></script>
+  <script src="/components/Footer.js"></script>
+  <script src="/shared-data-loader.js"></script>
+  <script>
+    function magazineSortValue(item) {
+      const ts = Date.parse(item && item.date ? item.date : '');
+      if (!Number.isNaN(ts)) return ts;
+      const id = item && item._id ? String(item._id) : '';
+      const hex = id.slice(0, 8);
+      return /^[0-9a-fA-F]{8}$/.test(hex) ? parseInt(hex, 16) * 1000 : 0;
+    }
+
+    function magazineGradient(index) {
+      const gradients = [
+        'linear-gradient(135deg, #7a1f3d 0%, #b8325a 55%, #e85c87 100%)',
+        'linear-gradient(135deg, #1e3a5f 0%, #2d5f8f 55%, #3b82c4 100%)',
+        'linear-gradient(135deg, #5c2d00 0%, #92480a 55%, #c8680f 100%)',
+        'linear-gradient(135deg, #1a4a2e 0%, #246b42 55%, #2e8c58 100%)',
+        'linear-gradient(135deg, #2d1a4f 0%, #4c2d8f 55%, #6b44c8 100%)',
+        'linear-gradient(135deg, #20485a 0%, #2d758f 55%, #4cb8c8 100%)'
+      ];
+      return gradients[index % gradients.length];
+    }
+
+    function escapeHtml(text) {
+      return String(text || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    function splitIssueTitle(title) {
+      const parts = String(title || '').split(' — ');
+      return {
+        title: parts[0] || 'E-Magazine',
+        issue: parts[1] || ''
+      };
+    }
+
+    function renderMagazineCards(items) {
+      const grid = document.getElementById('magazine-grid');
+      if (!grid || !items.length) return;
+
+      grid.innerHTML = items.map((item, index) => {
+        const parts = splitIssueTitle(item.title);
+        const issueLabel = parts.issue || `Issue No. ${items.length - index}`;
+        const dateLabel = item.date
+          ? new Date(item.date + 'T00:00:00').toLocaleDateString('en-IN', { month: 'long', year: 'numeric' })
+          : 'Latest Edition';
+        const desc = item.description || item.desc || 'Read the latest edition of the school magazine online or download the PDF.';
+        const featured = index === 0;
+
+        if (featured) {
+          return `
+            <div class="mag-card featured">
+              <div class="mag-cover" style="background: ${magazineGradient(index)};">
+                <div class="mag-cover-inner">
+                  <div class="mag-vol">${escapeHtml(issueLabel)} · Latest Edition</div>
+                  <div class="mag-title">${escapeHtml(parts.title)}</div>
+                  <div class="mag-date-pill">${escapeHtml(dateLabel)}</div>
+                </div>
+              </div>
+              <div class="mag-body">
+                <div class="issue-badge" style="margin-bottom:6px;">Latest Issue</div>
+                <div class="mag-title-lg">${escapeHtml(parts.title)}</div>
+                <div class="mag-desc">${escapeHtml(desc)}</div>
+                <div class="mag-actions">
+                  <a href="${escapeHtml(item.url || '#')}" class="mag-btn-primary" target="_blank" download>
+                    <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M8 1v9M5 7l3 3 3-3M2 12v2h12v-2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    Download PDF
+                  </a>
+                  <a href="${escapeHtml(item.url || '#')}" class="mag-btn-outline" target="_blank">
+                    <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M1 8s3-5 7-5 7 5 7 5-3 5-7 5-7-5-7-5z" stroke="currentColor" stroke-width="1.5"/><circle cx="8" cy="8" r="2" stroke="currentColor" stroke-width="1.5"/></svg>
+                    View Online
+                  </a>
+                </div>
+              </div>
+            </div>
+          `;
+        }
+
+        return `
+          <div class="mag-card">
+            <div class="mag-cover" style="background: ${magazineGradient(index)};">
+              <div class="mag-cover-inner">
+                <div class="mag-vol">${escapeHtml(issueLabel)}</div>
+                <div class="mag-title">${escapeHtml(parts.title)}</div>
+                <div class="mag-date-pill">${escapeHtml(dateLabel)}</div>
+              </div>
+            </div>
+            <div class="mag-body">
+              <div class="mag-desc">${escapeHtml(desc)}</div>
+              <div class="mag-actions">
+                <a href="${escapeHtml(item.url || '#')}" class="mag-btn-primary" target="_blank" download>
+                  <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M8 1v9M5 7l3 3 3-3M2 12v2h12v-2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  Download PDF
+                </a>
+                <a href="${escapeHtml(item.url || '#')}" class="mag-btn-outline" target="_blank">
+                  <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M1 8s3-5 7-5 7 5 7 5-3 5-7 5-7-5-7-5z" stroke="currentColor" stroke-width="1.5"/><circle cx="8" cy="8" r="2" stroke="currentColor" stroke-width="1.5"/></svg>
+                  View Online
+                </a>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    window.addEventListener('DOMContentLoaded', async () => {
+      if (typeof loadDocumentsData !== 'function') return;
+      const docs = await loadDocumentsData();
+      const magazines = (Array.isArray(docs) ? docs : [])
+        .filter(item => item.category === 'e-magazine' && item.url)
+        .sort((a, b) => magazineSortValue(b) - magazineSortValue(a));
+
+      if (magazines.length) {
+        renderMagazineCards(magazines);
+      }
+    });
+  </script>
+  <script src="/e-magazine-page-loader.js?v=20260328-1"></script>
+</body>
+</html>

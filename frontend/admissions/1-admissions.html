@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admissions | Loretto Central School</title>
+  <link rel="shortcut icon" href="../favicon.ico" type="image/x-icon">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800&family=Nunito:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --navy: #0e6b6b; --navy-dark: #094f4f; --gold: #c8960c; --gold-light: #e8b020; --gold-pale: #f5e6c0; --white: #ffffff; --light-bg: #f9f6ef; --text: #1a2e2e; --text-muted: #5a6e6e; --border: #e2d5b0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Nunito', sans-serif; color: var(--text); background: var(--white); overflow-x: hidden; }
+    .top-bar { background: var(--navy-dark); }
+    .top-bar-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; }
+    .top-bar-brand { display: flex; align-items: center; gap: 14px; text-decoration: none; }
+    .top-bar-brand .tb-logo { width: 72px; height: 72px; border-radius: 50%; object-fit: cover; border: 3px solid var(--gold); flex-shrink: 0; }
+    .top-bar-brand .tb-text { text-align: left; }
+    .top-bar-brand .tb-name { font-family: 'Playfair Display', serif; font-size: 1.55rem; font-weight: 700; color: #ffffff; line-height: 1.2; letter-spacing: 0.01em; }
+    .top-bar-brand .tb-tagline { font-size: 0.72rem; color: var(--gold-light); font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; margin-top: 3px; }
+    .top-bar-login { display: flex; align-items: center; gap: 10px; }
+    .login-btn { display: inline-flex; align-items: center; gap: 5px; font-family: 'Nunito', sans-serif; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; padding: 4px 10px; border-radius: 4px; text-decoration: none; transition: all 0.2s; border: 1px solid transparent; }
+    .parent-btn {
+      background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
+      color: var(--navy-dark) !important;
+      border: none;
+      border-radius: 8px;
+      padding: 8px 18px !important;
+      font-size: 0.78rem !important;
+      font-weight: 800 !important;
+      letter-spacing: 0.05em;
+      box-shadow: 0 3px 10px rgba(200,150,12,0.40), inset 0 1px 0 rgba(255,255,255,0.30);
+      position: relative;
+      overflow: hidden;
+    }
+    .parent-btn::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.20) 50%, transparent 100%);
+      transform: translateX(-100%);
+      transition: transform 0.5s ease;
+    }
+    .parent-btn:hover::before { transform: translateX(100%); }
+    .parent-btn:hover {
+      background: linear-gradient(135deg, var(--gold-light) 0%, #f5c842 100%) !important;
+      color: var(--navy-dark) !important;
+      box-shadow: 0 5px 18px rgba(200,150,12,0.55), inset 0 1px 0 rgba(255,255,255,0.35) !important;
+      transform: translateY(-1px);
+    }
+    header { background: var(--white); border-bottom: 3px solid var(--gold); box-shadow: 0 2px 10px rgba(0,0,0,0.10); position: sticky; top: 0; z-index: 1000; }
+    nav { display: flex; align-items: stretch; gap: 0; width: 100%; justify-content: center; max-width: 1160px; margin: 0 auto; }
+    /* ══════════════════════════════════════════════════════════════════ */
+    /* NAVBAR - MODERN HOVER EFFECT (Inspired by Vidya Sagar) */
+    /* ══════════════════════════════════════════════════════════════════ */
+    
+    nav {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      flex-wrap: wrap;
+    }
+
+    .nav-item {
+      position: relative;
+      display: flex;
+      align-items: stretch;
+      /* REMOVED: border-right: 1px solid rgba(0,0,0,0.07); */
+    }
+    
+    /* REMOVED: .nav-item:first-child { border-left: 1px solid rgba(0,0,0,0.07); } */
+
+    .nav-item > a {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--navy);
+      text-decoration: none;
+      padding: 12px 20px;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      letter-spacing: 0.01em;
+      
+      /* Modern hover properties */
+      border-radius: 8px;
+      background: transparent;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      margin: 0 2px;
+    }
+    
+    .nav-item > a .arrow {
+      font-size: 0.55rem;
+      opacity: 0.6;
+      transition: transform 0.3s, opacity 0.3s;
+      margin-left: 2px;
+    }
+    
+    /* MODERN HOVER EFFECT */
+    .nav-item:hover > a {
+      background: rgba(14, 107, 107, 0.12);  /* Teal with reduced transparency */
+      color: var(--navy-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(14, 107, 107, 0.15);
+    }
+    
+    .nav-item:hover > a .arrow {
+      transform: rotate(180deg);
+      opacity: 1;
+    }
+    
+    /* Active/Current Page Style */
+    .nav-item > a.active {
+      background: linear-gradient(135deg, var(--navy) 0%, var(--navy-dark) 100%);
+      color: white;
+      box-shadow: 0 4px 12px rgba(14, 107, 107, 0.25);
+    }
+    .dropdown { display: none; position: absolute; top: 100%; left: 0; min-width: 210px; background: var(--navy); box-shadow: 0 6px 24px rgba(0,0,0,0.18); z-index: 9999; border-top: 3px solid var(--gold);   overflow: visible;
+    }
+    .nav-item:hover .dropdown { display: block; }
+    .dropdown a { display: block; padding: 10px 18px; font-size: 0.76rem; font-weight: 500; color: rgba(255,255,255,0.88); text-decoration: none; border-bottom: 1px solid rgba(255,255,255,0.07); transition: background 0.15s, color 0.15s, padding-left 0.15s; white-space: nowrap; }
+    .dropdown a:last-child { border-bottom: none; }
+    .dropdown a:hover, .dropdown a.active { background: var(--gold); color: #fff; padding-left: 24px; }
+    .container { max-width: 1160px; margin: 0 auto; padding: 0 24px; }
+
+    /* PAGE BANNER */
+    .page-banner { background: linear-gradient(135deg, #094f4f 0%, #0e6b6b 60%, #127a7a 100%); padding: 60px 0 50px; position: relative; overflow: hidden; }
+    .page-banner::before { content: ''; position: absolute; inset: 0; background: url('https://school.edu/wp-content/uploads/2023/06/cropped-20230601_095851-1.jpg') center/cover no-repeat; opacity: 0.15; }
+    .page-banner-content { position: relative; z-index: 2; text-align: center; }
+    .page-banner h1 { font-family: 'Playfair Display', serif; font-size: 2.6rem; font-weight: 800; color: #fff; margin-bottom: 12px; }
+    .page-banner p { color: rgba(255,255,255,0.8); font-size: 1.05rem; max-width: 580px; margin: 0 auto; }
+    .breadcrumb { display: flex; gap: 8px; align-items: center; justify-content: center; font-size: 0.82rem; color: rgba(255,255,255,0.75); margin-bottom: 12px; }
+    .breadcrumb a { color: var(--gold-light); text-decoration: none; }
+    .breadcrumb span { color: rgba(255,255,255,0.45); }
+
+    /* SUBNAV */
+    .adm-subnav { background: var(--light-bg); border-bottom: 2px solid var(--border); }
+    .adm-subnav-inner { display: flex; gap: 0; overflow-x: auto; max-width: 1160px; margin: 0 auto; padding: 0 24px; }
+    .adm-subnav-inner a { display: block; padding: 14px 20px; font-size: 0.82rem; font-weight: 600; color: var(--text-muted); text-decoration: none; white-space: nowrap; border-bottom: 3px solid transparent; transition: all 0.2s; }
+    .adm-subnav-inner a:hover { color: var(--navy); border-color: var(--navy); }
+    .adm-subnav-inner a.active { color: var(--navy); border-color: var(--gold); background: rgba(200,150,12,0.06); }
+
+    /* OVERVIEW SECTION */
+    .page-content { padding: 64px 0; }
+
+    /* HIGHLIGHT CARDS ROW */
+    .adm-highlight-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-bottom: 52px; }
+    .adm-highlight-card { background: linear-gradient(135deg, var(--navy-dark), var(--navy)); border-radius: 14px; padding: 32px 24px; text-align: center; color: #fff; }
+    .adm-highlight-card .icon { font-size: 2.6rem; margin-bottom: 12px; }
+    .adm-highlight-card h3 { font-family: 'Playfair Display', serif; font-size: 1.15rem; color: var(--gold-light); margin-bottom: 8px; }
+    .adm-highlight-card p { font-size: 0.88rem; color: rgba(255,255,255,0.75); line-height: 1.6; }
+
+    /* ENQUIRY NOTICE */
+    .enquiry-notice { background: linear-gradient(135deg, #fdf6e3 0%, #f5e6c0 100%); border: 2px solid var(--gold); border-radius: 14px; padding: 32px 36px; margin-bottom: 44px; display: flex; align-items: center; gap: 28px; }
+    .enquiry-notice .notice-icon { font-size: 3.2rem; flex-shrink: 0; }
+    .enquiry-notice h3 { font-family: 'Playfair Display', serif; font-size: 1.35rem; color: var(--navy); margin-bottom: 6px; }
+    .enquiry-notice p { font-size: 0.95rem; color: var(--text-muted); line-height: 1.7; }
+
+    /* DOWNLOAD SECTION */
+    .download-section h3 { font-family: 'Playfair Display', serif; font-size: 1.5rem; color: var(--navy); margin-bottom: 8px; }
+    .download-section h3::after { content: ''; display: block; width: 40px; height: 3px; background: linear-gradient(90deg, var(--gold), var(--gold-light)); border-radius: 2px; margin-top: 8px; margin-bottom: 24px; }
+    .download-section > p { font-size: 0.98rem; color: var(--text-muted); margin-bottom: 28px; line-height: 1.7; }
+    .download-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    .download-card { background: var(--light-bg); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; transition: box-shadow 0.2s, transform 0.2s; display: flex; flex-direction: column; }
+    .download-card:hover { box-shadow: 0 8px 28px rgba(14,107,107,0.13); transform: translateY(-3px); }
+    .download-card-top { background: linear-gradient(135deg, var(--navy-dark), var(--navy)); padding: 28px 20px; text-align: center; }
+    .download-card-top .doc-icon { font-size: 2.8rem; margin-bottom: 8px; }
+    .download-card-top .doc-type { display: inline-block; background: var(--gold); color: #fff; font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; padding: 3px 10px; border-radius: 20px; }
+    .download-card-body { padding: 20px 22px; flex: 1; display: flex; flex-direction: column; }
+    .download-card-body h4 { font-family: 'Playfair Display', serif; font-size: 1rem; color: var(--navy); margin-bottom: 8px; line-height: 1.4; }
+    .download-card-body p { font-size: 0.84rem; color: var(--text-muted); line-height: 1.6; flex: 1; margin-bottom: 16px; }
+    .download-btn { display: inline-flex; align-items: center; gap: 7px; background: var(--navy); color: #fff; padding: 10px 18px; border-radius: 7px; font-size: 0.82rem; font-weight: 700; text-decoration: none; transition: background 0.2s; }
+    .download-btn:hover { background: var(--gold); }
+    .download-btn .btn-icon { font-size: 1rem; }
+
+    /* STEPS SECTION */
+    .steps-section { margin-top: 52px; }
+    .steps-section h3 { font-family: 'Playfair Display', serif; font-size: 1.5rem; color: var(--navy); margin-bottom: 8px; }
+    .steps-section h3::after { content: ''; display: block; width: 40px; height: 3px; background: linear-gradient(90deg, var(--gold), var(--gold-light)); border-radius: 2px; margin-top: 8px; margin-bottom: 28px; }
+    .steps-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+    .step-card { background: var(--light-bg); border: 1px solid var(--border); border-radius: 12px; padding: 24px 20px; text-align: center; position: relative; }
+    .step-num { width: 42px; height: 42px; background: var(--navy); color: var(--gold-light); font-family: 'Playfair Display', serif; font-size: 1.3rem; font-weight: 800; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 14px; }
+    .step-card h4 { font-weight: 700; color: var(--navy); font-size: 0.92rem; margin-bottom: 8px; }
+    .step-card p { font-size: 0.82rem; color: var(--text-muted); line-height: 1.6; }
+
+    /* CONTACT CTA */
+    .contact-cta { background: linear-gradient(135deg, var(--navy-dark), var(--navy)); border-radius: 14px; padding: 40px 44px; margin-top: 52px; display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
+    .contact-cta h3 { font-family: 'Playfair Display', serif; font-size: 1.5rem; color: #fff; margin-bottom: 6px; }
+    .contact-cta p { color: rgba(255,255,255,0.75); font-size: 0.95rem; }
+    .cta-btn { display: inline-flex; align-items: center; gap: 8px; background: var(--gold-light); color: var(--navy-dark); font-weight: 700; font-size: 0.92rem; padding: 13px 28px; border-radius: 30px; text-decoration: none; white-space: nowrap; transition: all 0.2s; }
+    .cta-btn:hover { background: #fff; }
+
+    /* FOOTER */
+    footer { background: var(--navy-dark); color: rgba(255,255,255,0.7); padding: 48px 0 0; }
+    .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; padding-bottom: 40px; }
+    .footer-col h4 { font-family: 'Playfair Display', serif; font-size: 1.05rem; color: var(--gold-light); border-bottom: 1px solid rgba(200,150,12,0.25); padding-bottom: 8px; margin-bottom: 16px; }
+    .footer-col p, .footer-col li { font-size: 0.83rem; line-height: 1.7; }
+    .footer-col ul { list-style: none; }
+    .footer-col ul li { margin-bottom: 8px; }
+    .footer-col ul li a { color: rgba(255,255,255,0.65); text-decoration: none; transition: color 0.2s; }
+    .footer-col ul li a:hover { color: var(--gold-light); }
+    .footer-bottom { border-top: 1px solid rgba(255,255,255,0.1); padding: 18px 24px; text-align: center; font-size: 0.78rem; color: rgba(255,255,255,0.45); }
+    @media (max-width: 900px) { .adm-highlight-row, .download-cards, .steps-grid { grid-template-columns: 1fr 1fr; } .footer-grid { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 600px) { .adm-highlight-row, .download-cards, .steps-grid { grid-template-columns: 1fr; } .footer-grid { grid-template-columns: 1fr; } .enquiry-notice { flex-direction: column; gap: 12px; text-align: center; } .contact-cta { flex-direction: column; text-align: center; } }
+  
+    /* ── TOP-BAR SEARCH ── */
+    /* ── TOP-BAR SEARCH (icon-only, expands on click) ── */
+    .tb-search { position: relative; display: flex; align-items: center; }
+    .tb-search-toggle {
+      background: none; border: none; cursor: pointer;
+      color: rgba(255,255,255,0.7); font-size: 1.05rem;
+      padding: 6px 8px; border-radius: 50%;
+      transition: color 0.2s, background 0.2s;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .tb-search-toggle:hover { color: var(--gold-light); background: rgba(255,255,255,0.08); }
+    .tb-search-box {
+      display: flex; align-items: center;
+      position: absolute; right: 0; top: 50%;
+      transform: translateY(-50%);
+      background: var(--navy-dark);
+      border: 1.5px solid rgba(200,150,12,0.5);
+      border-radius: 22px;
+      overflow: hidden;
+      width: 0; opacity: 0; pointer-events: none;
+      transition: width 0.35s cubic-bezier(0.4,0,0.2,1), opacity 0.25s ease;
+      z-index: 100;
+    }
+    .tb-search-box.open {
+      width: 220px; opacity: 1; pointer-events: all;
+    }
+    .tb-search-input {
+      background: transparent; border: none; outline: none;
+      color: #fff; font-family: 'Nunito', sans-serif;
+      font-size: 0.82rem; font-weight: 500;
+      padding: 7px 32px 7px 14px;
+      width: 100%;
+    }
+    .tb-search-input::placeholder { color: rgba(255,255,255,0.4); }
+    .tb-search-clear {
+      background: none; border: none; cursor: pointer;
+      color: rgba(255,255,255,0.5); font-size: 0.75rem;
+      padding: 0 10px 0 0; flex-shrink: 0;
+      opacity: 0; transition: opacity 0.2s;
+    }
+    .tb-search-clear.show { opacity: 1; }
+    .tb-search-results {
+      position: absolute; top: calc(100% + 10px); right: 0;
+      width: 300px; max-height: 360px; overflow-y: auto;
+      background: #fff; border-radius: 10px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.18);
+      border: 2px solid var(--gold);
+      display: none; z-index: 99999;
+    }
+    .tb-search-results.show { display: block; }
+    .tb-res-item {
+      padding: 12px 16px; border-bottom: 1px solid var(--border);
+      cursor: pointer; transition: background 0.15s;
+      text-decoration: none; display: block;
+    }
+    .tb-res-item:last-child { border-bottom: none; }
+    .tb-res-item:hover { background: var(--gold-pale); }
+    .tb-res-cat { font-size: 0.65rem; color: var(--gold); text-transform: uppercase; font-weight: 800; letter-spacing: 0.08em; }
+    .tb-res-title { font-weight: 600; color: var(--navy); margin-top: 3px; font-size: 0.87rem; }
+/* ═══════════════════════════════════════════════════════════════════ */
+/* DESKTOP SEARCH BAR - ALWAYS VISIBLE */
+/* ═══════════════════════════════════════════════════════════════════ */
+
+/* ═══════════════════════════════════════════════════════════════════ */
+/* MOBILE RESPONSIV */
+/* ═══════════════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  .tb-search { display: none; }
+  nav { display: none !important; }
+  .mobile-menu-btn { display: block !important; }
+  .header-inner { justify-content: space-between; padding: 0 20px; }
+  .top-bar-row { flex-direction: column; padding: 15px 0; gap: 15px; }
+  .top-bar-brand { justify-content: center; }
+  .top-bar-login { display: none; }
+  .hero { min-height: 500px; }
+  .hero h1 { font-size: clamp(1.8rem,7vw,3rem); }
+  .prog-grid, .news-grid { grid-template-columns: 1fr; }
+  .gallery-grid { grid-template-columns: repeat(2,1fr); }
+}
+
+@media (max-width: 480px) {
+  .gallery-grid { grid-template-columns: 1fr; }
+  .mobile-menu { width: 100%; max-width: 100%; }
+}
+
+
+    /* ── MANDATORY DISCLOSURE FLYOUT (click-based) ── */
+    .has-flyout { position: relative; }
+    .has-flyout > a { display: flex; align-items: center; justify-content: space-between; gap: 6px; cursor: pointer; }
+    .flyout-arrow { font-size: 0.55rem; margin-left: auto; opacity: 0.7; flex-shrink: 0; transition: transform 0.2s; }
+    .has-flyout.open > a .flyout-arrow { transform: rotate(90deg); }
+    .flyout-panel {
+      display: none;
+      position: absolute;
+      left: 100%; top: -3px;
+      min-width: 230px;
+      background: var(--navy-dark);
+      border-top: 3px solid var(--gold);
+      border-left: 2px solid rgba(200,150,12,0.35);
+      box-shadow: 8px 8px 28px rgba(0,0,0,0.30);
+      z-index: 10001;
+    }
+    .has-flyout.open > .flyout-panel { display: block; }
+    /* fallback hover for non-JS */
+    @media (hover: hover) {
+      .has-flyout:hover > .flyout-panel { display: block; }
+    }
+    .flyout-panel a {
+      display: block; padding: 10px 16px;
+      font-size: 0.74rem; font-weight: 500;
+      color: rgba(255,255,255,0.85);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      transition: background 0.15s, padding-left 0.15s, color 0.15s;
+      white-space: nowrap;
+    }
+    .flyout-panel a:last-child { border-bottom: none; }
+    .flyout-panel a:hover { background: var(--gold); color: #fff; padding-left: 22px; }
+    .dropdown .has-flyout > a {
+      padding: 10px 12px;
+      background: rgba(255,255,255,0.05);
+      font-weight: 700; font-size: 0.75rem;
+      color: rgba(255,255,255,0.92); letter-spacing: 0.02em;
+    }
+    .dropdown .has-flyout > a:hover,
+    .dropdown .has-flyout.open > a { background: var(--gold); color: #fff; }
+    /* Make sure dropdown doesn't clip the flyout */
+    .dropdown { overflow: visible !important; }
+    .nav-item { overflow: visible !important; }
+  </style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+
+
+<!-- PAGE BANNER -->
+<div class="page-banner">
+  <div class="container">
+    <div class="page-banner-content">
+      <div class="breadcrumb"><a href="../index.html">Home</a><span>›</span><span>Admissions</span></div>
+      <h1>Admissions</h1>
+      <p>Begin your child's journey of excellence at Loretto Central School — where every learner is valued, nurtured, and inspired.</p>
+    </div>
+  </div>
+</div>
+
+<!-- SUB NAV -->
+<div class="adm-subnav">
+  <div class="adm-subnav-inner">
+    <a href="1-admissions.html" class="active">Overview</a>
+    <a href="2-admission-enquiry.html">Admission Enquiry</a>
+    <a href="3-transfer-certificate.html">Transfer Certificate Format</a>
+    <a href="4-fee-structure.html">Fee Structure</a>
+  </div>
+</div>
+
+<!-- CONTENT -->
+<section class="page-content">
+  <div class="container">
+
+    <!-- Highlight cards -->
+    <div class="adm-highlight-row">
+      <div class="adm-highlight-card">
+        <div class="icon"></div>
+        <h3>CBSE Affiliated</h3>
+        <p>Fully affiliated to CBSE, New Delhi (Affiliation No. 831368), offering LKG to Class X education.</p>
+      </div>
+      <div class="adm-highlight-card">
+        <div class="icon"></div>
+        <h3>All Are Welcome</h3>
+        <p>Open to boys and girls of all communities — irrespective of caste, creed, or social status.</p>
+      </div>
+      <div class="adm-highlight-card">
+        <div class="icon"></div>
+        <h3>Simple Process</h3>
+        <p>Download the application form, fill it with the required documents, and submit to the school office.</p>
+      </div>
+    </div>
+
+    <!-- Enquiry notice -->
+    
+
+    <!-- Download forms -->
+    <div class="download-section">
+      <h3>Download Application Forms</h3>
+      <p>Choose the appropriate application form based on the class you are applying for. Fill in the form carefully and submit it to the school office along with the required documents.</p>
+      <div class="download-cards">
+        <div class="download-card">
+          <div class="download-card-top">
+            <div class="doc-icon"></div>
+            <div class="doc-type">PDF Form</div>
+          </div>
+          <div class="download-card-body">
+            <h4>Application for Play School Admission</h4>
+            <p>For children applying to the Play School (Pre-Nursery) programme at Loretto Central School.</p>
+            <a href="https://school.edu/wp-content/uploads/2025/02/application-for-play-school-admission.pdf" class="download-btn" target="_blank">
+              <span class="btn-icon"></span> Download Form
+            </a>
+          </div>
+        </div>
+        <div class="download-card">
+          <div class="download-card-top">
+            <div class="doc-icon"></div>
+            <div class="doc-type">PDF Form</div>
+          </div>
+          <div class="download-card-body">
+            <h4>Application for Kindergarten Admission</h4>
+            <p>For children applying to LKG or UKG (Kindergarten) classes at Loretto Central School.</p>
+            <a href="https://school.edu/wp-content/uploads/2025/02/application-for-kindergarten-school-admission.pdf" class="download-btn" target="_blank">
+              <span class="btn-icon"></span> Download Form
+            </a>
+          </div>
+        </div>
+        <div class="download-card">
+          <div class="download-card-top">
+            <div class="doc-icon"></div>
+            <div class="doc-type">PDF Form</div>
+          </div>
+          <div class="download-card-body">
+            <h4>Application for Class 1–8 Admission</h4>
+            <p>For students applying to Classes 1 through 8 at Loretto Central School.</p>
+            <a href="https://school.edu/wp-content/uploads/2025/02/application-for-1-8-admission.pdf" class="download-btn" target="_blank">
+              <span class="btn-icon"></span> Download Form
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Admission steps -->
+    <div class="steps-section">
+      <h3>Admission Process at a Glance</h3>
+      <div class="steps-grid">
+        <div class="step-card">
+          <div class="step-num">1</div>
+          <h4>Download Form</h4>
+          <p>Download the relevant application form from this page or collect it from the school office.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-num">2</div>
+          <h4>Fill &amp; Prepare</h4>
+          <p>Complete the form with accurate details. Gather required documents: TC, birth certificate, photos, etc.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-num">3</div>
+          <h4>Submit at Office</h4>
+          <p>Submit the filled form with all documents at the school office during working hours.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-num">4</div>
+          <h4>Confirmation</h4>
+          <p>Pay the prescribed fees upon confirmation. Fee payment can be done in instalments as permitted.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- CTA -->
+    <div class="contact-cta">
+      <div>
+        <h3>Have Questions About Admissions?</h3>
+        <p>Visit the school office or explore our detailed Admission Enquiry page for complete rules and guidelines.</p>
+      </div>
+      <a href="2-admission-enquiry.html" class="cta-btn"> Admission Enquiry →</a>
+    </div>
+
+  </div>
+</section>
+
+<!-- FOOTER -->
+
+  <script src="../shared-data-loader.js"></script>
+  <script src="admissions-page-loader.js?v=20260328-1"></script>
+  <script src="/components/Navbar.js"></script>
+  <script src="/components/Footer.js"></script>
+</body>
+</html>

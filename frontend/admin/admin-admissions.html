@@ -1,0 +1,1528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admissions — Admin | Loretto Central School</title>
+  <script src="/admin/admin-auth.js"></script>
+  <script src="/admin/adminfooter.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800&family=Nunito:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --navy:#0e6b6b; --navy-dark:#094f4f; --navy-deep:#062f2f;
+      --gold:#c8960c; --gold-light:#e8b020; --white:#fff; --bg:#f4f1eb;
+      --bg2:#edeae2; --text:#1a2e2e; --text-muted:#5a6e6e; --border:#ddd6c0;
+      --green:#27ae60; --red:#e74c3c; --orange:#e67e22; --shadow:0 4px 24px rgba(9,79,79,.10);
+    }
+    body { font-family:'Nunito',sans-serif; background:var(--bg); color:var(--text); }
+    .page { max-width: 1260px; margin: 0 auto; padding: 22px 24px 80px; }
+    .hero { display:flex; align-items:flex-start; justify-content:space-between; gap:18px; flex-wrap:wrap; margin-bottom:18px; }
+    .hero h1 { font-family:'Playfair Display',serif; font-size:1.9rem; color:var(--navy-dark); }
+    .hero p { margin-top:6px; color:var(--text-muted); font-size:.95rem; }
+    .hero-actions { display:flex; gap:10px; flex-wrap:wrap; }
+    .btn { border:none; border-radius:10px; font:700 .84rem 'Nunito',sans-serif; padding:10px 16px; cursor:pointer; transition:.2s; }
+    .btn:hover { transform:translateY(-1px); }
+    .btn.primary { background:var(--navy); color:#fff; }
+    .btn.gold { background:linear-gradient(135deg,var(--gold),var(--gold-light)); color:var(--navy-deep); }
+    .btn.outline { background:#fff; color:var(--navy); border:1.5px solid var(--border); }
+    .status-bar { display:flex; align-items:center; gap:10px; flex-wrap:wrap; background:rgba(39,174,96,.08); color:#1f7a46; border:1px solid rgba(39,174,96,.18); padding:10px 14px; border-radius:12px; margin-bottom:18px; }
+    .status-dot { width:8px; height:8px; border-radius:50%; background:var(--green); }
+    .tabs { display:flex; gap:8px; overflow:auto; padding-bottom:6px; margin-bottom:18px; }
+    .tab { background:#fff; border:1.5px solid var(--border); border-radius:999px; color:var(--text-muted); font:700 .8rem 'Nunito',sans-serif; padding:10px 14px; white-space:nowrap; cursor:pointer; }
+    .tab.active { background:var(--navy); border-color:var(--navy); color:#fff; }
+    .panel { display:none; }
+    .panel.active { display:block; }
+    .grid { display:grid; gap:18px; }
+    .grid.two { grid-template-columns:1.3fr 1fr; }
+    .grid.three { grid-template-columns:repeat(3,1fr); }
+    .card { background:#fff; border:1px solid var(--border); border-radius:16px; box-shadow:var(--shadow); overflow:hidden; }
+    .card-head { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:16px 18px; border-bottom:1px solid var(--border); background:linear-gradient(135deg,#fff,var(--bg)); }
+    .card-head h2, .card-head h3 { font-family:'Playfair Display',serif; font-size:1.05rem; color:var(--navy-dark); }
+    .chip { font-size:.64rem; font-weight:800; letter-spacing:.06em; text-transform:uppercase; color:var(--navy); background:rgba(14,107,107,.08); border:1px solid rgba(14,107,107,.18); padding:3px 8px; border-radius:999px; }
+    .card-body { padding:18px; }
+    .muted { color:var(--text-muted); font-size:.84rem; line-height:1.7; }
+    .stats { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:18px; }
+    .stat { background:#fff; border:1px solid var(--border); border-radius:14px; padding:18px; box-shadow:var(--shadow); }
+    .stat-value { font-family:'Playfair Display',serif; font-size:1.8rem; color:var(--navy-dark); }
+    .stat-label { margin-top:6px; font-size:.74rem; font-weight:700; color:var(--text-muted); }
+    .form-grid { display:grid; gap:14px; }
+    .form-grid.two { grid-template-columns:1fr 1fr; }
+    .form-grid.three { grid-template-columns:repeat(3,1fr); }
+    .field label { display:block; font-size:.75rem; font-weight:800; color:var(--navy-dark); margin-bottom:6px; }
+    .field input, .field textarea, .field select { width:100%; border:1.5px solid var(--border); border-radius:10px; padding:10px 12px; font:600 .86rem 'Nunito',sans-serif; color:var(--text); background:#fff; outline:none; }
+    .field textarea { min-height:92px; resize:vertical; }
+    .field input:focus, .field textarea:focus, .field select:focus { border-color:var(--navy); box-shadow:0 0 0 3px rgba(14,107,107,.08); }
+    .field small { display:block; margin-top:5px; color:var(--text-muted); font-size:.68rem; }
+    .inline-actions { display:flex; gap:8px; flex-wrap:wrap; }
+    .table-wrap { overflow:auto; }
+    table { width:100%; border-collapse:collapse; }
+    th { text-align:left; background:var(--bg); color:var(--text-muted); font-size:.68rem; font-weight:800; letter-spacing:.06em; text-transform:uppercase; padding:10px 12px; border-bottom:2px solid var(--border); }
+    td { padding:10px 12px; border-bottom:1px solid var(--bg2); vertical-align:top; font-size:.84rem; }
+    td input, td textarea, td select { width:100%; border:1.5px solid var(--border); border-radius:8px; padding:8px 10px; font:600 .82rem 'Nunito',sans-serif; }
+    td textarea { min-height:62px; resize:vertical; }
+    .icon-btn { width:32px; height:32px; border-radius:8px; border:1.5px solid var(--border); background:#fff; cursor:pointer; }
+    .icon-btn.danger:hover { border-color:var(--red); color:var(--red); }
+    .empty { padding:28px; text-align:center; color:var(--text-muted); font-size:.9rem; }
+    .notice { background:#fdf7e8; border:1px solid rgba(200,150,12,.3); color:#7a5a00; border-radius:12px; padding:12px 14px; font-size:.82rem; line-height:1.7; margin-bottom:14px; }
+    .upload-row { display:flex; gap:8px; align-items:center; }
+    .upload-row input { flex:1; }
+    .quick-form-stack { display:grid; gap:14px; }
+    .quick-form-slot { background:var(--bg); border:1px solid var(--border); border-radius:14px; padding:14px; }
+    .quick-form-slot-head { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; margin-bottom:12px; }
+    .quick-form-slot-head h3 { font-family:'Playfair Display',serif; font-size:1rem; color:var(--navy-dark); margin-bottom:4px; }
+    .quick-form-status { white-space:nowrap; font-size:.74rem; font-weight:800; color:var(--navy); background:rgba(14,107,107,.08); border:1px solid rgba(14,107,107,.16); border-radius:999px; padding:5px 10px; }
+    .toggle-row { display:flex; align-items:center; gap:12px; }
+    .toggle { width:42px; height:24px; position:relative; }
+    .toggle input { display:none; }
+    .toggle span { position:absolute; inset:0; border-radius:999px; background:var(--bg2); border:1.5px solid var(--border); }
+    .toggle span::after { content:''; position:absolute; width:16px; height:16px; border-radius:50%; background:#fff; top:3px; left:3px; box-shadow:0 2px 6px rgba(0,0,0,.18); transition:.2s; }
+    .toggle input:checked + span { background:var(--navy); border-color:var(--navy); }
+    .toggle input:checked + span::after { transform:translateX(18px); }
+    .pill { display:inline-flex; align-items:center; border-radius:999px; padding:3px 9px; font-size:.67rem; font-weight:800; }
+    .pill.live { background:rgba(39,174,96,.1); color:#1e8449; }
+    .pill.pending { background:rgba(230,126,34,.12); color:#b35d12; }
+    .pill.draft { background:var(--bg2); color:var(--text-muted); }
+    .modal-backdrop { display:none; position:fixed; inset:0; background:rgba(6,47,47,.56); z-index:10000; padding:20px; align-items:center; justify-content:center; }
+    .modal-backdrop.open { display:flex; }
+    .modal { width:min(680px,100%); background:#fff; border-radius:18px; overflow:hidden; box-shadow:0 18px 60px rgba(0,0,0,.24); }
+    .modal-head, .modal-foot { display:flex; align-items:center; justify-content:space-between; padding:16px 18px; border-bottom:1px solid var(--border); }
+    .modal-foot { border-top:1px solid var(--border); border-bottom:none; justify-content:flex-end; gap:8px; }
+    .modal-body { padding:18px; }
+    .toast { position:fixed; right:24px; bottom:24px; background:var(--navy-deep); color:#fff; padding:12px 16px; border-radius:12px; border-left:4px solid var(--gold-light); transform:translateY(80px); opacity:0; transition:.25s; z-index:10001; }
+    .toast.show { transform:translateY(0); opacity:1; }
+    @media (max-width: 1024px) {
+      .grid.two, .grid.three, .stats, .form-grid.two, .form-grid.three { grid-template-columns:1fr; }
+    }
+  </style>
+</head>
+<body>
+  <script src="adminnavbar.js"></script>
+
+  <div class="page">
+    <div class="hero">
+      <div>
+        <h1>Admissions Admin</h1>
+        <p>Manage the Admissions overview, enquiry information, fee structure, transfer certificate page, downloadable forms, and enquiries from one place.</p>
+      </div>
+      <div class="hero-actions">
+        <button class="btn outline" onclick="window.open('../admissions/1-admissions.html','_blank')">Preview Overview</button>
+        <button class="btn primary" onclick="refreshAll()">Refresh</button>
+        <button class="btn gold" onclick="saveSettings()">Save Admissions Settings</button>
+      </div>
+    </div>
+
+    <div class="status-bar">
+      <span class="status-dot"></span>
+      <span>Connected to shared admissions settings at <code>/api/settings/admissions</code></span>
+      <span>Forms and PDFs are stored in <code>/api/documents</code></span>
+      <span>Enquiries are stored in <code>/api/enquiries</code></span>
+    </div>
+
+    <div class="tabs" id="tabs">
+      <button class="tab active" data-tab="overview">Overview</button>
+      <button class="tab" data-tab="forms">Application Forms</button>
+      <button class="tab" data-tab="fee">Fee Structure</button>
+      <button class="tab" data-tab="tc">Transfer Certificate</button>
+      <button class="tab" data-tab="enquiries">Enquiries</button>
+      <button class="tab" data-tab="settings">Page Settings</button>
+    </div>
+
+    <section class="panel active" id="tab-overview">
+      <div class="stats">
+        <div class="stat"><div class="stat-value" id="stat-forms">0</div><div class="stat-label">Live Forms</div></div>
+        <div class="stat"><div class="stat-value" id="stat-enquiries">0</div><div class="stat-label">Enquiries</div></div>
+        <div class="stat"><div class="stat-value" id="stat-pending">0</div><div class="stat-label">Pending Enquiries</div></div>
+        <div class="stat"><div class="stat-value" id="stat-pdfs">0</div><div class="stat-label">PDF Documents</div></div>
+      </div>
+
+      <div class="grid two">
+        <div class="card">
+          <div class="card-head">
+            <h2>Highlight Cards</h2>
+            <div class="inline-actions">
+              <span class="chip">overview.highlights[]</span>
+              <button class="btn outline" onclick="addTableRow('highlights-tbody', 4)">Add Card</button>
+              <button class="btn gold" onclick="saveSettings('Highlights saved!')">Save</button>
+            </div>
+          </div>
+          <div class="card-body table-wrap">
+            <table>
+              <thead><tr><th>Order</th><th>Icon</th><th>Title</th><th>Description</th><th></th></tr></thead>
+              <tbody id="highlights-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <h2>Public Notice Text</h2>
+            <div class="inline-actions">
+              <span class="chip">status + CTA</span>
+              <button class="btn gold" onclick="saveSettings('Overview notice saved!')">Save</button>
+            </div>
+          </div>
+          <div class="card-body form-grid">
+            <div class="notice">This controls the exact text shown on the public admissions overview page above the forms section, including “Admissions Open for 2025–26”.</div>
+            <div class="field"><label>Academic Year</label><input id="adm-academic-year" type="text" placeholder="2025–2026" /></div>
+            <div class="field">
+              <label>Show Admissions As Open</label>
+              <div class="toggle-row">
+                <label class="toggle"><input id="adm-open-toggle" type="checkbox" checked /><span></span></label>
+                <span class="muted">Show open/closed state on the public overview notice</span>
+              </div>
+            </div>
+            <div class="field"><label>Public Badge Text</label><input id="adm-status-badge" type="text" placeholder="Admissions Open for 2025–26" /></div>
+            <div class="field"><label>Public Notice Text</label><textarea id="adm-status-notice" placeholder="Admissions notice shown below the highlight cards"></textarea></div>
+            <div class="field"><label>Contact CTA Heading</label><input id="overview-cta-heading" type="text" placeholder="Have Questions About Admissions?" /></div>
+            <div class="field"><label>Contact CTA Description</label><textarea id="overview-cta-desc"></textarea></div>
+            <div class="form-grid two">
+              <div class="field"><label>CTA Button Label</label><input id="overview-cta-label" type="text" placeholder="Admission Enquiry →" /></div>
+              <div class="field"><label>CTA Button Link</label><input id="overview-cta-link" type="text" placeholder="2-admission-enquiry.html" /></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid two" style="margin-top:18px;">
+        <div class="card">
+          <div class="card-head">
+            <h2>Overview Download Section Text</h2>
+            <div class="inline-actions">
+              <span class="chip">overview.forms</span>
+              <button class="btn gold" onclick="saveSettings('Download section text saved!')">Save</button>
+            </div>
+          </div>
+          <div class="card-body form-grid">
+            <div class="notice">This controls the public heading “Download Application Forms” and the short text below it on the overview page.</div>
+            <div class="field"><label>Overview Forms Heading</label><input id="overview-forms-heading" type="text" /></div>
+            <div class="field"><label>Overview Forms Description</label><textarea id="overview-forms-desc"></textarea></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <h2>Admission Steps</h2>
+            <div class="inline-actions">
+              <span class="chip">overview.steps[]</span>
+              <button class="btn outline" onclick="addTableRow('steps-tbody', 3)">Add Step</button>
+              <button class="btn gold" onclick="saveSettings('Admission steps saved!')">Save</button>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="field" style="margin-bottom:14px;"><label>Steps Section Heading</label><input id="overview-steps-title" type="text" /></div>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>No.</th><th>Step</th><th>Description</th><th></th></tr></thead>
+                <tbody id="steps-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel" id="tab-forms">
+      <div class="grid two">
+        <div class="card">
+          <div class="card-head">
+            <h2>Application Forms</h2>
+            <div class="inline-actions">
+              <span class="chip">documents: admission-form</span>
+              <button class="btn gold" onclick="openFormModal()">Add Custom Form</button>
+            </div>
+          </div>
+          <div class="card-body table-wrap">
+            <div class="notice">Use the quick uploader for the three main admission PDFs. Use “Add Custom Form” only if you need an extra downloadable form beyond those three.</div>
+            <table>
+              <thead><tr><th>Title</th><th>For Class</th><th>Status</th><th>Order</th><th></th></tr></thead>
+              <tbody id="forms-tbody"></tbody>
+            </table>
+            <div id="forms-empty" class="empty" style="display:none;">No admission forms yet.</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <h2>Quick Upload 3 PDFs</h2>
+            <span class="chip">Play School • Kindergarten • Class 1–8</span>
+          </div>
+          <div class="card-body">
+            <div class="notice">Upload the three standard admission PDFs here. When you save, these files automatically appear on the public overview page and the enquiry sidebar.</div>
+            <div class="quick-form-stack">
+              <div class="quick-form-slot">
+                <div class="quick-form-slot-head">
+                  <div>
+                    <h3>Play School Admission</h3>
+                    <p class="muted">Shown first on the public admissions pages.</p>
+                  </div>
+                  <span class="quick-form-status" id="std-form-play-school-status">Not uploaded</span>
+                </div>
+                <div class="form-grid two">
+                  <div class="field"><label>For Class</label><input id="std-form-play-school-class" type="text" /></div>
+                  <div class="field">
+                    <label>Visible on Website</label>
+                    <div class="toggle-row">
+                      <label class="toggle"><input id="std-form-play-school-visible" type="checkbox" checked /><span></span></label>
+                      <span class="muted">Show this form publicly.</span>
+                    </div>
+                  </div>
+                  <div class="field"><label>Description</label><textarea id="std-form-play-school-desc"></textarea></div>
+                  <div class="field">
+                    <label>PDF URL</label>
+                    <div class="upload-row">
+                      <input id="std-form-play-school-url" type="url" />
+                      <button class="btn outline" onclick="document.getElementById('std-form-play-school-file').click()">Upload</button>
+                      <input id="std-form-play-school-file" type="file" accept="application/pdf" style="display:none" onchange="uploadFile(this,'std-form-play-school-url')" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="quick-form-slot">
+                <div class="quick-form-slot-head">
+                  <div>
+                    <h3>Kindergarten Admission</h3>
+                    <p class="muted">Shown second on the public admissions pages.</p>
+                  </div>
+                  <span class="quick-form-status" id="std-form-kindergarten-status">Not uploaded</span>
+                </div>
+                <div class="form-grid two">
+                  <div class="field"><label>For Class</label><input id="std-form-kindergarten-class" type="text" /></div>
+                  <div class="field">
+                    <label>Visible on Website</label>
+                    <div class="toggle-row">
+                      <label class="toggle"><input id="std-form-kindergarten-visible" type="checkbox" checked /><span></span></label>
+                      <span class="muted">Show this form publicly.</span>
+                    </div>
+                  </div>
+                  <div class="field"><label>Description</label><textarea id="std-form-kindergarten-desc"></textarea></div>
+                  <div class="field">
+                    <label>PDF URL</label>
+                    <div class="upload-row">
+                      <input id="std-form-kindergarten-url" type="url" />
+                      <button class="btn outline" onclick="document.getElementById('std-form-kindergarten-file').click()">Upload</button>
+                      <input id="std-form-kindergarten-file" type="file" accept="application/pdf" style="display:none" onchange="uploadFile(this,'std-form-kindergarten-url')" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="quick-form-slot">
+                <div class="quick-form-slot-head">
+                  <div>
+                    <h3>Class 1–8 Admission</h3>
+                    <p class="muted">Shown third on the public admissions pages.</p>
+                  </div>
+                  <span class="quick-form-status" id="std-form-class-1-8-status">Not uploaded</span>
+                </div>
+                <div class="form-grid two">
+                  <div class="field"><label>For Class</label><input id="std-form-class-1-8-class" type="text" /></div>
+                  <div class="field">
+                    <label>Visible on Website</label>
+                    <div class="toggle-row">
+                      <label class="toggle"><input id="std-form-class-1-8-visible" type="checkbox" checked /><span></span></label>
+                      <span class="muted">Show this form publicly.</span>
+                    </div>
+                  </div>
+                  <div class="field"><label>Description</label><textarea id="std-form-class-1-8-desc"></textarea></div>
+                  <div class="field">
+                    <label>PDF URL</label>
+                    <div class="upload-row">
+                      <input id="std-form-class-1-8-url" type="url" />
+                      <button class="btn outline" onclick="document.getElementById('std-form-class-1-8-file').click()">Upload</button>
+                      <input id="std-form-class-1-8-file" type="file" accept="application/pdf" style="display:none" onchange="uploadFile(this,'std-form-class-1-8-url')" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="inline-actions" style="margin-top:14px;">
+              <button class="btn gold" onclick="saveQuickForms()">Save Uploaded PDFs</button>
+              <button class="btn outline" onclick="loadDocuments()">Reload Forms</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:18px;">
+        <div class="card-head">
+          <h2>Public Forms Sidebar</h2>
+          <span class="chip">enquiryPage + docs</span>
+        </div>
+        <div class="card-body form-grid">
+          <div class="field"><label>Download Box Heading</label><input id="enquiry-forms-heading" type="text" /></div>
+          <div class="field"><label>Download Box Intro</label><textarea id="enquiry-forms-desc"></textarea></div>
+          <div class="notice">The individual download cards on the public overview page and the enquiry sidebar are generated automatically from the live `admission-form` documents you manage here.</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel" id="tab-fee">
+      <div class="grid two">
+        <div class="card">
+          <div class="card-head">
+            <h2>Fee Page Content</h2>
+            <span class="chip">feePage</span>
+          </div>
+          <div class="card-body form-grid">
+            <div class="field"><label>Academic Year</label><input id="fee-year" type="text" /></div>
+            <div class="field"><label>Intro Text</label><textarea id="fee-intro"></textarea></div>
+            <div class="field"><label>Overview Heading</label><input id="fee-overview-title" type="text" /></div>
+            <div class="field"><label>Overview Text</label><textarea id="fee-overview-text"></textarea></div>
+            <div class="field"><label>Important Notes (one per line)</label><textarea id="fee-notes"></textarea></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <h2>Fee PDF</h2>
+            <span class="chip">documents: fee-structure</span>
+          </div>
+          <div class="card-body form-grid">
+            <div class="field"><label>Download Card Title</label><input id="fee-pdf-title" type="text" /></div>
+            <div class="field"><label>Download Card Description</label><textarea id="fee-pdf-desc"></textarea></div>
+            <div class="field">
+              <label>Cloudinary PDF URL</label>
+              <div class="upload-row">
+                <input id="fee-pdf-url" type="url" />
+                <button class="btn outline" onclick="document.getElementById('fee-pdf-file').click()">Upload</button>
+                <input id="fee-pdf-file" type="file" accept="application/pdf" style="display:none" onchange="uploadFile(this,'fee-pdf-url')" />
+              </div>
+            </div>
+            <button class="btn gold" onclick="saveDocumentSettings('fee-structure')">Save Fee PDF</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:18px;">
+        <div class="card-head">
+          <h2>Fee Table</h2>
+          <div class="inline-actions">
+            <span class="chip">feePage.rows[]</span>
+            <button class="btn outline" onclick="addTableRow('fee-rows-tbody', 4)">Add Row</button>
+            <button class="btn gold" onclick="saveSettings('Fee table saved!')">Save</button>
+          </div>
+        </div>
+        <div class="card-body table-wrap">
+          <table>
+            <thead><tr><th>Class / Group</th><th>Fee Type</th><th>Amount / Description</th><th>Frequency</th><th></th></tr></thead>
+            <tbody id="fee-rows-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:18px;">
+        <div class="card-head">
+          <h2>Payment Methods</h2>
+          <div class="inline-actions">
+            <span class="chip">feePage.paymentMethods[]</span>
+            <button class="btn outline" onclick="addTableRow('payment-tbody', 4)">Add Method</button>
+            <button class="btn gold" onclick="saveSettings('Payment methods saved!')">Save</button>
+          </div>
+        </div>
+        <div class="card-body table-wrap">
+          <table>
+            <thead><tr><th>Icon</th><th>Title</th><th>Description</th><th>Link</th><th></th></tr></thead>
+            <tbody id="payment-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel" id="tab-tc">
+      <div class="grid two">
+        <div class="card">
+          <div class="card-head">
+            <h2>Transfer Certificate Page</h2>
+            <span class="chip">tcPage</span>
+          </div>
+          <div class="card-body form-grid">
+            <div class="field"><label>Intro Paragraph</label><textarea id="tc-intro"></textarea></div>
+            <div class="field"><label>Secondary Paragraph</label><textarea id="tc-preview-intro"></textarea></div>
+            <div class="field"><label>Sidebar Section Title</label><input id="tc-rules-title" type="text" /></div>
+            <div class="field"><label>TC Required Rules (one per line)</label><textarea id="tc-rules"></textarea></div>
+            <div class="field"><label>Primary Note</label><textarea id="tc-note-primary"></textarea></div>
+            <div class="field"><label>Secondary Note</label><textarea id="tc-note-secondary"></textarea></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <h2>TC PDF</h2>
+            <span class="chip">documents: tc-format</span>
+          </div>
+          <div class="card-body form-grid">
+            <div class="field"><label>Download Box Title</label><input id="tc-pdf-title" type="text" /></div>
+            <div class="field"><label>Download Box Description</label><textarea id="tc-pdf-desc"></textarea></div>
+            <div class="field">
+              <label>Cloudinary PDF URL</label>
+              <div class="upload-row">
+                <input id="tc-pdf-url" type="url" />
+                <button class="btn outline" onclick="document.getElementById('tc-pdf-file').click()">Upload</button>
+                <input id="tc-pdf-file" type="file" accept="application/pdf" style="display:none" onchange="uploadFile(this,'tc-pdf-url')" />
+              </div>
+            </div>
+            <button class="btn gold" onclick="saveDocumentSettings('tc-format')">Save TC PDF</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel" id="tab-enquiries">
+      <div class="card">
+        <div class="card-head">
+          <h2>Admission Enquiries</h2>
+          <div class="inline-actions">
+            <span class="chip">/api/enquiries</span>
+            <button class="btn outline" onclick="loadEnquiries()">Reload</button>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="form-grid three" style="margin-bottom:14px;">
+            <div class="field"><label>Search</label><input id="enquiry-search" type="text" placeholder="Search by name or email" oninput="filterEnquiries()" /></div>
+            <div class="field">
+              <label>Status Filter</label>
+              <select id="enquiry-filter" onchange="filterEnquiries()">
+                <option value="">All</option>
+                <option value="pending">Pending</option>
+                <option value="contacted">Contacted</option>
+                <option value="accepted">Accepted</option>
+                <option value="rejected">Rejected</option>
+              </select>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Name</th><th>Email / Phone</th><th>Class</th><th>Submitted</th><th>Status</th><th></th></tr></thead>
+              <tbody id="enquiries-tbody"></tbody>
+            </table>
+          </div>
+          <div id="enquiries-empty" class="empty" style="display:none;">No admission enquiries yet.</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel" id="tab-settings">
+      <div class="grid two">
+        <div class="card">
+          <div class="card-head">
+            <h2>Hero & Navigation</h2>
+            <span class="chip">hero + subnav</span>
+          </div>
+          <div class="card-body form-grid">
+            <div class="field"><label>Hero Title</label><input id="hero-title" type="text" /></div>
+            <div class="field"><label>Hero Description</label><textarea id="hero-desc"></textarea></div>
+            <div class="field">
+              <label>Hero Background Image</label>
+              <div class="upload-row">
+                <input id="hero-bg" type="url" />
+                <button class="btn outline" onclick="document.getElementById('hero-bg-file').click()">Upload</button>
+                <input id="hero-bg-file" type="file" accept="image/*" style="display:none" onchange="uploadFile(this,'hero-bg')" />
+              </div>
+            </div>
+            <div class="form-grid two">
+              <div class="field"><label>Subnav Label 1</label><input id="subnav-1" type="text" /></div>
+              <div class="field"><label>Subnav Label 2</label><input id="subnav-2" type="text" /></div>
+              <div class="field"><label>Subnav Label 3</label><input id="subnav-3" type="text" /></div>
+              <div class="field"><label>Subnav Label 4</label><input id="subnav-4" type="text" /></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <h2>Enquiry Page Sidebar</h2>
+            <span class="chip">enquiryPage</span>
+          </div>
+          <div class="card-body form-grid">
+            <div class="field"><label>Enquiry Page Intro</label><textarea id="enquiry-intro"></textarea></div>
+            <div class="field"><label>Rules for Admission (one per line)</label><textarea id="enquiry-rules"></textarea></div>
+            <div class="field"><label>Documents Intro</label><textarea id="enquiry-documents-intro"></textarea></div>
+            <div class="field"><label>Documents Required (one per line)</label><textarea id="enquiry-documents"></textarea></div>
+            <div class="field"><label>Office Card Heading</label><input id="office-heading" type="text" /></div>
+            <div class="field"><label>Office Address</label><textarea id="office-address"></textarea></div>
+            <div class="form-grid two">
+              <div class="field"><label>Office Phone / Hours</label><input id="office-phone" type="text" /></div>
+              <div class="field"><label>Website</label><input id="office-website" type="text" /></div>
+            </div>
+            <div class="field"><label>Quick Tips (one per line)</label><textarea id="enquiry-quick-tips"></textarea></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:18px;">
+        <div class="card-head">
+          <h2>SEO</h2>
+          <div class="inline-actions">
+            <span class="chip">seo</span>
+            <button class="btn gold" onclick="saveSettings('Admissions settings saved!')">Save All</button>
+          </div>
+        </div>
+        <div class="card-body form-grid">
+          <div class="field"><label>Meta Title</label><input id="seo-title" type="text" /></div>
+          <div class="field"><label>Meta Description</label><textarea id="seo-desc"></textarea></div>
+          <div class="field"><label>Keywords</label><input id="seo-keywords" type="text" /></div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div class="modal-backdrop" id="form-modal" onclick="if(event.target===this)closeFormModal()">
+    <div class="modal">
+      <div class="modal-head">
+        <h3 id="form-modal-title">Add Application Form</h3>
+        <button class="icon-btn" onclick="closeFormModal()">×</button>
+      </div>
+      <div class="modal-body form-grid">
+        <input id="form-id" type="hidden" />
+        <div class="field"><label>Title</label><input id="form-title" type="text" /></div>
+        <div class="field"><label>For Class</label><input id="form-for-class" type="text" /></div>
+        <div class="field"><label>Description</label><textarea id="form-desc"></textarea></div>
+        <div class="field"><label>Icon</label><input id="form-icon" type="text" /></div>
+        <div class="field"><label>Sort Order</label><input id="form-order" type="number" value="1" /></div>
+        <div class="field">
+          <label>Visible on Website</label>
+          <div class="toggle-row">
+            <label class="toggle"><input id="form-visible" type="checkbox" checked /><span></span></label>
+            <span class="muted">Hidden forms remain in admin but do not show on the public pages.</span>
+          </div>
+        </div>
+        <div class="field">
+          <label>Cloudinary PDF URL</label>
+          <div class="upload-row">
+            <input id="form-url" type="url" />
+            <button class="btn outline" onclick="document.getElementById('form-file').click()">Upload</button>
+            <input id="form-file" type="file" accept="application/pdf" style="display:none" onchange="uploadFile(this,'form-url')" />
+          </div>
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button class="btn outline" onclick="closeFormModal()">Cancel</button>
+        <button class="btn gold" onclick="saveForm()">Save Form</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    var SETTINGS_KEY = 'admissions';
+    var API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://loretto-cbse-school.onrender.com';
+    var _forms = [];
+    var _enquiries = [];
+    var _docsByCategory = {};
+    var _saveBusy = false;
+    var _quickFormsBusy = false;
+
+    var DEFAULTS = {
+      hero: {
+        title: 'Admissions',
+        desc: "Begin your child's journey of excellence at Loretto Central School — where every learner is valued, nurtured, and inspired.",
+        bgImage: ''
+      },
+      subnav: ['Overview', 'Admission Enquiry', 'Transfer Certificate Format', 'Fee Structure'],
+      status: {
+        academicYear: '2025–2026',
+        isOpen: true,
+        badge: 'Admissions Open for 2025–26',
+        notice: 'Admissions for the academic year are open. Download the form and contact the school office for guidance.'
+      },
+      overview: {
+        formsHeading: 'Download Application Forms',
+        formsDesc: 'Choose the appropriate application form based on the class you are applying for. Fill in the form carefully and submit it to the school office along with the required documents.',
+        stepsTitle: 'Admission Process at a Glance',
+        highlights: [
+          { order: '1', icon: '🏫', title: 'CBSE Affiliated', desc: 'Fully affiliated to CBSE, New Delhi, offering LKG to Class X education.' },
+          { order: '2', icon: '🌍', title: 'All Are Welcome', desc: 'Open to boys and girls of all communities — irrespective of caste, creed, or social status.' },
+          { order: '3', icon: '📋', title: 'Simple Process', desc: 'Download the application form, fill it with the required documents, and submit to the school office.' }
+        ],
+        steps: [
+          { order: '1', title: 'Download Form', desc: 'Download the relevant application form from this page or collect it from the school office.' },
+          { order: '2', title: 'Fill & Prepare', desc: 'Complete the form with accurate details and gather the required documents.' },
+          { order: '3', title: 'Submit at Office', desc: 'Submit the filled form with all supporting documents during working hours.' },
+          { order: '4', title: 'Confirmation', desc: 'Pay the prescribed fees upon confirmation.' }
+        ],
+        cta: {
+          heading: 'Have Questions About Admissions?',
+          desc: 'Visit the school office or explore our detailed Admission Enquiry page for complete rules and guidelines.',
+          label: 'Admission Enquiry →',
+          link: '2-admission-enquiry.html'
+        }
+      },
+      enquiryPage: {
+        formsHeading: 'Download Application Forms',
+        formsDesc: "Choose the form that applies to your child's class:",
+        intro: 'Committed to our core value of nurturing excellence, we ensure that optimum learning happens for your child in an environment that is student-centric and respectful.',
+        rules: [
+          'The school, which mainly runs for the Christian minority community, is also open for admission to boys and girls irrespective of caste, creed, or social status.',
+          'The child should complete the age prescribed by the Government to be admitted to the 1st standard.',
+          'Every student for admission and withdrawal from the school must be introduced by letter or in person by someone responsible to the Head of the School.',
+          'Application for admission should be made in the prescribed form, which can be obtained from the office, and must be submitted along with the Transfer Certificate from the school previously attended.',
+          'Every pupil on admission shall pay the prescribed fees. No fees shall be refunded for any cause.',
+          'The payment may be made in instalments as prescribed by the school management. The entire fee is to be remitted by February end.',
+          'Pupils coming from secondary or primary schools should produce a Transfer Certificate and Conduct Certificate issued by the Head of the School concerned.',
+          'Pupils coming from schools outside Dakshina Kannada district or outside Karnataka State will be admitted on production of a Transfer Certificate duly countersigned by the concerned authorities of the Department of Education, in strict conformity with the rules and standards issued by the department.',
+          'In the case of admission of pupils coming from primary or secondary schools, the date of birth furnished in the Transfer Certificate will be taken as correct.',
+          'The admission application must be signed by the father or mother or, in their absence, by the guardian who has been authorized by the parents. The letter of authorization must be filed with the admission form.'
+        ],
+        documentsIntro: 'Please bring the following documents when submitting your application to the school office:',
+        documents: [
+          'Completed Application Form (downloaded and filled)',
+          'Transfer Certificate (TC) from previous school (for Classes 1–8)',
+          'Conduct Certificate from previous school (where applicable)',
+          'Original Birth Certificate of the child',
+          'Recent passport-size photographs of the student (2–4 copies)',
+          'Aadhar Card copy of student and parent/guardian',
+          'Caste Certificate / Community Certificate (if applicable)',
+          'Previous academic records / report card'
+        ],
+        officeInfo: {
+          heading: 'School Office Information',
+          address: 'Loretto Central School\nLoretto Padavu, Bantwal\nDakshina Kannada – 574219',
+          phone: 'Please enquire during school working hours',
+          website: 'https://lorettocentralschool.edu.in'
+        },
+        quickTips: [
+          'Collect or download forms in advance',
+          'Fill all fields accurately and completely',
+          'Keep original documents ready for verification',
+          'Submit during office working hours only',
+          'Fees once paid are non-refundable'
+        ]
+      },
+      feePage: {
+        year: '2025–2026',
+        intro: 'The fee structure below is applicable for the current academic year. Please download the official fee structure PDF for the most complete details.',
+        overviewTitle: 'Fee Structure Overview',
+        overviewText: 'The table below provides a general overview of fee categories applicable across classes.',
+        rows: [
+          { group: '', feeType: 'Tuition Fee', amount: 'Core academic instruction charges', frequency: 'Annual / Term' },
+          { group: '', feeType: 'Admission / Registration Fee', amount: 'One-time fee at the time of new admission', frequency: 'One-time' },
+          { group: '', feeType: 'Development Fee', amount: 'Infrastructure and facility development', frequency: 'Annual' },
+          { group: '', feeType: 'Library Fee', amount: 'Access to school library and reading resources', frequency: 'Annual' },
+          { group: '', feeType: 'Laboratory Fee', amount: 'Science / Computer lab usage charges', frequency: 'Annual' },
+          { group: '', feeType: 'Sports & Activities Fee', amount: 'Co-curricular and sports activities', frequency: 'Annual' },
+          { group: '', feeType: 'Examination Fee', amount: 'Internal and CBSE board examination charges', frequency: 'Annual' }
+        ],
+        notes: [
+          'The entire fee for the academic year is to be remitted by the end of February.',
+          'Fee payment may be made in instalments as prescribed by the school management.',
+          'No fees shall be refunded for any cause once paid.',
+          'Every pupil on admission shall pay the prescribed admission fees before commencement of classes.',
+          'Online fee payment is available. Please visit the Online Fees Payment section for details.',
+          'For fee-related queries, kindly contact the school office during working hours.',
+          'Fee structure is subject to revision by the management for subsequent academic years.'
+        ],
+        paymentMethods: [
+          { icon: '🏫', title: 'School Office (Cash / DD)', desc: 'Pay in person at the school accounts office during working hours. Demand Drafts are also accepted.', link: '' },
+          { icon: '🌐', title: 'Online Payment', desc: 'Pay conveniently through our online payment portal. Secure and instant.', link: 'https://school.edu/online-fees-payment/' },
+          { icon: '🏦', title: 'NEFT / Bank Transfer', desc: "Direct bank transfer to the school's bank account. Contact the office for bank details.", link: '' }
+        ],
+        pdfTitle: 'Download Official Fee Structure PDF',
+        pdfDesc: 'Download the complete and up-to-date fee structure, including class-wise breakdowns and applicable charges.'
+      },
+      tcPage: {
+        intro: 'The Transfer Certificate (TC) is an official document issued by a school to a student upon leaving.',
+        previewIntro: 'The following CBSE-standard Transfer Certificate format is in use for our CBSE-affiliated school.',
+        rulesTitle: 'When is TC Required?',
+        rules: [
+          'Transferring from any other school to Loretto Central School for Classes 1–8',
+          'Students coming from schools outside Dakshina Kannada district',
+          'Students transferring from schools outside Karnataka State (TC must be countersigned)',
+          'When a student leaves Loretto Central School to join another institution'
+        ],
+        notePrimary: 'The date of birth mentioned in the Transfer Certificate from the previous school will be taken as final and correct for admission purposes.',
+        noteSecondary: 'Students from outside Karnataka must have their TC countersigned by the concerned District Education Officer (DEO) before submission.',
+        pdfTitle: 'Download Official TC Format',
+        pdfDesc: 'Download the official CBSE-standard Transfer Certificate format used by Loretto Central School.'
+      },
+      seo: {
+        title: 'Admissions | Loretto Central School',
+        desc: 'Apply for admissions at Loretto Central School. Download application forms, view fee structure, and explore admission guidelines.',
+        keywords: 'Loretto Central School admissions, fee structure, application form'
+      }
+    };
+
+    var STANDARD_FORMS = [
+      {
+        key: 'play-school',
+        title: 'Play School Admission',
+        forClass: 'Play School',
+        description: 'Application form for Play School admission.',
+        order: 1,
+        icon: '📄'
+      },
+      {
+        key: 'kindergarten',
+        title: 'Kindergarten Admission',
+        forClass: 'Kindergarten',
+        description: 'Application form for Kindergarten admission.',
+        order: 2,
+        icon: '📄'
+      },
+      {
+        key: 'class-1-8',
+        title: 'Class 1–8 Admission',
+        forClass: 'Class 1–8',
+        description: 'Application form for Classes 1 to 8 admission.',
+        order: 3,
+        icon: '📄'
+      }
+    ];
+
+    function withAdminHeaders(extra, options) {
+      var settings = options && typeof options === 'object' ? options : {};
+      var defaults = settings.includeJsonContentType === false ? {} : { 'Content-Type': 'application/json' };
+      var base = Object.assign({}, defaults, extra || {});
+      if (window.AdminAuth && typeof window.AdminAuth.apiHeaders === 'function') {
+        return window.AdminAuth.apiHeaders(base);
+      }
+      if (typeof window.apiHeaders === 'function') {
+        return window.apiHeaders(base);
+      }
+      return Object.assign({ 'x-admin-token': window.ADMIN_TOKEN || '' }, base);
+    }
+
+    function adminApiHeaders(extra) {
+      return withAdminHeaders(extra);
+    }
+
+    function adminUploadHeaders(extra) {
+      return withAdminHeaders(extra, { includeJsonContentType: false });
+    }
+
+    function normalizeText(value) {
+      return value == null ? '' : String(value).trim();
+    }
+
+    function toast(message, error) {
+      var el = document.getElementById('toast');
+      el.textContent = (error ? 'Error: ' : '') + message;
+      el.style.borderLeftColor = error ? 'var(--red)' : 'var(--gold-light)';
+      el.classList.add('show');
+      setTimeout(function () { el.classList.remove('show'); }, 3200);
+    }
+
+    function qs(id) {
+      return document.getElementById(id);
+    }
+
+    function readValue(id) {
+      var el = qs(id);
+      return el ? normalizeText(el.value) : '';
+    }
+
+    function writeValue(id, value) {
+      var el = qs(id);
+      if (el) el.value = value == null ? '' : String(value);
+    }
+
+    function rowsFromTable(id, count) {
+      var body = qs(id);
+      if (!body) return [];
+      return Array.prototype.slice.call(body.querySelectorAll('tr')).map(function (row) {
+        var cells = Array.prototype.slice.call(row.querySelectorAll('td')).slice(0, count);
+        return cells.map(function (cell) {
+          var field = cell.querySelector('input, textarea, select');
+          return normalizeText(field ? field.value : cell.textContent);
+        });
+      }).filter(function (values) {
+        return values.some(function (value) { return value; });
+      });
+    }
+
+    function fillTable(id, rows, count) {
+      var body = qs(id);
+      if (!body) return;
+      body.innerHTML = '';
+      (Array.isArray(rows) ? rows : []).forEach(function (row) {
+        appendRow(id, count, row);
+      });
+    }
+
+    function appendRow(id, count, values) {
+      var body = qs(id);
+      if (!body) return;
+      var tr = document.createElement('tr');
+      for (var i = 0; i < count; i += 1) {
+        var td = document.createElement('td');
+        var input = document.createElement(i === count - 1 && count > 3 ? 'input' : 'input');
+        input.value = values && values[i] != null ? String(values[i]) : '';
+        td.appendChild(input);
+        tr.appendChild(td);
+      }
+      var act = document.createElement('td');
+      act.innerHTML = '<button class="icon-btn danger" onclick="this.closest(\'tr\').remove()">×</button>';
+      tr.appendChild(act);
+      body.appendChild(tr);
+    }
+
+    function addTableRow(id, count) {
+      appendRow(id, count, []);
+    }
+
+    function linesToArray(value) {
+      return String(value || '').split('\n').map(function (line) { return normalizeText(line); }).filter(Boolean);
+    }
+
+    function arrayToLines(items) {
+      return (Array.isArray(items) ? items : []).join('\n');
+    }
+
+    function slugify(value) {
+      return normalizeText(value).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+    }
+
+    function standardFormFieldId(key, field) {
+      return 'std-form-' + key + '-' + field;
+    }
+
+    function findStandardForm(config) {
+      var titleSlug = slugify(config.title);
+      var classSlug = slugify(config.forClass);
+      return _forms.find(function (item) {
+        var meta = item && item.meta && typeof item.meta === 'object' ? item.meta : {};
+        return slugify(meta.templateKey) === config.key
+          || slugify(item.title) === titleSlug
+          || slugify(meta.forClass || item.forClass || item.class) === classSlug
+          || Number(item.order || 0) === config.order;
+      }) || null;
+    }
+
+    function populateQuickForms() {
+      STANDARD_FORMS.forEach(function (config) {
+        var item = findStandardForm(config);
+        var meta = item && item.meta && typeof item.meta === 'object' ? item.meta : {};
+        writeValue(standardFormFieldId(config.key, 'class'), meta.forClass || (item && item.forClass) || config.forClass);
+        writeValue(standardFormFieldId(config.key, 'desc'), (item && item.description) || config.description);
+        writeValue(standardFormFieldId(config.key, 'url'), (item && item.url) || '');
+        var visible = item ? item.visible !== false : true;
+        var checkbox = qs(standardFormFieldId(config.key, 'visible'));
+        if (checkbox) checkbox.checked = visible;
+        var status = qs(standardFormFieldId(config.key, 'status'));
+        if (status) {
+          status.textContent = item ? (visible ? 'Live' : 'Hidden') : 'Not uploaded';
+        }
+      });
+    }
+
+    function buildQuickFormBody(config, existing) {
+      var forClass = readValue(standardFormFieldId(config.key, 'class')) || config.forClass;
+      var description = readValue(standardFormFieldId(config.key, 'desc')) || config.description;
+      var url = readValue(standardFormFieldId(config.key, 'url')) || (existing && existing.url) || '';
+      return {
+        title: config.title,
+        description: description,
+        url: url,
+        category: 'admission-form',
+        type: 'PDF Form',
+        icon: config.icon || '📄',
+        forClass: forClass,
+        visible: !!(qs(standardFormFieldId(config.key, 'visible')) || {}).checked,
+        order: config.order,
+        date: new Date().toISOString(),
+        meta: {
+          templateKey: config.key,
+          forClass: forClass,
+          icon: config.icon || '📄'
+        }
+      };
+    }
+
+    async function fetchEnquiriesApi(path, init) {
+      var requestPath = API_BASE + '/api/enquiries' + (path || '');
+      var response = await fetch(requestPath, init);
+
+      if (
+        response.status === 404 &&
+        window.AdminAuth &&
+        typeof window.AdminAuth.resolveApiBase === 'function'
+      ) {
+        await window.AdminAuth.resolveApiBase(true);
+        response = await fetch(requestPath, init);
+      }
+
+      return response;
+    }
+
+    function mergeDefaults(raw) {
+      var source = raw && typeof raw === 'object' ? raw : {};
+      return {
+        hero: Object.assign({}, DEFAULTS.hero, source.hero || {}),
+        subnav: Array.isArray(source.subnav) && source.subnav.length ? source.subnav.slice(0, 4) : DEFAULTS.subnav.slice(),
+        status: Object.assign({}, DEFAULTS.status, source.status || {}),
+        overview: {
+          formsHeading: normalizeText(source.overview && source.overview.formsHeading) || DEFAULTS.overview.formsHeading,
+          formsDesc: normalizeText(source.overview && source.overview.formsDesc) || DEFAULTS.overview.formsDesc,
+          stepsTitle: normalizeText(source.overview && source.overview.stepsTitle) || DEFAULTS.overview.stepsTitle,
+          highlights: Array.isArray(source.overview && source.overview.highlights) && source.overview.highlights.length ? source.overview.highlights : DEFAULTS.overview.highlights,
+          steps: Array.isArray(source.overview && source.overview.steps) && source.overview.steps.length ? source.overview.steps : DEFAULTS.overview.steps,
+          cta: Object.assign({}, DEFAULTS.overview.cta, source.overview && source.overview.cta ? source.overview.cta : {})
+        },
+        enquiryPage: {
+          formsHeading: normalizeText(source.enquiryPage && source.enquiryPage.formsHeading) || DEFAULTS.enquiryPage.formsHeading,
+          formsDesc: normalizeText(source.enquiryPage && source.enquiryPage.formsDesc) || DEFAULTS.enquiryPage.formsDesc,
+          intro: normalizeText(source.enquiryPage && source.enquiryPage.intro) || DEFAULTS.enquiryPage.intro,
+          rules: Array.isArray(source.enquiryPage && source.enquiryPage.rules) ? source.enquiryPage.rules : DEFAULTS.enquiryPage.rules,
+          documentsIntro: normalizeText(source.enquiryPage && source.enquiryPage.documentsIntro) || DEFAULTS.enquiryPage.documentsIntro,
+          documents: Array.isArray(source.enquiryPage && source.enquiryPage.documents) ? source.enquiryPage.documents : DEFAULTS.enquiryPage.documents,
+          officeInfo: Object.assign({}, DEFAULTS.enquiryPage.officeInfo, source.enquiryPage && source.enquiryPage.officeInfo ? source.enquiryPage.officeInfo : {}),
+          quickTips: Array.isArray(source.enquiryPage && source.enquiryPage.quickTips) ? source.enquiryPage.quickTips : DEFAULTS.enquiryPage.quickTips
+        },
+        feePage: {
+          year: normalizeText(source.feePage && source.feePage.year) || DEFAULTS.feePage.year,
+          intro: normalizeText(source.feePage && source.feePage.intro) || DEFAULTS.feePage.intro,
+          overviewTitle: normalizeText(source.feePage && source.feePage.overviewTitle) || DEFAULTS.feePage.overviewTitle,
+          overviewText: normalizeText(source.feePage && source.feePage.overviewText) || DEFAULTS.feePage.overviewText,
+          rows: Array.isArray(source.feePage && source.feePage.rows) ? source.feePage.rows : DEFAULTS.feePage.rows,
+          notes: Array.isArray(source.feePage && source.feePage.notes) ? source.feePage.notes : DEFAULTS.feePage.notes,
+          paymentMethods: Array.isArray(source.feePage && source.feePage.paymentMethods) ? source.feePage.paymentMethods : DEFAULTS.feePage.paymentMethods,
+          pdfTitle: normalizeText(source.feePage && source.feePage.pdfTitle) || DEFAULTS.feePage.pdfTitle,
+          pdfDesc: normalizeText(source.feePage && source.feePage.pdfDesc) || DEFAULTS.feePage.pdfDesc
+        },
+        tcPage: {
+          intro: normalizeText(source.tcPage && source.tcPage.intro) || DEFAULTS.tcPage.intro,
+          previewIntro: normalizeText(source.tcPage && source.tcPage.previewIntro) || DEFAULTS.tcPage.previewIntro,
+          rulesTitle: normalizeText(source.tcPage && source.tcPage.rulesTitle) || DEFAULTS.tcPage.rulesTitle,
+          rules: Array.isArray(source.tcPage && source.tcPage.rules) ? source.tcPage.rules : DEFAULTS.tcPage.rules,
+          notePrimary: normalizeText(source.tcPage && source.tcPage.notePrimary) || DEFAULTS.tcPage.notePrimary,
+          noteSecondary: normalizeText(source.tcPage && source.tcPage.noteSecondary) || DEFAULTS.tcPage.noteSecondary,
+          pdfTitle: normalizeText(source.tcPage && source.tcPage.pdfTitle) || DEFAULTS.tcPage.pdfTitle,
+          pdfDesc: normalizeText(source.tcPage && source.tcPage.pdfDesc) || DEFAULTS.tcPage.pdfDesc
+        },
+        seo: Object.assign({}, DEFAULTS.seo, source.seo || {})
+      };
+    }
+
+    function collectSettingsData() {
+      return {
+        hero: {
+          title: readValue('hero-title'),
+          desc: readValue('hero-desc'),
+          bgImage: readValue('hero-bg')
+        },
+        subnav: [readValue('subnav-1'), readValue('subnav-2'), readValue('subnav-3'), readValue('subnav-4')].filter(Boolean),
+        status: {
+          academicYear: readValue('adm-academic-year'),
+          isOpen: !!qs('adm-open-toggle').checked,
+          badge: readValue('adm-status-badge'),
+          notice: readValue('adm-status-notice')
+        },
+        overview: {
+          formsHeading: readValue('overview-forms-heading'),
+          formsDesc: readValue('overview-forms-desc'),
+          stepsTitle: readValue('overview-steps-title'),
+          highlights: rowsFromTable('highlights-tbody', 4).map(function (row) {
+            return { order: row[0], icon: row[1], title: row[2], desc: row[3] };
+          }),
+          steps: rowsFromTable('steps-tbody', 3).map(function (row) {
+            return { order: row[0], title: row[1], desc: row[2] };
+          }),
+          cta: {
+            heading: readValue('overview-cta-heading'),
+            desc: readValue('overview-cta-desc'),
+            label: readValue('overview-cta-label'),
+            link: readValue('overview-cta-link')
+          }
+        },
+        enquiryPage: {
+          formsHeading: readValue('enquiry-forms-heading'),
+          formsDesc: readValue('enquiry-forms-desc'),
+          intro: readValue('enquiry-intro'),
+          rules: linesToArray(readValue('enquiry-rules')),
+          documentsIntro: readValue('enquiry-documents-intro'),
+          documents: linesToArray(readValue('enquiry-documents')),
+          officeInfo: {
+            heading: readValue('office-heading'),
+            address: readValue('office-address'),
+            phone: readValue('office-phone'),
+            website: readValue('office-website')
+          },
+          quickTips: linesToArray(readValue('enquiry-quick-tips'))
+        },
+        feePage: {
+          year: readValue('fee-year'),
+          intro: readValue('fee-intro'),
+          overviewTitle: readValue('fee-overview-title'),
+          overviewText: readValue('fee-overview-text'),
+          rows: rowsFromTable('fee-rows-tbody', 4).map(function (row) {
+            return { group: row[0], feeType: row[1], amount: row[2], frequency: row[3] };
+          }),
+          notes: linesToArray(readValue('fee-notes')),
+          paymentMethods: rowsFromTable('payment-tbody', 4).map(function (row) {
+            return { icon: row[0], title: row[1], desc: row[2], link: row[3] };
+          }),
+          pdfTitle: readValue('fee-pdf-title'),
+          pdfDesc: readValue('fee-pdf-desc')
+        },
+        tcPage: {
+          intro: readValue('tc-intro'),
+          previewIntro: readValue('tc-preview-intro'),
+          rulesTitle: readValue('tc-rules-title'),
+          rules: linesToArray(readValue('tc-rules')),
+          notePrimary: readValue('tc-note-primary'),
+          noteSecondary: readValue('tc-note-secondary'),
+          pdfTitle: readValue('tc-pdf-title'),
+          pdfDesc: readValue('tc-pdf-desc')
+        },
+        seo: {
+          title: readValue('seo-title'),
+          desc: readValue('seo-desc'),
+          keywords: readValue('seo-keywords')
+        }
+      };
+    }
+
+    function populateSettings(raw) {
+      var data = mergeDefaults(raw);
+      writeValue('hero-title', data.hero.title);
+      writeValue('hero-desc', data.hero.desc);
+      writeValue('hero-bg', data.hero.bgImage);
+      writeValue('subnav-1', data.subnav[0] || DEFAULTS.subnav[0]);
+      writeValue('subnav-2', data.subnav[1] || DEFAULTS.subnav[1]);
+      writeValue('subnav-3', data.subnav[2] || DEFAULTS.subnav[2]);
+      writeValue('subnav-4', data.subnav[3] || DEFAULTS.subnav[3]);
+      writeValue('adm-academic-year', data.status.academicYear);
+      qs('adm-open-toggle').checked = data.status.isOpen !== false;
+      writeValue('adm-status-badge', data.status.badge);
+      writeValue('adm-status-notice', data.status.notice);
+      fillTable('highlights-tbody', data.overview.highlights.map(function (item) {
+        return [item.order, item.icon, item.title, item.desc];
+      }), 4);
+      fillTable('steps-tbody', data.overview.steps.map(function (item) {
+        return [item.order, item.title, item.desc];
+      }), 3);
+      writeValue('overview-forms-heading', data.overview.formsHeading);
+      writeValue('overview-forms-desc', data.overview.formsDesc);
+      writeValue('overview-steps-title', data.overview.stepsTitle);
+      writeValue('overview-cta-heading', data.overview.cta.heading);
+      writeValue('overview-cta-desc', data.overview.cta.desc);
+      writeValue('overview-cta-label', data.overview.cta.label);
+      writeValue('overview-cta-link', data.overview.cta.link);
+      writeValue('enquiry-forms-heading', data.enquiryPage.formsHeading);
+      writeValue('enquiry-forms-desc', data.enquiryPage.formsDesc);
+      writeValue('enquiry-intro', data.enquiryPage.intro);
+      writeValue('enquiry-rules', arrayToLines(data.enquiryPage.rules));
+      writeValue('enquiry-documents-intro', data.enquiryPage.documentsIntro);
+      writeValue('enquiry-documents', arrayToLines(data.enquiryPage.documents));
+      writeValue('office-heading', data.enquiryPage.officeInfo.heading);
+      writeValue('office-address', data.enquiryPage.officeInfo.address);
+      writeValue('office-phone', data.enquiryPage.officeInfo.phone);
+      writeValue('office-website', data.enquiryPage.officeInfo.website);
+      writeValue('enquiry-quick-tips', arrayToLines(data.enquiryPage.quickTips));
+      writeValue('fee-year', data.feePage.year);
+      writeValue('fee-intro', data.feePage.intro);
+      writeValue('fee-overview-title', data.feePage.overviewTitle);
+      writeValue('fee-overview-text', data.feePage.overviewText);
+      fillTable('fee-rows-tbody', data.feePage.rows.map(function (item) {
+        return [item.group, item.feeType, item.amount, item.frequency];
+      }), 4);
+      writeValue('fee-notes', arrayToLines(data.feePage.notes));
+      fillTable('payment-tbody', data.feePage.paymentMethods.map(function (item) {
+        return [item.icon, item.title, item.desc, item.link];
+      }), 4);
+      writeValue('fee-pdf-title', data.feePage.pdfTitle);
+      writeValue('fee-pdf-desc', data.feePage.pdfDesc);
+      writeValue('tc-intro', data.tcPage.intro);
+      writeValue('tc-preview-intro', data.tcPage.previewIntro);
+      writeValue('tc-rules-title', data.tcPage.rulesTitle);
+      writeValue('tc-rules', arrayToLines(data.tcPage.rules));
+      writeValue('tc-note-primary', data.tcPage.notePrimary);
+      writeValue('tc-note-secondary', data.tcPage.noteSecondary);
+      writeValue('tc-pdf-title', data.tcPage.pdfTitle);
+      writeValue('tc-pdf-desc', data.tcPage.pdfDesc);
+      writeValue('seo-title', data.seo.title);
+      writeValue('seo-desc', data.seo.desc);
+      writeValue('seo-keywords', data.seo.keywords);
+    }
+
+    async function loadSettings() {
+      try {
+        var res = await fetch('/api/settings/' + SETTINGS_KEY);
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        var item = await res.json();
+        populateSettings(item && item.data ? item.data : item);
+      } catch (error) {
+        populateSettings({});
+        toast('Could not load admissions settings yet; using page defaults.', true);
+      }
+    }
+
+    async function saveSettings(message) {
+      if (_saveBusy) return;
+      _saveBusy = true;
+      try {
+        var res = await fetch('/api/settings/' + SETTINGS_KEY, {
+          method: 'PUT',
+          headers: adminApiHeaders(),
+          body: JSON.stringify(collectSettingsData())
+        });
+        var data = await res.json().catch(function () { return {}; });
+        if (!res.ok) throw new Error(data.error || ('HTTP ' + res.status));
+        toast(message || 'Admissions settings saved!');
+      } catch (error) {
+        toast(error.message || 'Could not save admissions settings', true);
+      } finally {
+        _saveBusy = false;
+      }
+    }
+
+    async function loadDocuments() {
+      try {
+        var res = await fetch(API_BASE + '/api/documents');
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        var items = await res.json();
+        var docs = Array.isArray(items) ? items : [];
+        _forms = docs.filter(function (item) { return item.category === 'admission-form'; }).sort(function (a, b) {
+          return (a.order || 0) - (b.order || 0);
+        });
+        _docsByCategory['fee-structure'] = docs.find(function (item) { return item.category === 'fee-structure'; }) || null;
+        _docsByCategory['tc-format'] = docs.find(function (item) { return item.category === 'tc-format'; }) || null;
+        renderForms();
+        if (_docsByCategory['fee-structure']) {
+          writeValue('fee-pdf-url', _docsByCategory['fee-structure'].url || '');
+        }
+        if (_docsByCategory['tc-format']) {
+          writeValue('tc-pdf-url', _docsByCategory['tc-format'].url || '');
+        }
+        populateQuickForms();
+        updateStats();
+      } catch (error) {
+        populateQuickForms();
+        toast('Could not load admissions documents: ' + error.message, true);
+      }
+    }
+
+    function renderForms() {
+      var body = qs('forms-tbody');
+      var empty = qs('forms-empty');
+      body.innerHTML = '';
+      if (!_forms.length) {
+        empty.style.display = 'block';
+        return;
+      }
+      empty.style.display = 'none';
+      body.innerHTML = _forms.map(function (item) {
+        var visible = item.visible !== false;
+        var meta = item.meta && typeof item.meta === 'object' ? item.meta : {};
+        return '<tr>'
+          + '<td><strong>' + escapeHtml(item.title || 'Untitled') + '</strong><br><span class="muted">' + escapeHtml(item.description || '') + '</span></td>'
+          + '<td>' + escapeHtml(meta.forClass || item.forClass || item.class || '') + '</td>'
+          + '<td><span class="pill ' + (visible ? 'live' : 'draft') + '">' + (visible ? 'Live' : 'Hidden') + '</span></td>'
+          + '<td>' + escapeHtml(String(item.order || 0)) + '</td>'
+          + '<td><div class="inline-actions"><button class="btn outline" onclick="editForm(\'' + item._id + '\')">Edit</button><button class="btn outline" onclick="deleteForm(\'' + item._id + '\')">Delete</button></div></td>'
+          + '</tr>';
+      }).join('');
+    }
+
+    function openFormModal() {
+      qs('form-modal-title').textContent = 'Add Application Form';
+      writeValue('form-id', '');
+      writeValue('form-title', '');
+      writeValue('form-for-class', '');
+      writeValue('form-desc', '');
+      writeValue('form-url', '');
+      writeValue('form-icon', '📄');
+      writeValue('form-order', '4');
+      qs('form-visible').checked = true;
+      qs('form-modal').classList.add('open');
+    }
+
+    function closeFormModal() {
+      qs('form-modal').classList.remove('open');
+    }
+
+    function editForm(id) {
+      var item = _forms.find(function (entry) { return entry._id === id; });
+      if (!item) return;
+      var meta = item.meta && typeof item.meta === 'object' ? item.meta : {};
+      qs('form-modal-title').textContent = 'Edit Application Form';
+      writeValue('form-id', item._id);
+      writeValue('form-title', item.title || '');
+      writeValue('form-for-class', meta.forClass || item.forClass || item.class || '');
+      writeValue('form-desc', item.description || '');
+      writeValue('form-url', item.url || '');
+      writeValue('form-icon', meta.icon || item.icon || '📄');
+      writeValue('form-order', item.order || 1);
+      qs('form-visible').checked = item.visible !== false;
+      qs('form-modal').classList.add('open');
+    }
+
+    async function saveForm() {
+      var id = readValue('form-id');
+      var body = {
+        title: readValue('form-title'),
+        description: readValue('form-desc'),
+        url: readValue('form-url'),
+        category: 'admission-form',
+        type: 'PDF Form',
+        icon: readValue('form-icon') || '📄',
+        forClass: readValue('form-for-class'),
+        visible: !!qs('form-visible').checked,
+        order: parseInt(readValue('form-order'), 10) || 0,
+        date: new Date().toISOString(),
+        meta: {
+          forClass: readValue('form-for-class'),
+          icon: readValue('form-icon') || '📄'
+        }
+      };
+      if (!body.title || !body.url) {
+        toast('Form title and PDF URL are required.', true);
+        return;
+      }
+      try {
+        var endpoint = id ? (API_BASE + '/api/documents/' + id) : (API_BASE + '/api/documents');
+        var res = await fetch(endpoint, {
+          method: id ? 'PUT' : 'POST',
+          headers: adminApiHeaders(),
+          body: JSON.stringify(body)
+        });
+        var data = await res.json().catch(function () { return {}; });
+        if (!res.ok) throw new Error(data.error || 'Failed to save form');
+        closeFormModal();
+        await loadDocuments();
+        toast(id ? 'Application form updated!' : 'Application form created!');
+      } catch (error) {
+        toast(error.message || 'Could not save form', true);
+      }
+    }
+
+    async function saveQuickForms() {
+      if (_quickFormsBusy) return;
+
+      var tasks = STANDARD_FORMS.map(function (config) {
+        var existing = findStandardForm(config);
+        var body = buildQuickFormBody(config, existing);
+        if (!body.url) return null;
+        return { config: config, existing: existing, body: body };
+      }).filter(Boolean);
+
+      if (!tasks.length) {
+        toast('Upload at least one admission PDF first.', true);
+        return;
+      }
+
+      _quickFormsBusy = true;
+      try {
+        for (var i = 0; i < tasks.length; i += 1) {
+          var task = tasks[i];
+          var endpoint = task.existing
+            ? (API_BASE + '/api/documents/' + task.existing._id)
+            : (API_BASE + '/api/documents');
+          var res = await fetch(endpoint, {
+            method: task.existing ? 'PUT' : 'POST',
+            headers: adminApiHeaders(),
+            body: JSON.stringify(task.body)
+          });
+          var data = await res.json().catch(function () { return {}; });
+          if (!res.ok) {
+            throw new Error(data.error || ('Failed to save ' + task.config.title));
+          }
+        }
+        await loadDocuments();
+        toast('Admission PDFs saved and synced to the website.');
+      } catch (error) {
+        toast(error.message || 'Could not save admission PDFs', true);
+      } finally {
+        _quickFormsBusy = false;
+      }
+    }
+
+    async function deleteForm(id) {
+      if (!confirm('Delete this application form?')) return;
+      try {
+        var res = await fetch(API_BASE + '/api/documents/' + id, {
+          method: 'DELETE',
+          headers: adminApiHeaders()
+        });
+        if (!res.ok) throw new Error('Failed to delete form');
+        await loadDocuments();
+        toast('Application form deleted.');
+      } catch (error) {
+        toast(error.message || 'Could not delete form', true);
+      }
+    }
+
+    async function saveDocumentSettings(category) {
+      var urlField = category === 'fee-structure' ? 'fee-pdf-url' : 'tc-pdf-url';
+      var titleField = category === 'fee-structure' ? 'fee-pdf-title' : 'tc-pdf-title';
+      var descField = category === 'fee-structure' ? 'fee-pdf-desc' : 'tc-pdf-desc';
+      var url = readValue(urlField);
+      if (!url) {
+        toast('Please provide a PDF URL first.', true);
+        return;
+      }
+      var existing = _docsByCategory[category];
+      var body = {
+        title: readValue(titleField),
+        description: readValue(descField),
+        url: url,
+        category: category,
+        visible: true,
+        order: category === 'fee-structure' ? 1 : 2,
+        date: new Date().toISOString(),
+        meta: category === 'fee-structure' ? { year: readValue('fee-year') } : {}
+      };
+      try {
+        var res = await fetch(existing ? (API_BASE + '/api/documents/' + existing._id) : (API_BASE + '/api/documents'), {
+          method: existing ? 'PUT' : 'POST',
+          headers: adminApiHeaders(),
+          body: JSON.stringify(body)
+        });
+        var data = await res.json().catch(function () { return {}; });
+        if (!res.ok) throw new Error(data.error || 'Failed to save PDF');
+        await loadDocuments();
+        await saveSettings(category === 'fee-structure' ? 'Fee page updated!' : 'Transfer Certificate page updated!');
+      } catch (error) {
+        toast(error.message || 'Could not save PDF document', true);
+      }
+    }
+
+    async function uploadFile(input, targetId) {
+      if (!input.files[0]) return;
+      var fd = new FormData();
+      fd.append('file', input.files[0]);
+      toast('Uploading file...');
+      try {
+        var res = await fetch('/api/upload', {
+          method: 'POST',
+          headers: adminUploadHeaders(),
+          body: fd
+        });
+        var data = await res.json().catch(function () { return {}; });
+        if (!res.ok || !data.url) throw new Error(data.error || 'Upload failed');
+        writeValue(targetId, data.url);
+        input.value = '';
+        toast('Upload complete.');
+      } catch (error) {
+        toast(error.message || 'Could not upload file', true);
+      }
+    }
+
+    async function loadEnquiries() {
+      try {
+        var res = await fetchEnquiriesApi('');
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        var items = await res.json();
+        _enquiries = Array.isArray(items) ? items : [];
+        filterEnquiries();
+        updateStats();
+      } catch (error) {
+        _enquiries = [];
+        filterEnquiries();
+        toast('Could not load admission enquiries: ' + error.message, true);
+      }
+    }
+
+    function filterEnquiries() {
+      var body = qs('enquiries-tbody');
+      var empty = qs('enquiries-empty');
+      var query = readValue('enquiry-search').toLowerCase();
+      var status = readValue('enquiry-filter');
+      var filtered = _enquiries.filter(function (item) {
+        var name = normalizeText(item.name).toLowerCase();
+        var email = normalizeText(item.email).toLowerCase();
+        var matchText = !query || name.indexOf(query) !== -1 || email.indexOf(query) !== -1;
+        var matchStatus = !status || normalizeText(item.status) === status;
+        return matchText && matchStatus;
+      });
+      body.innerHTML = '';
+      if (!filtered.length) {
+        empty.style.display = 'block';
+        return;
+      }
+      empty.style.display = 'none';
+      body.innerHTML = filtered.map(function (item) {
+        var submitted = item.createdAt ? new Date(item.createdAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : '—';
+        var statusClass = item.status === 'accepted' ? 'live' : (item.status === 'pending' ? 'pending' : 'draft');
+        return '<tr>'
+          + '<td><strong>' + escapeHtml(item.name || '') + '</strong><br><span class="muted">' + escapeHtml(item.message || '') + '</span></td>'
+          + '<td>' + escapeHtml(item.email || '') + '<br><span class="muted">' + escapeHtml(item.phone || '') + '</span></td>'
+          + '<td>' + escapeHtml(item.class || '') + '</td>'
+          + '<td>' + escapeHtml(submitted) + '</td>'
+          + '<td><span class="pill ' + statusClass + '">' + escapeHtml(item.status || 'pending') + '</span></td>'
+          + '<td><div class="inline-actions"><button class="btn outline" onclick="changeEnquiryStatus(\'' + item._id + '\',\'contacted\')">Contacted</button><button class="btn outline" onclick="changeEnquiryStatus(\'' + item._id + '\',\'accepted\')">Accept</button><button class="btn outline" onclick="deleteEnquiry(\'' + item._id + '\')">Delete</button></div></td>'
+          + '</tr>';
+      }).join('');
+    }
+
+    async function changeEnquiryStatus(id, status) {
+      try {
+        var res = await fetchEnquiriesApi('/' + id, {
+          method: 'PUT',
+          headers: adminApiHeaders(),
+          body: JSON.stringify({ status: status })
+        });
+        var data = await res.json().catch(function () { return {}; });
+        if (!res.ok) throw new Error(data.error || 'Failed to update enquiry');
+        await loadEnquiries();
+        toast('Enquiry updated to ' + status + '.');
+      } catch (error) {
+        toast(error.message || 'Could not update enquiry', true);
+      }
+    }
+
+    async function deleteEnquiry(id) {
+      if (!confirm('Delete this enquiry?')) return;
+      try {
+        var res = await fetchEnquiriesApi('/' + id, {
+          method: 'DELETE',
+          headers: adminApiHeaders()
+        });
+        if (!res.ok) throw new Error('Failed to delete enquiry');
+        await loadEnquiries();
+        toast('Enquiry deleted.');
+      } catch (error) {
+        toast(error.message || 'Could not delete enquiry', true);
+      }
+    }
+
+    function updateStats() {
+      qs('stat-forms').textContent = _forms.filter(function (item) { return item.visible !== false; }).length;
+      qs('stat-enquiries').textContent = _enquiries.length;
+      qs('stat-pending').textContent = _enquiries.filter(function (item) { return normalizeText(item.status || 'pending') === 'pending'; }).length;
+      qs('stat-pdfs').textContent = ['fee-structure', 'tc-format'].filter(function (key) { return !!_docsByCategory[key]; }).length;
+    }
+
+    function refreshAll() {
+      Promise.all([loadSettings(), loadDocuments(), loadEnquiries()]).then(function () {
+        toast('Admissions data refreshed.');
+      });
+    }
+
+    function escapeHtml(value) {
+      return String(value || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function setupTabs() {
+      document.querySelectorAll('.tab').forEach(function (button) {
+        button.addEventListener('click', function () {
+          var tab = button.getAttribute('data-tab');
+          document.querySelectorAll('.tab').forEach(function (item) { item.classList.toggle('active', item === button); });
+          document.querySelectorAll('.panel').forEach(function (panel) { panel.classList.toggle('active', panel.id === 'tab-' + tab); });
+        });
+      });
+    }
+
+    document.addEventListener('keydown', function (event) {
+      if ((event.ctrlKey || event.metaKey) && event.key === 's') {
+        event.preventDefault();
+        saveSettings();
+      }
+      if (event.key === 'Escape') closeFormModal();
+    });
+
+    window.addEventListener('DOMContentLoaded', function () {
+      setupTabs();
+      Promise.all([loadSettings(), loadDocuments(), loadEnquiries()]);
+    });
+  </script>
+</body>
+</html>

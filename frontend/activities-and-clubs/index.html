@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Activities & Clubs | Loretto Central School</title>
+  <link rel="shortcut icon" href="../favicon.ico" type="image/x-icon">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800&family=Nunito:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing:border-box;margin:0;padding:0; }
+    :root { --navy:#0e6b6b;--navy-dark:#094f4f;--gold:#c8960c;--gold-light:#e8b020;--white:#fff;--light-bg:#f9f6ef;--text:#1a2e2e;--text-muted:#5a6e6e;--border:#e2d5b0; }
+    body { font-family:'Nunito',sans-serif;color:var(--text);background:var(--white); }
+    .container { max-width:1160px;margin:0 auto;padding:0 24px; }
+    .page-banner { background:linear-gradient(135deg,var(--navy-dark),var(--navy));padding:48px 0; }
+    .page-banner h1 { font-family:'Playfair Display',serif;font-size:2.4rem;font-weight:800;color:#fff; }
+    .page-content { padding:60px 0; }
+    .activities-grid { display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:28px; }
+    .activity-card { background:#fff;border:1px solid var(--border);border-radius:14px;overflow:hidden;box-shadow:0 4px 18px rgba(14,107,107,0.07);transition:transform 0.25s,box-shadow 0.25s; }
+    .activity-card:hover { transform:translateY(-4px);box-shadow:0 12px 36px rgba(14,107,107,0.14); }
+    .activity-gallery { display:grid;grid-template-columns:1fr 1fr;height:180px;gap:2px; }
+    .activity-gallery img { width:100%;height:100%;object-fit:cover; }
+    .activity-placeholder { height:180px;background:linear-gradient(135deg,var(--navy-dark),var(--navy));display:flex;align-items:center;justify-content:center;font-size:3rem; }
+    .activity-body { padding:22px; }
+    .activity-name { font-family:'Playfair Display',serif;font-size:1.15rem;font-weight:700;color:var(--text);margin-bottom:8px; }
+    .activity-meta { display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px; }
+    .activity-badge { font-size:0.72rem;font-weight:700;background:rgba(14,107,107,0.08);color:var(--navy);border-radius:20px;padding:3px 10px;border:1px solid rgba(14,107,107,0.15); }
+    .activity-desc { font-size:0.87rem;color:var(--text-muted);line-height:1.7; }
+  </style>
+</head>
+<body>
+
+  <div class="page-banner">
+    <div class="container"><h1>Activities &amp; Clubs</h1></div>
+  </div>
+
+  <section class="page-content">
+    <div class="container">
+      <div id="activities-loading" style="text-align:center;padding:60px 0;color:#5a6e6e;">Loading activities...</div>
+      <div class="activities-grid" id="activities-grid" style="display:none;"></div>
+    </div>
+  </section>
+
+  <script src="../shared-data-loader.js"></script>
+  <script src="activities-clubs-page-loader.js"></script>
+  <script src="/components/Navbar.js"></script>
+  <script src="/components/Footer.js"></script>
+</body>
+</html>

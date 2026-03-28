@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>No Objection Certificate | Mandatory Disclosure | Loretto Central School</title>
+  <link rel="shortcut icon" href="../favicon.ico" type="image/x-icon">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800&family=Nunito:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --navy: #0e6b6b; --navy-dark: #094f4f; --gold: #c8960c; --gold-light: #e8b020;
+      --gold-pale: #f5e6c0; --white: #ffffff; --light-bg: #f9f6ef;
+      --text: #1a2e2e; --text-muted: #5a6e6e; --border: #e2d5b0;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Nunito', sans-serif; color: var(--text); background: var(--white); overflow-x: hidden; }
+    /* TOP BAR */
+    .top-bar { background: var(--navy-dark); color: rgba(255,255,255,0.85); font-size: 0.78rem; padding: 0; }
+    .top-bar-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; }
+    .top-bar-brand { display: flex; align-items: center; gap: 14px; text-decoration: none; }
+    .top-bar-brand .tb-logo { width: 72px; height: 72px; border-radius: 50%; object-fit: cover; border: 3px solid var(--gold); flex-shrink: 0; }
+    .top-bar-brand .tb-name { font-family: 'Playfair Display', serif; font-size: 1.55rem; font-weight: 700; color: #fff; line-height: 1.2; }
+    .top-bar-brand .tb-tagline { font-size: 0.72rem; color: var(--gold-light); font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; margin-top: 3px; }
+    .top-bar-login { display: flex; align-items: center; gap: 10px; }
+    .parent-btn { display: inline-flex; align-items: center; gap: 5px; font-family: 'Nunito', sans-serif; font-size: 0.78rem; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; padding: 8px 18px; border-radius: 8px; text-decoration: none; background: linear-gradient(135deg, var(--gold), var(--gold-light)); color: var(--navy-dark) !important; box-shadow: 0 3px 10px rgba(200,150,12,0.40); position: relative; overflow: hidden; transition: all 0.2s; border: none; }
+    .parent-btn:hover { background: linear-gradient(135deg, var(--gold-light), #f5c842); transform: translateY(-1px); box-shadow: 0 5px 18px rgba(200,150,12,0.55); }
+    /* HEADER / NAV */
+    header { background: var(--white); border-bottom: 3px solid var(--gold); box-shadow: 0 2px 10px rgba(0,0,0,0.10); position: sticky; top: 0; z-index: 1000; }
+    .header-inner { display: flex; align-items: center; justify-content: center; }
+    nav { display: flex; align-items: stretch; width: 100%; justify-content: center; max-width: 1160px; margin: 0 auto; }
+    /* ══════════════════════════════════════════════════════════════════ */
+    /* NAVBAR - MODERN HOVER EFFECT (Inspired by Vidya Sagar) */
+    /* ══════════════════════════════════════════════════════════════════ */
+    
+    nav {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      flex-wrap: wrap;
+    }
+
+    .nav-item {
+      position: relative;
+      display: flex;
+      align-items: stretch;
+      /* REMOVED: border-right: 1px solid rgba(0,0,0,0.07); */
+    }
+    
+    /* REMOVED: .nav-item:first-child { border-left: 1px solid rgba(0,0,0,0.07); } */
+
+    .nav-item > a {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--navy);
+      text-decoration: none;
+      padding: 12px 20px;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      letter-spacing: 0.01em;
+      
+      /* Modern hover properties */
+      border-radius: 8px;
+      background: transparent;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      margin: 0 2px;
+    }
+    
+    .nav-item > a .arrow {
+      font-size: 0.55rem;
+      opacity: 0.6;
+      transition: transform 0.3s, opacity 0.3s;
+      margin-left: 2px;
+    }
+    
+    /* MODERN HOVER EFFECT */
+    .nav-item:hover > a {
+      background: rgba(14, 107, 107, 0.12);  /* Teal with reduced transparency */
+      color: var(--navy-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(14, 107, 107, 0.15);
+    }
+    
+    .nav-item:hover > a .arrow {
+      transform: rotate(180deg);
+      opacity: 1;
+    }
+    
+    /* Active/Current Page Style */
+    .nav-item > a.active {
+      background: linear-gradient(135deg, var(--navy) 0%, var(--navy-dark) 100%);
+      color: white;
+      box-shadow: 0 4px 12px rgba(14, 107, 107, 0.25);
+    }
+    .dropdown { display: none; position: absolute; top: 100%; left: 0; min-width: 200px; background: var(--navy); box-shadow: 0 6px 24px rgba(0,0,0,0.18); z-index: 9999; border-top: 3px solid var(--gold); max-height: 70vh; overflow-y: auto; }
+    .nav-item:hover .dropdown { display: block; }
+    .dropdown a { display: block; padding: 10px 18px; font-size: 0.76rem; font-weight: 500; color: rgba(255,255,255,0.88); text-decoration: none; border-bottom: 1px solid rgba(255,255,255,0.07); transition: background 0.15s, color 0.15s, padding-left 0.15s; white-space: nowrap; }
+    .dropdown a:last-child { border-bottom: none; }
+    .dropdown a:hover, .dropdown a.active { background: var(--gold); color: #fff; padding-left: 24px; }
+    .container { max-width: 1160px; margin: 0 auto; padding: 0 24px; }
+    /* PAGE BANNER */
+    .page-banner { background: linear-gradient(135deg, #094f4f 0%, #0e6b6b 60%, #127a7a 100%); padding: 60px 0 50px; position: relative; overflow: hidden; }
+    .page-banner::before { content: ''; position: absolute; inset: 0; background: url('https://school.edu/wp-content/uploads/2023/06/cropped-20230601_095851-1.jpg') center/cover no-repeat; opacity: 0.15; }
+    .page-banner-content { position: relative; z-index: 2; text-align: center; }
+    .page-banner h1 { font-family: 'Playfair Display', serif; font-size: 2.4rem; font-weight: 800; color: #fff; margin-bottom: 12px; }
+    .breadcrumb { display: flex; gap: 8px; align-items: center; justify-content: center; font-size: 0.82rem; color: rgba(255,255,255,0.75); }
+    .breadcrumb a { color: var(--gold-light); text-decoration: none; }
+    .breadcrumb a:hover { color: #fff; }
+    .breadcrumb span { color: rgba(255,255,255,0.45); }
+    /* SUBNAV */
+    .md-subnav { background: var(--light-bg); border-bottom: 2px solid var(--border); position: sticky; top: 51px; z-index: 900; }
+    .md-subnav-inner { display: flex; overflow-x: auto; max-width: 1160px; margin: 0 auto; padding: 0 24px; scrollbar-width: none; }
+    .md-subnav-inner::-webkit-scrollbar { display: none; }
+    .md-subnav-inner a { display: block; padding: 12px 16px; font-size: 0.78rem; font-weight: 600; color: var(--text-muted); text-decoration: none; white-space: nowrap; border-bottom: 3px solid transparent; transition: all 0.2s; flex-shrink: 0; }
+    .md-subnav-inner a:hover { color: var(--navy); border-color: var(--navy); }
+    .md-subnav-inner a.active { color: var(--navy); border-color: var(--gold); background: rgba(200,150,12,0.06); }
+    /* CONTENT */
+    .page-content { padding: 56px 0; }
+    .content-card { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 48px; box-shadow: 0 4px 24px rgba(14,107,107,0.07); }
+    .content-card h2 { font-family: 'Playfair Display', serif; font-size: 1.9rem; color: var(--navy); margin-bottom: 6px; }
+    .content-card h2::after { content: ''; display: block; width: 50px; height: 3px; background: linear-gradient(90deg, var(--gold), var(--gold-light)); border-radius: 2px; margin-top: 10px; margin-bottom: 24px; }
+    .content-card h3 { font-family: 'Playfair Display', serif; font-size: 1.2rem; color: var(--navy); margin: 32px 0 12px; }
+    .content-card h3::after { content: ''; display: block; width: 32px; height: 2px; background: var(--gold); border-radius: 2px; margin-top: 5px; }
+    .content-card p { font-size: 0.98rem; line-height: 1.85; color: var(--text-muted); margin-bottom: 16px; }
+    /* TABLE */
+    .info-table { width: 100%; border-collapse: collapse; margin: 16px 0 28px; border-radius: 10px; overflow: hidden; border: 1px solid var(--border); }
+    .info-table thead th { background: var(--navy); color: #fff; padding: 12px 16px; font-size: 0.8rem; font-weight: 700; text-align: left; letter-spacing: 0.04em; text-transform: uppercase; }
+    .info-table tbody tr { border-bottom: 1px solid var(--border); transition: background 0.15s; }
+    .info-table tbody tr:last-child { border-bottom: none; }
+    .info-table tbody tr:hover { background: var(--gold-pale); }
+    .info-table tbody td { padding: 11px 16px; font-size: 0.92rem; vertical-align: top; }
+    .info-table tbody td:first-child { font-weight: 700; color: var(--navy); min-width: 200px; background: var(--light-bg); }
+    /* HIGHLIGHT */
+    .highlight-box { background: linear-gradient(135deg, #f5e6c0, #fdf6e3); border-left: 4px solid var(--gold); border-radius: 0 8px 8px 0; padding: 18px 22px; margin: 20px 0 28px; }
+    .highlight-box p { color: var(--text); margin: 0; font-weight: 500; font-size: 0.94rem; }
+    /* DOC DISPLAY */
+    .doc-display { background: var(--light-bg); border: 2px dashed var(--border); border-radius: 10px; padding: 60px 32px; text-align: center; margin: 24px 0; }
+    .doc-display .doc-icon { font-size: 3.5rem; margin-bottom: 16px; }
+    .doc-display h3 { font-family: 'Playfair Display', serif; font-size: 1.3rem; color: var(--navy); margin-bottom: 8px; }
+    .doc-display h3::after { display: none; }
+    .doc-display p { color: var(--text-muted); font-size: 0.88rem; margin-bottom: 20px; max-width: 420px; margin-left: auto; margin-right: auto; }
+    .btn-doc { display: inline-flex; align-items: center; gap: 8px; background: var(--navy); color: #fff; padding: 11px 22px; border-radius: 8px; font-size: 0.88rem; font-weight: 700; text-decoration: none; transition: all 0.2s; border: none; cursor: pointer; }
+    .btn-doc:hover { background: var(--navy-dark); transform: translateY(-1px); box-shadow: 0 4px 14px rgba(9,79,79,0.35); }
+    .btn-doc-gold { background: var(--gold); color: var(--navy-dark); }
+    .btn-doc-gold:hover { background: var(--gold-light); }
+    /* FOOTER */
+    footer { background: var(--navy-dark); color: rgba(255,255,255,0.7); padding: 48px 0 0; margin-top: 0; }
+    .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; padding-bottom: 40px; }
+    .footer-col h4 { font-family: 'Playfair Display', serif; font-size: 1.05rem; color: var(--gold-light); border-bottom: 1px solid rgba(200,150,12,0.25); padding-bottom: 8px; margin-bottom: 16px; }
+    .footer-col p, .footer-col li { font-size: 0.83rem; line-height: 1.7; }
+    .footer-col ul { list-style: none; }
+    .footer-col ul li { margin-bottom: 7px; }
+    .footer-col ul li a { color: rgba(255,255,255,0.65); text-decoration: none; transition: color 0.2s; }
+    .footer-col ul li a:hover { color: var(--gold-light); }
+    .footer-bottom { border-top: 1px solid rgba(255,255,255,0.1); padding: 16px 24px; text-align: center; font-size: 0.78rem; color: rgba(255,255,255,0.45); }
+    /* SEARCH */
+    .tb-search { position: relative; display: flex; align-items: center; }
+    .tb-search-toggle { background: none; border: none; cursor: pointer; color: rgba(255,255,255,0.7); padding: 6px 8px; border-radius: 50%; transition: color 0.2s, background 0.2s; display: flex; align-items: center; }
+    .tb-search-toggle:hover { color: var(--gold-light); background: rgba(255,255,255,0.08); }
+    .tb-search-box { display: flex; align-items: center; position: absolute; right: 0; top: 50%; transform: translateY(-50%); background: var(--navy-dark); border: 1.5px solid rgba(200,150,12,0.5); border-radius: 22px; overflow: hidden; width: 0; opacity: 0; pointer-events: none; transition: width 0.35s ease, opacity 0.25s ease; z-index: 100; }
+    .tb-search-box.open { width: 220px; opacity: 1; pointer-events: all; }
+    .tb-search-input { background: transparent; border: none; outline: none; color: #fff; font-family: 'Nunito', sans-serif; font-size: 0.82rem; padding: 7px 32px 7px 14px; width: 100%; }
+    .tb-search-input::placeholder { color: rgba(255,255,255,0.4); }
+    .tb-search-clear { background: none; border: none; cursor: pointer; color: rgba(255,255,255,0.5); font-size: 0.75rem; padding: 0 10px 0 0; opacity: 0; transition: opacity 0.2s; }
+    .tb-search-clear.show { opacity: 1; }
+    .tb-search-results { position: absolute; top: calc(100% + 10px); right: 0; width: 300px; max-height: 360px; overflow-y: auto; background: #fff; border-radius: 10px; box-shadow: 0 8px 30px rgba(0,0,0,0.18); border: 2px solid var(--gold); display: none; z-index: 99999; }
+    .tb-search-results.show { display: block; }
+    .tb-res-item { padding: 11px 16px; border-bottom: 1px solid var(--border); text-decoration: none; display: block; transition: background 0.15s; }
+    .tb-res-item:last-child { border-bottom: none; }
+    .tb-res-item:hover { background: var(--gold-pale); }
+    .tb-res-cat { font-size: 0.65rem; color: var(--gold); text-transform: uppercase; font-weight: 800; letter-spacing: 0.08em; }
+    .tb-res-title { font-weight: 600; color: var(--navy); margin-top: 2px; font-size: 0.86rem; }
+    @media (max-width: 900px) { .footer-grid { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 768px) { .tb-search { display: none; } nav { display: none !important; } .header-inner { justify-content: flex-end; padding: 0 20px; } .top-bar-row { flex-direction: column; padding: 14px 0; gap: 12px; } .top-bar-brand { justify-content: center; } .top-bar-login { display: none; } .content-card { padding: 28px 20px; } }
+  
+    /* ── MANDATORY DISCLOSURE FLYOUT (click-based) ── */
+    .has-flyout { position: relative; }
+    .has-flyout > a { display: flex; align-items: center; justify-content: space-between; gap: 6px; cursor: pointer; }
+    .flyout-arrow { font-size: 0.55rem; margin-left: auto; opacity: 0.7; flex-shrink: 0; transition: transform 0.2s; }
+    .has-flyout.open > a .flyout-arrow { transform: rotate(90deg); }
+    .flyout-panel {
+      display: none;
+      position: absolute;
+      left: 100%; top: -3px;
+      min-width: 230px;
+      background: var(--navy-dark);
+      border-top: 3px solid var(--gold);
+      border-left: 2px solid rgba(200,150,12,0.35);
+      box-shadow: 8px 8px 28px rgba(0,0,0,0.30);
+      z-index: 10001;
+    }
+    .has-flyout.open > .flyout-panel { display: block; }
+    /* fallback hover for non-JS */
+    @media (hover: hover) {
+      .has-flyout:hover > .flyout-panel { display: block; }
+    }
+    .flyout-panel a {
+      display: block; padding: 10px 16px;
+      font-size: 0.74rem; font-weight: 500;
+      color: rgba(255,255,255,0.85);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      transition: background 0.15s, padding-left 0.15s, color 0.15s;
+      white-space: nowrap;
+    }
+    .flyout-panel a:last-child { border-bottom: none; }
+    .flyout-panel a:hover { background: var(--gold); color: #fff; padding-left: 22px; }
+    .dropdown .has-flyout > a {
+      padding: 10px 12px;
+      background: rgba(255,255,255,0.05);
+      font-weight: 700; font-size: 0.75rem;
+      color: rgba(255,255,255,0.92); letter-spacing: 0.02em;
+    }
+    .dropdown .has-flyout > a:hover,
+    .dropdown .has-flyout.open > a { background: var(--gold); color: #fff; }
+    /* Make sure dropdown doesn't clip the flyout */
+    .dropdown { overflow: visible !important; }
+    .nav-item { overflow: visible !important; }
+  </style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+
+<!-- MD SUBNAV -->
+<div class="md-subnav">
+  <div class="md-subnav-inner">
+    <a href="1-school-name-change-order.html">School Name Change Order</a>
+    <a href="2-affiliation-letter.html">Affiliation Letter</a>
+    <a href="3-saras-mandatory-document.html">SARAS Mandatory Document</a>
+    <a href="4-building-plan.html">Building Plan</a>
+    <a href="5-affidavit.html">Affidavit</a>
+    <a href="6-building-safety.html">Building Safety</a>
+    <a href="7-land-certificate.html">Land Certificate</a>
+    <a href="8-fire-safety.html">Fire Safety</a>
+    <a href="9-deo-certificate.html">DEO Certificate</a>
+    <a href="10-recognition-renewal-certificate.html">Recognition Renewal Certificate</a>
+    <a href="11-mandatory-disclosure-link.html">Mandatory Disclosure Link</a>
+    <a href="12-no-objection-certificate.html" class="active">No Objection Certificate</a>
+    <a href="13-lease-deed-certificate.html">Lease Deed Certificate</a>
+    <a href="14-safe-drinking-water.html">Safe Drinking Water</a>
+    <a href="15-society-registration.html">Society Registration</a>
+    <a href="16-water-health-sanitation.html">Valid Water, Health &amp; Sanitation</a>
+    <a href="17-calendar.html">Calendar</a>
+    <a href="18-management-committee.html">Management Committee</a>
+    <a href="19-pta-committee.html">PTA Committee</a>
+    <a href="20-school-fee-structure.html">School Fee Structure</a>
+    <a href="21-sslc-results.html">SSLC Results</a>
+    <a href="22-school-local-management-committee.html">School Local Management Committee</a>
+    <a href="23-teachers-information.html">Teachers Information</a>
+  </div>
+</div>
+
+<!-- PAGE BANNER -->
+<div class="page-banner">
+  <div class="container">
+    <div class="page-banner-content">
+      <h1>No Objection Certificate</h1>
+      <div class="breadcrumb">
+        <a href="../index.html">Home</a><span>›</span>
+        <span>Mandatory Disclosure</span><span>›</span>
+        <span>No Objection Certificate</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CONTENT -->
+<section class="page-content">
+  <div class="container">
+    <div class="content-card">
+
+      <h2>No Objection Certificate (NOC)</h2>
+      <p>As part of the CBSE Mandatory Public Disclosure requirements (Affiliation Bye-Laws &amp; Circular No. 09 dated 21.05.2021), Loretto Central School publishes the following document for transparency and public access.</p>
+      <div class="highlight-box">
+        <p> No Objection Certificate issued by the State Government / UT confirming that there is no objection to the school being affiliated to CBSE.</p>
+      </div>
+            <div class="doc-display">
+        <div class="doc-icon"></div>
+        <h3>No Objection Certificate (NOC)</h3>
+        <p>NOC issued by the government authorities for operating the school.</p>
+        <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+          <a href="https://school.edu/wp-content/uploads/2023/06/noc.pdf" target="_blank" class="btn-doc">
+            <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M8 1v9M8 10L5 7m3 3 3-3M2 12v1a2 2 0 002 2h8a2 2 0 002-2v-1" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Download PDF
+          </a>
+          <a href="https://school.edu/wp-content/uploads/2023/06/noc.pdf" target="_blank" class="btn-doc btn-doc-gold">
+            <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M2 2h12v12H2z" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M5 8h6M5 5h6M5 11h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            View Document
+          </a>
+        </div>
+      </div>
+        <h3>No Objection Certificate (NOC)</h3>
+        <p>The document is maintained at the school office. For a certified copy, please contact the school administration during working hours.</p>
+        <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+          <a href="#" class="btn-doc">
+            <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M8 1v9M8 10L5 7m3 3 3-3M2 12v1a2 2 0 002 2h8a2 2 0 002-2v-1" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Download Document
+          </a>
+          <a href="#" class="btn-doc btn-doc-gold">
+            <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M1 3h14M1 8h14M1 13h14" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+            View Full Document
+          </a>
+        </div>
+      </div>
+      <h3>Document Details</h3>
+      <table class="info-table">
+        <thead><tr><th>Particulars</th><th>Details</th></tr></thead>
+        <tbody>
+          <tr><td>School Name</td><td>Loretto Central School</td></tr>
+          <tr><td>CBSE Affiliation No.</td><td>831368</td></tr>
+          <tr><td>Document Type</td><td>No Objection Certificate (NOC)</td></tr>
+          <tr><td>Issued By</td><td>Competent Authority</td></tr>
+          <tr><td>Status</td><td>Valid / Active</td></tr>
+          <tr><td>Available At</td><td>School Office, Loretto Padavu, Bantwal</td></tr>
+        </tbody>
+      </table>
+      <h3>About the NOC</h3>
+      <p>The No Objection Certificate (NOC) is issued by the State Government of Karnataka (Department of Public Instruction) allowing Loretto Central School to seek and hold affiliation with the Central Board of Secondary Education (CBSE). It is a mandatory prerequisite for CBSE affiliation and is periodically renewed.</p>
+
+      <!-- PDF-DOWNLOAD-INJECTED -->
+      <div class="doc-display" style="margin-top:32px;">
+        <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:12px;">
+          <a href="https://school.edu/wp-content/uploads/2023/06/noc.pdf" target="_blank" class="btn-doc">
+            <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M8 1v9M8 10L5 7m3 3 3-3M2 12v1a2 2 0 002 2h8a2 2 0 002-2v-1" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Download PDF
+          </a>
+          <a href="https://school.edu/wp-content/uploads/2023/06/noc.pdf" target="_blank" class="btn-doc btn-doc-gold">
+            <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M2 2h12v12H2z" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M5 8h6M5 5h6M5 11h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            View Document
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+  <script src="disclosure-page-loader.js"></script>
+  <script src="/components/Navbar.js"></script>
+  <script src="/components/Footer.js"></script>
+</body>
+</html>

@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>School Information — Admin | Loretto Central School</title>
+  <script src="/admin/admin-auth.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800&family=Nunito:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <script src="/admin/adminfooter.js"></script>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --navy:#0e6b6b;--navy-dark:#094f4f;--navy-deep:#062f2f;
+      --gold:#c8960c;--gold-light:#e8b020;--gold-pale:#f5e6c0;
+      --white:#fff;--bg:#f4f1eb;--bg2:#edeae2;
+      --text:#1a2e2e;--text-muted:#5a6e6e;--border:#ddd6c0;
+      --green:#27ae60;--red:#e74c3c;--orange:#e67e22;
+      --sidebar-w:252px;--radius:13px;--shadow:0 4px 24px rgba(9,79,79,.10);
+    }
+    html{scroll-behavior:smooth}
+    body{font-family:'Nunito',sans-serif;color:var(--text);background:var(--bg);min-height:100vh;overflow-x:hidden}
+    .shell{display:flex;min-height:100vh}
+
+    /* SIDEBAR */
+    .sidebar{width:var(--sidebar-w);background:var(--navy-deep);display:flex;flex-direction:column;flex-shrink:0;position:sticky;top:0;height:100vh;overflow-y:auto;scrollbar-width:thin;scrollbar-color:rgba(200,150,12,.3) transparent;z-index:100}
+    .sidebar::-webkit-scrollbar{width:4px}.sidebar::-webkit-scrollbar-thumb{background:rgba(200,150,12,.3);border-radius:4px}
+    .sb-brand{padding:18px 16px 14px;border-bottom:1px solid rgba(255,255,255,.07);display:flex;align-items:center;gap:10px}
+    .sb-ic{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--gold),var(--gold-light));display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0;box-shadow:0 3px 10px rgba(200,150,12,.4)}
+    .sb-brand .sbn{font-family:'Playfair Display',serif;font-size:.84rem;font-weight:700;color:#fff}
+    .sb-brand .sbs{font-size:.57rem;color:var(--gold-light);font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-top:1px}
+    .sb-sec{font-size:.57rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.28);padding:14px 16px 4px}
+    .sb-nav{padding:4px 9px;flex:1}
+    .sl{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:9px;font-size:.8rem;font-weight:600;color:rgba(255,255,255,.58);text-decoration:none;cursor:pointer;transition:all .2s;margin-bottom:2px;position:relative}
+    .sl:hover{background:rgba(255,255,255,.06);color:rgba(255,255,255,.9)}
+    .sl.active{background:linear-gradient(135deg,rgba(200,150,12,.22),rgba(200,150,12,.12));color:var(--gold-light);border:1px solid rgba(200,150,12,.3)}
+    .sl.active::before{content:'';position:absolute;left:0;top:22%;bottom:22%;width:3px;background:var(--gold-light);border-radius:0 3px 3px 0}
+    .sl .ic{font-size:.88rem;width:18px;text-align:center;flex-shrink:0}
+    .sb-footer{padding:12px 9px 14px;border-top:1px solid rgba(255,255,255,.07)}
+    .sb-user{display:flex;align-items:center;gap:8px;padding:9px 10px;border-radius:9px;background:rgba(255,255,255,.05)}
+    .sb-av{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold-light));display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:800;color:var(--navy-deep);flex-shrink:0}
+
+    /* MAIN */
+    .main{flex:1;min-width:0;display:flex;flex-direction:column}
+
+    /* TOPBAR */
+    .atbar{height:56px;background:var(--white);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 22px;gap:12px;position:sticky;top:0;z-index:50;box-shadow:0 2px 10px rgba(9,79,79,.06)}
+    .at-title{font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:700;color:var(--navy-dark);flex:1}
+    .at-title span{font-family:'Nunito',sans-serif;font-size:.68rem;font-weight:600;color:var(--text-muted);display:block;margin-top:1px}
+    .at-acts{display:flex;align-items:center;gap:8px}
+    .btn{display:inline-flex;align-items:center;gap:5px;padding:6px 14px;border-radius:8px;cursor:pointer;font-family:'Nunito',sans-serif;font-size:.73rem;font-weight:700;border:none;transition:all .2s}
+    .btn.out{background:transparent;border:1.5px solid var(--border);color:var(--text-muted)}.btn.out:hover{border-color:var(--navy);color:var(--navy)}
+    .btn.tl{background:var(--navy);color:#fff;box-shadow:0 3px 12px rgba(9,79,79,.22)}.btn.tl:hover{background:var(--navy-dark);transform:translateY(-1px)}
+    .btn.gd{background:linear-gradient(135deg,var(--gold),var(--gold-light));color:var(--navy-deep);box-shadow:0 3px 12px rgba(200,150,12,.28)}.btn.gd:hover{transform:translateY(-1px)}
+    .at-div{width:1px;height:24px;background:var(--border)}
+
+    /* SUBNAV */
+    .subnav{background:var(--white);border-bottom:2px solid var(--border);display:flex;overflow-x:auto;padding:0 22px;scrollbar-width:none;position:sticky;top:56px;z-index:40}
+    .subnav::-webkit-scrollbar{display:none}
+    .subnav a{display:flex;align-items:center;gap:5px;padding:11px 13px;font-size:.73rem;font-weight:700;color:var(--text-muted);text-decoration:none;white-space:nowrap;border-bottom:3px solid transparent;transition:all .2s;cursor:pointer;flex-shrink:0}
+    .subnav a:hover{color:var(--navy);border-color:var(--navy)}
+    .subnav a.active{color:var(--navy);border-color:var(--gold);background:rgba(200,150,12,.04)}
+
+    /* PAGE BODY */
+    .pbody{padding:22px;flex:1}
+    .panel{display:none}.panel.active{display:block}
+
+    /* BLOCK */
+    .block{background:var(--white);border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow);margin-bottom:18px;overflow:hidden}
+    .bh{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--border);background:linear-gradient(135deg,var(--white),var(--bg));flex-wrap:wrap;gap:8px}
+    .bt{font-family:'Playfair Display',serif;font-size:.92rem;font-weight:700;color:var(--navy-dark);display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+    .dbc{font-family:'Nunito',sans-serif;font-size:.56rem;font-weight:800;background:rgba(14,107,107,.1);color:var(--navy);border:1px solid rgba(14,107,107,.18);padding:2px 7px;border-radius:7px}
+    .bb{padding:18px}
+    .ba{display:flex;gap:7px;flex-shrink:0}
+
+    /* FORM */
+    .fg{display:grid;gap:12px}.fg.c2{grid-template-columns:1fr 1fr}.fg.c3{grid-template-columns:1fr 1fr 1fr}
+    .f label{display:block;font-size:.72rem;font-weight:700;color:var(--navy-dark);margin-bottom:4px}
+    .f label .req{color:var(--gold);margin-left:2px}
+    .f label .dbh{font-size:.56rem;font-weight:700;color:var(--text-muted);background:var(--bg2);padding:1px 5px;border-radius:4px;margin-left:4px;font-style:normal}
+    .f input,.f textarea,.f select{width:100%;padding:8px 12px;border:1.5px solid var(--border);border-radius:9px;font-family:'Nunito',sans-serif;font-size:.85rem;color:var(--text);background:var(--white);outline:none;transition:border .2s,box-shadow .2s}
+    .f input:focus,.f textarea:focus,.f select:focus{border-color:var(--navy);box-shadow:0 0 0 3px rgba(14,107,107,.09)}
+    .f textarea{resize:vertical;min-height:80px}
+    .fhint{font-size:.62rem;color:var(--text-muted);margin-top:3px}
+    .fhint code{background:var(--bg2);padding:1px 4px;border-radius:4px;font-family:monospace;font-size:.8em;color:#b35e00}
+
+    /* LIST EDITOR */
+    .le{display:grid;gap:7px;margin-top:4px}
+    .lr{display:flex;gap:7px;align-items:center}
+    .lr input{flex:1;padding:7px 11px;border:1.5px solid var(--border);border-radius:8px;font-family:'Nunito',sans-serif;font-size:.83rem;color:var(--text);background:var(--white);outline:none;transition:border .2s}
+    .lr input:focus{border-color:var(--navy)}
+    .ab{width:28px;height:28px;border-radius:6px;border:1.5px solid var(--border);background:var(--white);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.76rem;transition:all .15s;flex-shrink:0}
+    .ab:hover{border-color:var(--navy);background:var(--bg)}.ab.del:hover{border-color:var(--red);background:rgba(231,76,60,.06)}
+    .add-btn{display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:7px;background:rgba(14,107,107,.07);border:1.5px dashed rgba(14,107,107,.25);color:var(--navy);font-family:'Nunito',sans-serif;font-size:.73rem;font-weight:700;cursor:pointer;transition:all .2s;margin-top:6px}
+    .add-btn:hover{background:rgba(14,107,107,.12);border-color:var(--navy)}
+
+    /* FEAT CARD EDITOR */
+    .fcg{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:8px}
+    .fce{background:var(--bg);border:1.5px solid var(--border);border-radius:10px;padding:14px}
+    .fce .fch{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+    .fce .fcn{font-size:.62rem;font-weight:800;color:var(--text-muted)}
+    .fce input,.fce textarea{width:100%;padding:6px 10px;border:1.5px solid var(--border);border-radius:7px;font-family:'Nunito',sans-serif;font-size:.8rem;color:var(--text);background:var(--white);outline:none;margin-bottom:6px}
+    .fce textarea{min-height:60px;resize:vertical}
+    .fce input:focus,.fce textarea:focus{border-color:var(--navy)}
+
+    /* TABLE EDITOR */
+    .te{width:100%;border-collapse:collapse;margin-top:8px}
+    .te thead th{font-size:.63rem;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--text-muted);padding:8px 11px;text-align:left;background:var(--bg);border-bottom:2px solid var(--border)}
+    .te tbody tr{border-bottom:1px solid var(--bg2)}.te tbody tr:hover{background:rgba(14,107,107,.03)}
+    .te tbody td{padding:7px 6px;vertical-align:middle}
+    .te tbody td input,.te tbody td select{width:100%;padding:6px 9px;border:1.5px solid var(--border);border-radius:7px;font-family:'Nunito',sans-serif;font-size:.8rem;color:var(--text);background:var(--white);outline:none}
+    .te tbody td input:focus{border-color:var(--navy)}
+
+    /* TOGGLE */
+    .tog-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--bg2)}.tog-row:last-child{border-bottom:none}
+    .tln{font-size:.83rem;font-weight:700;color:var(--text)}.tld{font-size:.69rem;color:var(--text-muted);margin-top:2px}
+    .tog{position:relative;width:40px;height:22px;flex-shrink:0}.tog input{display:none}
+    .togt{position:absolute;inset:0;background:var(--bg2);border-radius:12px;border:1.5px solid var(--border);cursor:pointer;transition:all .2s}
+    .togt::after{content:'';position:absolute;width:14px;height:14px;border-radius:50%;background:#fff;top:3px;left:3px;box-shadow:0 2px 5px rgba(0,0,0,.18);transition:transform .2s}
+    .tog input:checked~.togt{background:var(--navy);border-color:var(--navy-dark)}.tog input:checked~.togt::after{transform:translateX(18px)}
+
+    /* POLICY BLOCK */
+    .pol{background:linear-gradient(135deg,rgba(200,150,12,.07),rgba(200,150,12,.03));border-left:4px solid var(--gold);border-radius:0 10px 10px 0;padding:16px 18px;margin-bottom:12px}
+    .pol h4{font-family:'Playfair Display',serif;font-size:.9rem;color:var(--navy);margin-bottom:8px}
+    .pol textarea{width:100%;padding:8px 11px;border:1.5px solid rgba(200,150,12,.25);border-radius:8px;font-family:'Nunito',sans-serif;font-size:.83rem;color:var(--text);background:rgba(255,255,255,.8);outline:none;resize:vertical;min-height:80px}
+
+    /* INFO CHIPS */
+    .chip{display:inline-flex;align-items:center;gap:5px;font-size:.65rem;font-weight:700;padding:3px 10px;border-radius:20px;margin-bottom:14px}
+    .chip.warn{background:rgba(230,126,34,.08);border:1px solid rgba(230,126,34,.2);color:var(--orange)}
+    .chip.note{background:rgba(14,107,107,.08);border:1px solid rgba(14,107,107,.2);color:var(--navy)}
+
+    /* CLOUDINARY */
+    .cld-row{display:flex;gap:7px;align-items:center;margin-top:6px}
+    .cld-row input{flex:1;font-size:.8rem}
+    .cld-up{flex-shrink:0;padding:7px 11px;border-radius:8px;cursor:pointer;background:rgba(200,150,12,.1);border:1.5px solid rgba(200,150,12,.25);color:var(--gold);font-family:'Nunito',sans-serif;font-size:.7rem;font-weight:700;transition:all .2s;white-space:nowrap}
+    .cld-up:hover{background:rgba(200,150,12,.2)}
+    .cld-prev{width:100%;height:100px;border-radius:8px;overflow:hidden;border:1.5px solid var(--border);background:var(--bg2);margin-bottom:7px;display:flex;align-items:center;justify-content:center;color:var(--text-muted);font-size:.8rem}
+
+    /* TWO COL */
+    .two-col{display:grid;grid-template-columns:1.5fr 1fr;gap:18px;align-items:start}
+
+    /* TOAST */
+    .toast{position:fixed;bottom:24px;right:24px;background:var(--navy-deep);color:#fff;padding:11px 18px;border-radius:10px;font-size:.79rem;font-weight:700;display:flex;align-items:center;gap:8px;box-shadow:0 8px 28px rgba(0,0,0,.22);transform:translateY(80px);opacity:0;transition:all .3s cubic-bezier(.34,1.56,.64,1);z-index:99998;border-left:4px solid var(--gold-light);pointer-events:none}
+    .toast.show{transform:translateY(0);opacity:1}
+
+    @media(max-width:1100px){.two-col{grid-template-columns:1fr}.fcg{grid-template-columns:1fr 1fr}}
+    @media(max-width:768px){.sidebar{display:none}.fg.c2,.fg.c3{grid-template-columns:1fr}.fcg{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+
+<script src="adminnavbar.js"></script>
+
+<div class="shell">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sb-brand">
+      <div class="sb-ic"></div>
+      <div><div class="sbn">Loretto Admin</div><div class="sbs">School Info</div></div>
+    </div>
+    <div class="sb-nav">
+      <div class="sb-sec">9 Pages</div>
+      <a class="sl active" onclick="go('curriculum')"><span class="ic"></span> Curriculum</a>
+      <a class="sl" onclick="go('uniform')"><span class="ic"></span> School Uniform</a>
+      <a class="sl" onclick="go('calendar')"><span class="ic"></span> School Calendar</a>
+      <a class="sl" onclick="go('timings')"><span class="ic"></span> Office &amp; Timings</a>
+      <a class="sl" onclick="go('provisions')"><span class="ic"></span> Provisions</a>
+      <a class="sl" onclick="go('facilities')"><span class="ic"></span> Facilities</a>
+      <a class="sl" onclick="go('harassment')"><span class="ic"></span> Prev. of Harassment</a>
+      <a class="sl" onclick="go('childprotect')"><span class="ic"></span> Child Protection</a>
+      <a class="sl" onclick="go('privacy')"><span class="ic"></span> Privacy Policy</a>
+      <div class="sb-sec">Other</div>
+      <a class="sl" href="admin-panel.html"><span class="ic"></span> Dashboard</a>
+      <a class="sl" href="admin-academics.html"><span class="ic"></span> Academics</a>
+      <a class="sl" href="adminschool-profile.html"><span class="ic"></span> About Us</a>
+    </div>
+    <div class="sb-footer">
+      <div class="sb-user">
+        <div class="sb-av">A</div>
+        <div><div style="font-size:.74rem;font-weight:700;color:#fff;">Administrator</div><div style="font-size:.58rem;color:rgba(255,255,255,.4);">Super Admin</div></div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <div class="atbar">
+      <div class="at-title" id="atTitle">
+        School Info — Curriculum
+        <span id="atSub">school_info.curriculum · POST /api/school-info</span>
+      </div>
+      <div class="at-acts">
+        <button class="btn out" id="prevBtn" onclick="window.open('../school-information/1-curriculum.html','_blank')"> Preview</button>
+        <div class="at-div"></div>
+        <button class="btn tl" onclick="save()"> Save Section</button>
+        <button class="btn gd" onclick="publish()"> Publish</button>
+      </div>
+    </div>
+
+    <nav class="subnav">
+      <a class="active" onclick="go('curriculum')"> Curriculum</a>
+      <a onclick="go('uniform')"> Uniform</a>
+      <a onclick="go('calendar')"> Calendar</a>
+      <a onclick="go('timings')"> Timings</a>
+      <a onclick="go('provisions')"> Provisions</a>
+      <a onclick="go('facilities')"> Facilities</a>
+      <a onclick="go('harassment')"> Harassment Policy</a>
+      <a onclick="go('childprotect')"> Child Protection</a>
+      <a onclick="go('privacy')"> Privacy Policy</a>
+    </nav>
+
+    <div class="pbody">
+
+      <!-- ===== CURRICULUM ===== -->
+      <div class="panel active" id="tab-curriculum">
+        <div class="two-col">
+          <div>
+            <div class="block">
+              <div class="bh"><div class="bt"> Introduction <span class="dbc">curriculum.intro</span></div><div class="ba"><button class="btn gd" onclick="save()"> Save</button></div></div>
+              <div class="bb"><div class="fg">
+                <div class="f"><label>Intro Paragraph</label><textarea>Loretto Central School follows the Central Board of Secondary Education (CBSE) curriculum for all classes from LKG to Class X. Our curriculum is designed to foster intellectual curiosity, critical thinking, and holistic development in every student.</textarea></div>
+                <div class="f"><label>Highlight Box <span class="dbh">highlightBox</span></label><textarea>Our curriculum is anchored in the National Curriculum Framework (NCF) and NCERT textbooks, supplemented by activity-based learning, project work, and co-curricular programmes that nurture each child's unique potential.</textarea></div>
+              </div></div>
+            </div>
+
+            <div class="block">
+              <div class="bh"><div class="bt"> Framework Cards <span class="dbc">curriculum.frameworkCards[]</span></div><div class="ba"><button class="btn out" onclick="addFC('curr-fc')">＋ Add</button><button class="btn gd" onclick="save()"> Save</button></div></div>
+              <div class="bb"><div class="fcg" id="curr-fc">
+                <div class="fce"><div class="fch"><span class="fcn">Card 1</span><button class="ab del" style="margin-left:auto" onclick="this.closest('.fce').remove()"></button></div><input value=""/><input value="Pre-Primary (LKG &amp; UKG)"/><textarea>Play-based, activity-centred learning to build foundational literacy, numeracy, and social skills.</textarea></div>
+                <div class="fce"><div class="fch"><span class="fcn">Card 2</span><button class="ab del" style="margin-left:auto" onclick="this.closest('.fce').remove()"></button></div><input value=""/><input value="Primary (Classes I–V)"/><textarea>NCERT-based integrated curriculum across English, Maths, EVS, Hindi, and general knowledge.</textarea></div>
+                <div class="fce"><div class="fch"><span class="fcn">Card 3</span><button class="ab del" style="margin-left:auto" onclick="this.closest('.fce').remove()"></button></div><input value=""/><input value="Middle School (VI–VIII)"/><textarea>Subject-specific instruction in Science, Maths, Social Science, English, Hindi and second language.</textarea></div>
+                <div class="fce"><div class="fch"><span class="fcn">Card 4</span><button class="ab del" style="margin-left:auto" onclick="this.closest('.fce').remove()"></button></div><input value=""/><input value="Secondary (Classes IX–X)"/><textarea>CBSE Board curriculum with Periodic and Annual Assessments leading to Class X Board Examination.</textarea></div>
+                <div class="fce"><div class="fch"><span class="fcn">Card 5</span><button class="ab del" style="margin-left:auto" onclick="this.closest('.fce').remove()"></button></div><input value=""/><input value="Co-Curricular"/><textarea>Clubs, sports, arts, olympiads, debates, and cultural activities complement academic learning.</textarea></div>
+                <div class="fce"><div class="fch"><span class="fcn">Card 6</span><button class="ab del" style="margin-left:auto" onclick="this.closest('.fce').remove()"></button></div><input value=""/><input value="Value Education"/><textarea>Moral science, environmental awareness, and life skills are woven into the curriculum at every level.</textarea></div>
+              </div></div>
+            </div>
+
+            <div class="block">
+              <div class="bh"><div class="bt"> Languages Offered <span class="dbc">curriculum.languages[]</span></div><div class="ba"><button class="btn gd" onclick="save()"> Save</button></div></div>
+              <div class="bb">
+                <div class="le" id="curr-langs">
+                  <div class="lr"><input value="English — First Language (Medium of Instruction)"/><button class="ab del" onclick="this.closest('.lr').remove()"></button></div>
+                  <div class="lr"><input value="Hindi — Second Language"/><button class="ab del" onclick="this.closest('.lr').remove()"></button></div>
+                  <div class="lr"><input value="Kannada — Third Language / Regional Language"/><button class="ab del" onclick="this.closest('.lr').remove()"></button></div>
+                </div>
+                <button class="add-btn" onclick="addLR('curr-langs')">＋ Add Language</button>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div class="block">
+              <div class="bh"><div class="bt"> Assessment Table <span class="dbc">curriculum.assessmentTable[]</span></div><div class="ba"><button class="btn out" onclick="addTR('curr-at',3)">＋ Row</button><button class="btn gd" onclick="save()"> Save</button></div></div>
+              <div class="bb" style="padding:0;">
+                <table class="te"><thead><tr><th>Class</th><th>Assessment Type</th><th>Details</th><th style="width:34px"></th></tr></thead>
+                <tbody id="curr-at">
+                  <tr><td><input value="LKG – UKG"/></td><td><input value="Continuous Assessment"/></td><td><input value="Activity-based portfolio; no written exams"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+                  <tr><td><input value="I – V"/></td><td><input value="Periodic Tests + Annual Exam"/></td><td><input value="PT-I, Half-Yearly, PT-II, Annual Examination"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+                  <tr><td><input value="VI – VIII"/></td><td><input value="Periodic Tests + Annual Exam"/></td><td><input value="PT-I, Half-Yearly, PT-II, Annual Examination"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+                  <tr><td><input value="IX – X"/></td><td><input value="Board Pattern"/></td><td><input value="PT-I, PT-II, Half-Yearly, Pre-Board, CBSE Board Exam"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+                </tbody></table>
+              </div>
+            </div>
+            <div class="block">
+              <div class="bh"><div class="bt"> Page Settings</div></div>
+              <div class="bb">
+                <div class="tog-row"><div><div class="tln">Page Live</div><div class="tld">Visible to public</div></div><label class="tog"><input type="checkbox" checked/><span class="togt"></span></label></div>
+                <div class="tog-row"><div><div class="tln">Show Highlight Box</div><div class="tld">Gold callout block</div></div><label class="tog"><input type="checkbox" checked/><span class="togt"></span></label></div>
+                <div class="tog-row"><div><div class="tln">Show Assessment Table</div></div><label class="tog"><input type="checkbox" checked/><span class="togt"></span></label></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== UNIFORM ===== -->
+      <div class="panel" id="tab-uniform">
+        <div class="two-col">
+          <div>
+            <div class="block"><div class="bh"><div class="bt"> Introduction <span class="dbc">uniform.intro</span></div><div class="ba"><button class="btn gd" onclick="save()"> Save</button></div></div>
+              <div class="bb"><div class="fg">
+                <div class="f"><label>Intro Para</label><textarea>Loretto Central School believes that a neat and proper uniform instils discipline, equality, and school pride in every student. All students are required to wear the prescribed school uniform on all working days.</textarea></div>
+                <div class="f"><label>Highlight Box</label><textarea>Wearing the school uniform properly is a matter of discipline and school pride. Students must come in clean, ironed uniform every day. The school badge and ID card must be visible at all times.</textarea></div>
+              </div></div>
+            </div>
+
+            <div class="block"><div class="bh"><div class="bt"> Boys' Uniform <span class="dbc">uniform.boys[]</span></div><div class="ba"><button class="btn gd" onclick="save()"> Save</button></div></div>
+              <div class="bb"><div class="le" id="uni-boys">
+                <div class="lr"><input value="White full-sleeve shirt with school monogram"/><button class="ab del" onclick="this.closest('.lr').remove()"></button></div>
+                <div class="lr"><input value="Navy blue trousers (well-ironed)"/><button class="ab del" onclick="this.closest('.lr').remove()"></button></div>
+                <div class="lr"><input value="Black leather shoes (well-polished) with white socks"/><button class="ab del" onclick="this.closest('.lr').remove()"></button></div>
+                <div class="lr"><input value="School tie and school belt as prescribed"/><button class="ab del" onclick="this.closest('.lr').remove()"></button></div>
+                <div class="lr"><input value="School ID card worn at all times within campus"/><button class="ab del" onclick="this.closest('.lr').remove()"></button></div>
+              </div><button class="add-btn" onclick="addLR('uni-boys')">＋ Add Item</button></div>
+            </div>
+
+            <div class="block"><div class="bh"><div class="bt"> Girls' Uniform <span class="dbc">uniform.girls[]</span></div><div class="ba"><button class="btn gd" onclick="save()"> Save</button></div></div>
+              <div class="bb"><div class="le" id="uni-girls">
+                <div class="lr"><input value="White salwar kurta with school monogram"/><button class="ab del" onclick="this.closest('.lr').remove()"></button></div>
+                <div class="lr"><input value="Navy blue dupatta"/><button class="ab del" onclick="this.closest('.lr').remove()"></button></div>
+                <div class="lr"><input value="Black shoes (well-polished) with white socks"/><button class="ab del" onclick="this.closest('.lr').remove()"></button></div>
+                <div class="lr"><input value="Hair neatly tied — plaited or ponytail with black/navy ribbon"/><button class="ab del" onclick="this.closest('.lr').remove()"></button></div>
+                <div class="lr"><input value="School ID card worn at all times within campus"/><button class="ab del" onclick="this.closest('.lr').remove()"></button></div>
+              </div><button class="add-btn" onclick="addLR('uni-girls')">＋ Add Item</button></div>
+            </div>
+
+            <div class="block"><div class="bh"><div class="bt"> PE / Sports Uniform <span class="dbc">uniform.pe[]</span></div><div class="ba"><button class="btn gd" onclick="save()"> Save</button></div></div>
+              <div class="bb"><div class="le" id="uni-pe">
+                <div class="lr"><input value="School sports T-shirt (navy blue with school logo)"/><button class="ab del" onclick="this.closest('.lr').remove()"></button></div>
+                <div class="lr"><input value="White track pants / shorts (as prescribed per class)"/><button class="ab del" onclick="this.closest('.lr').remove()"></button></div>
+                <div class="lr"><input value="Sports shoes (white canvas or running shoes)"/><button class="ab del" onclick="this.closest('.lr').remove()"></button></div>
+                <div class="lr"><input value="PE uniform to be worn only on Physical Education days"/><button class="ab del" onclick="this.closest('.lr').remove()"></button></div>
+              </div><button class="add-btn" onclick="addLR('uni-pe')">＋ Add Item</button></div>
+            </div>
+          </div>
+
+          <div>
+            <div class="block"><div class="bh"><div class="bt"> General Rules Cards <span class="dbc">uniform.rules[]</span></div><div class="ba"><button class="btn out" onclick="addFC('uni-rules')">＋</button><button class="btn gd" onclick="save()"> Save</button></div></div>
+              <div class="bb"><div class="fcg" id="uni-rules" style="grid-template-columns:1fr;">
+                <div class="fce"><div class="fch"><span class="fcn">1</span><button class="ab del" style="margin-left:auto" onclick="this.closest('.fce').remove()"></button></div><input value=""/><input value="Neat Appearance"/><textarea>Uniforms must be clean and well-ironed. Torn or faded uniforms must be replaced promptly.</textarea></div>
+                <div class="fce"><div class="fch"><span class="fcn">2</span><button class="ab del" style="margin-left:auto" onclick="this.closest('.fce').remove()"></button></div><input value=""/><input value="No Jewellery"/><textarea>No jewellery or accessories allowed. Simple studs for girls are permitted.</textarea></div>
+                <div class="fce"><div class="fch"><span class="fcn">3</span><button class="ab del" style="margin-left:auto" onclick="this.closest('.fce').remove()"></button></div><input value=""/><input value="Hair &amp; Grooming"/><textarea>Boys must keep hair short and neat. Girls must tie hair. No coloured hair or nail paint.</textarea></div>
+              </div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== CALENDAR ===== -->
+      <div class="panel" id="tab-calendar">
+        <div class="two-col">
+          <div>
+            <div class="block"><div class="bh"><div class="bt"> Introduction <span class="dbc">calendar.intro</span></div><div class="ba"><button class="btn gd" onclick="save()"> Save</button></div></div>
+              <div class="bb"><div class="fg">
+                <div class="f"><label>Intro Paragraph</label><textarea>The Academic Calendar for Loretto Central School is published at the start of each academic year. It outlines all key academic events, examinations, holidays, and important school activities.</textarea></div>
+                <div class="f"><label>Highlight Box</label><textarea>The academic year runs from April to March as per CBSE norms, with a minimum of 220 working days. Specific dates may be revised and communicated through school circulars.</textarea></div>
+                <div class="fg c2">
+                  <div class="f"><label>Academic Year <span class="dbh">yearLabel</span></label><input value="2024–25"/></div>
+                  <div class="f"><label>Min Working Days <span class="dbh">workingDays</span></label><input type="number" value="220"/></div>
+                </div>
+              </div></div>
+            </div>
+
+            <div class="block"><div class="bh"><div class="bt"> Key Events Table <span class="dbc">calendar.events[]</span></div><div class="ba"><button class="btn out" onclick="addTR('cal-ev',3)">＋ Row</button><button class="btn gd" onclick="save()"> Save</button></div></div>
+              <div class="bb" style="padding:0;">
+                <table class="te"><thead><tr><th>Month</th><th>Event / Activity</th><th>Remarks</th><th style="width:34px"></th></tr></thead>
+                <tbody id="cal-ev">
+                  <tr><td><input value="April"/></td><td><input value="New Academic Year Begins"/></td><td><input value="All classes"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+                  <tr><td><input value="May"/></td><td><input value="Parent-Teacher Meeting (PTM)"/></td><td><input value="First term orientation"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+                  <tr><td><input value="June"/></td><td><input value="Periodic Test – I (PT-1)"/></td><td><input value="Classes I–X"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+                  <tr><td><input value="July"/></td><td><input value="Sports Day / Inter-House Competitions"/></td><td><input value="All students"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+                  <tr><td><input value="August"/></td><td><input value="Independence Day Celebration"/></td><td><input value="15 Aug — School Function"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+                  <tr><td><input value="September"/></td><td><input value="Half-Yearly Examinations"/></td><td><input value="Classes I–X"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+                  <tr><td><input value="October"/></td><td><input value="Parent-Teacher Meeting (PTM)"/></td><td><input value="Mid-year review"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+                  <tr><td><input value="November"/></td><td><input value="Periodic Test – II (PT-2)"/></td><td><input value="Classes I–X"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+                  <tr><td><input value="December"/></td><td><input value="Annual Day / Christmas Celebration"/></td><td><input value="Cultural programme"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+                  <tr><td><input value="January"/></td><td><input value="Republic Day &amp; Pre-Board Examinations"/></td><td><input value="Class X"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+                  <tr><td><input value="February"/></td><td><input value="Annual Examinations begin"/></td><td><input value="Classes I–IX; CBSE Boards (X)"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+                  <tr><td><input value="March"/></td><td><input value="Examinations conclude / Result Day"/></td><td><input value="All classes"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+                </tbody></table>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div class="block"><div class="bh"><div class="bt"> School Holidays <span class="dbc">calendar.holidays[]</span></div><div class="ba"><button class="btn gd" onclick="save()"> Save</button></div></div>
+              <div class="bb"><div class="le" id="cal-hol">
+                <div class="lr"><input value="Republic Day — 26 January"/><button class="ab del" onclick="this.closest('.lr').remove()"></button></div>
+                <div class="lr"><input value="Good Friday"/><button class="ab del" onclick="this.closest('.lr').remove()"></button></div>
+                <div class="lr"><input value="Id-ul-Fitr"/><button class="ab del" onclick="this.closest('.lr').remove()"></button></div>
+                <div class="lr"><input value="Independence Day — 15 August"/><button class="ab del" onclick="this.closest('.lr').remove()"></button></div>
+                <div class="lr"><input value="Gandhi Jayanti — 2 October"/><button class="ab del" onclick="this.closest('.lr').remove()"></button></div>
+                <div class="lr"><input value="Dasara (Navaratri)"/><button class="ab del" onclick="this.closest('.lr').remove()"></button></div>
+                <div class="lr"><input value="Deepavali"/><button class="ab del" onclick="this.closest('.lr').remove()"></button></div>
+                <div class="lr"><input value="Christmas — 25 December"/><button class="ab del" onclick="this.closest('.lr').remove()"></button></div>
+                <div class="lr"><input value="Other state / local holidays as notified"/><button class="ab del" onclick="this.closest('.lr').remove()"></button></div>
+              </div><button class="add-btn" onclick="addLR('cal-hol')">＋ Add Holiday</button></div>
+            </div>
+
+            <div class="block"><div class="bh"><div class="bt"> Calendar PDF <span class="dbc">documents · category: school-calendar</span></div></div>
+              <div class="bb">
+                <p class="fhint" style="margin-bottom:8px;">Upload printable calendar PDF to Cloudinary · stored as <code>documents</code> record</p>
+                <div class="cld-row">
+                  <input type="url" id="cal-pdf" placeholder="https://res.cloudinary.com/your-cloud/raw/upload/..."/>
+                  <button class="cld-up" onclick="document.getElementById('cal-pdf-f').click()"> Upload PDF</button>
+                  <input type="file" id="cal-pdf-f" accept="application/pdf" style="display:none" onchange="cldUp(this,'cal-pdf')"/>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== TIMINGS ===== -->
+      <div class="panel" id="tab-timings">
+        <div class="two-col">
+          <div>
+            <div class="block"><div class="bh"><div class="bt"> Introduction</div><div class="ba"><button class="btn gd" onclick="save()"> Save</button></div></div>
+              <div class="bb"><div class="f"><label>Intro Para</label><textarea>Loretto Central School follows a structured daily schedule to ensure maximum learning time and discipline. All students and staff are expected to strictly adhere to the timings below.</textarea></div></div>
+            </div>
+
+            <div class="block"><div class="bh"><div class="bt"> School Timings <span class="dbc">timings.schoolTimings[]</span></div><div class="ba"><button class="btn out" onclick="addTR('sch-tim',4)">＋</button><button class="btn gd" onclick="save()"> Save</button></div></div>
+              <div class="bb" style="padding:0;">
+                <table class="te"><thead><tr><th>Day</th><th>Begins</th><th>Ends</th><th>Remarks</th><th style="width:34px"></th></tr></thead>
+                <tbody id="sch-tim">
+                  <tr><td><input value="Monday – Friday"/></td><td><input value="8:30 AM"/></td><td><input value="3:30 PM"/></td><td><input value="Regular working days"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+                  <tr><td><input value="Saturday"/></td><td><input value="8:30 AM"/></td><td><input value="12:30 PM"/></td><td><input value="As per CBSE schedule"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+                  <tr><td><input value="Sunday"/></td><td><input value="—"/></td><td><input value="—"/></td><td><input value="Holiday"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+                </tbody></table>
+              </div>
+            </div>
+
+            <div class="block"><div class="bh"><div class="bt"> Pre-Primary Timings <span class="dbc">timings.prePrimary[]</span></div><div class="ba"><button class="btn out" onclick="addTR('pp-tim',3)">＋</button><button class="btn gd" onclick="save()"> Save</button></div></div>
+              <div class="bb" style="padding:0;">
+                <table class="te"><thead><tr><th>Day</th><th>Begins</th><th>Ends</th><th style="width:34px"></th></tr></thead>
+                <tbody id="pp-tim">
+                  <tr><td><input value="Monday – Friday"/></td><td><input value="8:30 AM"/></td><td><input value="1:00 PM"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+                  <tr><td><input value="Saturday"/></td><td><input value="8:30 AM"/></td><td><input value="12:00 PM"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+                </tbody></table>
+              </div>
+            </div>
+
+            <div class="block"><div class="bh"><div class="bt"> Office Timings <span class="dbc">timings.office[]</span></div><div class="ba"><button class="btn out" onclick="addTR('off-tim',4)">＋</button><button class="btn gd" onclick="save()"> Save</button></div></div>
+              <div class="bb" style="padding:0;">
+                <table class="te"><thead><tr><th>Day</th><th>Opens</th><th>Closes</th><th>Remarks</th><th style="width:34px"></th></tr></thead>
+                <tbody id="off-tim">
+                  <tr><td><input value="Monday – Friday"/></td><td><input value="8:00 AM"/></td><td><input value="4:30 PM"/></td><td><input value="Admissions, fees, records"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+                  <tr><td><input value="Saturday"/></td><td><input value="8:00 AM"/></td><td><input value="1:30 PM"/></td><td><input value="Limited services"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+                  <tr><td><input value="Sunday / Holidays"/></td><td><input value="—"/></td><td><input value="—"/></td><td><input value="Closed; prior appointment needed"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+                </tbody></table>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div class="block"><div class="bh"><div class="bt"> Daily Schedule Cards <span class="dbc">timings.dailySchedule[]</span></div><div class="ba"><button class="btn out" onclick="addFC('ds-cards')">＋</button><button class="btn gd" onclick="save()"> Save</button></div></div>
+              <div class="bb"><div class="fcg" id="ds-cards" style="grid-template-columns:1fr;">
+                <div class="fce"><div class="fch"><span class="fcn">1</span><button class="ab del" style="margin-left:auto" onclick="this.closest('.fce').remove()"></button></div><input value=""/><input value="Assembly"/><textarea>Morning assembly at 8:30 AM — prayer, pledge, thought of the day, news headlines.</textarea></div>
+                <div class="fce"><div class="fch"><span class="fcn">2</span><button class="ab del" style="margin-left:auto" onclick="this.closest('.fce').remove()"></button></div><input value=""/><input value="Class Hours"/><textarea>8 periods of 45 minutes each. Break 11:00–11:30 AM; Lunch 1:00–1:30 PM.</textarea></div>
+                <div class="fce"><div class="fch"><span class="fcn">3</span><button class="ab del" style="margin-left:auto" onclick="this.closest('.fce').remove()"></button></div><input value=""/><input value="Games Period"/><textarea>Physical Education integrated into weekly timetable; outdoor games on PE days.</textarea></div>
+              </div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== PROVISIONS ===== -->
+      <div class="panel" id="tab-provisions">
+        <div class="two-col">
+          <div>
+            <div class="block"><div class="bh"><div class="bt"> Introduction <span class="dbc">provisions.intro</span></div><div class="ba"><button class="btn gd" onclick="save()"> Save</button></div></div>
+              <div class="bb"><div class="fg">
+                <div class="f"><label>Intro Para</label><textarea>Loretto Central School makes comprehensive provisions for the academic, physical, and emotional well-being of all its students, creating an inclusive, safe, and resourceful learning environment.</textarea></div>
+                <div class="f"><label>Highlight Box</label><textarea>All provisions are regularly reviewed and updated to meet CBSE norms and the evolving needs of our student community. Parents are encouraged to report any gaps or concerns to the school office.</textarea></div>
+              </div></div>
+            </div>
+
+            <div class="block"><div class="bh"><div class="bt"> Academic Provisions <span class="dbc">provisions.academic[]</span></div><div class="ba"><button class="btn gd" onclick="save()"> Save</button></div></div>
+              <div class="bb"><div class="le" id="prov-ac">
+                <div class="lr"><input value="Well-equipped classrooms with adequate seating, lighting, and ventilation"/><button class="ab del" onclick="this.closest('.lr').remove()"></button></div>
+                <div class="lr"><input value="Smart boards and audio-visual aids in select classrooms"/><button class="ab del" onclick="this.closest('.lr').remove()"></button></div>
+                <div class="lr"><input value="NCERT and CBSE-approved textbooks for all classes"/><button class="ab del" onclick="this.closest('.lr').remove()"></button></div>
+                <div class="lr"><input value="School library with books, periodicals, and reference materials"/><button class="ab del" onclick="this.closest('.lr').remove()"></button></div>
+                <div class="lr"><input value="Computer laboratory with internet access for digital learning"/><button class="ab del" onclick="this.closest('.lr').remove()"></button></div>
+                <div class="lr"><input value="Science Laboratory for Physics, Chemistry, and Biology practicals"/><button class="ab del" onclick="this.closest('.lr').remove()"></button></div>
+                <div class="lr"><input value="Remedial classes and extra coaching for students needing academic support"/><button class="ab del" onclick="this.closest('.lr').remove()"></button></div>
+              </div><button class="add-btn" onclick="addLR('prov-ac')">＋ Add Item</button></div>
+            </div>
+
+            <div class="block"><div class="bh"><div class="bt"> Health &amp; Safety <span class="dbc">provisions.healthSafety[]</span></div><div class="ba"><button class="btn gd" onclick="save()"> Save</button></div></div>
+              <div class="bb"><div class="le" id="prov-hs">
+                <div class="lr"><input value="First Aid room with a trained first-aider on campus"/><button class="ab del" onclick="this.closest('.lr').remove()"></button></div>
+                <div class="lr"><input value="Purified drinking water available throughout the school"/><button class="ab del" onclick="this.closest('.lr').remove()"></button></div>
+                <div class="lr"><input value="Separate, well-maintained washrooms for boys, girls, and staff"/><button class="ab del" onclick="this.closest('.lr').remove()"></button></div>
+                <div class="lr"><input value="Fire extinguishers at all required locations; fire drills conducted regularly"/><button class="ab del" onclick="this.closest('.lr').remove()"></button></div>
+                <div class="lr"><input value="CCTV cameras across the campus for student safety"/><button class="ab del" onclick="this.closest('.lr').remove()"></button></div>
+                <div class="lr"><input value="Ramps and accessible pathways for students with physical disabilities"/><button class="ab del" onclick="this.closest('.lr').remove()"></button></div>
+              </div><button class="add-btn" onclick="addLR('prov-hs')">＋ Add Item</button></div>
+            </div>
+          </div>
+
+          <div>
+            <div class="block"><div class="bh"><div class="bt"> Student Welfare Cards <span class="dbc">provisions.welfare[]</span></div><div class="ba"><button class="btn out" onclick="addFC('prov-sw')">＋</button><button class="btn gd" onclick="save()"> Save</button></div></div>
+              <div class="bb"><div class="fcg" id="prov-sw" style="grid-template-columns:1fr;">
+                <div class="fce"><div class="fch"><span class="fcn">1</span><button class="ab del" style="margin-left:auto" onclick="this.closest('.fce').remove()"></button></div><input value=""/><input value="Canteen"/><textarea>Clean, hygienic canteen providing nutritious snacks and meals during break hours.</textarea></div>
+                <div class="fce"><div class="fch"><span class="fcn">2</span><button class="ab del" style="margin-left:auto" onclick="this.closest('.fce').remove()"></button></div><input value=""/><input value="Transport"/><textarea>School transport service on major routes. Contact office for route details and fees.</textarea></div>
+                <div class="fce"><div class="fch"><span class="fcn">3</span><button class="ab del" style="margin-left:auto" onclick="this.closest('.fce').remove()"></button></div><input value=""/><input value="Counselling"/><textarea>Student counselling for academic stress, career guidance, and personal challenges.</textarea></div>
+                <div class="fce"><div class="fch"><span class="fcn">4</span><button class="ab del" style="margin-left:auto" onclick="this.closest('.fce').remove()"></button></div><input value=""/><input value="Scholarships"/><textarea>Merit-based and need-based fee concessions available. Apply through school office.</textarea></div>
+                <div class="fce"><div class="fch"><span class="fcn">5</span><button class="ab del" style="margin-left:auto" onclick="this.closest('.fce').remove()"></button></div><input value=""/><input value="Grievance Redressal"/><textarea>Grievance box at the school office. All complaints addressed within 7 working days.</textarea></div>
+                <div class="fce"><div class="fch"><span class="fcn">6</span><button class="ab del" style="margin-left:auto" onclick="this.closest('.fce').remove()"></button></div><input value=""/><input value="Green Campus"/><textarea>Eco-friendly initiative with gardens, rainwater harvesting, and cleanliness drives.</textarea></div>
+              </div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== FACILITIES ===== -->
+      <div class="panel" id="tab-facilities">
+        <div class="two-col">
+          <div>
+            <div class="block"><div class="bh"><div class="bt"> Introduction <span class="dbc">facilities.intro</span></div><div class="ba"><button class="btn gd" onclick="save()"> Save</button></div></div>
+              <div class="bb"><div class="f"><label>Intro Para</label><textarea>Loretto Central School is equipped with modern facilities that support the academic, physical, and creative development of every student. Our campus continues to grow with ongoing infrastructure improvements.</textarea></div></div>
+            </div>
+
+            <div class="block"><div class="bh"><div class="bt"> Facility Cards <span class="dbc">facilities.cards[]</span></div><div class="ba"><button class="btn out" onclick="addFC('fac-c')">＋ Add</button><button class="btn gd" onclick="save()"> Save</button></div></div>
+              <div class="bb"><div class="fcg" id="fac-c">
+                <div class="fce"><div class="fch"><span class="fcn">1</span><button class="ab del" style="margin-left:auto" onclick="this.closest('.fce').remove()"></button></div><input value=""/><input value="Classrooms"/><textarea>Spacious, well-lit classrooms with adequate ventilation, ceiling fans, and modern furniture.</textarea></div>
+                <div class="fce"><div class="fch"><span class="fcn">2</span><button class="ab del" style="margin-left:auto" onclick="this.closest('.fce').remove()"></button></div><input value=""/><input value="Science Laboratory"/><textarea>Fully equipped integrated lab for Physics, Chemistry, and Biology as per CBSE curriculum.</textarea></div>
+                <div class="fce"><div class="fch"><span class="fcn">3</span><button class="ab del" style="margin-left:auto" onclick="this.closest('.fce').remove()"></button></div><input value=""/><input value="Computer Laboratory"/><textarea>Modern systems with internet connectivity for computer science and digital learning.</textarea></div>
+                <div class="fce"><div class="fch"><span class="fcn">4</span><button class="ab del" style="margin-left:auto" onclick="this.closest('.fce').remove()"></button></div><input value=""/><input value="Library"/><textarea>Well-stocked with fiction, non-fiction, reference books, encyclopaedias, and periodicals.</textarea></div>
+                <div class="fce"><div class="fch"><span class="fcn">5</span><button class="ab del" style="margin-left:auto" onclick="this.closest('.fce').remove()"></button></div><input value=""/><input value="Sports Ground"/><textarea>Open playground for cricket, football, athletics, kabaddi, and other outdoor sports.</textarea></div>
+                <div class="fce"><div class="fch"><span class="fcn">6</span><button class="ab del" style="margin-left:auto" onclick="this.closest('.fce').remove()"></button></div><input value=""/><input value="Auditorium / Hall"/><textarea>Multipurpose hall for school functions, annual day, assemblies, and cultural events.</textarea></div>
+                <div class="fce"><div class="fch"><span class="fcn">7</span><button class="ab del" style="margin-left:auto" onclick="this.closest('.fce').remove()"></button></div><input value=""/><input value="Safe Drinking Water"/><textarea>RO/UV purified water stations at multiple points across the campus at all times.</textarea></div>
+                <div class="fce"><div class="fch"><span class="fcn">8</span><button class="ab del" style="margin-left:auto" onclick="this.closest('.fce').remove()"></button></div><input value=""/><input value="CCTV Surveillance"/><textarea>Comprehensive CCTV coverage across classrooms, corridors, and campus entry/exit points.</textarea></div>
+                <div class="fce"><div class="fch"><span class="fcn">9</span><button class="ab del" style="margin-left:auto" onclick="this.closest('.fce').remove()"></button></div><input value=""/><input value="Barrier-Free Access"/><textarea>Ramps and accessible pathways ensure all areas are accessible to differently-abled students.</textarea></div>
+              </div></div>
+            </div>
+          </div>
+
+          <div>
+            <div class="block"><div class="bh"><div class="bt"> Facilities Status Table <span class="dbc">facilities.statusTable[]</span></div><div class="ba"><button class="btn out" onclick="addTR('fac-st',3)">＋</button><button class="btn gd" onclick="save()"> Save</button></div></div>
+              <div class="bb" style="padding:0;">
+                <table class="te"><thead><tr><th>Facility</th><th>Status</th><th>Details</th><th style="width:34px"></th></tr></thead>
+                <tbody id="fac-st">
+                  <tr><td><input value="Library"/></td><td><input value=" Available"/></td><td><input value="With dedicated reading room"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+                  <tr><td><input value="Science Lab"/></td><td><input value=" Available"/></td><td><input value="Physics, Chemistry &amp; Biology — integrated"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+                  <tr><td><input value="Computer Lab"/></td><td><input value=" Available"/></td><td><input value="Internet-enabled; updated hardware"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+                  <tr><td><input value="Sports Ground"/></td><td><input value=" Available"/></td><td><input value="Open field for multiple sports"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+                  <tr><td><input value="Auditorium / Hall"/></td><td><input value=" Available"/></td><td><input value="For functions and assemblies"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+                  <tr><td><input value="Canteen"/></td><td><input value=" Available"/></td><td><input value="Hygienic; daily menu"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+                  <tr><td><input value="Safe Drinking Water"/></td><td><input value=" Available"/></td><td><input value="RO/UV purified throughout campus"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+                  <tr><td><input value="First Aid Room"/></td><td><input value=" Available"/></td><td><input value="Trained staff; medical supplies"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+                  <tr><td><input value="CCTV Surveillance"/></td><td><input value=" Available"/></td><td><input value="Across campus"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+                  <tr><td><input value="Fire Safety Equipment"/></td><td><input value=" Available"/></td><td><input value="At all required locations"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+                </tbody></table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== HARASSMENT ===== -->
+      <div class="panel" id="tab-harassment">
+        <div class="chip warn"> Legal content — review with school management before publishing any changes</div>
+        <div class="two-col">
+          <div>
+            <div class="block"><div class="bh"><div class="bt"> Policy Statement <span class="dbc">harassment.intro</span></div><div class="ba"><button class="btn gd" onclick="save()"> Save</button></div></div>
+              <div class="bb"><div class="fg">
+                <div class="f"><label>Intro Para</label><textarea>Loretto Central School is firmly committed to providing a safe, respectful, and dignified environment for all students, staff, and visitors. The school has a zero-tolerance policy towards any form of sexual harassment on its premises or in any school-related activity.</textarea></div>
+                <div class="f"><label>Highlight Box (Legislative references)</label><textarea>This policy is in compliance with the Protection of Children from Sexual Offences (POCSO) Act, 2012, the Sexual Harassment of Women at Workplace (Prevention, Prohibition and Redressal) Act, 2013, and CBSE child safety guidelines.</textarea></div>
+              </div></div>
+            </div>
+
+            <div class="block"><div class="bh"><div class="bt"> Prohibited Acts <span class="dbc">harassment.prohibitedActs[]</span></div><div class="ba"><button class="btn gd" onclick="save()"> Save</button></div></div>
+              <div class="bb"><div class="le" id="har-acts">
+                <div class="lr"><input value="Unwelcome physical contact or advances of a sexual nature"/><button class="ab del" onclick="this.closest('.lr').remove()"></button></div>
+                <div class="lr"><input value="Demand or request for sexual favours"/><button class="ab del" onclick="this.closest('.lr').remove()"></button></div>
+                <div class="lr"><input value="Sexually coloured remarks, jokes, or gestures"/><button class="ab del" onclick="this.closest('.lr').remove()"></button></div>
+                <div class="lr"><input value="Showing pornographic or obscene material"/><button class="ab del" onclick="this.closest('.lr').remove()"></button></div>
+                <div class="lr"><input value="Sending inappropriate messages or images through any medium"/><button class="ab del" onclick="this.closest('.lr').remove()"></button></div>
+                <div class="lr"><input value="Any behaviour that creates a hostile or intimidating environment"/><button class="ab del" onclick="this.closest('.lr').remove()"></button></div>
+              </div><button class="add-btn" onclick="addLR('har-acts')">＋ Add Item</button></div>
+            </div>
+
+            <div class="block"><div class="bh"><div class="bt"> ICC Members <span class="dbc">harassment.iccMembers[]</span></div><div class="ba"><button class="btn out" onclick="addTR('icc-tb',2)">＋</button><button class="btn gd" onclick="save()"> Save</button></div></div>
+              <div class="bb" style="padding:0;">
+                <table class="te"><thead><tr><th>Role</th><th>Designation</th><th style="width:34px"></th></tr></thead>
+                <tbody id="icc-tb">
+                  <tr><td><input value="Presiding Officer"/></td><td><input value="Senior Female Staff Member (as designated)"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+                  <tr><td><input value="Member"/></td><td><input value="Staff Representative"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+                  <tr><td><input value="Member"/></td><td><input value="Parent Representative"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+                  <tr><td><input value="External Member"/></td><td><input value="NGO / Legal Expert (as required)"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+                </tbody></table>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div class="block"><div class="bh"><div class="bt"> Reporting Cards <span class="dbc">harassment.reportingCards[]</span></div><div class="ba"><button class="btn out" onclick="addFC('har-rc')">＋</button><button class="btn gd" onclick="save()"> Save</button></div></div>
+              <div class="bb"><div class="fcg" id="har-rc" style="grid-template-columns:1fr;">
+                <div class="fce"><div class="fch"><span class="fcn">1</span><button class="ab del" style="margin-left:auto" onclick="this.closest('.fce').remove()"></button></div><input value=""/><input value="Written Complaint"/><textarea>Submit a written complaint to the ICC Presiding Officer or directly to the Principal's office.</textarea></div>
+                <div class="fce"><div class="fch"><span class="fcn">2</span><button class="ab del" style="margin-left:auto" onclick="this.closest('.fce').remove()"></button></div><input value=""/><input value="Confidential"/><textarea>All complaints handled with strict confidentiality. The complainant's identity is protected.</textarea></div>
+                <div class="fce"><div class="fch"><span class="fcn">3</span><button class="ab del" style="margin-left:auto" onclick="this.closest('.fce').remove()"></button></div><input value="⏱"/><input value="Time-Bound"/><textarea>Complaints acknowledged within 3 working days and resolved within 90 days of receipt.</textarea></div>
+              </div></div>
+            </div>
+
+            <div class="block"><div class="bh"><div class="bt"> POCSO Compliance Box <span class="dbc">harassment.pocsoBox</span></div><div class="ba"><button class="btn gd" onclick="save()"> Save</button></div></div>
+              <div class="bb"><div class="pol"><h4> POCSO Compliance</h4>
+                <textarea>In compliance with the POCSO Act 2012, all staff are trained to recognise signs of abuse and are mandatory reporters. Any suspicion or disclosure of child sexual abuse will be immediately reported to the appropriate authorities.</textarea>
+              </div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== CHILD PROTECTION ===== -->
+      <div class="panel" id="tab-childprotect">
+        <div class="chip warn"> Legal content — review with school management before publishing any changes</div>
+        <div class="two-col">
+          <div>
+            <div class="block"><div class="bh"><div class="bt"> Introduction <span class="dbc">childProtect.intro</span></div><div class="ba"><button class="btn gd" onclick="save()"> Save</button></div></div>
+              <div class="bb"><div class="fg">
+                <div class="f"><label>Intro Para</label><textarea>Loretto Central School recognises the fundamental right of every child to be safe, respected, and protected from all forms of abuse, neglect, exploitation, and violence. Our Child Protection Policy sets out the school's commitment and procedures to safeguard the welfare of all children in our care.</textarea></div>
+                <div class="f"><label>Highlight Box</label><textarea>This policy applies to all students, staff, volunteers, contractors, and visitors. It is implemented in accordance with the POCSO Act 2012, RTE Act 2009, Juvenile Justice Act 2015, and CBSE child safety guidelines.</textarea></div>
+              </div></div>
+            </div>
+
+            <div class="block"><div class="bh"><div class="bt"> Our Commitments <span class="dbc">childProtect.commitments[]</span></div><div class="ba"><button class="btn gd" onclick="save()"> Save</button></div></div>
+              <div class="bb"><div class="le" id="cp-comm">
+                <div class="lr"><input value="The safety and well-being of every child is the school's highest priority"/><button class="ab del" onclick="this.closest('.lr').remove()"></button></div>
+                <div class="lr"><input value="Every child has the right to be heard, believed, and supported"/><button class="ab del" onclick="this.closest('.lr').remove()"></button></div>
+                <div class="lr"><input value="All staff are responsible for the safety of children in their care"/><button class="ab del" onclick="this.closest('.lr').remove()"></button></div>
+                <div class="lr"><input value="No child will be subjected to physical punishment, humiliation, or abuse"/><button class="ab del" onclick="this.closest('.lr').remove()"></button></div>
+                <div class="lr"><input value="All concerns will be taken seriously and acted upon promptly"/><button class="ab del" onclick="this.closest('.lr').remove()"></button></div>
+                <div class="lr"><input value="The school will work in partnership with parents and authorities to protect children"/><button class="ab del" onclick="this.closest('.lr').remove()"></button></div>
+              </div><button class="add-btn" onclick="addLR('cp-comm')">＋ Add Point</button></div>
+            </div>
+
+            <div class="block"><div class="bh"><div class="bt"> Reporting Contacts <span class="dbc">childProtect.contacts[]</span></div><div class="ba"><button class="btn gd" onclick="save()"> Save</button></div></div>
+              <div class="bb"><div class="le" id="cp-rep">
+                <div class="lr"><input value="The Class Teacher or Form Teacher (for immediate classroom concerns)"/><button class="ab del" onclick="this.closest('.lr').remove()"></button></div>
+                <div class="lr"><input value="The Principal (for serious concerns requiring urgent action)"/><button class="ab del" onclick="this.closest('.lr').remove()"></button></div>
+                <div class="lr"><input value="The Child Protection Officer designated by the school"/><button class="ab del" onclick="this.closest('.lr').remove()"></button></div>
+                <div class="lr"><input value="CHILDLINE India — 1098 (24-hour free helpline for children in distress)"/><button class="ab del" onclick="this.closest('.lr').remove()"></button></div>
+                <div class="lr"><input value="Local police or relevant child welfare authority if immediate danger is present"/><button class="ab del" onclick="this.closest('.lr').remove()"></button></div>
+              </div><button class="add-btn" onclick="addLR('cp-rep')">＋ Add Contact</button></div>
+            </div>
+          </div>
+
+          <div>
+            <div class="block"><div class="bh"><div class="bt"> Types of Abuse Cards <span class="dbc">childProtect.abuseTypes[]</span></div><div class="ba"><button class="btn out" onclick="addFC('cp-abuse')">＋</button><button class="btn gd" onclick="save()"> Save</button></div></div>
+              <div class="bb"><div class="fcg" id="cp-abuse" style="grid-template-columns:1fr;">
+                <div class="fce"><div class="fch"><span class="fcn">1</span><button class="ab del" style="margin-left:auto" onclick="this.closest('.fce').remove()"></button></div><input value=""/><input value="Physical Abuse"/><textarea>Any form of deliberate physical harm to a child. Corporal punishment is strictly prohibited.</textarea></div>
+                <div class="fce"><div class="fch"><span class="fcn">2</span><button class="ab del" style="margin-left:auto" onclick="this.closest('.fce').remove()"></button></div><input value=""/><input value="Emotional Abuse"/><textarea>Persistent emotional ill-treatment, humiliation, or threats that affect a child's development.</textarea></div>
+                <div class="fce"><div class="fch"><span class="fcn">3</span><button class="ab del" style="margin-left:auto" onclick="this.closest('.fce').remove()"></button></div><input value=""/><input value="Cyberbullying"/><textarea>Harassment or humiliation via digital platforms. Students are educated on safe internet use.</textarea></div>
+                <div class="fce"><div class="fch"><span class="fcn">4</span><button class="ab del" style="margin-left:auto" onclick="this.closest('.fce').remove()"></button></div><input value=""/><input value="Bullying"/><textarea>Repeated intentional harm through words, actions, or social exclusion. Anti-Bullying Policy applies.</textarea></div>
+              </div></div>
+            </div>
+
+            <div class="block"><div class="bh"><div class="bt"> Staff Training Policy <span class="dbc">childProtect.staffTraining</span></div><div class="ba"><button class="btn gd" onclick="save()"> Save</button></div></div>
+              <div class="bb"><div class="pol"><h4> Staff Training &amp; Awareness</h4>
+                <textarea>All staff members undergo mandatory child protection training at the time of joining and annually thereafter. This includes recognising signs of abuse, reporting obligations under POCSO, and maintaining professional boundaries with students at all times.</textarea>
+              </div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== PRIVACY POLICY ===== -->
+      <div class="panel" id="tab-privacy">
+        <div class="chip note">ℹ MongoDB collection: <code style="margin-left:4px;font-family:monospace;font-size:.85em;">school_info</code> · document: <code style="font-family:monospace;font-size:.85em;">privacy_policy</code></div>
+        <div class="two-col">
+          <div>
+            <div class="block"><div class="bh"><div class="bt"> Introduction <span class="dbc">privacy.intro</span></div><div class="ba"><button class="btn gd" onclick="save()"> Save</button></div></div>
+              <div class="bb"><div class="fg">
+                <div class="f"><label>Intro Para</label><textarea>Loretto Central School is committed to protecting the privacy and personal information of all visitors to our website and members of our school community. This Privacy Policy explains how we collect, use, store, and protect your information.</textarea></div>
+                <div class="f"><label>Highlight Box</label><textarea>This policy applies to the official website at www.school.edu and all associated digital platforms. By using our website, you agree to the terms of this policy.</textarea></div>
+                <div class="fg c2">
+                  <div class="f"><label>Website URL <span class="dbh">websiteUrl</span></label><input type="url" value="https://www.school.edu"/></div>
+                  <div class="f"><label>Last Updated <span class="dbh">lastUpdated</span></label><input type="date" value="2024-04-01"/></div>
+                </div>
+              </div></div>
+            </div>
+
+            <div class="block"><div class="bh"><div class="bt"> Information We Collect <span class="dbc">privacy.dataCollected[]</span></div><div class="ba"><button class="btn gd" onclick="save()"> Save</button></div></div>
+              <div class="bb"><div class="le" id="priv-col">
+                <div class="lr"><input value="Contact Form Data: Name, email, phone number, and message when submitting an enquiry"/><button class="ab del" onclick="this.closest('.lr').remove()"></button></div>
+                <div class="lr"><input value="Admission Enquiry Data: Student name, class, parent details submitted during admission enquiries"/><button class="ab del" onclick="this.closest('.lr').remove()"></button></div>
+                <div class="lr"><input value="Usage Data: Pages visited, time spent, and browser/device information collected anonymously"/><button class="ab del" onclick="this.closest('.lr').remove()"></button></div>
+                <div class="lr"><input value="Cookies: Small data files stored on your device to improve browsing experience"/><button class="ab del" onclick="this.closest('.lr').remove()"></button></div>
+              </div><button class="add-btn" onclick="addLR('priv-col')">＋ Add Item</button></div>
+            </div>
+
+            <div class="block"><div class="bh"><div class="bt"> Data Protection <span class="dbc">privacy.dataProtection[]</span></div><div class="ba"><button class="btn gd" onclick="save()"> Save</button></div></div>
+              <div class="bb"><div class="le" id="priv-dp">
+                <div class="lr"><input value="All personal data is stored securely and accessed only by authorised school personnel"/><button class="ab del" onclick="this.closest('.lr').remove()"></button></div>
+                <div class="lr"><input value="We do not sell, trade, or share your personal information with third parties"/><button class="ab del" onclick="this.closest('.lr').remove()"></button></div>
+                <div class="lr"><input value="Data collected for admission purposes is used solely for school administration"/><button class="ab del" onclick="this.closest('.lr').remove()"></button></div>
+                <div class="lr"><input value="Student data is handled in compliance with applicable data protection laws"/><button class="ab del" onclick="this.closest('.lr').remove()"></button></div>
+                <div class="lr"><input value="Our website uses HTTPS encryption to protect data transmitted online"/><button class="ab del" onclick="this.closest('.lr').remove()"></button></div>
+              </div><button class="add-btn" onclick="addLR('priv-dp')">＋ Add Point</button></div>
+            </div>
+          </div>
+
+          <div>
+            <div class="block"><div class="bh"><div class="bt"> How We Use Data — Cards <span class="dbc">privacy.usageCards[]</span></div><div class="ba"><button class="btn out" onclick="addFC('priv-cards')">＋</button><button class="btn gd" onclick="save()"> Save</button></div></div>
+              <div class="bb"><div class="fcg" id="priv-cards" style="grid-template-columns:1fr;">
+                <div class="fce"><div class="fch"><span class="fcn">1</span><button class="ab del" style="margin-left:auto" onclick="this.closest('.fce').remove()"></button></div><input value=""/><input value="Communication"/><textarea>To respond to enquiries, admission requests, and general queries in a timely manner.</textarea></div>
+                <div class="fce"><div class="fch"><span class="fcn">2</span><button class="ab del" style="margin-left:auto" onclick="this.closest('.fce').remove()"></button></div><input value=""/><input value="Website Improvement"/><textarea>Anonymised analytics data used to improve website content, navigation, and performance.</textarea></div>
+                <div class="fce"><div class="fch"><span class="fcn">3</span><button class="ab del" style="margin-left:auto" onclick="this.closest('.fce').remove()"></button></div><input value=""/><input value="School Updates"/><textarea>With your consent, we may send school news, circulars, and event notifications.</textarea></div>
+              </div></div>
+            </div>
+
+            <div class="block"><div class="bh"><div class="bt"> Your Rights Table <span class="dbc">privacy.rights[]</span></div><div class="ba"><button class="btn out" onclick="addTR('priv-rt',2)">＋</button><button class="btn gd" onclick="save()"> Save</button></div></div>
+              <div class="bb" style="padding:0;">
+                <table class="te"><thead><tr><th>Right</th><th>Description</th><th style="width:34px"></th></tr></thead>
+                <tbody id="priv-rt">
+                  <tr><td><input value="Access"/></td><td><input value="Request a copy of personal data we hold about you"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+                  <tr><td><input value="Correction"/></td><td><input value="Request correction of inaccurate or incomplete data"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+                  <tr><td><input value="Deletion"/></td><td><input value="Request deletion of your personal data (subject to legal obligations)"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+                  <tr><td><input value="Opt-Out"/></td><td><input value="Unsubscribe from school communications at any time"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+                  <tr><td><input value="Complaint"/></td><td><input value="Lodge a complaint if you feel your data rights are violated"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
+                </tbody></table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /pbody -->
+  </main>
+</div><!-- /shell -->
+
+<div class="toast" id="toast"> Saved!</div>
+
+<script>
+/* ═══════════════════════════════════
+   TAB SYSTEM
+═══════════════════════════════════ */
+var TABS=['curriculum','uniform','calendar','timings','provisions','facilities','harassment','childprotect','privacy'];
+var SECTION_MAP={
+  curriculum:'curriculum',
+  uniform:'uniform',
+  calendar:'calendar',
+  timings:'timings',
+  provisions:'provisions',
+  facilities:'facilities',
+  harassment:'harassment',
+  childprotect:'child-protection',
+  privacy:'privacy-policy'
+};
+var currentTab='curriculum';
+var META={
+  curriculum:   {t:'School Info — Curriculum',               s:'school_info.curriculum',                p:'../school-information/1-curriculum.html'},
+  uniform:      {t:'School Info — School Uniform',           s:'school_info.uniform',                   p:'../school-information/2-school-uniform.html'},
+  calendar:     {t:'School Info — School Calendar',          s:'school_info.calendar',                  p:'../school-information/3-school-calendar.html'},
+  timings:      {t:'School Info — Office & School Timings',  s:'school_info.timings',                   p:'../school-information/4-office-school-timings.html'},
+  provisions:   {t:'School Info — Provisions',               s:'school_info.provisions',                p:'../school-information/5-provisions.html'},
+  facilities:   {t:'School Info — Facilities',               s:'school_info.facilities',                p:'../school-information/6-facilities.html'},
+  harassment:   {t:'School Info — Prevention of Harassment', s:'school_info.harassment',                p:'../school-information/7-prevention-sexual-harassment.html'},
+  childprotect: {t:'School Info — Child Protection Policy',  s:'school_info.childProtect',              p:'../school-information/8-child-protection-policy.html'},
+  privacy:      {t:'School Info — Privacy Policy',           s:'school_info.privacy_policy',            p:'../school-information/9-website-privacy-policy.html'},
+};
+
+function apiJson(url, options){
+  return fetch(url, Object.assign({
+    headers:{'Content-Type':'application/json'}
+  }, options||{})).then(function(res){
+    return res.json().catch(function(){return {};}).then(function(data){
+      if(!res.ok) throw new Error(data.error||'Request failed');
+      return data;
+    });
+  });
+}
+
+function getPanel(id){ return document.getElementById('tab-'+id); }
+
+function clonePanelWithFormState(panel){
+  if(!panel) return null;
+  var clone=panel.cloneNode(true);
+  var src=panel.querySelectorAll('input, textarea, select');
+  var dst=clone.querySelectorAll('input, textarea, select');
+
+  src.forEach(function(field,index){
+    var target=dst[index];
+    if(!target) return;
+
+    if(field.tagName==='TEXTAREA'){
+      target.textContent=field.value;
+      return;
+    }
+
+    if(field.tagName==='SELECT'){
+      target.value=field.value;
+      Array.from(target.options).forEach(function(option){
+        option.selected=option.value===field.value;
+      });
+      return;
+    }
+
+    if(field.type==='checkbox'||field.type==='radio'){
+      target.checked=field.checked;
+      if(field.checked) target.setAttribute('checked','checked');
+      else target.removeAttribute('checked');
+      return;
+    }
+
+    target.value=field.value;
+    target.setAttribute('value',field.value);
+  });
+
+  return clone;
+}
+
+function serializePanel(id){
+  var panel=getPanel(id);
+  var clone=clonePanelWithFormState(panel);
+  return { tab:id, html:clone?clone.innerHTML:'', updatedAt:new Date().toISOString() };
+}
+
+function hydratePanel(id, data){
+  var panel=getPanel(id);
+  if(panel && data && data.html) panel.innerHTML=data.html;
+}
+
+async function loadSection(id){
+  if(!SECTION_MAP[id]) return;
+  try{
+    var item=await apiJson(API_BASE+'/api/school-info/'+SECTION_MAP[id]);
+    if(item && item.data) hydratePanel(id,item.data);
+  }catch(e){
+    toast('Could not load '+(META[id]?META[id].t:id),true);
+  }
+}
+
+async function go(id){
+  currentTab=id;
+  TABS.forEach(function(t){document.getElementById('tab-'+t).classList.toggle('active',t===id)});
+  document.querySelectorAll('.subnav a').forEach(function(a,i){a.classList.toggle('active',TABS[i]===id)});
+  document.querySelectorAll('.sl').forEach(function(l){l.classList.remove('active')});
+  var s=document.querySelector('.sl[onclick="go(\''+id+'\')"]');if(s)s.classList.add('active');
+  var m=META[id];
+  if(m){
+    document.getElementById('atTitle').childNodes[0].textContent=m.t+' ';
+    document.getElementById('atSub').textContent=m.s+' · POST /api/school-info';
+    document.getElementById('prevBtn').onclick=function(){window.open(m.p,'_blank')};
+  }
+  await loadSection(id);
+}
+
+/* ═══════════════════════════════════
+   TOAST + SAVE
+═══════════════════════════════════ */
+function toast(msg,err){
+  var t=document.getElementById('toast');
+  t.textContent=(err?' ':' ')+(msg||'Saved!');
+  t.style.borderLeftColor=err?'var(--red)':'var(--gold-light)';
+  t.classList.add('show');
+  setTimeout(function(){t.classList.remove('show')},3000);
+}
+
+var API_BASE=window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://loretto-cbse-school.onrender.com';
+// Admin token logic removed
+
+async function save(){
+  try{
+    await apiJson(API_BASE+'/api/school-info',{
+      method:'POST',
+      body:JSON.stringify({section:SECTION_MAP[currentTab],data:serializePanel(currentTab)})
+    });
+    toast('Section saved to MongoDB!');
+  }catch(e){
+    toast(e.message||'Failed to save section',true);
+  }
+}
+async function publish(){
+  await save();
+  toast('All changes published!');
+}
+
+/* ═══════════════════════════════════
+   LIST ROW HELPER
+═══════════════════════════════════ */
+function addLR(id){
+  var c=document.getElementById(id);if(!c)return;
+  var r=document.createElement('div');r.className='lr';
+  r.innerHTML='<input type="text" placeholder="Enter item..."/><button class="ab del" onclick="this.closest(\'.lr\').remove()"></button>';
+  c.appendChild(r);r.querySelector('input').focus();
+}
+
+/* ═══════════════════════════════════
+   FEAT CARD HELPER
+═══════════════════════════════════ */
+function addFC(id){
+  var c=document.getElementById(id);if(!c)return;
+  var n=c.children.length+1;
+  var d=document.createElement('div');d.className='fce';
+  d.innerHTML='<div class="fch"><span class="fcn">Card '+n+'</span><button class="ab del" style="margin-left:auto" onclick="this.closest(\'.fce\').remove()"></button></div>'
+    +'<input placeholder="Emoji icon..."/><input placeholder="Title..."/><textarea placeholder="Description..."></textarea>';
+  c.appendChild(d);d.querySelector('input').focus();
+}
+
+/* ═══════════════════════════════════
+   TABLE ROW HELPER
+═══════════════════════════════════ */
+function addTR(tbodyId,cols){
+  var tb=document.getElementById(tbodyId);if(!tb)return;
+  var tr=document.createElement('tr');
+  var cells='';for(var i=0;i<cols;i++)cells+='<td><input type="text" placeholder="Value..."/></td>';
+  cells+='<td><button class="ab del" onclick="this.closest(\'tr\').remove()"></button></td>';
+  tr.innerHTML=cells;tb.appendChild(tr);tr.querySelector('input').focus();
+}
+
+/* ═══════════════════════════════════
+   CLOUDINARY UPLOAD
+═══════════════════════════════════ */
+async function cldUp(input,outputId){
+  if(!input.files[0])return;
+  toast('Uploading to Cloudinary...');
+  var fd=new FormData();fd.append('file',input.files[0]);
+  try{
+    var res=await fetch(API_BASE+'/api/upload',{method:'POST',body:fd});
+    var data=await res.json();
+    if(!res.ok||!data.url)throw new Error(data.error||'Upload failed');
+    var el=document.getElementById(outputId);if(el)el.value=data.url;
+    toast('Uploaded to Cloudinary!');
+  }catch(e){toast(e.message,true)}
+}
+
+/* ═══════════════════════════════════
+   ADMIN TOKEN + KEYBOARD
+═══════════════════════════════════ */
+// Admin token prompt removed
+document.addEventListener('keydown',function(e){if((e.ctrlKey||e.metaKey)&&e.key==='s'){e.preventDefault();save();}});
+loadSection(currentTab);
+</script>
+</body>
+</html>

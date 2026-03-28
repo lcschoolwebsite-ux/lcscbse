@@ -1,0 +1,2155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Panel — Loretto Central School</title>
+  <script src="/admin/admin-auth.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800&family=Nunito:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <script src="/admin/adminfooter.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy:       #0e6b6b;
+      --navy-dark:  #094f4f;
+      --navy-deep:  #062f2f;
+      --gold:       #c8960c;
+      --gold-light: #e8b020;
+      --gold-pale:  #f5e6c0;
+      --white:      #ffffff;
+      --bg:         #f4f1eb;
+      --bg2:        #edeae2;
+      --text:       #1a2e2e;
+      --text-muted: #5a6e6e;
+      --border:     #ddd6c0;
+      --sidebar-w:  260px;
+      --topbar-h:   64px;
+      --radius:     14px;
+      --shadow:     0 4px 24px rgba(9,79,79,0.10);
+      --shadow-lg:  0 12px 48px rgba(9,79,79,0.16);
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* AdminNavbar.js handles the top bar — no placeholder needed */
+
+    /* The site's sticky #lcs-header is ~52px tall.
+       All admin sticky elements sit below it. */
+
+    /* ══════════════════════════════════════
+       LAYOUT SHELL
+    ══════════════════════════════════════ */
+    .admin-shell {
+      display: flex;
+      min-height: calc(100vh - 52px);
+    }
+
+    /* ══════════════════════════════════════
+       SIDEBAR
+    ══════════════════════════════════════ */
+    .sidebar {
+      width: var(--sidebar-w);
+      background: var(--navy-deep);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      position: sticky;
+      top: 52px;
+      height: calc(100vh - 52px);
+      overflow-y: auto;
+      overflow-x: hidden;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(200,150,12,0.3) transparent;
+      z-index: 100;
+    }
+    .sidebar::-webkit-scrollbar { width: 4px; }
+    .sidebar::-webkit-scrollbar-thumb { background: rgba(200,150,12,0.3); border-radius: 4px; }
+
+    .sidebar-brand {
+      padding: 22px 20px 18px;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .sidebar-brand-icon {
+      width: 38px; height: 38px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--gold), var(--gold-light));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem;
+      flex-shrink: 0;
+      box-shadow: 0 4px 14px rgba(200,150,12,0.4);
+    }
+    .sidebar-brand-text .name {
+      font-family: 'Playfair Display', serif;
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--white);
+      line-height: 1.2;
+    }
+    .sidebar-brand-text .sub {
+      font-size: 0.62rem;
+      color: var(--gold-light);
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-top: 1px;
+    }
+
+    .sidebar-section-label {
+      font-size: 0.6rem;
+      font-weight: 800;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.28);
+      padding: 18px 20px 6px;
+    }
+
+    .sidebar-nav { padding: 4px 10px; flex: 1; }
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      font-size: 0.83rem;
+      font-weight: 600;
+      color: rgba(255,255,255,0.62);
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-bottom: 2px;
+      position: relative;
+    }
+    .nav-link:hover {
+      background: rgba(255,255,255,0.06);
+      color: rgba(255,255,255,0.9);
+    }
+    .nav-link.active {
+      background: linear-gradient(135deg, rgba(200,150,12,0.22), rgba(200,150,12,0.12));
+      color: var(--gold-light);
+      border: 1px solid rgba(200,150,12,0.3);
+    }
+    .nav-link.active::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 20%; bottom: 20%;
+      width: 3px;
+      background: var(--gold-light);
+      border-radius: 0 3px 3px 0;
+    }
+    .nav-link .icon {
+      font-size: 1rem;
+      width: 22px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+    .nav-link .badge {
+      margin-left: auto;
+      background: var(--gold);
+      color: var(--navy-deep);
+      font-size: 0.6rem;
+      font-weight: 800;
+      padding: 2px 7px;
+      border-radius: 10px;
+    }
+    .nav-link .badge.new { background: #2ecc71; color: #fff; }
+
+    .sidebar-footer {
+      padding: 14px 10px 18px;
+      border-top: 1px solid rgba(255,255,255,0.07);
+    }
+    .admin-user {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.05);
+    }
+    .admin-avatar {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--gold), var(--gold-light));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.85rem;
+      font-weight: 800;
+      color: var(--navy-deep);
+      flex-shrink: 0;
+    }
+    .admin-user-info .uname {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--white);
+    }
+    .admin-user-info .urole {
+      font-size: 0.62rem;
+      color: rgba(255,255,255,0.4);
+    }
+
+    /* ══════════════════════════════════════
+       MAIN CONTENT
+    ══════════════════════════════════════ */
+    .main {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Top bar */
+    .admin-topbar {
+      height: var(--topbar-h);
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 0 28px;
+      gap: 16px;
+      position: sticky;
+      top: 52px;
+      z-index: 50;
+      box-shadow: 0 2px 10px rgba(9,79,79,0.06);
+    }
+    .topbar-page-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--navy-dark);
+      flex: 1;
+    }
+    .topbar-page-title span {
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      display: block;
+      margin-top: 1px;
+    }
+    .topbar-actions { display: flex; align-items: center; gap: 10px; }
+    .topbar-btn {
+      display: flex; align-items: center; gap: 6px;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+    }
+    .topbar-btn.outline {
+      background: transparent;
+      border: 1.5px solid var(--border);
+      color: var(--text-muted);
+    }
+    .topbar-btn.outline:hover { border-color: var(--navy); color: var(--navy); }
+    .topbar-btn.primary {
+      background: linear-gradient(135deg, var(--navy-dark), var(--navy));
+      color: var(--white);
+      box-shadow: 0 4px 14px rgba(9,79,79,0.25);
+    }
+    .topbar-btn.primary:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(9,79,79,0.35); }
+    .topbar-btn.gold {
+      background: linear-gradient(135deg, var(--gold), var(--gold-light));
+      color: var(--navy-deep);
+      box-shadow: 0 4px 14px rgba(200,150,12,0.3);
+    }
+    .topbar-btn.gold:hover { transform: translateY(-1px); }
+
+    .topbar-divider {
+      width: 1px; height: 28px;
+      background: var(--border);
+    }
+    .topbar-notif {
+      position: relative;
+      width: 36px; height: 36px;
+      border-radius: 9px;
+      background: var(--bg);
+      border: 1.5px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .topbar-notif:hover { border-color: var(--navy); background: var(--white); }
+    .notif-dot {
+      position: absolute;
+      top: 6px; right: 6px;
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: #e74c3c;
+      border: 2px solid var(--white);
+    }
+
+    /* Page body */
+    .page-body { padding: 28px; flex: 1; }
+
+    /* ══════════════════════════════════════
+       PANELS / TABS
+    ══════════════════════════════════════ */
+    .panel { display: none; }
+    .panel.active { display: block; }
+
+    /* ══════════════════════════════════════
+       STAT CARDS ROW
+    ══════════════════════════════════════ */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+      margin-bottom: 28px;
+    }
+    .stat-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      padding: 22px 20px;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .stat-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+    }
+    .stat-card.teal::before  { background: linear-gradient(90deg, var(--navy), var(--navy-dark)); }
+    .stat-card.gold::before  { background: linear-gradient(90deg, var(--gold), var(--gold-light)); }
+    .stat-card.green::before { background: linear-gradient(90deg, #27ae60, #2ecc71); }
+    .stat-card.red::before   { background: linear-gradient(90deg, #c0392b, #e74c3c); }
+
+    .stat-card-icon {
+      width: 44px; height: 44px;
+      border-radius: 11px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem;
+      margin-bottom: 14px;
+    }
+    .stat-card.teal .stat-card-icon  { background: rgba(14,107,107,0.1); }
+    .stat-card.gold .stat-card-icon  { background: rgba(200,150,12,0.1); }
+    .stat-card.green .stat-card-icon { background: rgba(39,174,96,0.1); }
+    .stat-card.red .stat-card-icon   { background: rgba(192,57,43,0.1); }
+
+    .stat-card .val {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--text);
+      line-height: 1;
+    }
+    .stat-card .lbl {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      margin-top: 4px;
+    }
+    .stat-card .change {
+      font-size: 0.7rem;
+      font-weight: 700;
+      margin-top: 8px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .change.up   { color: #27ae60; }
+    .change.down { color: #e74c3c; }
+
+    /* ══════════════════════════════════════
+       SECTION BLOCKS
+    ══════════════════════════════════════ */
+    .section-block {
+      background: var(--white);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      margin-bottom: 24px;
+      overflow: hidden;
+    }
+    .section-block-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 22px;
+      border-bottom: 1px solid var(--border);
+      background: linear-gradient(135deg, var(--white), var(--bg));
+    }
+    .section-block-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--navy-dark);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .section-block-title .icon { font-size: 1.1rem; }
+    .section-block-title .count-pill {
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.65rem;
+      font-weight: 800;
+      background: var(--gold-pale);
+      color: var(--gold);
+      border: 1px solid rgba(200,150,12,0.3);
+      padding: 2px 9px;
+      border-radius: 20px;
+    }
+    .section-block-actions { display: flex; gap: 8px; }
+    .btn-sm {
+      padding: 6px 14px;
+      border-radius: 7px;
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+    }
+    .btn-sm.outline {
+      background: transparent;
+      border: 1.5px solid var(--border);
+      color: var(--text-muted);
+    }
+    .btn-sm.outline:hover { border-color: var(--navy); color: var(--navy); }
+    .btn-sm.primary {
+      background: var(--navy);
+      color: var(--white);
+    }
+    .btn-sm.primary:hover { background: var(--navy-dark); }
+    .btn-sm.gold {
+      background: linear-gradient(135deg, var(--gold), var(--gold-light));
+      color: var(--navy-deep);
+    }
+    .section-block-body { padding: 20px 22px; }
+
+    /* ══════════════════════════════════════
+       FORM ELEMENTS
+    ══════════════════════════════════════ */
+    .form-grid { display: grid; gap: 16px; }
+    .form-grid.cols2 { grid-template-columns: 1fr 1fr; }
+    .form-grid.cols3 { grid-template-columns: 1fr 1fr 1fr; }
+    .form-field {}
+    .form-field label {
+      display: block;
+      font-size: 0.76rem;
+      font-weight: 700;
+      color: var(--navy-dark);
+      margin-bottom: 6px;
+      letter-spacing: 0.02em;
+    }
+    .form-field label .req { color: var(--gold); margin-left: 3px; }
+    .form-field input,
+    .form-field textarea,
+    .form-field select {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: 9px;
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.88rem;
+      color: var(--text);
+      background: var(--white);
+      outline: none;
+      transition: border 0.2s, box-shadow 0.2s;
+    }
+    .form-field input:focus,
+    .form-field textarea:focus,
+    .form-field select:focus {
+      border-color: var(--navy);
+      box-shadow: 0 0 0 3px rgba(14,107,107,0.12);
+    }
+    .form-field textarea { resize: vertical; min-height: 90px; }
+    .form-hint {
+      font-size: 0.68rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    /* ══════════════════════════════════════
+       TOGGLE SWITCH
+    ══════════════════════════════════════ */
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--bg2);
+    }
+    .toggle-row:last-child { border-bottom: none; }
+    .toggle-label .tl-name {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .toggle-label .tl-desc {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+    .toggle {
+      position: relative;
+      width: 44px; height: 24px;
+      flex-shrink: 0;
+    }
+    .toggle input { display: none; }
+    .toggle-track {
+      position: absolute; inset: 0;
+      background: var(--bg2);
+      border-radius: 12px;
+      border: 1.5px solid var(--border);
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .toggle-track::after {
+      content: '';
+      position: absolute;
+      width: 16px; height: 16px;
+      border-radius: 50%;
+      background: var(--white);
+      top: 3px; left: 3px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.18);
+      transition: transform 0.2s;
+    }
+    .toggle input:checked ~ .toggle-track {
+      background: var(--navy);
+      border-color: var(--navy-dark);
+    }
+    .toggle input:checked ~ .toggle-track::after {
+      transform: translateX(20px);
+    }
+
+    /* ══════════════════════════════════════
+       TABLE
+    ══════════════════════════════════════ */
+    .data-table { width: 100%; border-collapse: collapse; }
+    .data-table thead th {
+      font-size: 0.7rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      padding: 10px 14px;
+      text-align: left;
+      background: var(--bg);
+      border-bottom: 2px solid var(--border);
+    }
+    .data-table tbody tr {
+      border-bottom: 1px solid var(--bg2);
+      transition: background 0.15s;
+    }
+    .data-table tbody tr:hover { background: rgba(14,107,107,0.03); }
+    .data-table tbody td {
+      padding: 12px 14px;
+      font-size: 0.82rem;
+      color: var(--text);
+      vertical-align: middle;
+    }
+    .td-bold { font-weight: 700; }
+    .td-muted { color: var(--text-muted); }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 11px;
+      border-radius: 20px;
+      font-size: 0.65rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+    }
+    .pill.active-pill  { background: rgba(39,174,96,0.12); color: #1e8449; border: 1px solid rgba(39,174,96,0.25); }
+    .pill.pending-pill { background: rgba(200,150,12,0.12); color: var(--gold); border: 1px solid rgba(200,150,12,0.3); }
+    .pill.draft-pill   { background: var(--bg2); color: var(--text-muted); border: 1px solid var(--border); }
+    .pill::before { content: '●'; font-size: 0.5rem; }
+
+    .action-btns { display: flex; gap: 6px; }
+    .act-btn {
+      width: 30px; height: 30px;
+      border-radius: 7px;
+      border: 1.5px solid var(--border);
+      background: var(--white);
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.8rem;
+      transition: all 0.15s;
+    }
+    .act-btn:hover { border-color: var(--navy); background: var(--bg); }
+    .act-btn.del:hover { border-color: #e74c3c; background: rgba(231,76,60,0.06); }
+
+    /* ══════════════════════════════════════
+       CONTENT EDIT ROWS
+    ══════════════════════════════════════ */
+    .content-edit-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--bg2);
+    }
+    .content-edit-row:last-child { border-bottom: none; }
+    .cer-icon {
+      width: 40px; height: 40px;
+      border-radius: 10px;
+      background: var(--bg);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem;
+      flex-shrink: 0;
+    }
+    .cer-info { flex: 1; min-width: 0; }
+    .cer-info .cer-name {
+      font-size: 0.84rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .cer-info .cer-sub {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .cer-actions { display: flex; gap: 6px; flex-shrink: 0; }
+
+    /* ══════════════════════════════════════
+       INLINE EDIT MODAL (lightweight)
+    ══════════════════════════════════════ */
+    .modal-overlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(6,47,47,0.65);
+      backdrop-filter: blur(4px);
+      z-index: 99999;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal-box {
+      background: var(--white);
+      border-radius: 18px;
+      max-width: 560px;
+      width: 100%;
+      max-height: 88vh;
+      overflow-y: auto;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.3);
+      animation: modalIn 0.25s cubic-bezier(0.22,1,0.36,1);
+    }
+    .modal-box.wide { max-width: 760px; }
+    @keyframes modalIn {
+      from { opacity: 0; transform: scale(0.94) translateY(16px); }
+      to   { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border);
+      background: linear-gradient(135deg, var(--white), var(--bg));
+    }
+    .modal-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--navy-dark);
+    }
+    .modal-close {
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      background: var(--bg2);
+      border: none;
+      cursor: pointer;
+      font-size: 0.9rem;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--text-muted);
+      transition: all 0.2s;
+    }
+    .modal-close:hover { background: #fde8e8; color: #e74c3c; }
+    .modal-body { padding: 24px; }
+    .modal-footer {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      padding: 16px 24px;
+      border-top: 1px solid var(--border);
+    }
+
+    /* ══════════════════════════════════════
+       MEDIA UPLOAD AREA
+    ══════════════════════════════════════ */
+    .upload-zone {
+      border: 2px dashed var(--border);
+      border-radius: 12px;
+      padding: 30px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      background: var(--bg);
+    }
+    .upload-zone:hover {
+      border-color: var(--navy);
+      background: rgba(14,107,107,0.04);
+    }
+    .upload-zone .uz-icon { font-size: 2rem; margin-bottom: 8px; }
+    .upload-zone .uz-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 4px;
+    }
+    .upload-zone .uz-sub { font-size: 0.72rem; color: var(--text-muted); }
+
+    /* ══════════════════════════════════════
+       GRID LAYOUT (split panels)
+    ══════════════════════════════════════ */
+    .two-col { display: grid; grid-template-columns: 2fr 1fr; gap: 24px; align-items: start; }
+    .one-col { display: grid; gap: 24px; }
+
+    /* ══════════════════════════════════════
+       ACTIVITY FEED
+    ══════════════════════════════════════ */
+    .activity-item {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--bg2);
+    }
+    .activity-item:last-child { border-bottom: none; }
+    .act-dot {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.85rem;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .act-dot.edit   { background: rgba(14,107,107,0.12); }
+    .act-dot.add    { background: rgba(39,174,96,0.12); }
+    .act-dot.delete { background: rgba(231,76,60,0.1); }
+    .act-dot.upload { background: rgba(200,150,12,0.12); }
+    .act-info .act-text {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1.4;
+    }
+    .act-info .act-time {
+      font-size: 0.68rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    /* ══════════════════════════════════════
+       QUICK LINKS
+    ══════════════════════════════════════ */
+    .quick-links-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .quick-link-btn {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 14px;
+      border-radius: 10px;
+      background: var(--bg);
+      border: 1.5px solid var(--border);
+      cursor: pointer;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--navy-dark);
+      transition: all 0.2s;
+      text-align: left;
+    }
+    .quick-link-btn:hover {
+      background: rgba(14,107,107,0.07);
+      border-color: var(--navy);
+      transform: translateY(-1px);
+    }
+    .quick-link-btn .ql-icon { font-size: 1.1rem; }
+
+    /* ══════════════════════════════════════
+       CHAR COUNTER
+    ══════════════════════════════════════ */
+    .char-count {
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      text-align: right;
+      margin-top: 3px;
+    }
+
+    /* ══════════════════════════════════════
+       RESPONSIVE
+    ══════════════════════════════════════ */
+    @media (max-width: 1100px) {
+      .stats-row { grid-template-columns: repeat(2, 1fr); }
+      .two-col { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 768px) {
+      :root { --sidebar-w: 0px; }
+      .sidebar { display: none; }
+      .stats-row { grid-template-columns: 1fr 1fr; }
+      .form-grid.cols2, .form-grid.cols3 { grid-template-columns: 1fr; }
+    }
+
+    /* ══════════════════════════════════════
+       COLOUR SWATCH PICKER
+    ══════════════════════════════════════ */
+    .swatch-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+    .swatch {
+      width: 32px; height: 32px;
+      border-radius: 8px;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: transform 0.15s;
+    }
+    .swatch:hover { transform: scale(1.15); }
+    .swatch.selected { border-color: var(--navy); }
+
+    /* ══════════════════════════════════════
+       SAVE TOAST
+    ══════════════════════════════════════ */
+    .save-toast {
+      position: fixed;
+      bottom: 28px; right: 28px;
+      background: var(--navy-deep);
+      color: var(--white);
+      padding: 12px 22px;
+      border-radius: 10px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      display: flex; align-items: center; gap: 8px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.25);
+      transform: translateY(80px);
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1);
+      z-index: 99998;
+      border-left: 4px solid var(--gold-light);
+    }
+    .save-toast.show { transform: translateY(0); opacity: 1; }
+
+    /* ══════════════════════════════════════
+       IMAGE PREVIEW STRIP
+    ══════════════════════════════════════ */
+    .img-preview-strip {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+    .img-thumb {
+      width: 80px; height: 70px;
+      border-radius: 8px;
+      background: var(--bg2);
+      border: 1.5px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .img-thumb .remove-thumb {
+      position: absolute;
+      top: 3px; right: 3px;
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      background: rgba(0,0,0,0.6);
+      color: #fff;
+      font-size: 0.55rem;
+      border: none;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Admin-only navbar — same look as site, all links go to admin pages -->
+<script src="adminnavbar.js"></script>
+
+<!-- ════════════════════════════════════════════════════════════
+     SHELL
+════════════════════════════════════════════════════════════ -->
+<div class="admin-shell">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="sidebar-brand-icon"></div>
+      <div class="sidebar-brand-text">
+        <div class="name">Loretto Central</div>
+        <div class="sub">Admin Panel</div>
+      </div>
+    </div>
+
+    <div class="sidebar-nav">
+      <div class="sidebar-section-label">Overview</div>
+      <a class="nav-link active" onclick="showPanel('dashboard')">
+        <span class="icon"></span> Dashboard
+      </a>
+
+      <div class="sidebar-section-label">Homepage Sections</div>
+      <a class="nav-link" onclick="showPanel('hero')">
+        <span class="icon"></span> Hero / Banner
+      </a>
+      <a class="nav-link" onclick="showPanel('about')">
+        <span class="icon"></span> About Section
+      </a>
+      <a class="nav-link" onclick="showPanel('whyus')">
+        <span class="icon">⭐</span> Why Choose Us
+      </a>
+      <a class="nav-link" onclick="showPanel('stats')">
+        <span class="icon"></span> Stats / Counters
+      </a>
+      <a class="nav-link" onclick="showPanel('testimonials')">
+        <span class="icon"></span> Testimonials
+      </a>
+      <a class="nav-link" onclick="showPanel('gallery')">
+        <span class="icon"></span> Gallery
+      </a>
+      <a class="nav-link" onclick="showPanel('cta')">
+        <span class="icon"></span> Admissions CTA
+      </a>
+      <a class="nav-link" onclick="showPanel('contact')">
+        <span class="icon"></span> Contact Info
+      </a>
+      <a class="nav-link" onclick="showPanel('footer')">
+        <span class="icon"></span> Footer
+      </a>
+
+      <div class="sidebar-section-label">Other Admin Pages</div>
+      <a class="nav-link" href="admin-admissions.html">
+        <span class="icon"></span> Admissions Pages
+      </a>
+
+      <div class="sidebar-section-label">Site Settings</div>
+      <a class="nav-link" onclick="showPanel('seo')">
+        <span class="icon"></span> SEO & Meta <span class="badge">!</span>
+      </a>
+      <a class="nav-link" onclick="showPanel('settings')">
+        <span class="icon"></span> General Settings
+      </a>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="admin-user">
+        <div class="admin-avatar">A</div>
+        <div class="admin-user-info">
+          <div class="uname">Admin</div>
+          <div class="urole">Super Administrator</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- TOP BAR -->
+    <div class="admin-topbar">
+      <div class="topbar-page-title" id="topbarTitle">
+        Dashboard
+        <span id="topbarSub">Overview of all homepage sections</span>
+      </div>
+      <div class="topbar-actions">
+        <button class="topbar-btn outline" onclick="window.open('../index.html','_blank')"> Preview Site</button>
+        <div class="topbar-divider"></div>
+        <div class="topbar-notif" title="Notifications"><span></span><div class="notif-dot"></div></div>
+        <button class="topbar-btn gold" onclick="saveAll()"> Save All Changes</button>
+      </div>
+    </div>
+
+    <!-- PAGE BODY -->
+    <div class="page-body">
+
+      <!-- ════════════════════════════
+           DASHBOARD PANEL
+      ════════════════════════════ -->
+      <div class="panel active" id="panel-dashboard">
+        <div class="stats-row">
+          <div class="stat-card teal">
+            <div class="stat-card-icon"></div>
+            <div class="val">9</div>
+            <div class="lbl">Sections on Homepage</div>
+            <div class="change up">↑ All configured</div>
+          </div>
+          <div class="stat-card gold">
+            <div class="stat-card-icon"></div>
+            <div class="val">3</div>
+            <div class="lbl">News Items (visible)</div>
+            <div class="change up">↑ Latest: Feb 2026</div>
+          </div>
+          <div class="stat-card green">
+            <div class="stat-card-icon"></div>
+            <div class="val">3</div>
+            <div class="lbl">Testimonials</div>
+            <div class="change up">↑ All 5-star rated</div>
+          </div>
+          <div class="stat-card red">
+            <div class="stat-card-icon"></div>
+            <div class="val">2</div>
+            <div class="lbl">Needs Attention</div>
+            <div class="change down">↓ SEO + Logo missing</div>
+          </div>
+        </div>
+
+        <div class="two-col">
+          <!-- Left -->
+          <div>
+            <div class="section-block">
+              <div class="section-block-header">
+                <div class="section-block-title"><span class="icon"></span> Homepage Sections Overview <span class="count-pill">10 sections</span></div>
+                <div class="section-block-actions">
+                  <button class="btn-sm outline">Reorder</button>
+                </div>
+              </div>
+              <div class="section-block-body" style="padding:0;">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Section</th>
+                      <th>Status</th>
+                      <th>Last Edited</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td class="td-bold"> Hero / Banner</td>
+                      <td><span class="pill active-pill">Live</span></td>
+                      <td class="td-muted">Today</td>
+                      <td><div class="action-btns"><button class="act-btn" onclick="showPanel('hero')" title="Edit"></button></div></td>
+                    </tr>
+                    <tr>
+                      <td class="td-bold"> About School</td>
+                      <td><span class="pill active-pill">Live</span></td>
+                      <td class="td-muted">Jan 2026</td>
+                      <td><div class="action-btns"><button class="act-btn" onclick="showPanel('about')" title="Edit"></button></div></td>
+                    </tr>
+                    <tr>
+                      <td class="td-bold"> Stats Counters</td>
+                      <td><span class="pill active-pill">Live</span></td>
+                      <td class="td-muted">Jan 2026</td>
+                      <td><div class="action-btns"><button class="act-btn" onclick="showPanel('stats')" title="Edit"></button></div></td>
+                    </tr>
+                    <tr>
+                      <td class="td-bold">⭐ Why Choose Us</td>
+                      <td><span class="pill active-pill">Live</span></td>
+                      <td class="td-muted">Dec 2025</td>
+                      <td><div class="action-btns"><button class="act-btn" onclick="showPanel('whyus')" title="Edit"></button></div></td>
+                    </tr>
+                    <tr>
+                      <td class="td-bold"> Testimonials</td>
+                      <td><span class="pill active-pill">Live</span></td>
+                      <td class="td-muted">Dec 2025</td>
+                      <td><div class="action-btns"><button class="act-btn" onclick="showPanel('testimonials')" title="Edit"></button></div></td>
+                    </tr>
+                    <tr>
+                      <td class="td-bold"> Gallery</td>
+                      <td><span class="pill active-pill">Live</span></td>
+                      <td class="td-muted">Nov 2025</td>
+                      <td><div class="action-btns"><button class="act-btn" onclick="showPanel('gallery')" title="Edit"></button></div></td>
+                    </tr>
+                    <tr>
+                      <td class="td-bold"> Admissions CTA</td>
+                      <td><span class="pill pending-pill">Review</span></td>
+                      <td class="td-muted">Oct 2025</td>
+                      <td><div class="action-btns"><button class="act-btn" onclick="showPanel('cta')" title="Edit"></button></div></td>
+                    </tr>
+                    <tr>
+                      <td class="td-bold"> Admissions Pages</td>
+                      <td><span class="pill active-pill">Live</span></td>
+                      <td class="td-muted">Mar 2026</td>
+                      <td><div class="action-btns"><button class="act-btn" onclick="window.location.href='admin-admissions.html'" title="Open Admissions Admin"></button></div></td>
+                    </tr>
+                    <tr>
+                      <td class="td-bold"> Contact Info</td>
+                      <td><span class="pill active-pill">Live</span></td>
+                      <td class="td-muted">Sep 2025</td>
+                      <td><div class="action-btns"><button class="act-btn" onclick="showPanel('contact')" title="Edit"></button></div></td>
+                    </tr>
+                    <tr>
+                      <td class="td-bold"> Footer</td>
+                      <td><span class="pill draft-pill">Draft</span></td>
+                      <td class="td-muted">Sep 2025</td>
+                      <td><div class="action-btns"><button class="act-btn" onclick="showPanel('footer')" title="Edit"></button></div></td>
+                    </tr>
+                    <tr>
+                      <td class="td-bold"> SEO / Meta</td>
+                      <td><span class="pill pending-pill">Incomplete</span></td>
+                      <td class="td-muted">—</td>
+                      <td><div class="action-btns"><button class="act-btn" onclick="showPanel('seo')" title="Edit"></button></div></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right -->
+          <div>
+            <div class="section-block">
+              <div class="section-block-header">
+                <div class="section-block-title"><span class="icon"></span> Quick Actions</div>
+              </div>
+              <div class="section-block-body">
+                <div class="quick-links-grid">
+                  <button class="quick-link-btn" onclick="showPanel('hero')"><span class="ql-icon"></span> Edit Hero</button>
+                  <button class="quick-link-btn" onclick="showPanel('about')"><span class="ql-icon"></span> Edit About</button>
+                  <button class="quick-link-btn" onclick="showPanel('stats')"><span class="ql-icon"></span> Update Stats</button>
+                  <button class="quick-link-btn" onclick="showPanel('testimonials')"><span class="ql-icon"></span> Testimonials</button>
+                  <button class="quick-link-btn" onclick="showPanel('gallery')"><span class="ql-icon"></span> Gallery</button>
+                  <button class="quick-link-btn" onclick="showPanel('settings')"><span class="ql-icon"></span> Navbar Notice</button>
+                  <button class="quick-link-btn" onclick="showPanel('cta')"><span class="ql-icon"></span> Edit CTA</button>
+                  <button class="quick-link-btn" onclick="window.location.href='admin-admissions.html'"><span class="ql-icon"></span> Admissions Pages</button>
+                  <button class="quick-link-btn" onclick="showPanel('contact')"><span class="ql-icon"></span> Contact</button>
+                  <button class="quick-link-btn" onclick="showPanel('seo')"><span class="ql-icon"></span> Fix SEO</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="section-block">
+              <div class="section-block-header">
+                <div class="section-block-title"><span class="icon"></span> Recent Activity</div>
+              </div>
+              <div class="section-block-body" style="padding:10px 18px;">
+                <div class="activity-item">
+                  <div class="act-dot add"></div>
+                  <div class="act-info">
+                    <div class="act-text">News item "Karate Competition" added</div>
+                    <div class="act-time">2 hours ago</div>
+                  </div>
+                </div>
+                <div class="activity-item">
+                  <div class="act-dot edit"></div>
+                  <div class="act-info">
+                    <div class="act-text">Hero headline updated — typewriter cycle</div>
+                    <div class="act-time">Yesterday</div>
+                  </div>
+                </div>
+                <div class="activity-item">
+                  <div class="act-dot upload"></div>
+                  <div class="act-info">
+                    <div class="act-text">School image re-uploaded (school img.webp)</div>
+                    <div class="act-time">3 days ago</div>
+                  </div>
+                </div>
+                <div class="activity-item">
+                  <div class="act-dot edit"></div>
+                  <div class="act-info">
+                    <div class="act-text">Contact phone numbers updated</div>
+                    <div class="act-time">1 week ago</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════════════════════════════
+           HERO PANEL
+      ════════════════════════════ -->
+      <div class="panel" id="panel-hero">
+        <div class="two-col">
+          <div>
+            <div class="section-block">
+              <div class="section-block-header">
+                <div class="section-block-title"><span class="icon"></span> Hero Background Image</div>
+                <div class="section-block-actions"><button class="btn-sm gold" onclick="saveSection('Hero')"> Save</button></div>
+              </div>
+              <div class="section-block-body">
+                <div class="upload-zone" onclick="triggerUpload('heroImg')">
+                  <div class="uz-icon"></div>
+                  <div class="uz-title">Click to upload hero background photo</div>
+                  <div class="uz-sub">Recommended: 1920×1080px · WEBP or JPG · Max 2MB<br>Current: <strong>IMGS/school img.webp</strong></div>
+                </div>
+                <input type="file" id="heroImg" style="display:none;" accept="image/*"/>
+              </div>
+            </div>
+
+            <div class="section-block">
+              <div class="section-block-header">
+                <div class="section-block-title"><span class="icon"></span> Typewriter Headlines</div>
+                <div class="section-block-actions">
+                  <button class="btn-sm outline" onclick="addTypewriterRow()">+ Add Phrase</button>
+                  <button class="btn-sm gold" onclick="saveSection('Hero')"> Save</button>
+                </div>
+              </div>
+              <div class="section-block-body">
+                <p style="font-size:0.75rem;color:var(--text-muted);margin-bottom:14px;">Each line cycles in the hero headline. Use the <strong>Bold Part</strong> field for the gold-highlighted word.</p>
+                <div id="typewriterRows">
+                  <div class="tw-edit-row" style="display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:10px;align-items:end;margin-bottom:10px;">
+                    <div class="form-field"><label>Prefix Text</label><input type="text" value="Shaping the " /></div>
+                    <div class="form-field"><label>Bold / Gold Part</label><input type="text" value="Leaders" style="border-color:var(--gold);"/></div>
+                    <div class="form-field"><label>Suffix Text</label><input type="text" value="of Tomorrow" /></div>
+                    <button class="btn-sm outline del-row" style="align-self:flex-end;height:38px;"></button>
+                  </div>
+                  <div class="tw-edit-row" style="display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:10px;align-items:end;margin-bottom:10px;">
+                    <div class="form-field"><label>Prefix Text</label><input type="text" value="" /></div>
+                    <div class="form-field"><label>Bold / Gold Part</label><input type="text" value="Excellence" style="border-color:var(--gold);"/></div>
+                    <div class="form-field"><label>Suffix Text</label><input type="text" value="in Every Classroom" /></div>
+                    <button class="btn-sm outline del-row" style="align-self:flex-end;height:38px;"></button>
+                  </div>
+                  <div class="tw-edit-row" style="display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:10px;align-items:end;margin-bottom:10px;">
+                    <div class="form-field"><label>Prefix Text</label><input type="text" value="Where " /></div>
+                    <div class="form-field"><label>Bold / Gold Part</label><input type="text" value="Character" style="border-color:var(--gold);"/></div>
+                    <div class="form-field"><label>Suffix Text</label><input type="text" value="Meets Achievement" /></div>
+                    <button class="btn-sm outline del-row" style="align-self:flex-end;height:38px;"></button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="section-block">
+              <div class="section-block-header">
+                <div class="section-block-title"><span class="icon"></span> Hero Sub-text & Buttons</div>
+                <div class="section-block-actions"><button class="btn-sm gold" onclick="saveSection('Hero')"> Save</button></div>
+              </div>
+              <div class="section-block-body">
+                <div class="form-grid">
+                  <div class="form-field">
+                    <label>Hero Badge Text <span class="req">*</span></label>
+                    <input type="text" value="CBSE Affiliated School" />
+                    <div class="form-hint">Shown in the gold pill above the headline</div>
+                  </div>
+                  <div class="form-field">
+                    <label>Subtitle Paragraph <span class="req">*</span></label>
+                    <textarea id="heroSubtext">Loretto Central School provides a world-class education rooted in values, discipline, and innovation. We nurture young minds to achieve academic excellence and holistic development.</textarea>
+                    <div class="char-count" id="heroSubCount">0 / 200 chars</div>
+                  </div>
+                  <div class="form-grid cols2">
+                    <div class="form-field">
+                      <label>Primary Button Text</label>
+                      <input type="text" value="Apply for Admission" />
+                    </div>
+                    <div class="form-field">
+                      <label>Primary Button Link</label>
+                      <input type="text" value="admissions/1-admissions.html" />
+                    </div>
+                  </div>
+                  <div class="form-grid cols2">
+                    <div class="form-field">
+                      <label>Secondary Button Text</label>
+                      <input type="text" value="Take a Virtual Tour" />
+                    </div>
+                    <div class="form-field">
+                      <label>Secondary Button Link</label>
+                      <input type="text" value="#" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sidebar widgets -->
+          <div>
+            <div class="section-block">
+              <div class="section-block-header">
+                <div class="section-block-title"><span class="icon"></span> Hero Stats</div>
+                <div class="section-block-actions"><button class="btn-sm gold" onclick="saveSection('Stats')"> Save</button></div>
+              </div>
+              <div class="section-block-body">
+                <div class="form-grid">
+                  <div class="form-grid cols2">
+                    <div class="form-field"><label>Value</label><input type="text" value="15+"/></div>
+                    <div class="form-field"><label>Label</label><input type="text" value="Years of Excellence"/></div>
+                  </div>
+                  <div class="form-grid cols2">
+                    <div class="form-field"><label>Value</label><input type="text" value="3500+"/></div>
+                    <div class="form-field"><label>Label</label><input type="text" value="Happy Students"/></div>
+                  </div>
+                  <div class="form-grid cols2">
+                    <div class="form-field"><label>Value</label><input type="text" value="30+"/></div>
+                    <div class="form-field"><label>Label</label><input type="text" value="Dedicated Faculty"/></div>
+                  </div>
+                  <div class="form-grid cols2">
+                    <div class="form-field"><label>Value</label><input type="text" value="100%"/></div>
+                    <div class="form-field"><label>Label</label><input type="text" value="Result"/></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="section-block">
+              <div class="section-block-header">
+                <div class="section-block-title"><span class="icon"></span> Visual Effects</div>
+              </div>
+              <div class="section-block-body">
+                <div class="toggle-row">
+                  <div class="toggle-label">
+                    <div class="tl-name">Twinkling Stars</div>
+                    <div class="tl-desc">Animated particle stars in background</div>
+                  </div>
+                  <label class="toggle"><input type="checkbox" checked/><span class="toggle-track"></span></label>
+                </div>
+                <div class="toggle-row">
+                  <div class="toggle-label">
+                    <div class="tl-name">Floating Particles</div>
+                    <div class="tl-desc">Rising gold particle effect</div>
+                  </div>
+                  <label class="toggle"><input type="checkbox" checked/><span class="toggle-track"></span></label>
+                </div>
+                <div class="toggle-row">
+                  <div class="toggle-label">
+                    <div class="tl-name">Perspective Grid Floor</div>
+                    <div class="tl-desc">Animated grid at hero bottom</div>
+                  </div>
+                  <label class="toggle"><input type="checkbox" checked/><span class="toggle-track"></span></label>
+                </div>
+                <div class="toggle-row">
+                  <div class="toggle-label">
+                    <div class="tl-name">Orbiting Rings (Desktop)</div>
+                    <div class="tl-desc">Decorative spinning rings</div>
+                  </div>
+                  <label class="toggle"><input type="checkbox" checked/><span class="toggle-track"></span></label>
+                </div>
+                <div class="toggle-row">
+                  <div class="toggle-label">
+                    <div class="tl-name">Scroll Hint Arrow</div>
+                    <div class="tl-desc">Scroll indicator at bottom</div>
+                  </div>
+                  <label class="toggle"><input type="checkbox" checked/><span class="toggle-track"></span></label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════════════════════════════
+           ABOUT PANEL
+      ════════════════════════════ -->
+      <div class="panel" id="panel-about">
+        <div class="two-col">
+          <div>
+            <div class="section-block">
+              <div class="section-block-header">
+                <div class="section-block-title"><span class="icon"></span> About Section Content</div>
+                <div class="section-block-actions"><button class="btn-sm gold" onclick="saveSection('About')"> Save</button></div>
+              </div>
+              <div class="section-block-body">
+                <div class="form-grid">
+                  <div class="form-grid cols2">
+                    <div class="form-field">
+                      <label>Section Tag (small text)</label>
+                      <input type="text" value="About Our School" />
+                    </div>
+                    <div class="form-field">
+                      <label>Established Year</label>
+                      <input type="text" value="1994" />
+                    </div>
+                  </div>
+                  <div class="form-field">
+                    <label>Main Heading <span class="req">*</span></label>
+                    <input type="text" value="A Legacy of Excellence & Values" />
+                  </div>
+                  <div class="form-field">
+                    <label>Paragraph 1 <span class="req">*</span></label>
+                    <textarea>Loretto Central School has been a beacon of quality education for over three decades. Founded on the principles of academic rigour, character building, and holistic development, we are proud to serve thousands of families.</textarea>
+                  </div>
+                  <div class="form-field">
+                    <label>Paragraph 2</label>
+                    <textarea>Affiliated to CBSE, New Delhi, our school offers a comprehensive curriculum from Nursery to Class XII, delivered by a team of highly qualified and passionate educators committed to bringing out the best in every child.</textarea>
+                  </div>
+                  <div class="form-grid cols2">
+                    <div class="form-field">
+                      <label>Badge Card Value (e.g. A+)</label>
+                      <input type="text" value="A+" />
+                    </div>
+                    <div class="form-field">
+                      <label>Badge Card Label</label>
+                      <input type="text" value="CBSE Grade" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="section-block">
+              <div class="section-block-header">
+                <div class="section-block-title"><span class="icon"></span> Feature Pills <span class="count-pill">8 items</span></div>
+                <div class="section-block-actions">
+                  <button class="btn-sm outline">+ Add Feature</button>
+                  <button class="btn-sm gold" onclick="saveSection('About')"> Save</button>
+                </div>
+              </div>
+              <div class="section-block-body">
+                <div id="featPillList">
+                  <div style="display:grid;grid-template-columns:2rem 1fr auto;gap:10px;align-items:center;margin-bottom:8px;">
+                    <div class="form-field"><input type="text" value="" style="text-align:center;padding:6px 4px;"/></div>
+                    <div class="form-field"><input type="text" value="CBSE Curriculum"/></div>
+                    <button class="act-btn del"></button>
+                  </div>
+                  <div style="display:grid;grid-template-columns:2rem 1fr auto;gap:10px;align-items:center;margin-bottom:8px;">
+                    <div class="form-field"><input type="text" value="" style="text-align:center;padding:6px 4px;"/></div>
+                    <div class="form-field"><input type="text" value="Smart Classrooms"/></div>
+                    <button class="act-btn del"></button>
+                  </div>
+                  <div style="display:grid;grid-template-columns:2rem 1fr auto;gap:10px;align-items:center;margin-bottom:8px;">
+                    <div class="form-field"><input type="text" value="" style="text-align:center;padding:6px 4px;"/></div>
+                    <div class="form-field"><input type="text" value="Sports Facilities"/></div>
+                    <button class="act-btn del"></button>
+                  </div>
+                  <div style="display:grid;grid-template-columns:2rem 1fr auto;gap:10px;align-items:center;margin-bottom:8px;">
+                    <div class="form-field"><input type="text" value="" style="text-align:center;padding:6px 4px;"/></div>
+                    <div class="form-field"><input type="text" value="Arts & Crafts"/></div>
+                    <button class="act-btn del"></button>
+                  </div>
+                  <div style="display:grid;grid-template-columns:2rem 1fr auto;gap:10px;align-items:center;margin-bottom:8px;">
+                    <div class="form-field"><input type="text" value="" style="text-align:center;padding:6px 4px;"/></div>
+                    <div class="form-field"><input type="text" value="Modern Labs"/></div>
+                    <button class="act-btn del"></button>
+                  </div>
+                  <div style="display:grid;grid-template-columns:2rem 1fr auto;gap:10px;align-items:center;margin-bottom:8px;">
+                    <div class="form-field"><input type="text" value="" style="text-align:center;padding:6px 4px;"/></div>
+                    <div class="form-field"><input type="text" value="School Transport"/></div>
+                    <button class="act-btn del"></button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="section-block">
+              <div class="section-block-header">
+                <div class="section-block-title"><span class="icon"></span> About Image</div>
+                <div class="section-block-actions"><button class="btn-sm gold" onclick="saveSection('About')"> Save</button></div>
+              </div>
+              <div class="section-block-body">
+                <div class="upload-zone">
+                  <div class="uz-icon"></div>
+                  <div class="uz-title">About Section Photo</div>
+                  <div class="uz-sub">Current: IMGS/school img.webp<br>Recommended 600×430px</div>
+                </div>
+              </div>
+            </div>
+            <div class="section-block">
+              <div class="section-block-header">
+                <div class="section-block-title"><span class="icon"></span> Floating Mini Cards</div>
+              </div>
+              <div class="section-block-body">
+                <div class="form-grid">
+                  <div class="form-grid cols2">
+                    <div class="form-field"><label>Card 1 Icon</label><input type="text" value=""/></div>
+                    <div class="form-field"><label>Card 1 Text</label><input type="text" value="CBSE Affiliated"/></div>
+                  </div>
+                  <div class="form-grid cols2">
+                    <div class="form-field"><label>Card 2 Icon</label><input type="text" value=""/></div>
+                    <div class="form-field"><label>Card 2 Text</label><input type="text" value="3500+ Students"/></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════════════════════════════
+           WHY US PANEL
+      ════════════════════════════ -->
+      <div class="panel" id="panel-whyus">
+        <div class="section-block">
+          <div class="section-block-header">
+            <div class="section-block-title"><span class="icon">⭐</span> "Why Choose Us" Cards <span class="count-pill">8 cards</span></div>
+            <div class="section-block-actions">
+              <button class="btn-sm outline">+ Add Card</button>
+              <button class="btn-sm gold" onclick="saveSection('Why Us')"> Save</button>
+            </div>
+          </div>
+          <div class="section-block-body">
+            <div id="whyUsCards" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+              <!-- Card template repeated -->
+              <div style="background:var(--bg);border-radius:10px;padding:16px;border:1.5px solid var(--border);">
+                <div style="display:flex;gap:10px;align-items:center;margin-bottom:12px;">
+                  <div style="font-size:1.2rem;"></div>
+                  <div style="font-size:0.8rem;font-weight:700;color:var(--navy);">Card 1</div>
+                  <button class="act-btn" style="margin-left:auto;" title="Edit" onclick="openWhyModal(1)"></button>
+                  <button class="act-btn del" title="Delete"></button>
+                </div>
+                <div class="form-grid">
+                  <div class="form-field"><label>Title</label><input type="text" value="Expert Faculty"/></div>
+                  <div class="form-field"><label>Description</label><textarea style="min-height:60px;">Our teachers are highly qualified, trained, and dedicated to the success of every student.</textarea></div>
+                  <div class="form-field"><label>Icon Image Path</label><input type="text" value="IMGS/faculty.webp"/></div>
+                </div>
+              </div>
+              <div style="background:var(--bg);border-radius:10px;padding:16px;border:1.5px solid var(--border);">
+                <div style="display:flex;gap:10px;align-items:center;margin-bottom:12px;">
+                  <div style="font-size:1.2rem;"></div>
+                  <div style="font-size:0.8rem;font-weight:700;color:var(--navy);">Card 2</div>
+                  <button class="act-btn" style="margin-left:auto;" title="Edit" onclick="openWhyModal(2)"></button>
+                  <button class="act-btn del" title="Delete"></button>
+                </div>
+                <div class="form-grid">
+                  <div class="form-field"><label>Title</label><input type="text" value="Award-Winning Results"/></div>
+                  <div class="form-field"><label>Description</label><textarea style="min-height:60px;">Consistently outstanding CBSE board results with multiple toppers and merit holders each year.</textarea></div>
+                  <div class="form-field"><label>Icon Image Path</label><input type="text" value="IMGS/results.webp"/></div>
+                </div>
+              </div>
+              <div style="background:var(--bg);border-radius:10px;padding:16px;border:1.5px solid var(--border);">
+                <div style="display:flex;gap:10px;align-items:center;margin-bottom:12px;">
+                  <div style="font-size:1.2rem;"></div>
+                  <div style="font-size:0.8rem;font-weight:700;color:var(--navy);">Card 3</div>
+                  <button class="act-btn" style="margin-left:auto;"></button>
+                  <button class="act-btn del"></button>
+                </div>
+                <div class="form-grid">
+                  <div class="form-field"><label>Title</label><input type="text" value="Global Exposure"/></div>
+                  <div class="form-field"><label>Description</label><textarea style="min-height:60px;">Exchange programs, olympiads, and international competitions.</textarea></div>
+                  <div class="form-field"><label>Icon Image Path</label><input type="text" value="IMGS/global.webp"/></div>
+                </div>
+              </div>
+              <div style="background:var(--bg);border-radius:10px;padding:16px;border:1.5px solid var(--border);">
+                <div style="display:flex;gap:10px;align-items:center;margin-bottom:12px;">
+                  <div style="font-size:1.2rem;"></div>
+                  <div style="font-size:0.8rem;font-weight:700;color:var(--navy);">Card 4</div>
+                  <button class="act-btn" style="margin-left:auto;"></button>
+                  <button class="act-btn del"></button>
+                </div>
+                <div class="form-grid">
+                  <div class="form-field"><label>Title</label><input type="text" value="Safe & Secure Campus"/></div>
+                  <div class="form-field"><label>Description</label><textarea style="min-height:60px;">CCTV surveillance, trained security staff, and a child-friendly, safe learning environment.</textarea></div>
+                  <div class="form-field"><label>Icon Image Path</label><input type="text" value="IMGS/safety.webp"/></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════════════════════════════
+           STATS PANEL
+      ════════════════════════════ -->
+      <div class="panel" id="panel-stats">
+        <div class="section-block">
+          <div class="section-block-header">
+            <div class="section-block-title"><span class="icon"></span> Hero & Achievement Counters</div>
+            <div class="section-block-actions"><button class="btn-sm gold" onclick="saveSection('Stats')"> Save</button></div>
+          </div>
+          <div class="section-block-body">
+            <p style="font-size:0.75rem;color:var(--text-muted);margin-bottom:18px;">These numbers animate on scroll. The "Number" field is the target count. "Suffix" is the symbol after (e.g. +, %).</p>
+            <table class="data-table">
+              <thead><tr><th>Label</th><th>Number</th><th>Suffix</th><th>Section</th><th>Actions</th></tr></thead>
+              <tbody>
+                <tr>
+                  <td><input type="text" value="Years of Excellence" style="border:none;background:transparent;font-family:Nunito;font-size:0.82rem;width:100%;"/></td>
+                  <td><input type="number" value="15" style="border:none;background:transparent;font-family:Nunito;font-size:0.82rem;width:60px;"/></td>
+                  <td><input type="text" value="+" style="border:none;background:transparent;font-family:Nunito;font-size:0.82rem;width:40px;"/></td>
+                  <td><span class="pill active-pill">Hero</span></td>
+                  <td><div class="action-btns"><button class="act-btn del"></button></div></td>
+                </tr>
+                <tr>
+                  <td><input type="text" value="Happy Students" style="border:none;background:transparent;font-family:Nunito;font-size:0.82rem;width:100%;"/></td>
+                  <td><input type="number" value="3500" style="border:none;background:transparent;font-family:Nunito;font-size:0.82rem;width:60px;"/></td>
+                  <td><input type="text" value="+" style="border:none;background:transparent;font-family:Nunito;font-size:0.82rem;width:40px;"/></td>
+                  <td><span class="pill active-pill">Hero</span></td>
+                  <td><div class="action-btns"><button class="act-btn del"></button></div></td>
+                </tr>
+                <tr>
+                  <td><input type="text" value="Dedicated Faculty" style="border:none;background:transparent;font-family:Nunito;font-size:0.82rem;width:100%;"/></td>
+                  <td><input type="number" value="30" style="border:none;background:transparent;font-family:Nunito;font-size:0.82rem;width:60px;"/></td>
+                  <td><input type="text" value="+" style="border:none;background:transparent;font-family:Nunito;font-size:0.82rem;width:40px;"/></td>
+                  <td><span class="pill active-pill">Hero</span></td>
+                  <td><div class="action-btns"><button class="act-btn del"></button></div></td>
+                </tr>
+                <tr>
+                  <td><input type="text" value="Pass Result" style="border:none;background:transparent;font-family:Nunito;font-size:0.82rem;width:100%;"/></td>
+                  <td><input type="number" value="100" style="border:none;background:transparent;font-family:Nunito;font-size:0.82rem;width:60px;"/></td>
+                  <td><input type="text" value="%" style="border:none;background:transparent;font-family:Nunito;font-size:0.82rem;width:40px;"/></td>
+                  <td><span class="pill active-pill">Hero</span></td>
+                  <td><div class="action-btns"><button class="act-btn del"></button></div></td>
+                </tr>
+              </tbody>
+            </table>
+            <button class="btn-sm outline" style="margin-top:12px;">+ Add Counter</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════════════════════════════
+           TESTIMONIALS PANEL
+      ════════════════════════════ -->
+      <div class="panel" id="panel-testimonials">
+        <div class="section-block">
+          <div class="section-block-header">
+            <div class="section-block-title"><span class="icon"></span> Testimonials <span class="count-pill">3 visible</span></div>
+            <div class="section-block-actions">
+              <button class="btn-sm outline" onclick="openTestiModal()">+ Add New</button>
+              <button class="btn-sm gold" onclick="saveSection('Testimonials')"> Save</button>
+            </div>
+          </div>
+          <div class="section-block-body" style="padding:0;">
+            <table class="data-table">
+              <thead><tr><th>Photo</th><th>Name</th><th>Role</th><th>Excerpt</th><th>Rating</th><th>Visible</th><th>Actions</th></tr></thead>
+              <tbody>
+                <tr>
+                  <td>IMG</td>
+                  <td class="td-bold">Priya Sharma</td>
+                  <td class="td-muted">Parent of Class VIII</td>
+                  <td style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text-muted);font-size:0.78rem;">Loretto Central School has been the best decision for our daughter...</td>
+                  <td>⭐⭐⭐⭐⭐</td>
+                  <td><label class="toggle"><input type="checkbox" checked/><span class="toggle-track"></span></label></td>
+                  <td><div class="action-btns"><button class="act-btn"></button><button class="act-btn del"></button></div></td>
+                </tr>
+                <tr>
+                  <td>IMG</td>
+                  <td class="td-bold">Rajesh Kumar</td>
+                  <td class="td-muted">Parent of Class X</td>
+                  <td style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text-muted);font-size:0.78rem;">My son has grown tremendously since joining Loretto...</td>
+                  <td>⭐⭐⭐⭐⭐</td>
+                  <td><label class="toggle"><input type="checkbox" checked/><span class="toggle-track"></span></label></td>
+                  <td><div class="action-btns"><button class="act-btn"></button><button class="act-btn del"></button></div></td>
+                </tr>
+                <tr>
+                  <td>IMG</td>
+                  <td class="td-bold">Sunita Verma</td>
+                  <td class="td-muted">Parent of Class XII Alumni</td>
+                  <td style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text-muted);font-size:0.78rem;">The faculty at Loretto Central is exceptional...</td>
+                  <td>⭐⭐⭐⭐⭐</td>
+                  <td><label class="toggle"><input type="checkbox" checked/><span class="toggle-track"></span></label></td>
+                  <td><div class="action-btns"><button class="act-btn"></button><button class="act-btn del"></button></div></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════════════════════════════
+           GALLERY PANEL
+      ════════════════════════════ -->
+      <div class="panel" id="panel-gallery">
+        <div class="section-block">
+          <div class="section-block-header">
+            <div class="section-block-title"><span class="icon"></span> Gallery Images <span class="count-pill">Homepage photos</span></div>
+            <div class="section-block-actions">
+              <button class="btn-sm outline" onclick="addGalleryImageRow()">+ Add Image</button>
+              <button class="btn-sm gold" onclick="saveSection('Gallery')"> Save</button>
+            </div>
+          </div>
+          <div class="section-block-body" style="padding:0;">
+            <table class="data-table">
+              <thead><tr><th>Photo</th><th>Caption</th><th>Visible</th><th>Actions</th></tr></thead>
+              <tbody id="galleryImageRows">
+                <tr>
+                  <td>
+                    <div style="display:flex;align-items:center;gap:10px;">
+                      <div style="width:54px;height:42px;border-radius:8px;overflow:hidden;background:var(--bg2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:.68rem;color:var(--text-muted);">IMG</div>
+                      <div style="display:grid;gap:6px;width:100%;">
+                        <input type="url" value="" placeholder="Cloudinary image URL" style="border:1px solid var(--border);border-radius:6px;padding:6px 10px;font-family:Nunito;font-size:0.8rem;"/>
+                        <button class="btn-sm outline" type="button" data-action="upload-gallery">Upload</button>
+                      </div>
+                    </div>
+                  </td>
+                  <td><input type="text" value="Our Campus" style="border:1px solid var(--border);border-radius:6px;padding:6px 10px;font-family:Nunito;"/></td>
+                  <td><label class="toggle"><input type="checkbox" checked/><span class="toggle-track"></span></label></td>
+                  <td><div class="action-btns"><button class="act-btn del"></button></div></td>
+                </tr>
+                <tr>
+                  <td>
+                    <div style="display:flex;align-items:center;gap:10px;">
+                      <div style="width:54px;height:42px;border-radius:8px;overflow:hidden;background:var(--bg2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:.68rem;color:var(--text-muted);">IMG</div>
+                      <div style="display:grid;gap:6px;width:100%;">
+                        <input type="url" value="" placeholder="Cloudinary image URL" style="border:1px solid var(--border);border-radius:6px;padding:6px 10px;font-family:Nunito;font-size:0.8rem;"/>
+                        <button class="btn-sm outline" type="button" data-action="upload-gallery">Upload</button>
+                      </div>
+                    </div>
+                  </td>
+                  <td><input type="text" value="Sports & Athletics" style="border:1px solid var(--border);border-radius:6px;padding:6px 10px;font-family:Nunito;"/></td>
+                  <td><label class="toggle"><input type="checkbox" checked/><span class="toggle-track"></span></label></td>
+                  <td><div class="action-btns"><button class="act-btn del"></button></div></td>
+                </tr>
+                <tr>
+                  <td>
+                    <div style="display:flex;align-items:center;gap:10px;">
+                      <div style="width:54px;height:42px;border-radius:8px;overflow:hidden;background:var(--bg2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:.68rem;color:var(--text-muted);">IMG</div>
+                      <div style="display:grid;gap:6px;width:100%;">
+                        <input type="url" value="" placeholder="Cloudinary image URL" style="border:1px solid var(--border);border-radius:6px;padding:6px 10px;font-family:Nunito;font-size:0.8rem;"/>
+                        <button class="btn-sm outline" type="button" data-action="upload-gallery">Upload</button>
+                      </div>
+                    </div>
+                  </td>
+                  <td><input type="text" value="Arts & Crafts" style="border:1px solid var(--border);border-radius:6px;padding:6px 10px;font-family:Nunito;"/></td>
+                  <td><label class="toggle"><input type="checkbox" checked/><span class="toggle-track"></span></label></td>
+                  <td><div class="action-btns"><button class="act-btn del"></button></div></td>
+                </tr>
+                <tr>
+                  <td>
+                    <div style="display:flex;align-items:center;gap:10px;">
+                      <div style="width:54px;height:42px;border-radius:8px;overflow:hidden;background:var(--bg2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:.68rem;color:var(--text-muted);">IMG</div>
+                      <div style="display:grid;gap:6px;width:100%;">
+                        <input type="url" value="" placeholder="Cloudinary image URL" style="border:1px solid var(--border);border-radius:6px;padding:6px 10px;font-family:Nunito;font-size:0.8rem;"/>
+                        <button class="btn-sm outline" type="button" data-action="upload-gallery">Upload</button>
+                      </div>
+                    </div>
+                  </td>
+                  <td><input type="text" value="Science Laboratories" style="border:1px solid var(--border);border-radius:6px;padding:6px 10px;font-family:Nunito;"/></td>
+                  <td><label class="toggle"><input type="checkbox" checked/><span class="toggle-track"></span></label></td>
+                  <td><div class="action-btns"><button class="act-btn del"></button></div></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════════════════════════════
+           CTA PANEL
+      ════════════════════════════ -->
+      <div class="panel" id="panel-cta">
+        <div class="section-block">
+          <div class="section-block-header">
+            <div class="section-block-title"><span class="icon"></span> Admissions CTA Section</div>
+            <div class="section-block-actions"><button class="btn-sm gold" onclick="saveSection('CTA')"> Save</button></div>
+          </div>
+          <div class="section-block-body">
+            <div class="form-grid cols2">
+              <div class="form-field">
+                <label>Headline <span class="req">*</span></label>
+                <input type="text" value="Admissions Open for 2025–26" />
+              </div>
+              <div class="form-field">
+                <label>Sub-text</label>
+                <textarea>Join the Loretto Central School family. Limited seats available. Apply now to secure your child's future in an environment that fosters excellence, values, and all-round growth.</textarea>
+              </div>
+              <div class="form-field">
+                <label>Primary Button Text</label>
+                <input type="text" value="Apply for Admission Now" />
+              </div>
+              <div class="form-field">
+                <label>Primary Button Link</label>
+                <input type="text" value="admissions/1-admissions.html" />
+              </div>
+              <div class="form-field">
+                <label>Secondary Button Text</label>
+                <input type="text" value="Download Prospectus" />
+              </div>
+              <div class="form-field">
+                <label>Secondary Button Link</label>
+                <input type="text" value="admissions/1-admissions.html" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════════════════════════════
+           CONTACT PANEL
+      ════════════════════════════ -->
+      <div class="panel" id="panel-contact">
+        <div class="two-col">
+          <div>
+            <div class="section-block">
+              <div class="section-block-header">
+                <div class="section-block-title"><span class="icon"></span> Contact Information</div>
+                <div class="section-block-actions"><button class="btn-sm gold" onclick="saveSection('Contact')"> Save</button></div>
+              </div>
+              <div class="section-block-body">
+                <div class="form-grid">
+                  <div class="form-field">
+                    <label>Full Address <span class="req">*</span></label>
+                    <textarea style="min-height:70px;">Loretto Central School, Main Road, Near City Centre, PIN – 123456</textarea>
+                  </div>
+                  <div class="form-field">
+                    <label>Phone Numbers</label>
+                    <input type="text" value="+91 98765 43210 | +91 12345 67890" />
+                    <div class="form-hint">Separate multiple numbers with |</div>
+                  </div>
+                  <div class="form-field">
+                    <label>Email Addresses</label>
+                    <input type="text" value="info@school.edu, principal@school.edu" />
+                    <div class="form-hint">Separate with comma</div>
+                  </div>
+                  <div class="form-grid cols2">
+                    <div class="form-field">
+                      <label>Office Hours</label>
+                      <input type="text" value="Mon–Sat: 8:00 AM – 4:00 PM" />
+                    </div>
+                    <div class="form-field">
+                      <label>Sunday / Holiday</label>
+                      <input type="text" value="Closed" />
+                    </div>
+                  </div>
+                  <div class="form-field">
+                    <label>Google Maps Embed URL</label>
+                    <input type="text" placeholder="Paste your Google Maps embed URL here..." />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="section-block">
+              <div class="section-block-header">
+                <div class="section-block-title"><span class="icon"></span> Contact Form Settings</div>
+              </div>
+              <div class="section-block-body">
+                <div class="toggle-row">
+                  <div class="toggle-label"><div class="tl-name">Enable Contact Form</div><div class="tl-desc">Show send message form on homepage</div></div>
+                  <label class="toggle"><input type="checkbox" checked/><span class="toggle-track"></span></label>
+                </div>
+                <div class="toggle-row">
+                  <div class="toggle-label"><div class="tl-name">Email Notifications</div><div class="tl-desc">Send email alert on new submissions</div></div>
+                  <label class="toggle"><input type="checkbox" checked/><span class="toggle-track"></span></label>
+                </div>
+                <div class="form-field" style="margin-top:16px;">
+                  <label>Recipient Email</label>
+                  <input type="email" value="info@school.edu" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════════════════════════════
+           FOOTER PANEL
+      ════════════════════════════ -->
+      <div class="panel" id="panel-footer">
+        <div class="two-col">
+          <div>
+            <div class="section-block">
+              <div class="section-block-header">
+                <div class="section-block-title"><span class="icon"></span> Footer Content</div>
+                <div class="section-block-actions"><button class="btn-sm gold" onclick="saveSection('Footer')"> Save</button></div>
+              </div>
+              <div class="section-block-body">
+                <div class="form-grid">
+                  <div class="form-field">
+                    <label>School Description (Footer brand text)</label>
+                    <textarea style="min-height:70px;">Loretto Central School — nurturing young minds through academic excellence, values, and holistic development since 1994.</textarea>
+                  </div>
+                  <div class="form-field">
+                    <label>Copyright Text</label>
+                    <input type="text" value="© 2026 Loretto Central School. All rights reserved." />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="section-block">
+              <div class="section-block-header">
+                <div class="section-block-title"><span class="icon"></span> Social Media Links</div>
+              </div>
+              <div class="section-block-body">
+                <div class="form-grid cols2">
+                  <div class="form-field"><label>Facebook</label><input type="url" placeholder="https://facebook.com/..." /></div>
+                  <div class="form-field"><label>Instagram</label><input type="url" placeholder="https://instagram.com/..." /></div>
+                  <div class="form-field"><label>YouTube</label><input type="url" placeholder="https://youtube.com/..." /></div>
+                  <div class="form-field"><label>Twitter / X</label><input type="url" placeholder="https://x.com/..." /></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="section-block">
+              <div class="section-block-header">
+                <div class="section-block-title"><span class="icon"></span> Footer Quick Links</div>
+              </div>
+              <div class="section-block-body">
+                <p style="font-size:0.72rem;color:var(--text-muted);margin-bottom:12px;">Manage the 3 link columns in the footer</p>
+                <div style="display:grid;gap:8px;" id="footerLinks">
+                  <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:8px;align-items:end;">
+                    <div class="form-field"><label>Link Text</label><input type="text" value="About School"/></div>
+                    <div class="form-field"><label>URL</label><input type="text" value="#about-section"/></div>
+                    <button class="act-btn del" style="align-self:flex-end;"></button>
+                  </div>
+                  <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:8px;align-items:end;">
+                    <div class="form-field"><input type="text" value="Admissions"/></div>
+                    <div class="form-field"><input type="text" value="admissions/1-admissions.html"/></div>
+                    <button class="act-btn del"></button>
+                  </div>
+                  <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:8px;align-items:end;">
+                    <div class="form-field"><input type="text" value="Gallery"/></div>
+                    <div class="form-field"><input type="text" value="#gallery-section"/></div>
+                    <button class="act-btn del"></button>
+                  </div>
+                </div>
+                <button class="btn-sm outline" style="margin-top:10px;">+ Add Link</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════════════════════════════
+           SEO PANEL
+      ════════════════════════════ -->
+      <div class="panel" id="panel-seo">
+        <div class="section-block">
+          <div class="section-block-header">
+            <div class="section-block-title"><span class="icon"></span> SEO & Meta Tags</div>
+            <div class="section-block-actions"><button class="btn-sm gold" onclick="saveSection('SEO')"> Save</button></div>
+          </div>
+          <div class="section-block-body">
+            <div class="form-grid cols2">
+              <div class="form-field">
+                <label>Page Title (browser tab) <span class="req">*</span></label>
+                <input type="text" value="Loretto Central School" />
+                <div class="form-hint">Recommended: 50–60 characters</div>
+              </div>
+              <div class="form-field">
+                <label>Meta Description <span class="req">*</span></label>
+                <textarea style="min-height:70px;" placeholder="Brief description of the school for search engines..."></textarea>
+                <div class="form-hint">Recommended: 150–160 characters</div>
+              </div>
+              <div class="form-field">
+                <label>Meta Keywords</label>
+                <input type="text" placeholder="CBSE school, Karkala, Loretto Central, admissions..." />
+              </div>
+              <div class="form-field">
+                <label>Canonical URL</label>
+                <input type="text" placeholder="https://www.school.edu/" />
+              </div>
+              <div class="form-field">
+                <label>OG / Social Preview Image</label>
+                <input type="text" placeholder="IMGS/og-image.jpg" />
+                <div class="form-hint">1200×630px recommended for social sharing</div>
+              </div>
+              <div class="form-field">
+                <label>Favicon Path</label>
+                <input type="text" value="favicon.ico" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════════════════════════════
+           GENERAL SETTINGS PANEL
+      ════════════════════════════ -->
+      <div class="panel" id="panel-settings">
+        <div class="two-col">
+          <div>
+            <div class="section-block">
+              <div class="section-block-header">
+                <div class="section-block-title"><span class="icon"></span> General Site Settings</div>
+                <div class="section-block-actions"><button class="btn-sm gold" onclick="saveSection('Settings')"> Save</button></div>
+              </div>
+              <div class="section-block-body">
+                <div class="form-grid">
+                  <div class="form-field">
+                    <label>School Name <span class="req">*</span></label>
+                    <input type="text" value="Loretto Central School" />
+                  </div>
+                  <div class="form-grid cols2">
+                    <div class="form-field">
+                      <label>Tagline</label>
+                      <input type="text" value="Excellence · Values · Innovation" />
+                    </div>
+                    <div class="form-field">
+                      <label>Affiliation</label>
+                      <input type="text" value="CBSE Affiliated" />
+                    </div>
+                  </div>
+                  <div class="form-field">
+                    <label>School Logo</label>
+                    <div class="upload-zone" style="padding:16px;">
+                      <div class="uz-icon"></div>
+                      <div class="uz-title">Upload Logo</div>
+                      <div class="uz-sub">PNG with transparent bg · 200×200px ideal</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="section-block">
+              <div class="section-block-header">
+                <div class="section-block-title"><span class="icon"></span> Navbar Notice Ticker</div>
+                <div class="section-block-actions"><button class="btn-sm gold" onclick="saveSection('Settings')"> Save</button></div>
+              </div>
+              <div class="section-block-body">
+                <div class="toggle-row">
+                  <div class="toggle-label"><div class="tl-name">Show Moving Notice Line</div><div class="tl-desc">This controls the scrolling text in the main navbar area on the public website</div></div>
+                  <label class="toggle"><input type="checkbox" checked/><span class="toggle-track"></span></label>
+                </div>
+                <div class="form-field" style="margin-top:14px;">
+                  <label>Notice Text</label>
+                  <div class="form-hint">Use `|` to separate multiple announcements in the moving line.</div>
+                  <input type="text" value=" Admissions open for 2025–26 |  National Karate Champions |  100% Results | Apply Now!" />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="section-block">
+              <div class="section-block-header">
+                <div class="section-block-title"><span class="icon"></span> Colour Scheme</div>
+              </div>
+              <div class="section-block-body">
+                <div class="form-field">
+                  <label>Primary (Teal)</label>
+                  <input type="color" value="#0e6b6b" style="height:36px;border:1.5px solid var(--border);border-radius:8px;cursor:pointer;width:100%;"/>
+                </div>
+                <div class="form-field">
+                  <label>Primary Dark</label>
+                  <input type="color" value="#094f4f" style="height:36px;border:1.5px solid var(--border);border-radius:8px;cursor:pointer;width:100%;"/>
+                </div>
+                <div class="form-field">
+                  <label>Accent (Gold)</label>
+                  <input type="color" value="#c8960c" style="height:36px;border:1.5px solid var(--border);border-radius:8px;cursor:pointer;width:100%;"/>
+                </div>
+              </div>
+            </div>
+            <div class="section-block">
+              <div class="section-block-header">
+                <div class="section-block-title"><span class="icon"></span> Site Visibility</div>
+              </div>
+              <div class="section-block-body">
+                <div class="toggle-row">
+                  <div class="toggle-label"><div class="tl-name">Site Live</div><div class="tl-desc">Toggle to take site offline for maintenance</div></div>
+                  <label class="toggle"><input type="checkbox" checked/><span class="toggle-track"></span></label>
+                </div>
+                <div class="toggle-row">
+                  <div class="toggle-label"><div class="tl-name">Maintenance Mode</div><div class="tl-desc">Show maintenance page to visitors</div></div>
+                  <label class="toggle"><input type="checkbox"/><span class="toggle-track"></span></label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /page-body -->
+  </main>
+</div><!-- /admin-shell -->
+
+<!-- TESTIMONIAL ADD MODAL -->
+<div class="modal-overlay" id="testiModal" onclick="if(event.target===this)closeTestiModal()">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div class="modal-title"> Add Testimonial</div>
+      <button class="modal-close" aria-label="Close modal" onclick="closeTestiModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-grid cols2">
+          <div class="form-field"><label>Parent / Person Name</label><input type="text" id="testiName" placeholder="e.g. Priya Sharma"/></div>
+          <div class="form-field"><label>Role / Class</label><input type="text" id="testiRole" placeholder="e.g. Parent of Class VIII Student"/></div>
+        </div>
+        <div class="form-field">
+          <label>Photo</label>
+          <div class="upload-zone" id="testiPhotoZone" style="padding:16px;" onclick="triggerUpload('testiPhotoFile')">
+            <div class="uz-icon"></div>
+            <div class="uz-title">Upload testimonial photo</div>
+            <div class="uz-sub">JPG, PNG or WEBP via Cloudinary</div>
+          </div>
+          <input type="file" id="testiPhotoFile" style="display:none;" accept="image/*"/>
+        </div>
+        <div class="form-field"><label>Photo URL</label><input type="url" id="testiPhotoUrl" placeholder="https://res.cloudinary.com/..."/></div>
+        <div class="form-field"><label>Testimonial Text</label><textarea id="testiText" placeholder="What they said about the school..."></textarea></div>
+        <div class="form-field">
+          <label>Star Rating</label>
+          <select id="testiRating"><option>5 Stars ⭐⭐⭐⭐⭐</option><option>4 Stars ⭐⭐⭐⭐</option><option>3 Stars ⭐⭐⭐</option></select>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="topbar-btn outline" onclick="closeTestiModal()">Cancel</button>
+      <button class="topbar-btn gold" id="testiModalSaveBtn" type="button"> Add Testimonial</button>
+    </div>
+  </div>
+</div>
+
+<!-- SAVE TOAST -->
+<div class="save-toast" id="saveToast"> Changes saved successfully!</div>
+
+<script>
+  /* ══ PANEL NAVIGATION ══ */
+  const panelTitles = {
+    dashboard:    ['Dashboard', 'Overview of all homepage sections'],
+    hero:         ['Hero / Banner', 'Edit the full-screen hero section'],
+    about:        ['About Section', 'School description, features & image'],
+    whyus:        ['Why Choose Us', 'Manage the 8 feature cards'],
+    stats:        ['Stats & Counters', 'Animated number counters'],
+    testimonials: ['Testimonials', 'Parent & student reviews'],
+    gallery:      ['Gallery', 'Gallery grid categories'],
+    cta:          ['Admissions CTA', 'Call-to-action banner section'],
+    contact:      ['Contact Info', 'Address, phone, email & form'],
+    footer:       ['Footer', 'Footer links, social media & copyright'],
+    seo:          ['SEO & Meta Tags', 'Search engine & social metadata'],
+    settings:     ['General Settings', 'School name, logo, colours & notice'],
+  };
+
+  function showPanel(id) {
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+    const panel = document.getElementById('panel-' + id);
+    if (panel) panel.classList.add('active');
+    const link = document.querySelector(`.nav-link[onclick="showPanel('${id}')"]`);
+    if (link) link.classList.add('active');
+    const info = panelTitles[id] || [id, ''];
+    document.getElementById('topbarTitle').childNodes[0].textContent = info[0] + ' ';
+    document.getElementById('topbarSub').textContent = info[1];
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  /* ══ SAVE TOAST ══ */
+  function showToast(msg) {
+    const t = document.getElementById('saveToast');
+    t.textContent = ' ' + (msg || 'Changes saved!');
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3000);
+  }
+  function saveSection(section) { showToast(section + ' section saved!'); }
+  function saveAll() {
+    if (window.LCSAdminNav) { window.LCSAdminNav.triggerSave(); }
+    else { showToast('All changes saved successfully!'); }
+  }
+
+  /* ══ CHAR COUNTER ══ */
+  const heroSub = document.getElementById('heroSubtext');
+  const heroCount = document.getElementById('heroSubCount');
+  if (heroSub && heroCount) {
+    heroSub.addEventListener('input', () => {
+      heroCount.textContent = heroSub.value.length + ' / 200 chars';
+      heroCount.style.color = heroSub.value.length > 180 ? '#e74c3c' : 'var(--text-muted)';
+    });
+    heroCount.textContent = heroSub.value.length + ' / 200 chars';
+  }
+
+  /* ══ ADD TYPEWRITER ROW ══ */
+  function addTypewriterRow() {
+    const container = document.getElementById('typewriterRows');
+    const row = document.createElement('div');
+    row.className = 'tw-edit-row';
+    row.style.cssText = 'display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:10px;align-items:end;margin-bottom:10px;';
+    row.innerHTML = `
+      <div class="form-field"><label>Prefix Text</label><input type="text" placeholder="e.g. Where " /></div>
+      <div class="form-field"><label>Bold / Gold Part</label><input type="text" placeholder="e.g. Excellence" style="border-color:var(--gold);"/></div>
+      <div class="form-field"><label>Suffix Text</label><input type="text" placeholder="e.g. Begins Here" /></div>
+      <button class="btn-sm outline del-row" style="align-self:flex-end;height:38px;"></button>
+    `;
+    row.querySelector('.del-row').addEventListener('click', () => row.remove());
+    container.appendChild(row);
+  }
+  document.querySelectorAll('.del-row').forEach(btn => {
+    btn.addEventListener('click', () => btn.closest('.tw-edit-row').remove());
+  });
+
+  /* ══ MODALS ══ */
+  function openTestiModal() { document.getElementById('testiModal').classList.add('open'); }
+  function closeTestiModal() { document.getElementById('testiModal').classList.remove('open'); }
+
+  /* ══ FILE UPLOAD TRIGGER ══ */
+  function triggerUpload(id) { document.getElementById(id)?.click(); }
+
+  /* ══ Ctrl+S handled by AdminNavbar.js ══ */
+</script>
+<script src="/admin/admin-panel-homepage.js?v=20260328-3"></script>
+</body>
+</html>
