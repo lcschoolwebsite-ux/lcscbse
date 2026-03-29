@@ -4,9 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Academics — Admin | Loretto Central School</title>
-  <script src="/admin/admin-auth.js"></script>
+  <script src="/admin/admin-auth.js?v=20260329-1"></script>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800&family=Nunito:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
-  <script src="/admin/adminfooter.js"></script>
+  <script src="/admin/adminfooter.js?v=20260329-1"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
@@ -290,7 +290,8 @@
     </div>
     <div class="sb-nav">
       <div class="sb-sec">Academics</div>
-      <a class="sb-lnk active" onclick="goTab('faculty')"><span class="ic"></span> Faculty <span class="bdg green" id="sb-faculty-count">...</span></a>
+      <a class="sb-lnk active" id="sb-overview-link" onclick="goTab('overview')"><span class="ic"></span> Overview</a>
+      <a class="sb-lnk" onclick="goTab('faculty')"><span class="ic"></span> Faculty <span class="bdg green" id="sb-faculty-count">...</span></a>
       <a class="sb-lnk" onclick="goTab('formerheads')"><span class="ic"></span> Former Heads</a>
       <a class="sb-lnk" onclick="goTab('cbse')"><span class="ic"></span> CBSE Circulars</a>
       <a class="sb-lnk" onclick="goTab('school')"><span class="ic"></span> School Circulars</a>
@@ -315,13 +316,13 @@
     <!-- Topbar -->
     <div class="atbar">
       <div class="at-title" id="atTitle">
-        Academics — Faculty
-        <span id="atSub">Collection: <code style="font-family:monospace;font-size:.7em;color:var(--navy);">faculty</code> · GET /api/faculty</span>
+        Academics — Overview
+        <span id="atSub">Collection: <code style="font-family:monospace;font-size:.7em;color:var(--navy);">content</code> · Key: <code style="font-family:monospace;font-size:.7em;color:var(--navy);">academics.main</code></span>
       </div>
       <div class="at-acts">
         <div class="api-status"><span class="api-dot"></span> API Connected</div>
         <div class="at-div"></div>
-        <button class="atbtn out" id="previewBtn" onclick="window.open('../academics/1-faculty.html','_blank')"> Preview</button>
+        <button class="atbtn out" id="previewBtn" onclick="window.open('../academics/index.html','_blank')"> Preview</button>
         <button class="atbtn tl" onclick="refreshData()"> Refresh</button>
         <button class="atbtn gd" onclick="openAddModal()">＋ Add New</button>
       </div>
@@ -329,7 +330,8 @@
 
     <!-- Sub-nav -->
     <nav class="subnav" id="subnav">
-      <a class="active" onclick="goTab('faculty')"> Faculty <span class="sn-cnt" id="cnt-faculty">0</span></a>
+      <a class="active" onclick="goTab('overview')"> Overview</a>
+      <a onclick="goTab('faculty')"> Faculty <span class="sn-cnt" id="cnt-faculty">0</span></a>
       <a onclick="goTab('formerheads')"> Former Heads</a>
       <a onclick="goTab('cbse')"> CBSE Circulars <span class="sn-cnt" id="cnt-cbse">0</span></a>
       <a onclick="goTab('school')"> School Circulars <span class="sn-cnt" id="cnt-school">0</span></a>
@@ -340,9 +342,49 @@
     <div class="pbody">
 
       <!-- ════════════════════════════
+           TAB 0 — OVERVIEW
+      ════════════════════════════ -->
+      <div class="panel active" id="tab-overview">
+        <div class="dbbar">
+          <span class="dd"></span> MongoDB · Content Key: <code>academics.main</code> · Global settings for the Academics section.
+          <span class="ep">GET · POST /api/content/academics.main</span>
+        </div>
+
+        <div class="block">
+          <div class="blk-hd">
+            <div class="blk-title"><span class="ic"></span> Academics Introduction <span class="dbc">academics.main</span></div>
+            <div class="blk-acts"><button class="atbtn gd" onclick="saveAcademicsOverview()"> Save Overview</button></div>
+          </div>
+          <div class="blkbody">
+            <div class="fg c2">
+              <div class="f"><label>Hero Badge <span class="dbh">heroBadge</span></label><input type="text" id="ac-hero-badge" placeholder="Academic Excellence · holistic Growth" /></div>
+              <div class="f"><label>Hero Title <span class="dbh">heroTitle</span></label><input type="text" id="ac-hero-title" placeholder="Academics at Loretto" /></div>
+            </div>
+            <div class="f" style="margin-top:12px;"><label>Hero Description <span class="dbh">heroDesc</span></label><textarea id="ac-hero-desc" placeholder="Broad introduction to the academic culture and values at Loretto Central School."></textarea></div>
+          </div>
+        </div>
+
+        <div class="block">
+          <div class="blk-hd">
+            <div class="blk-title"><span class="ic"></span> Category Icons / Emojis <span class="dbc">academics.main.icons</span></div>
+            <div class="blk-acts"><button class="atbtn gd" onclick="saveAcademicsOverview()"> Save Overview</button></div>
+          </div>
+          <div class="blkbody">
+            <p class="fhint" style="margin-bottom:14px;">These emojis/icons are used as placeholders throughout the academics pages (Faculty, Circulars, etc.).</p>
+            <div class="fg c4">
+              <div class="f"><label>Faculty Icon</label><input type="text" id="ac-icon-faculty" value="🎓" style="text-align:center;font-size:1.4rem;padding:4px;"/></div>
+              <div class="f"><label>Circulars Icon</label><input type="text" id="ac-icon-circular" value="📢" style="text-align:center;font-size:1.4rem;padding:4px;"/></div>
+              <div class="f"><label>Curriculum Icon</label><input type="text" id="ac-icon-curriculum" value="📚" style="text-align:center;font-size:1.4rem;padding:4px;"/></div>
+              <div class="f"><label>Timeline Icon</label><input type="text" id="ac-icon-calendar" value="📅" style="text-align:center;font-size:1.4rem;padding:4px;"/></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════════════════════════════
            TAB 1 — FACULTY
       ════════════════════════════ -->
-      <div class="panel active" id="tab-faculty">
+      <div class="panel" id="tab-faculty">
 
         <div class="dbbar">
           <span class="dd"></span> MongoDB · Collection: <code>faculty</code> · Schema: <code>{ name, subject, qualification, experience, photo }</code>
@@ -780,8 +822,9 @@ var API_BASE   = window.location.origin; // e.g. http://localhost:3000
 /* ════════════════════════════════════════════
    TAB SYSTEM
 ════════════════════════════════════════════ */
-var TABS = ['faculty','formerheads','cbse','school','booklist'];
+var TABS = ['overview','faculty','formerheads','cbse','school','booklist'];
 var TAB_META = {
+  overview:    { title:'Academics — Overview',        sub:'Collection: content · Key: academics.main',             preview:'../academics/index.html' },
   faculty:     { title:'Academics — Faculty',         sub:'Collection: faculty · GET /api/faculty',                preview:'../academics/1-faculty.html' },
   formerheads: { title:'Academics — Former Heads',    sub:'Content block + management timeline for ../academics/2-former-heads.html',   preview:'../academics/2-former-heads.html' },
   cbse:        { title:'Academics — CBSE Circulars',  sub:'Collection: documents · filter: category=cbse-circular', preview:'../academics/3-cbse-circulars.html' },
@@ -789,6 +832,7 @@ var TAB_META = {
   booklist:    { title:'Academics — Book List',       sub:'Collection: documents + academics.bookList',          preview:'../academics/5-book-list.html' },
 };
 var SCHOOL_CIRCULARS_PAGE_KEY = 'academics.school-circulars';
+var ACADEMICS_MAIN_KEY = 'academics.main';
 var SCHOOL_CIRCULARS_DEFAULTS = {
   bannerTitle: 'School Circulars',
   academicYear: '2024 – 2025',
@@ -824,6 +868,7 @@ function goTab(id) {
     document.getElementById('previewBtn').onclick = function(){ window.open(m.preview,'_blank'); };
   }
   // Load data on first visit
+  if (id === 'overview' && !window._overviewLoaded) loadAcademicsOverview();
   if (id === 'faculty' && !window._facultyLoaded) loadFaculty();
   if (id === 'formerheads' && !window._fhLoaded) loadFormerHeads();
   if (id === 'cbse' && !window._cbseLoaded) loadDocuments('cbse-circular','cbse-loading','cbse-list','cnt-cbse');
@@ -1764,6 +1809,50 @@ async function saveBookListPDF() {
   } catch(e) { toast(e.message,'err'); }
 }
 
+/* ════════════════════════════════════════════
+   ACADEMICS OVERVIEW
+   ════════════════════════════════════════════ */
+async function loadAcademicsOverview() {
+  window._overviewLoaded = true;
+  try {
+    var res = await fetch(API_BASE + '/api/content/' + ACADEMICS_MAIN_KEY);
+    var item = await res.json();
+    var data = item && item.data ? item.data : {};
+    document.getElementById('ac-hero-badge').value = data.heroBadge || 'Academic Excellence · Holistic Growth';
+    document.getElementById('ac-hero-title').value = data.heroTitle || 'Academics at Loretto';
+    document.getElementById('ac-hero-desc').value = data.heroDesc || '';
+    if (data.icons) {
+      document.getElementById('ac-icon-faculty').value = data.icons.faculty || '🎓';
+      document.getElementById('ac-icon-circular').value = data.icons.circular || '📢';
+      document.getElementById('ac-icon-curriculum').value = data.icons.curriculum || '📚';
+      document.getElementById('ac-icon-calendar').value = data.icons.calendar || '📅';
+    }
+  } catch(e) { console.error('Failed to load academics overview', e); }
+}
+
+async function saveAcademicsOverview() {
+  var body = {
+    heroBadge: document.getElementById('ac-hero-badge').value.trim(),
+    heroTitle: document.getElementById('ac-hero-title').value.trim(),
+    heroDesc: document.getElementById('ac-hero-desc').value.trim(),
+    icons: {
+      faculty: document.getElementById('ac-icon-faculty').value.trim(),
+      circular: document.getElementById('ac-icon-circular').value.trim(),
+      curriculum: document.getElementById('ac-icon-curriculum').value.trim(),
+      calendar: document.getElementById('ac-icon-calendar').value.trim()
+    }
+  };
+  try {
+    var res = await fetch(API_BASE + '/api/content/' + ACADEMICS_MAIN_KEY, {
+      method: 'POST',
+      headers: apiHeaders(),
+      body: JSON.stringify(body)
+    });
+    if (!res.ok) throw new Error('Failed to save overview');
+    toast('Academics overview saved to MongoDB!');
+  } catch(e) { toast(e.message, 'err'); }
+}
+
 async function saveBookListContent() {
   var groups = collectBookListGroups();
   if (!groups.length) {
@@ -1805,16 +1894,19 @@ document.addEventListener('keydown', function(e) {
   if ((e.ctrlKey||e.metaKey) && e.key==='s') { e.preventDefault(); toast('Use specific Save buttons per section.'); }
 });
 
-/* ── BOOT: load faculty on page load ── */
+/* ── BOOT: load academics on page load ── */
 window.addEventListener('DOMContentLoaded', function() {
+  loadAcademicsOverview();
   loadFaculty();
   // Pre-load document counts
   fetch(API_BASE+'/api/documents').then(function(r){return r.json();}).then(function(data){
     if (!Array.isArray(data)) return;
-    document.getElementById('cnt-cbse').textContent   = data.filter(function(d){return d.category==='cbse-circular';}).length;
-    document.getElementById('cnt-school').textContent = data.filter(function(d){return d.category==='school-circular';}).length;
+    document.getElementById('cnt-faculty').textContent = data.filter(function(d){return d.category==='faculty';}).length; 
+    document.getElementById('cnt-cbse').textContent    = data.filter(function(d){return d.category==='cbse-circular';}).length;
+    document.getElementById('cnt-school').textContent  = data.filter(function(d){return d.category==='school-circular';}).length;
   }).catch(function(){});
 });
 </script>
+<script src="adminnavbar.js?v=20260329-1"></script>
 </body>
 </html>

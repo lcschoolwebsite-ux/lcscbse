@@ -1,7 +1,21 @@
 (function () {
+  var doc = document;
+  var ACADEMICS_MAIN_KEY = 'academics.main';
   var FORMER_HEADS_KEY = 'academics.former-heads';
   var SCHOOL_CIRCULARS_KEY = 'academics.school-circulars';
   var BOOK_LIST_KEY = 'academics.book-list';
+  var ACADEMICS_OVERVIEW_DEFAULTS = {
+    bannerTitle: 'Academics',
+    heroBadge: 'Academic Excellence · Holistic Growth',
+    heroTitle: 'Academics at Loretto',
+    heroDesc: 'Loretto Central School nurtures academic discipline, strong values, and joyful learning through an evolving curriculum, dedicated teachers, and transparent communication with families.',
+    icons: {
+      faculty: '🎓',
+      circular: '📢',
+      curriculum: '📚',
+      calendar: '📅'
+    }
+  };
   var SCHOOL_CIRCULARS_DEFAULTS = {
     bannerTitle: 'School Circulars',
     badge: 'Internal Notices · Academic Year 2024–25',
@@ -138,6 +152,13 @@
     return response.json();
   }
 
+  async function loadAcademicsOverviewContent() {
+    if (typeof window.loadContentBlock === 'function') {
+      return window.loadContentBlock(ACADEMICS_MAIN_KEY);
+    }
+    return fetchJson('content/' + ACADEMICS_MAIN_KEY);
+  }
+
   async function loadFormerHeadsContent() {
     if (typeof window.loadContentBlock === 'function') {
       return window.loadContentBlock(FORMER_HEADS_KEY);
@@ -198,6 +219,21 @@
     };
   }
 
+  function collectAcademicsOverviewFallback(doc) {
+    return {
+      bannerTitle: textOf(doc.getElementById('academicsBannerTitle')) || ACADEMICS_OVERVIEW_DEFAULTS.bannerTitle,
+      heroBadge: textOf(doc.getElementById('academicsHeroBadge')) || ACADEMICS_OVERVIEW_DEFAULTS.heroBadge,
+      heroTitle: textOf(doc.getElementById('academicsHeroTitle')) || ACADEMICS_OVERVIEW_DEFAULTS.heroTitle,
+      heroDesc: textOf(doc.getElementById('academicsHeroDesc')) || ACADEMICS_OVERVIEW_DEFAULTS.heroDesc,
+      icons: {
+        faculty: textOf(doc.querySelector('[data-acad-icon="faculty"]')) || ACADEMICS_OVERVIEW_DEFAULTS.icons.faculty,
+        circular: textOf(doc.querySelector('[data-acad-icon="circular"]')) || ACADEMICS_OVERVIEW_DEFAULTS.icons.circular,
+        curriculum: textOf(doc.querySelector('[data-acad-icon="curriculum"]')) || ACADEMICS_OVERVIEW_DEFAULTS.icons.curriculum,
+        calendar: textOf(doc.querySelector('[data-acad-icon="calendar"]')) || ACADEMICS_OVERVIEW_DEFAULTS.icons.calendar
+      }
+    };
+  }
+
   function normalizeStats(items, fallback) {
     var source = Array.isArray(items) && items.length ? items : fallback;
     return source.map(function (item, index) {
@@ -242,6 +278,24 @@
       stats: normalizeStats(raw.stats, fallback.stats),
       journeyTitle: normalizeText(raw.journeyTitle) || fallback.journeyTitle,
       journeyItems: normalizeJourney(raw.journeyItems, fallback.journeyItems)
+    };
+  }
+
+  function mergeAcademicsOverviewContent(stored, fallback) {
+    var raw = stored && stored.data && typeof stored.data === 'object' ? stored.data : (stored || {});
+    var rawIcons = raw.icons && typeof raw.icons === 'object' ? raw.icons : {};
+
+    return {
+      bannerTitle: normalizeText(raw.bannerTitle) || fallback.bannerTitle || ACADEMICS_OVERVIEW_DEFAULTS.bannerTitle,
+      heroBadge: normalizeText(raw.heroBadge) || fallback.heroBadge || ACADEMICS_OVERVIEW_DEFAULTS.heroBadge,
+      heroTitle: normalizeText(raw.heroTitle) || fallback.heroTitle || ACADEMICS_OVERVIEW_DEFAULTS.heroTitle,
+      heroDesc: normalizeText(raw.heroDesc || raw.heroText) || fallback.heroDesc || ACADEMICS_OVERVIEW_DEFAULTS.heroDesc,
+      icons: {
+        faculty: normalizeText(rawIcons.faculty) || fallback.icons.faculty || ACADEMICS_OVERVIEW_DEFAULTS.icons.faculty,
+        circular: normalizeText(rawIcons.circular) || fallback.icons.circular || ACADEMICS_OVERVIEW_DEFAULTS.icons.circular,
+        curriculum: normalizeText(rawIcons.curriculum) || fallback.icons.curriculum || ACADEMICS_OVERVIEW_DEFAULTS.icons.curriculum,
+        calendar: normalizeText(rawIcons.calendar) || fallback.icons.calendar || ACADEMICS_OVERVIEW_DEFAULTS.icons.calendar
+      }
     };
   }
 
@@ -391,6 +445,41 @@
     container.innerHTML = items.map(function (item) {
       return '<li>' + escapeHtml(item.text) + '</li>';
     }).join('');
+  }
+
+  function applyAcademicsOverviewIcons(icons) {
+    ['faculty', 'circular', 'curriculum', 'calendar'].forEach(function (key) {
+      Array.prototype.forEach.call(doc.querySelectorAll('[data-acad-icon="' + key + '"]'), function (node) {
+        node.textContent = icons[key] || ACADEMICS_OVERVIEW_DEFAULTS.icons[key] || '';
+      });
+    });
+  }
+
+  async function initAcademicsOverviewPage() {
+    var path = normalizeText(window.location.pathname).replace(/\/+$/, '');
+    if (!(path === '/academics' || path.indexOf('/academics/index.html') !== -1)) return;
+
+    var fallback = collectAcademicsOverviewFallback(doc);
+
+    try {
+      var content = await loadAcademicsOverviewContent();
+      var merged = mergeAcademicsOverviewContent(content, fallback);
+
+      if (doc.getElementById('academicsBannerTitle')) doc.getElementById('academicsBannerTitle').textContent = merged.bannerTitle;
+      if (doc.getElementById('academicsHeroBadge')) {
+        doc.getElementById('academicsHeroBadge').textContent = merged.heroBadge;
+        doc.getElementById('academicsHeroBadge').style.display = merged.heroBadge ? 'inline-flex' : 'none';
+      }
+      if (doc.getElementById('academicsHeroTitle')) doc.getElementById('academicsHeroTitle').textContent = merged.heroTitle;
+      if (doc.getElementById('academicsHeroDesc')) doc.getElementById('academicsHeroDesc').textContent = merged.heroDesc;
+
+      applyAcademicsOverviewIcons(merged.icons);
+
+      document.title = (merged.bannerTitle || merged.heroTitle || ACADEMICS_OVERVIEW_DEFAULTS.bannerTitle) + ' | Loretto Central School';
+    } catch (error) {
+      applyAcademicsOverviewIcons(fallback.icons);
+      console.error('Could not load Academics overview content:', error);
+    }
   }
 
   async function initFormerHeadsPage() {
@@ -604,11 +693,13 @@
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', function () {
+      initAcademicsOverviewPage();
       initFormerHeadsPage();
       initSchoolCircularsPage();
       initBookListPage();
     });
   } else {
+    initAcademicsOverviewPage();
     initFormerHeadsPage();
     initSchoolCircularsPage();
     initBookListPage();

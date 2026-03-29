@@ -7,6 +7,7 @@
   var IDENTIFIER_KEY = 'lorettoAdminIdentifier';
   var RETURN_KEY = 'lorettoAdminReturnTo';
   var RESOLVED_API_BASE_KEY = 'lorettoAdminApiBase';
+  var RESOLVED_OK_KEY = 'lorettoAdminApiBase_ok';
   var path = window.location.pathname;
   // Match both /admin-login and /admin-login.html (Cloudflare strips .html via 308)
   var isLoginPage = /\/admin-login(\.html)?$/i.test(path);
@@ -249,30 +250,34 @@
   }
 
   async function resolveApiBase(forceRefresh) {
-    var cached = sessionStorage.getItem(RESOLVED_API_BASE_KEY);
-    var cachedConfigured = sessionStorage.getItem(RESOLVED_API_BASE_KEY + '_ok') === 'true';
+    var cached = localStorage.getItem(RESOLVED_API_BASE_KEY) || sessionStorage.getItem(RESOLVED_API_BASE_KEY);
+    var cachedConfigured = localStorage.getItem(RESOLVED_OK_KEY) === 'true' || sessionStorage.getItem(RESOLVED_OK_KEY) === 'true';
     
     if (cached && cachedConfigured && !forceRefresh) {
       return cached;
     }
  
     var candidates = getCandidateApiBases();
-    var results = [];
+    var resolved = normalizeOrigin(window.location.origin);
+
+    // Try each candidate one by one
     for (var i = 0; i < candidates.length; i++) {
       var result = await probeApiBase(candidates[i]);
-      if (result) results.push(result);
+      if (result) {
+        resolved = result.base;
+        localStorage.setItem(RESOLVED_API_BASE_KEY, resolved);
+        sessionStorage.setItem(RESOLVED_API_BASE_KEY, resolved);
+        if (result.authConfigured) {
+          localStorage.setItem(RESOLVED_OK_KEY, 'true');
+          sessionStorage.setItem(RESOLVED_OK_KEY, 'true');
+        }
+        return resolved;
+      }
     }
- 
-    var preferred = results.find(function (item) { return item.authConfigured; }) || results[0];
-    var resolved = preferred ? preferred.base : normalizeOrigin(window.location.origin);
     
+    // Fallback to origin
+    localStorage.setItem(RESOLVED_API_BASE_KEY, resolved);
     sessionStorage.setItem(RESOLVED_API_BASE_KEY, resolved);
-    if (preferred && preferred.authConfigured) {
-      sessionStorage.setItem(RESOLVED_API_BASE_KEY + '_ok', 'true');
-    } else {
-      sessionStorage.removeItem(RESOLVED_API_BASE_KEY + '_ok');
-    }
-    
     return resolved;
   }
 

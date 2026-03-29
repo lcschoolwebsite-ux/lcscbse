@@ -463,8 +463,9 @@
       + '<a href="' + R + 'admissions/4-fee-structure.html">Fee Structure</a>'
       + '</div></div>'
 
-      + '<div class="lcs-nav-item"><a href="#">Academics <span class="arrow">&#9660;</span></a>'
+      + '<div class="lcs-nav-item"><a href="' + R + 'academics/index.html">Academics <span class="arrow">&#9660;</span></a>'
       + '<div class="lcs-dropdown">'
+      + '<a href="' + R + 'academics/index.html">Academics Overview</a>'
       + '<a href="' + R + 'academics/1-faculty.html">Faculty</a>'
       + '<a href="' + R + 'academics/2-former-heads.html">Former Heads</a>'
       + '<a href="' + R + 'academics/3-cbse-circulars.html">CBSE Circulars</a>'
@@ -541,7 +542,8 @@
         ['Transfer Certificate', R + 'admissions/3-transfer-certificate.html'],
         ['Fee Structure', R + 'admissions/4-fee-structure.html'],
       ]],
-      ['Academics', '#', [
+      ['Academics', R + 'academics/index.html', [
+        ['Academics Overview', R + 'academics/index.html'],
         ['Faculty', R + 'academics/1-faculty.html'],
         ['Former Heads', R + 'academics/2-former-heads.html'],
         ['CBSE Circulars', R + 'academics/3-cbse-circulars.html'],
@@ -617,6 +619,7 @@
     { c: 'Admissions', t: 'Admission Enquiry', u: R + 'admissions/2-admission-enquiry.html' },
     { c: 'Admissions', t: 'Transfer Certificate', u: R + 'admissions/3-transfer-certificate.html' },
     { c: 'Admissions', t: 'Fee Structure', u: R + 'admissions/4-fee-structure.html' },
+    { c: 'Academics', t: 'Academics Overview', u: R + 'academics/index.html' },
     { c: 'Academics', t: 'Faculty', u: R + 'academics/1-faculty.html' },
     { c: 'Academics', t: 'Former Heads', u: R + 'academics/2-former-heads.html' },
     { c: 'Academics', t: 'CBSE Circulars', u: R + 'academics/3-cbse-circulars.html' },
