@@ -1283,7 +1283,8 @@ var SETTINGS_KEY = 'disclosure-pages';
 var PDF_PAGE_NUMBERS = [1,2,3,4,5,6,7,8,9,10,12,13,14,15,16,17,18,19,20,21,22,23];
 var _pdfUrls = {};
 var _pdfDocs = {};
-var API_BASE = window.location.origin;
+var API_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? 'http://localhost:3000' : 'https://lcscbse-production.up.railway.app';
+var ADMIN_TOKEN = localStorage.getItem('token') || '';
 var _saveInFlight = false;
 
 /* ── OVERVIEW TABLE ── */
