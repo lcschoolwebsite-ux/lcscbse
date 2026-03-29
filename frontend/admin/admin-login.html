@@ -1014,7 +1014,7 @@
   </div>
 
   <script>
-    var API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://loretto-cbse-school.onrender.com';
+    var API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'http://localhost:3000' : 'https://lcscbse-production.up.railway.app';
     var REDIRECT = window.AdminAuth ? window.AdminAuth.getReturnUrl() : 'admin-panel.html';
 
     var form = document.getElementById('loginForm');

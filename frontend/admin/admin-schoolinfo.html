@@ -840,7 +840,7 @@ function toast(msg,err){
   setTimeout(function(){t.classList.remove('show')},3000);
 }
 
-var API_BASE=window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://loretto-cbse-school.onrender.com';
+var API_BASE=window.location.origin;
 // Admin token logic removed
 
 async function save(){

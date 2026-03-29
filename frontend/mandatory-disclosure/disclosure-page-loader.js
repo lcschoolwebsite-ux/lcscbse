@@ -52,7 +52,7 @@
       window.location.origin.replace(/\/+$/, '') + '/api',
       'http://localhost:3000/api',
       'http://127.0.0.1:3000/api',
-      'https://loretto-cbse-school.onrender.com/api'
+      'https://lcscbse-production.up.railway.app/api'
     ];
 
     for (var i = 0; i < candidates.length; i += 1) {

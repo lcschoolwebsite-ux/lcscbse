@@ -5,7 +5,7 @@
 
 /* ── API BASE RESOLUTION ── */
 var API_BASE_KEY = 'loretto_api_base';
-var RESOLVED_API_BASE = window.location.hostname === 'localhost' ? (sessionStorage.getItem(API_BASE_KEY) || '') : 'https://loretto-cbse-school.onrender.com/api';
+var RESOLVED_API_BASE = window.location.hostname === 'localhost' ? (sessionStorage.getItem(API_BASE_KEY) || '') : 'https://lcscbse-production.up.railway.app/api';
 
 async function resolveApiBase() {
   const cachedOk = sessionStorage.getItem(API_BASE_KEY + '_ok') === 'true';

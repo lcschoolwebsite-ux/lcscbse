@@ -1,54 +1,88 @@
-# Loretto Central School — Backend
+# Loretto Backend
 
-Node.js/Express REST API backend for the Loretto Central School website.
+Express + MongoDB + Cloudinary backend for the Loretto school website.
 
-## Tech Stack
-- **Runtime:** Node.js (ES Modules)
-- **Framework:** Express 4
-- **Database:** MongoDB via Mongoose
-- **File Uploads:** Cloudinary + Multer
-- **Email:** Resend
-- **Auth:** Token-based admin auth
+## What it covers
 
-## Local Setup
+- `news` CRUD
+- `faculty` CRUD
+- `management` CRUD
+- `documents` CRUD
+- `testimonials` CRUD
+- `contact` singleton
+- `contact` enquiries with optional Resend email notifications
+- structured page/content storage for:
+  - `about/*`
+  - `school-info/*`
+  - `activities-clubs/*`
+  - `settings/*`
+  - generic `content/*`
+- Cloudinary upload endpoint for images and PDFs
+
+## Run locally
+
+1. Copy `.env.example` to `.env`
+2. Fill MongoDB and Cloudinary values
+3. Install packages:
 
 ```bash
 cd backend
 npm install
-cp .env.example .env   # Fill in your real values
+```
+
+4. Start the server:
+
+```bash
 npm run dev
 ```
 
-## Environment Variables
+The API will run on `http://localhost:3000` by default.
 
-Copy `.env.example` to `.env` and fill in all values. See `.env.example` for reference.
+## Main routes
 
-> ⚠️ Never commit `.env` to Git.
+- `GET/POST/PUT/DELETE /api/news`
+- `GET/POST/PUT/DELETE /api/faculty`
+- `GET/POST/PUT/DELETE /api/management`
+- `GET/POST/PUT/DELETE /api/documents`
+- `GET/POST/PUT /api/contact`
+- `POST /api/contact/enquiry`
+- `GET /api/contact/inquiries`
+- `GET/POST/PUT/DELETE /api/testimonials`
+- `GET/POST/PUT /api/about/:section`
+- `GET/POST/PUT /api/school-info/:section`
+- `GET/POST/PUT /api/school-info`
+- `GET/POST/PUT /api/activities-clubs/:slug`
+- `GET/POST/PUT /api/settings/:key`
+- `GET/POST/PUT /api/content/:key`
+- `POST /api/upload`
 
-## Deployment (Render)
+## Admin auth
 
-1. Push this repo to GitHub
-2. Go to [render.com](https://render.com) → New Web Service
-3. Connect your GitHub repo
-4. Set:
-   - **Root Directory:** `backend`
-   - **Build Command:** `npm install`
-   - **Start Command:** `node src/server.js`
-5. Add all environment variables from `.env.example` in Render's dashboard
-6. Update `CORS_ORIGIN` to include your Cloudflare Pages domain
+If `ADMIN_TOKEN` is set, all mutating routes require header:
 
-## API Routes
+```http
+x-admin-token: <your token>
+```
 
-| Method | Route | Description |
-|--------|-------|-------------|
-| GET | /api/health | Health check |
-| GET/PUT | /api/contact | Contact info |
-| POST | /api/contact/enquiry | Submit contact form |
-| GET/POST | /api/news | News items |
-| GET/POST | /api/faculty | Faculty list |
-| GET/POST | /api/management | Management list |
-| GET/POST | /api/documents | Documents |
-| GET/POST | /api/testimonials | Testimonials |
-| GET/POST | /api/enquiries | Admission enquiries |
-| POST | /api/upload | File upload to Cloudinary |
-| GET/PUT | /api/content/:key | Content blocks |
+If `ADMIN_TOKEN` is empty, the backend allows writes without the header for local development.
+
+## Resend setup
+
+To send contact-form emails, set these environment variables:
+
+```env
+RESEND_API_KEY=your_resend_api_key
+RESEND_FROM_EMAIL=Loretto Central School <your-verified-sender@yourdomain.com>
+CONTACT_EMAIL=admin@yourdomain.com
+```
+
+`CONTACT_EMAIL` is the inbox that receives website enquiries. The public contact form also sends an acknowledgement email back to the user when Resend is configured.
+
+## Admin login identity
+
+If you want the admin login page to require a username or email in addition to the token, add one or both of these to your `.env`:
+
+```env
+ADMIN_USERNAME=admin
+ADMIN_EMAIL=admin@example.com
+```

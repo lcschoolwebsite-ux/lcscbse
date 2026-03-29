@@ -6,6 +6,10 @@ node_modules/
 .env.local
 .env.production
 
+# Backups and temp files
+*.bak
+*.tmp
+
 # macOS
 .DS_Store
 __MACOSX/

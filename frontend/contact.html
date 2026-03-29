@@ -1706,7 +1706,9 @@
     /* ═══════════════════════════════════════════════════════ */
     /* CONTACT DATA LOADER                                    */
     /* ═══════════════════════════════════════════════════════ */
-    var API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://loretto-cbse-school.onrender.com';
+    var API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+      ? window.location.origin
+      : 'https://lcscbse-production.up.railway.app';
 
     window.addEventListener('DOMContentLoaded', async () => {
       if (typeof loadContactData === 'function') {
