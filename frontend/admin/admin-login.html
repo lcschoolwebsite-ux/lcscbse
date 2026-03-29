@@ -1015,7 +1015,9 @@
 
   <script>
     var API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'http://localhost:3000' : 'https://lcscbse-production.up.railway.app';
-    var REDIRECT = window.AdminAuth ? window.AdminAuth.getReturnUrl() : 'admin-panel.html';
+    // Get the saved return URL — strip .html extension since Cloudflare Pages uses extensionless URLs
+    var rawRedirect = window.AdminAuth ? window.AdminAuth.getReturnUrl() : 'admin-panel';
+    var REDIRECT = rawRedirect.replace(/\.html$/, '') || 'admin-panel';
 
     var form = document.getElementById('loginForm');
     var identifierInput = document.getElementById('identifierInput');
@@ -1130,7 +1132,9 @@
       successOv.classList.add('show');
       setTimeout(function () {
         if (window.AdminAuth) window.AdminAuth.clearReturnUrl();
-        window.location.href = REDIRECT || 'admin-panel.html';
+        // Use extensionless URL to avoid 308 redirect chain on Cloudflare Pages
+        var dest = (REDIRECT || 'admin-panel').replace(/\.html$/, '');
+        window.location.href = dest;
       }, 1950);
     }
 

@@ -1,13 +1,15 @@
 (function () {
   'use strict';
 
-  var LOGIN_PAGE = 'admin-login.html';
+  // Use extensionless URL — Cloudflare Pages 308-redirects .html to extensionless
+  var LOGIN_PAGE = 'admin-login';
   var TOKEN_KEY = 'lorettoAdminToken';
   var IDENTIFIER_KEY = 'lorettoAdminIdentifier';
   var RETURN_KEY = 'lorettoAdminReturnTo';
   var RESOLVED_API_BASE_KEY = 'lorettoAdminApiBase';
   var path = window.location.pathname;
-  var isLoginPage = /\/admin\/admin-login\.html$/i.test(path) || /\/admin-login\.html$/i.test(path);
+  // Match both /admin-login and /admin-login.html (Cloudflare strips .html via 308)
+  var isLoginPage = /\/admin-login(\.html)?$/i.test(path);
 
   // Hide page immediately to prevent flash/flicker before auth check completes
   if (!isLoginPage) {
@@ -297,7 +299,7 @@
   }
 
   function getReturnUrl() {
-    return sessionStorage.getItem(RETURN_KEY) || 'admin-panel.html';
+    return sessionStorage.getItem(RETURN_KEY) || 'admin-panel';
   }
 
   function setReturnUrl(url) {
@@ -310,8 +312,11 @@
 
   function redirectToLogin() {
     if (isLoginPage) return;
-    var current = path.split('/').pop() || 'admin-panel.html';
-    setReturnUrl(current + window.location.search + window.location.hash);
+    var current = path.split('/').pop() || '';
+    // Don't save admin-login itself as the return URL
+    if (current && !/admin-login/.test(current)) {
+      setReturnUrl(current + window.location.search + window.location.hash);
+    }
     window.location.replace(LOGIN_PAGE);
   }
 
