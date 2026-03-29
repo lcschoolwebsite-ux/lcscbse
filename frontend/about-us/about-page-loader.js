@@ -17,7 +17,10 @@
   }
 
   function currentSection() {
-    return SECTION_BY_FILE[fileName()] || '';
+    var raw = fileName();
+    if (SECTION_BY_FILE[raw]) return SECTION_BY_FILE[raw];
+    if (SECTION_BY_FILE[raw + '.html']) return SECTION_BY_FILE[raw + '.html'];
+    return '';
   }
 
   function escapeHtml(value) {

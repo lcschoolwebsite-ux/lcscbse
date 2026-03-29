@@ -138,7 +138,9 @@
 
   function fileName() {
     var parts = window.location.pathname.split('/');
-    return parts[parts.length - 1] || '1-admissions.html';
+    var f = parts[parts.length - 1] || '1-admissions.html';
+    if (f && !/\\.html$/i.test(f) && !/[?#]/.test(f)) f += '.html';
+    return f;
   }
 
   function pageConfig() {
