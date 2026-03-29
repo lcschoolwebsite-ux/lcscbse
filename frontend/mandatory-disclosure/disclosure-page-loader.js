@@ -6,6 +6,31 @@
     9: true, 10: true, 12: true, 13: true, 14: true, 15: true, 16: true,
     17: true, 18: true, 19: true, 20: true, 21: true, 22: true, 23: true
   };
+  var DISCLOSURE_PAGES = {
+    1: { title: 'School Name Change Order', file: '1-school-name-change-order.html' },
+    2: { title: 'Affiliation Letter', file: '2-affiliation-letter.html' },
+    3: { title: 'SARAS Mandatory Document', file: '3-saras-mandatory-document.html' },
+    4: { title: 'Building Plan', file: '4-building-plan.html' },
+    5: { title: 'Affidavit', file: '5-affidavit.html' },
+    6: { title: 'Building Safety Certificate', file: '6-building-safety.html' },
+    7: { title: 'Land Certificate', file: '7-land-certificate.html' },
+    8: { title: 'Fire Safety Certificate', file: '8-fire-safety.html' },
+    9: { title: 'DEO Certificate', file: '9-deo-certificate.html' },
+    10: { title: 'Recognition Renewal Certificate', file: '10-recognition-renewal-certificate.html' },
+    11: { title: 'Mandatory Disclosure Link', file: '11-mandatory-disclosure-link.html' },
+    12: { title: 'No Objection Certificate', file: '12-no-objection-certificate.html' },
+    13: { title: 'Lease Deed Certificate', file: '13-lease-deed-certificate.html' },
+    14: { title: 'Safe Drinking Water Certificate', file: '14-safe-drinking-water.html' },
+    15: { title: 'Society Registration Certificate', file: '15-society-registration.html' },
+    16: { title: 'Water Health & Sanitation', file: '16-water-health-sanitation.html' },
+    17: { title: 'Academic Calendar', file: '17-calendar.html' },
+    18: { title: 'Management Committee', file: '18-management-committee.html' },
+    19: { title: 'PTA Committee', file: '19-pta-committee.html' },
+    20: { title: 'School Fee Structure', file: '20-school-fee-structure.html' },
+    21: { title: 'SSLC / Board Results', file: '21-sslc-results.html' },
+    22: { title: 'Local Mgmt Committee', file: '22-school-local-management-committee.html' },
+    23: { title: 'Teachers Information', file: '23-teachers-information.html' }
+  };
 
   function normalizeText(value) {
     return value == null ? '' : String(value).trim();
@@ -38,6 +63,15 @@
   function currentPageNumber() {
     var match = fileName().match(/^(\d+)-/);
     return match ? parseInt(match[1], 10) : 0;
+  }
+
+  function isDisclosureOverviewPage() {
+    var name = fileName().toLowerCase();
+    return name === 'mandatory-disclosure.html' || name === 'disclosure.html';
+  }
+
+  function pageMeta(pageNum) {
+    return DISCLOSURE_PAGES[pageNum] || null;
   }
 
   async function resolveApiBase() {
@@ -94,6 +128,22 @@
     return items.find(function (item) {
       return item && item.category === 'disclosure-' + pageNum && item.url && item.visible !== false;
     }) || null;
+  }
+
+  async function loadAllDisclosureDocuments() {
+    var payload = null;
+    if (typeof window.loadDocumentsData === 'function') {
+      payload = await window.loadDocumentsData();
+    } else {
+      payload = await fetchJson('documents');
+    }
+
+    return (Array.isArray(payload) ? payload : []).filter(function (item) {
+      return item
+        && /^disclosure-\d+$/.test(normalizeText(item.category))
+        && normalizeText(item.url)
+        && item.visible !== false;
+    });
   }
 
   function contentCard() {
@@ -257,6 +307,124 @@
       return '<a href="' + escapeHtml(clean) + '" target="_blank" rel="noopener noreferrer" class="disclosure-inline-link">View →</a>';
     }
     return formatTextHtml(clean);
+  }
+
+  function overviewPageNumberFromHref(href) {
+    var match = normalizeText(href).match(/(?:^|\/)(\d+)-/);
+    return match ? parseInt(match[1], 10) : 0;
+  }
+
+  function overviewCards() {
+    return Array.prototype.slice.call(document.querySelectorAll('.document-grid .doc-card[href]'));
+  }
+
+  function disclosureDocumentMap(items) {
+    return (Array.isArray(items) ? items : []).reduce(function (acc, item) {
+      var match = normalizeText(item && item.category).match(/^disclosure-(\d+)$/);
+      if (!match) return acc;
+      var pageNum = parseInt(match[1], 10);
+      if (!pageNum || acc[pageNum]) return acc;
+      acc[pageNum] = item;
+      return acc;
+    }, {});
+  }
+
+  function truncateText(value, maxLength) {
+    var clean = normalizeText(value).replace(/\s+/g, ' ');
+    var limit = maxLength || 140;
+    if (clean.length <= limit) return clean;
+    return clean.slice(0, Math.max(0, limit - 1)).trim() + '…';
+  }
+
+  function overviewDescription(pageNum, pageData, fallback) {
+    var raw = '';
+    if (pageNum === 11) {
+      raw = pageData && pageData.intro;
+    } else if (pageNum >= 1 && pageNum <= 16) {
+      raw = pageData && pageData.description;
+    } else {
+      raw = pageData && pageData.intro;
+    }
+
+    var clean = truncateText(raw, 130);
+    return clean || fallback;
+  }
+
+  function renderOverviewInfoGrid(rows) {
+    var grid = document.getElementById('disclosureInfoGrid');
+    if (!grid || !Array.isArray(rows) || !rows.length) return;
+
+    grid.innerHTML = rows.map(function (row) {
+      var label = normalizeText(row && row[1]);
+      var value = normalizeText(row && row[2]);
+      if (!label && !value) return '';
+      return ''
+        + '<div class="info-card">'
+        + '<div class="info-label">' + escapeHtml(label || 'Information') + '</div>'
+        + '<div class="info-value">' + formatTextHtml(value || '—') + '</div>'
+        + '</div>';
+    }).join('');
+  }
+
+  function updateOverviewCard(card, pageNum, pageData, docItem) {
+    if (!card || !pageNum) return;
+
+    var meta = pageMeta(pageNum);
+    var title = card.querySelector('.doc-title');
+    var desc = card.querySelector('.doc-desc');
+    var badge = card.querySelector('.doc-meta');
+    var isLive = !(pageData && pageData.page && pageData.page.live === false);
+
+    card.hidden = !isLive;
+    if (!isLive) return;
+
+    if (title && meta && meta.title) title.textContent = meta.title;
+    if (desc) desc.textContent = overviewDescription(pageNum, pageData, normalizeText(desc.textContent));
+
+    if (docItem && normalizeText(docItem.url)) {
+      card.classList.add('has-live-pdf');
+      card.setAttribute('title', 'Official PDF available on this disclosure page');
+      if (!badge) {
+        badge = document.createElement('div');
+        badge.className = 'doc-meta';
+        badge.textContent = 'Official PDF Available';
+        if (desc && desc.parentNode) {
+          desc.parentNode.insertBefore(badge, desc.nextSibling);
+        } else {
+          card.appendChild(badge);
+        }
+      }
+    } else {
+      card.classList.remove('has-live-pdf');
+      card.removeAttribute('title');
+      if (badge) badge.remove();
+    }
+  }
+
+  async function initOverviewPage() {
+    if (!isDisclosureOverviewPage()) return;
+
+    var result = await Promise.all([
+      loadDisclosureSettings(),
+      loadAllDisclosureDocuments()
+    ]);
+
+    var settings = result[0] && typeof result[0] === 'object' ? result[0] : {};
+    var docs = disclosureDocumentMap(result[1]);
+    var pages = settings.pages && typeof settings.pages === 'object' ? settings.pages : {};
+    var page11 = pages['11'] || null;
+    var intro = document.getElementById('disclosureSectionIntro');
+
+    if (page11) {
+      renderOverviewInfoGrid(Array.isArray(page11.generalInfo) ? page11.generalInfo : []);
+      if (intro && normalizeText(page11.intro)) intro.textContent = normalizeText(page11.intro);
+    }
+
+    overviewCards().forEach(function (card) {
+      var pageNum = overviewPageNumberFromHref(card.getAttribute('href'));
+      if (!pageNum) return;
+      updateOverviewCard(card, pageNum, pages[String(pageNum)] || null, docs[pageNum] || null);
+    });
   }
 
   function resolvePdfUrl(pageData, docItem) {
@@ -453,10 +621,15 @@
   }
 
   async function init() {
+    addRuntimeStyles();
+
+    if (isDisclosureOverviewPage()) {
+      await initOverviewPage();
+      return;
+    }
+
     var pageNum = currentPageNumber();
     if (!pageNum) return;
-
-    addRuntimeStyles();
 
     var result = await Promise.all([
       loadDisclosureSettings(),

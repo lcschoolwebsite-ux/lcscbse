@@ -547,7 +547,7 @@
       <section class="school-info">
         <div class="container">
           <h2 class="school-info-title">School Information</h2>
-          <div class="info-grid">
+          <div class="info-grid" id="disclosureInfoGrid">
             <div class="info-card">
               <div class="info-label">School Name</div>
               <div class="info-value">Loretto Central School</div>
@@ -571,7 +571,7 @@
       <!-- Documents Section -->
       <div class="section-title">
         <h2>Required Documents & Certificates</h2>
-        <p>Access all mandatory disclosure documents and official certificates required by CBSE</p>
+        <p id="disclosureSectionIntro">Access all mandatory disclosure documents and official certificates required by CBSE</p>
       </div>
 
       <div class="document-grid">
@@ -729,58 +729,7 @@
   <!-- FOOTER -->
 
   <script src="/shared-data-loader.js"></script>
-  <script>
-    (function () {
-      'use strict';
-
-      function findDisclosurePdf(docs, pageNum) {
-        return (Array.isArray(docs) ? docs : []).find(function (item) {
-          return item
-            && item.category === 'disclosure-' + pageNum
-            && item.url
-            && item.visible !== false;
-        }) || null;
-      }
-
-      async function initDisclosureCards() {
-        var cards = Array.prototype.slice.call(document.querySelectorAll('.doc-card[data-disclosure-page]'));
-        if (!cards.length || typeof window.loadDocumentsData !== 'function') return;
-
-        var docs = await window.loadDocumentsData();
-        if (!Array.isArray(docs)) return;
-
-        cards.forEach(function (card) {
-          var pageNum = parseInt(card.getAttribute('data-disclosure-page'), 10);
-          if (!pageNum) return;
-
-          var doc = findDisclosurePdf(docs, pageNum);
-          if (!doc) return;
-
-          card.classList.add('has-live-pdf');
-          card.setAttribute('title', 'Official PDF available on this disclosure page');
-
-          var meta = card.querySelector('.doc-meta');
-          if (!meta) {
-            meta = document.createElement('div');
-            meta.className = 'doc-meta';
-            meta.textContent = 'Official PDF Available';
-            var desc = card.querySelector('.doc-desc');
-            if (desc && desc.parentNode) {
-              desc.parentNode.insertBefore(meta, desc.nextSibling);
-            } else {
-              card.appendChild(meta);
-            }
-          }
-        });
-      }
-
-      if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initDisclosureCards);
-      } else {
-        initDisclosureCards();
-      }
-    }());
-  </script>
+  <script src="/mandatory-disclosure/disclosure-page-loader.js?v=20260329-2"></script>
   <script src="components/Navbar.js"></script>
   <script src="components/Footer.js"></script>
 
