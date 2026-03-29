@@ -73,13 +73,7 @@
   function getViewableDocumentUrl(url) {
     var clean = normalizeDocumentUrl(url);
     if (!clean) return '';
-    var ext = fileExtension(clean);
-    if (/^pdf$/i.test(ext)) {
-      return 'https://docs.google.com/gview?embedded=1&url=' + encodeURIComponent(clean);
-    }
-    if (/^(doc|docx|xls|xlsx|ppt|pptx)$/i.test(ext)) {
-      return 'https://view.officeapps.live.com/op/embed.aspx?src=' + encodeURIComponent(clean);
-    }
+    // User requested direct Cloudinary links, so we bypass the embedded viewer
     return clean;
   }
 
@@ -163,11 +157,29 @@
 
   async function loadDisclosureDocument(pageNum) {
     if (!PDF_ENABLED_PAGES[pageNum]) return null;
-    var payload = await fetchJson('documents?category=disclosure-' + pageNum);
+    
+    // Try primary category first (e.g. disclosure-1)
+    var primaryCat = 'disclosure-' + pageNum;
+    var payload = await fetchJson('documents?category=' + primaryCat);
     var items = Array.isArray(payload) ? payload : [];
-    return items.find(function (item) {
-      return item && item.category === 'disclosure-' + pageNum && item.url && item.visible !== false;
-    }) || null;
+    var doc = items.find(function (item) {
+      return item && item.category === primaryCat && item.url && item.visible !== false;
+    });
+    
+    if (doc) return doc;
+
+    // Fallback to padded category (e.g. disclosure-01) if applicable
+    if (pageNum < 10) {
+      var paddedCat = 'disclosure-0' + pageNum;
+      payload = await fetchJson('documents?category=' + paddedCat);
+      items = Array.isArray(payload) ? payload : [];
+      doc = items.find(function (item) {
+        return item && item.category === paddedCat && item.url && item.visible !== false;
+      });
+      if (doc) return doc;
+    }
+
+    return null;
   }
 
   async function loadAllDisclosureDocuments() {
@@ -284,26 +296,37 @@
 
   function renderPdfDisplay(card, options) {
     if (!card) return;
-    var display = card.querySelector('.doc-display[data-runtime-disclosure="true"]') || card.querySelector('.doc-display');
+    
+    // Identifiers for doc-displays
+    var displays = Array.prototype.slice.call(card.querySelectorAll('.doc-display'));
+    var dynamicDisplay = card.querySelector('.doc-display[data-runtime-disclosure="true"]');
 
     if (!options || options.show === false || !normalizeText(options.url)) {
-      if (display) display.remove();
+      // If no dynamic URL found, keep the legacy blocks but we might want them hidden if they are broken
+      // For now, we only remove the dynamic one if it existed from a previous logic run
+      if (dynamicDisplay) dynamicDisplay.remove();
       return;
     }
 
-    if (!display) {
-      display = document.createElement('div');
-      display.className = 'doc-display';
+    // Since we have a dynamic PDF, we want to ensure only ONE display is visible and it's updated
+    // We remove all OTHER legacy doc-displays to prevent duplicates (e.g. 5-affidavit.html)
+    displays.forEach(function (d) {
+      if (d !== dynamicDisplay) d.remove();
+    });
+
+    if (!dynamicDisplay) {
+      dynamicDisplay = document.createElement('div');
+      dynamicDisplay.className = 'doc-display';
+      dynamicDisplay.setAttribute('data-runtime-disclosure', 'true');
       var marker = findPdfMarker(card);
       if (marker && marker.parentNode) {
-        marker.parentNode.insertBefore(display, marker);
+        marker.parentNode.insertBefore(dynamicDisplay, marker);
       } else {
-        card.appendChild(display);
+        card.appendChild(dynamicDisplay);
       }
     }
-
-    display.setAttribute('data-runtime-disclosure', 'true');
-    if (!display.style.marginTop) display.style.marginTop = '32px';
+    
+    if (!dynamicDisplay.style.marginTop) dynamicDisplay.style.marginTop = '32px';
 
     var sourceUrl = normalizeDocumentUrl(options.url);
     var downloadUrl = getDownloadableDocumentUrl(sourceUrl);
@@ -329,27 +352,25 @@
       + '</a>'
     );
 
-    display.innerHTML = ''
+    dynamicDisplay.innerHTML = ''
       + '<div class="doc-icon"></div>'
       + '<h3>' + title + '</h3>'
       + '<p>' + description + '</p>'
       + '<div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">' + actions.join('') + '</div>';
 
+    // Global cleanup: find any a.btn-doc candidates ACROSS THE ENTIRE CARD and update them
+    // This catches links that might have been hardcoded outside the main box
     Array.prototype.forEach.call(card.querySelectorAll('a.btn-doc'), function (link) {
       var label = normalizeText(link.textContent).toLowerCase();
       var isDownload = label.indexOf('download') !== -1;
-      if (isDownload && !allowDownload) {
-        link.style.display = 'none';
-        return;
-      }
-      link.style.display = '';
+      
       link.href = isDownload ? downloadUrl : viewUrl;
+      link.setAttribute('rel', 'noopener noreferrer');
       if (isDownload) {
         link.removeAttribute('target');
       } else {
         link.setAttribute('target', '_blank');
       }
-      link.setAttribute('rel', 'noopener noreferrer');
     });
   }
 
@@ -444,20 +465,47 @@
     if (docItem && normalizeText(docItem.url)) {
       card.classList.add('has-live-pdf');
       card.setAttribute('title', 'Official PDF available on this disclosure page');
+      
       if (!badge) {
         badge = document.createElement('div');
         badge.className = 'doc-meta';
-        badge.textContent = 'Official PDF Available';
+        badge.innerHTML = '<i class="fas fa-check-circle"></i> Official PDF Available';
         if (desc && desc.parentNode) {
           desc.parentNode.insertBefore(badge, desc.nextSibling);
         } else {
           card.appendChild(badge);
         }
       }
+
+      // Add a small floating button for direct PDF access if not present
+      var directBtn = card.querySelector('.direct-pdf-link');
+      if (!directBtn) {
+        directBtn = document.createElement('div');
+        directBtn.className = 'direct-pdf-link';
+        directBtn.innerHTML = '<i class="fas fa-file-pdf"></i> View File';
+        // Basic styling via JS to avoid CSS changes to the main file if possible
+        Object.assign(directBtn.style, {
+          position: 'absolute', top: '10px', right: '10px',
+          background: 'var(--navy)', color: '#fff',
+          padding: '4px 8px', borderRadius: '6px',
+          fontSize: '0.65rem', fontWeight: '800',
+          boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
+          zIndex: '10'
+        });
+        card.appendChild(directBtn);
+        
+        directBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          window.open(getViewableDocumentUrl(docItem.url), '_blank');
+        });
+      }
     } else {
       card.classList.remove('has-live-pdf');
       card.removeAttribute('title');
       if (badge) badge.remove();
+      var oldBtn = card.querySelector('.direct-pdf-link');
+      if (oldBtn) oldBtn.remove();
     }
   }
 
