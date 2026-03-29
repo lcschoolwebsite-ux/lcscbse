@@ -42,6 +42,49 @@
     return node ? String(node.textContent || '').trim() : '';
   }
 
+  /* Icons Map */
+  var PAGE_ICONS = {
+    'school-circulars': {
+      hero: '📢',
+      tiles: ['📅', '🗞️', '👨‍👩‍👧‍👦', '📦']
+    },
+    'book-list': {
+      hero: '📚',
+      tiles: ['🎒', '📖', '📝', '📍']
+    },
+    'former-heads': {
+      hero: '🎓',
+      tiles: ['🕊️', '🕰️', '🥇', '📜']
+    }
+  };
+
+  function setPageIcons(type) {
+    var icons = PAGE_ICONS[type];
+    if (!icons) return;
+
+    // Hero Icon
+    var heroIcon = document.querySelector('.acad-hero-icon');
+    if (heroIcon && !heroIcon.textContent.trim()) {
+      heroIcon.textContent = icons.hero;
+    }
+
+    // Tile Icons
+    var tileIcons = document.querySelectorAll('.acad-tile-icon');
+    tileIcons.forEach(function (el, i) {
+      if (el && !el.textContent.trim() && icons.tiles[i]) {
+        el.textContent = icons.tiles[i];
+      }
+    });
+
+    // Subnav Active State Force (just in case)
+    var subnavLinks = document.querySelectorAll('.acad-subnav-inner a');
+    subnavLinks.forEach(function(link) {
+      if (link.getAttribute('href').indexOf(type.substring(0, 10)) !== -1) {
+        link.classList.add('active');
+      }
+    });
+  }
+
   function escapeHtml(value) {
     return (value == null ? '' : String(value))
       .replace(/&/g, '&amp;')
@@ -351,9 +394,11 @@
   }
 
   async function initFormerHeadsPage() {
-    if (!/\/academics\/2-former-heads/.test(window.location.pathname)) return;
+    var path = window.location.pathname;
+    if (!(path.indexOf('2-former-heads') !== -1 || path.indexOf('former') !== -1)) return;
 
-    var doc = document;
+    console.log('[Loretto] Initializing Former Heads page...');
+    setPageIcons('former-heads');
     var fallback = collectFormerHeadsFallback(doc);
 
     try {
@@ -444,9 +489,11 @@
   }
 
   async function initBookListPage() {
-    if (!/\/academics\/5-book-list/.test(window.location.pathname)) return;
+    var path = window.location.pathname;
+    if (!(path.indexOf('5-book-list') !== -1 || path.indexOf('book') !== -1)) return;
 
-    var doc = document;
+    console.log('[Loretto] Initializing Book List page...');
+    setPageIcons('book-list');
     var fallback = collectBookListFallback(doc);
 
     try {
@@ -498,9 +545,11 @@
   }
 
   async function initSchoolCircularsPage() {
-    if (!/\/academics\/4-school-circulars/.test(window.location.pathname)) return;
+    var path = window.location.pathname;
+    if (!(path.indexOf('4-school-circulars') !== -1 || path.indexOf('circular') !== -1)) return;
 
-    var doc = document;
+    console.log('[Loretto] Initializing School Circulars page...');
+    setPageIcons('school-circulars');
     var fallback = collectSchoolCircularsFallback(doc);
 
     try {
