@@ -52,9 +52,13 @@
     return match ? match[0] : '';
   }
 
+  var PROD_API_BASE = 'https://lcscbse-production.up.railway.app/api';
+  var IS_LOCAL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+
   async function loadAboutBlock(slug) {
     try {
-      var response = await fetch('/api/about/' + slug);
+      var base = IS_LOCAL ? 'http://localhost:3000/api' : PROD_API_BASE;
+      var response = await fetch(base + '/about/' + slug);
       if (!response.ok) return null;
       var payload = await response.json().catch(function () { return null; });
       return payload && payload.data ? payload.data : null;
