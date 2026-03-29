@@ -49,6 +49,46 @@
     return escapeHtml(normalizeText(value)).replace(/\n/g, '<br>');
   }
 
+  function normalizeDocumentUrl(value) {
+    var url = normalizeText(value);
+    if (!url) return '';
+    if (/^(https?:)?\/\//i.test(url)) return url;
+    return 'https://' + url.replace(/^\/+/, '');
+  }
+
+  function fileExtension(url) {
+    var clean = normalizeDocumentUrl(url).split('?')[0].split('#')[0];
+    var parts = clean.split('.');
+    return parts.length > 1 ? parts.pop().toLowerCase() : '';
+  }
+
+  function buildCloudinaryAttachmentUrl(url) {
+    var clean = normalizeDocumentUrl(url);
+    if (!clean) return '';
+    if (!/res\.cloudinary\.com/i.test(clean)) return clean;
+    if (/\/fl_attachment(?:\/|,)/i.test(clean)) return clean;
+    return clean.replace(/\/((?:image|raw|video)\/upload\/)/i, '/$1fl_attachment/');
+  }
+
+  function getViewableDocumentUrl(url) {
+    var clean = normalizeDocumentUrl(url);
+    if (!clean) return '';
+    var ext = fileExtension(clean);
+    if (/^pdf$/i.test(ext)) {
+      return 'https://docs.google.com/gview?embedded=1&url=' + encodeURIComponent(clean);
+    }
+    if (/^(doc|docx|xls|xlsx|ppt|pptx)$/i.test(ext)) {
+      return 'https://view.officeapps.live.com/op/embed.aspx?src=' + encodeURIComponent(clean);
+    }
+    return clean;
+  }
+
+  function getDownloadableDocumentUrl(url) {
+    var clean = normalizeDocumentUrl(url);
+    if (!clean) return '';
+    return buildCloudinaryAttachmentUrl(clean);
+  }
+
   function hasOwn(obj, key) {
     return !!obj && Object.prototype.hasOwnProperty.call(obj, key);
   }
@@ -265,14 +305,17 @@
     display.setAttribute('data-runtime-disclosure', 'true');
     if (!display.style.marginTop) display.style.marginTop = '32px';
 
-    var url = escapeHtml(options.url);
+    var sourceUrl = normalizeDocumentUrl(options.url);
+    var downloadUrl = getDownloadableDocumentUrl(sourceUrl);
+    var viewUrl = getViewableDocumentUrl(sourceUrl);
+    var allowDownload = options.showDownload !== false;
     var title = escapeHtml(options.title || 'Official PDF');
     var description = escapeHtml(options.description || 'The latest official PDF uploaded from the admin disclosure panel is available below.');
     var actions = [];
 
-    if (options.showDownload !== false) {
+    if (allowDownload) {
       actions.push(
-        '<a href="' + url + '" target="_blank" rel="noopener noreferrer" class="btn-doc" download>'
+        '<a href="' + escapeHtml(downloadUrl) + '" rel="noopener noreferrer" class="btn-doc">'
         + '<svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M8 1v9M8 10L5 7m3 3 3-3M2 12v1a2 2 0 002 2h8a2 2 0 002-2v-1" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>'
         + 'Download PDF'
         + '</a>'
@@ -280,7 +323,7 @@
     }
 
     actions.push(
-      '<a href="' + url + '" target="_blank" rel="noopener noreferrer" class="btn-doc btn-doc-gold">'
+      '<a href="' + escapeHtml(viewUrl) + '" target="_blank" rel="noopener noreferrer" class="btn-doc btn-doc-gold">'
       + '<svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M2 2h12v12H2z" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M5 8h6M5 5h6M5 11h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>'
       + 'View Document'
       + '</a>'
@@ -291,6 +334,23 @@
       + '<h3>' + title + '</h3>'
       + '<p>' + description + '</p>'
       + '<div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">' + actions.join('') + '</div>';
+
+    Array.prototype.forEach.call(card.querySelectorAll('a.btn-doc'), function (link) {
+      var label = normalizeText(link.textContent).toLowerCase();
+      var isDownload = label.indexOf('download') !== -1;
+      if (isDownload && !allowDownload) {
+        link.style.display = 'none';
+        return;
+      }
+      link.style.display = '';
+      link.href = isDownload ? downloadUrl : viewUrl;
+      if (isDownload) {
+        link.removeAttribute('target');
+      } else {
+        link.setAttribute('target', '_blank');
+      }
+      link.setAttribute('rel', 'noopener noreferrer');
+    });
   }
 
   function renderUnavailable(card) {
@@ -428,7 +488,8 @@
   }
 
   function resolvePdfUrl(pageData, docItem) {
-    if (pageData && hasOwn(pageData, 'pdfUrl')) return normalizeText(pageData.pdfUrl);
+    var pageUrl = pageData && hasOwn(pageData, 'pdfUrl') ? normalizeText(pageData.pdfUrl) : '';
+    if (pageUrl) return pageUrl;
     return docItem && docItem.url ? normalizeText(docItem.url) : '';
   }
 
