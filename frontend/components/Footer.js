@@ -82,8 +82,8 @@
     '        <h4>Contact</h4>',
     '        <ul class="footer-contact-list">',
     '          <li><span>&#128205;</span> Main Road, Bantwal, Karnataka</li>',
-    '          <li><a href="tel:+919876543210"><span>&#128222;</span> +91 98765 43210</a></li>',
-    '          <li><a href="mailto:info@school.edu"><span>&#9993;&#65039;</span> info@school.edu</a></li>',
+    '          <li><a href="tel:+919480663011"><span>&#128222;</span> +91 94806 63011</a></li>',
+    '          <li><a href="mailto:Lorettocentralschool@gmail.com"><span>&#9993;&#65039;</span> Lorettocentralschool@gmail.com</a></li>',
     '          <li><span>&#128336;</span> Mon&#8211;Sat: 8:00 AM &#8211; 4:00 PM</li>',
     '          <li class="footer-login-link"><a href="' + R + 'login/parent-login.html">&#128106; Parent Login Portal</a></li>',
     '        </ul>',
@@ -136,13 +136,13 @@
     '          <div class="mob-ft-rule"></div>',
 
     '          <div class="mob-ft-contact">',
-    '            <a href="tel:+919876543210" class="mob-ft-contact-item">',
+    '            <a href="tel:+919480663011" class="mob-ft-contact-item">',
     '              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.4 2 2 0 0 1 3.58 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.54a16 16 0 0 0 5.55 5.55l1.61-1.61a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>',
-    '              +91 98765 43210',
+    '              +91 94806 63011',
     '            </a>',
-    '            <a href="mailto:info@school.edu" class="mob-ft-contact-item">',
+    '            <a href="mailto:Lorettocentralschool@gmail.com" class="mob-ft-contact-item">',
     '              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>',
-    '              info@school.edu',
+    '              Lorettocentralschool@gmail.com',
     '            </a>',
     '          </div>',
 
@@ -265,8 +265,10 @@
     let html = FOOTER_HTML;
     if (contact) {
       if (contact.address) html = html.replace(/Main Road, Bantwal, Karnataka/g, contact.address);
-      if (contact.phone) html = html.replace(/\+91 98765 43210/g, contact.phone);
+      if (contact.phone) html = html.replace(/\+91 94806 63011/g, contact.phone);
+      else html = html.replace(/\+91 94806 63011/g, '+91 94806 63011');
       if (contact.email) html = html.replace(/info@school\.edu/g, contact.email);
+      else html = html.replace(/info@school\.edu/g, 'Lorettocentralschool@gmail.com');
     }
 
     document.body.insertAdjacentHTML('beforeend', html);
