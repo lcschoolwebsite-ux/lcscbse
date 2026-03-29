@@ -645,8 +645,23 @@
   ];
 
   /* ── 6. INJECT ── */
+  function injectGoogleAnalytics() {
+    if (window.gtag || document.querySelector('script[src*="googletagmanager.com"]')) return;
+    var gtagId = 'G-DBNE16BEN6';
+    var snip = '\n<!-- Google tag (gtag.js) -->\n'
+      + '<script async src="https://www.googletagmanager.com/gtag/js?id=' + gtagId + '"></script>\n'
+      + '<script>\n'
+      + '  window.dataLayer = window.dataLayer || [];\n'
+      + '  function gtag(){dataLayer.push(arguments);}\n'
+      + '  gtag("js", new Date());\n'
+      + '  gtag("config", "' + gtagId + '");\n'
+      + '</script>\n';
+    document.head.insertAdjacentHTML('afterbegin', snip);
+  }
+
   function inject() {
     ensureViewportMeta();
+    injectGoogleAnalytics();
     if (document.getElementById('lcs-top-bar')) return;
     if (!document.getElementById('lcs-navbar-styles')) {
       document.head.insertAdjacentHTML('beforeend', CSS);
