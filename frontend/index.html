@@ -5885,9 +5885,12 @@
         setText('.about-year-tag', about.establishedYear ? 'Est. ' + about.establishedYear : '');
         setText('.about-badge-card .num', about.badgeValue);
         setText('.about-badge-card .lbl', about.badgeLabel);
-        if (about.image) {
+        var aboutImage = typeof about.image === 'string' ? about.image.trim() : '';
+        var heroImage = typeof hero.backgroundImage === 'string' ? hero.backgroundImage.trim() : '';
+        var resolvedAboutImage = aboutImage || heroImage;
+        if (resolvedAboutImage) {
           var aboutImg = document.querySelector('.about-img-placeholder img');
-          if (aboutImg) aboutImg.src = about.image;
+          if (aboutImg) aboutImg.src = resolvedAboutImage;
         }
         if (Array.isArray(about.features) && about.features.length) {
           var featuresHost = document.getElementById('aboutFeatures');

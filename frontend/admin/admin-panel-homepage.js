@@ -347,7 +347,11 @@
     setUploadZoneMessage(
       qs('.upload-zone', blocks[2]),
       state.aboutImage ? 'About image connected to Cloudinary' : 'About Section Photo',
-      state.aboutImage ? 'Stored in MongoDB and delivered from Cloudinary.<br><strong>' + state.aboutImage + '</strong>' : 'Current: IMGS/school img.webp'
+      state.aboutImage
+        ? 'Stored in MongoDB and delivered from Cloudinary.<br><strong>' + state.aboutImage + '</strong>'
+        : (state.heroImage
+          ? 'No dedicated About image uploaded. This section will use the Hero image.<br><strong>' + state.heroImage + '</strong>'
+          : 'Optional override. If empty, the homepage hero image will be used here.')
     );
 
     if (Array.isArray(data.miniCards)) {
