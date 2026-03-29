@@ -5695,6 +5695,29 @@
         if (el) el.innerHTML = value;
       }
 
+      function escapeHtml(value) {
+        return String(value || '')
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#39;');
+      }
+
+      function splitParagraphs(value) {
+        return String(value || '')
+          .replace(/\r\n?/g, '\n')
+          .split(/\n\s*\n/)
+          .map(function (part) { return part.trim(); })
+          .filter(Boolean);
+      }
+
+      function renderParagraphHtml(value) {
+        return splitParagraphs(value).map(function (paragraph) {
+          return '<p>' + escapeHtml(paragraph).replace(/\n/g, '<br>') + '</p>';
+        }).join('');
+      }
+
       function setValueFromArray(nodes, values, mapper) {
         if (!nodes || !values || !values.length) return;
         Array.from(nodes).forEach(function (node, index) {
@@ -6000,6 +6023,7 @@
               const modalId = 'dnm' + (item._id || item.id || i);
 
               const excerptText = item.excerpt || (item.content ? item.content.substring(0, 100) + '...' : '');
+              const modalContentHtml = renderParagraphHtml(item.content || excerptText);
 
               newsGrid.innerHTML += `
                 <div class="news-card">
@@ -6025,7 +6049,7 @@
                       <div class="news-modal-title">${item.title}</div>
                       <div class="news-modal-divider"></div>
                       <div class="news-modal-content">
-                        <p>${item.content || excerptText}</p>
+                        ${modalContentHtml}
                       </div>
                       ${Array.isArray(item.images) && item.images.length ? `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px;margin-top:20px;">${item.images.map(url => `<img src="${url}" alt="${item.title}" style="width:100%;height:160px;object-fit:cover;border-radius:12px;border:1px solid rgba(255,255,255,0.12);" onerror="this.style.display='none'" />`).join('')}</div>` : ''}
                     </div>
