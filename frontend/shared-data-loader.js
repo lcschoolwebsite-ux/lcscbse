@@ -88,6 +88,51 @@ function formatDisplayDate(value) {
   });
 }
 
+function escapeHtml(value) {
+  return String(value || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function splitParagraphs(value) {
+  return String(value || '')
+    .replace(/\r\n?/g, '\n')
+    .split(/\n\s*\n/)
+    .map(function (part) { return part.trim(); })
+    .filter(Boolean);
+}
+
+function renderParagraphHtml(value) {
+  const paragraphs = Array.isArray(value) ? value : splitParagraphs(value);
+  return paragraphs.map(function (paragraph) {
+    return '<p>' + escapeHtml(paragraph).replace(/\n/g, '<br>') + '</p>';
+  }).join('');
+}
+
+function getPrimaryNewsImage(item) {
+  if (item && item.image) return item.image;
+  if (item && Array.isArray(item.images) && item.images.length) return item.images[0];
+  return '';
+}
+
+function getNewsGalleryImages(item) {
+  const images = Array.isArray(item && item.images) ? item.images.filter(Boolean) : [];
+  const primary = getPrimaryNewsImage(item);
+  let skippedPrimary = false;
+
+  return images.filter(function (url) {
+    if (!primary) return true;
+    if (!skippedPrimary && url === primary) {
+      skippedPrimary = true;
+      return false;
+    }
+    return true;
+  });
+}
+
 function extractStructuredContent(data) {
   if (!data || typeof data !== 'object') return null;
 
@@ -149,12 +194,6 @@ async function renderNewsList(containerId) {
     container.innerHTML = '<div class="empty-msg">No news articles found.</div>';
     return;
   }
-
-  const getPrimaryNewsImage = (item) => {
-    if (item.image) return item.image;
-    if (Array.isArray(item.images) && item.images.length) return item.images[0];
-    return '';
-  };
 
   container.innerHTML = news.map(item => `
     <article class="news-card">
@@ -300,6 +339,81 @@ async function renderTestimonialsList(containerId) {
 
 // ── MODAL HELPER for News ──────────────────────────────────
 
+function bindNewsImageViewer(root) {
+  if (!root) return;
+
+  root.querySelectorAll('[data-news-image]').forEach(function (node) {
+    if (node.dataset.bound === 'true') return;
+    node.dataset.bound = 'true';
+    node.addEventListener('click', function () {
+      const rawUrl = node.getAttribute('data-news-image') || '';
+      const rawAlt = node.getAttribute('data-news-alt') || '';
+      const url = rawUrl ? decodeURIComponent(rawUrl) : '';
+      const alt = rawAlt ? decodeURIComponent(rawAlt) : '';
+      openNewsImageModal(url, alt);
+    });
+  });
+}
+
+function openNewsImageModal(url, alt) {
+  if (!url) return;
+
+  let container = document.getElementById('modal-container');
+  if (!container) {
+    container = document.createElement('div');
+    container.id = 'modal-container';
+    document.body.appendChild(container);
+  }
+
+  const existing = document.getElementById('news-image-viewer');
+  if (existing) existing.remove();
+
+  const viewer = document.createElement('div');
+  viewer.id = 'news-image-viewer';
+  viewer.className = 'modal-image-viewer';
+
+  const dialog = document.createElement('div');
+  dialog.className = 'modal-image-viewer-dialog';
+
+  const closeBtn = document.createElement('button');
+  closeBtn.type = 'button';
+  closeBtn.className = 'modal-image-viewer-close';
+  closeBtn.setAttribute('aria-label', 'Close image viewer');
+  closeBtn.innerHTML = '&times;';
+
+  const image = document.createElement('img');
+  image.className = 'modal-image-viewer-img';
+  image.src = url;
+  image.alt = alt || 'News image';
+
+  dialog.appendChild(closeBtn);
+  dialog.appendChild(image);
+
+  if (alt) {
+    const caption = document.createElement('div');
+    caption.className = 'modal-image-viewer-caption';
+    caption.textContent = alt;
+    dialog.appendChild(caption);
+  }
+
+  viewer.appendChild(dialog);
+
+  viewer.addEventListener('click', function (event) {
+    if (event.target === viewer) closeNewsImageModal();
+  });
+
+  if (closeBtn) {
+    closeBtn.addEventListener('click', closeNewsImageModal);
+  }
+
+  container.appendChild(viewer);
+}
+
+function closeNewsImageModal() {
+  const viewer = document.getElementById('news-image-viewer');
+  if (viewer) viewer.remove();
+}
+
 function openNewsModal(item) {
   if (typeof item === 'string') {
     const existingModal = document.getElementById(item);
@@ -310,11 +424,14 @@ function openNewsModal(item) {
     return;
   }
 
+  const primaryImage = getPrimaryNewsImage(item);
+  const galleryImages = getNewsGalleryImages(item);
+
   const modalHtml = `
     <div class="modal-overlay open" id="news-modal" onclick="if(event.target==this) closeNewsModal()">
       <div class="modal">
         <button class="modal-close" onclick="closeNewsModal()"></button>
-        ${((item.image || (Array.isArray(item.images) && item.images[0])) ? `<img src="${item.image || item.images[0]}" class="modal-img" alt="${item.title}">` : `<div class="modal-img-placeholder n${(item.id % 6) + 1}"></div>`)}
+        ${primaryImage ? `<button type="button" class="modal-main-image-btn" data-news-image="${encodeURIComponent(primaryImage)}" data-news-alt="${encodeURIComponent(item.title || 'News image')}"><img src="${primaryImage}" class="modal-img" alt="${item.title}"></button>` : `<div class="modal-img-placeholder n${(item.id % 6) + 1}"></div>`}
         <div class="modal-body">
           <div class="modal-meta">
             <span class="modal-date">${formatDisplayDate(item.date)}</span>
@@ -323,9 +440,9 @@ function openNewsModal(item) {
           <h2 class="modal-title">${item.title || ''}</h2>
           <div class="modal-divider"></div>
           <div class="modal-content">
-            <p>${item.content || item.excerpt || ''}</p>
+            ${renderParagraphHtml(item.content || item.excerpt || '')}
           </div>
-          ${Array.isArray(item.images) && item.images.length ? `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px;margin-top:20px;">${item.images.map(url => `<img src="${url}" alt="${item.title}" style="width:100%;height:160px;object-fit:cover;border-radius:12px;border:1px solid #eee;" />`).join('')}</div>` : ''}
+          ${galleryImages.length ? `<div class="modal-gallery">${galleryImages.map((url, index) => `<button type="button" class="modal-gallery-link" data-news-image="${encodeURIComponent(url)}" data-news-alt="${encodeURIComponent((item.title || 'News image') + ' ' + (index + 1))}"><img src="${url}" alt="${item.title}" class="modal-gallery-img" loading="lazy" /></button>`).join('')}</div>` : ''}
           <div style="margin-top: 25px; pt: 15px; border-top: 1px solid #eee; text-align: center;">
             <a href="/news.html" style="color: var(--navy); font-size: 0.85rem; font-weight: 700; text-decoration: none;">View All News & Events →</a>
           </div>
@@ -341,6 +458,7 @@ function openNewsModal(item) {
     document.body.appendChild(container);
   }
   container.innerHTML = modalHtml;
+  bindNewsImageViewer(container);
   document.body.style.overflow = 'hidden';
 }
 

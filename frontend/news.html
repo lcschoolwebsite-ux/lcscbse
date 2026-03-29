@@ -237,6 +237,18 @@
       object-fit: cover;
       border-radius: 16px 16px 0 0;
     }
+    .modal-main-image-btn {
+      width: 100%;
+      padding: 0;
+      border: none;
+      background: none;
+      cursor: zoom-in;
+      display: block;
+    }
+    .modal-main-image-btn .modal-img,
+    .modal-main-image-btn .modal-img-placeholder {
+      display: block;
+    }
     .modal-img-placeholder {
       width: 100%; height: 200px;
       border-radius: 16px 16px 0 0;
@@ -251,6 +263,97 @@
     .modal-divider { width: 48px; height: 3px; background: linear-gradient(90deg, var(--gold), var(--gold-light)); border-radius: 2px; margin: 16px 0 20px; }
     .modal-content p { font-size: 0.97rem; color: var(--text-muted); line-height: 1.85; margin-bottom: 16px; }
     .modal-content p:last-child { margin-bottom: 0; }
+    .modal-gallery {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+      margin-top: 24px;
+    }
+    .modal-gallery-link {
+      display: block;
+      width: 100%;
+      padding: 0;
+      border: none;
+      background: none;
+      border-radius: 14px;
+      overflow: hidden;
+      cursor: zoom-in;
+    }
+    .modal-gallery-link:focus-visible,
+    .modal-main-image-btn:focus-visible,
+    .modal-image-viewer-close:focus-visible {
+      outline: 3px solid rgba(14, 107, 107, 0.28);
+      outline-offset: 3px;
+    }
+    .modal-gallery-img {
+      width: 100%;
+      height: 220px;
+      object-fit: cover;
+      display: block;
+      border-radius: 14px;
+      border: 1px solid #eee;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+      background: var(--light-bg);
+    }
+    .modal-gallery-link:hover .modal-gallery-img {
+      transform: scale(1.02);
+      box-shadow: 0 14px 28px rgba(14, 107, 107, 0.14);
+    }
+    .modal-image-viewer {
+      position: fixed;
+      inset: 0;
+      background: rgba(6, 18, 18, 0.92);
+      z-index: 100000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 28px;
+    }
+    .modal-image-viewer-dialog {
+      position: relative;
+      max-width: min(1100px, 100%);
+      max-height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+    }
+    .modal-image-viewer-img {
+      max-width: 100%;
+      max-height: calc(100vh - 120px);
+      display: block;
+      border-radius: 18px;
+      box-shadow: 0 26px 70px rgba(0, 0, 0, 0.35);
+      background: #fff;
+    }
+    .modal-image-viewer-caption {
+      color: rgba(255, 255, 255, 0.88);
+      font-size: 0.92rem;
+      text-align: center;
+      line-height: 1.6;
+    }
+    .modal-image-viewer-close {
+      position: absolute;
+      top: -12px;
+      right: -12px;
+      width: 40px;
+      height: 40px;
+      border: none;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.14);
+      color: #fff;
+      cursor: pointer;
+      font-size: 1.2rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(6px);
+      transition: background 0.2s ease, transform 0.2s ease;
+    }
+    .modal-image-viewer-close:hover {
+      background: rgba(255, 255, 255, 0.24);
+      transform: scale(1.05);
+    }
     .modal-source { margin-top: 24px; padding-top: 18px; border-top: 1px solid var(--border); }
     .modal-source a { color: var(--navy); font-size: 0.82rem; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; }
     .modal-source a:hover { color: var(--gold); }
@@ -291,7 +394,7 @@
 
     /* ── RESPONSIVE ── */
     @media (max-width: 900px) { .news-grid { grid-template-columns: repeat(2,1fr); } }
-    @media (max-width: 600px) { .news-grid { grid-template-columns: 1fr; } .footer-grid { grid-template-columns: 1fr; } .modal-body { padding: 24px 20px 28px; } .modal-title { font-size: 1.3rem; } .tb-search { display: none; } }
+    @media (max-width: 600px) { .news-grid { grid-template-columns: 1fr; } .footer-grid { grid-template-columns: 1fr; } .modal-body { padding: 24px 20px 28px; } .modal-title { font-size: 1.3rem; } .modal-gallery { grid-template-columns: 1fr; gap: 14px; } .modal-gallery-img { height: 160px; } .modal-image-viewer { padding: 16px; } .modal-image-viewer-close { top: 12px; right: 12px; } .tb-search { display: none; } }
   
     /* ── MANDATORY DISCLOSURE FLYOUT (click-based) ── */
     .has-flyout { position: relative; }

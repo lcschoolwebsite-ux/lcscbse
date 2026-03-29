@@ -46,6 +46,24 @@
     return String(node.value || node.textContent || node.getAttribute('value') || '').trim();
   }
 
+  function splitParagraphs(value) {
+    return String(value || '')
+      .replace(/\r\n?/g, '\n')
+      .split(/\n\s*\n/)
+      .map(function (part) { return part.trim(); })
+      .filter(Boolean);
+  }
+
+  function formatParagraph(value) {
+    return escapeHtml(value).replace(/\n/g, '<br>');
+  }
+
+  function renderParagraphHtml(paragraphs) {
+    return (Array.isArray(paragraphs) ? paragraphs : []).map(function (paragraph) {
+      return '<p>' + formatParagraph(paragraph) + '</p>';
+    }).join('');
+  }
+
   function checked(node) {
     return !!(node && (node.checked || node.hasAttribute('checked')));
   }
@@ -134,14 +152,15 @@
     });
 
     var paragraphs = [];
-    var highlight = '';
+    var highlightParagraphs = [];
     Array.prototype.slice.call(doc.querySelectorAll('#paraList .para-item')).forEach(function (item) {
-      var value = text(item.querySelector('textarea'));
-      if (!value) return;
+      var value = longValue(item.querySelector('textarea'));
+      var parts = splitParagraphs(value);
+      if (!parts.length) return;
       if (/highlight box/i.test(text(item))) {
-        highlight = value;
+        highlightParagraphs = parts;
       } else {
-        paragraphs.push(value);
+        paragraphs = paragraphs.concat(parts);
       }
     });
 
@@ -158,6 +177,18 @@
     updatePageTitle(title);
     setBannerImage(bannerUrl);
 
+    var paragraphBlocks = paragraphs.map(function (paragraph, index) {
+      var block = '<p>' + formatParagraph(paragraph) + '</p>';
+      if (highlightParagraphs.length && index === 1) {
+        block += '<div class="highlight-box">' + renderParagraphHtml(highlightParagraphs) + '</div>';
+      }
+      return block;
+    }).join('');
+
+    if (highlightParagraphs.length && paragraphs.length < 2) {
+      paragraphBlocks += '<div class="highlight-box">' + renderParagraphHtml(highlightParagraphs) + '</div>';
+    }
+
     card.innerHTML = ''
       + '<h2>' + escapeHtml(title) + '</h2>'
       + (gallery.length ? '<div class="school-gallery">' + gallery.map(function (item) {
@@ -166,13 +197,7 @@
             + '<div class="gallery-img-placeholder" style="display:none"><span>' + escapeHtml(item.alt) + '</span></div>'
             + '</div>';
         }).join('') + '</div>' : '')
-      + paragraphs.map(function (paragraph, index) {
-          var block = '<p>' + escapeHtml(paragraph) + '</p>';
-          if (highlight && index === 1) {
-            block += '<div class="highlight-box"><p>' + escapeHtml(highlight) + '</p></div>';
-          }
-          return block;
-        }).join('')
+      + paragraphBlocks
       + (facts.length ? '<h2 style="margin-top:40px; font-size:1.4rem;">Key School Facts</h2>'
         + '<table class="info-table">'
         + facts.map(function (item) {
@@ -185,6 +210,7 @@
     var content = document.getElementById('mgmt-content');
     var loading = document.getElementById('mgmt-loading');
     var intro = longValue(doc.querySelector('#managementIntroText'));
+    var introParagraphs = splitParagraphs(intro);
     var rows = rowsFromTable(doc).map(function (row) {
       var cells = row.querySelectorAll('td');
       var photo = row.querySelector('img');
@@ -208,7 +234,7 @@
     if (loading) loading.style.display = 'none';
     content.style.display = 'block';
     updatePageTitle('Management');
-    content.innerHTML = (intro ? '<div class="mgmt-intro"><p>' + escapeHtml(intro) + '</p></div>' : '')
+    content.innerHTML = (introParagraphs.length ? '<div class="mgmt-intro">' + renderParagraphHtml(introParagraphs) + '</div>' : '')
       + '<h3 class="section-title">Management Team</h3><div class="mgmt-cards">'
       + rows.map(function (item, index) {
           return '<div class="mgmt-card ' + (index === 0 ? 'primary' : '') + '">'
@@ -227,7 +253,7 @@
     var bodyBlock = doc.querySelector('.block-body .fg');
     if (!bodyBlock) return;
     var textInputs = bodyBlock.querySelectorAll('input[type="text"]');
-    var message = text(doc.querySelector('textarea'));
+    var message = longValue(doc.querySelector('textarea'));
     var heading = inputValue(textInputs[0]) || personTitle;
     var subHeading = inputValue(textInputs[1]) || '';
     var signature = inputValue(textInputs[2]) || '';
@@ -235,7 +261,7 @@
     var signatureParts = signature.split(',').map(function (part) { return part.trim(); }).filter(Boolean);
     var personName = signatureParts[0] || personTitle;
     var personRole = signatureParts.slice(1).join(', ') || personTitle;
-    var paragraphs = message.split(/\n\s*\n/).map(function (part) { return part.trim(); }).filter(Boolean);
+    var paragraphs = splitParagraphs(message);
 
     updatePageTitle(heading);
 
@@ -253,9 +279,7 @@
       + '<div class="message-text">'
       + '<span class="quote-mark">"</span>'
       + (subHeading ? '<div class="highlight-quote">' + escapeHtml(subHeading) + '</div>' : '')
-      + paragraphs.map(function (paragraph) {
-          return '<p>' + escapeHtml(paragraph) + '</p>';
-        }).join('')
+      + renderParagraphHtml(paragraphs)
       + '<div class="signature"><strong>' + escapeHtml(personName) + '</strong><span>' + escapeHtml(personRole) + '</span></div>'
       + '</div>'
       + '</div>';
@@ -266,9 +290,7 @@
     if (!card) return;
     var introText = longValue(doc.querySelector('#ptaIntroText'))
       || 'The Parent-Teacher Association (PTA) plays a vital supportive role in the functioning of the school. The main motive of the PTA is to build a strong relationship between the school and the children\'s families, supporting holistic development and a nurturing community. The PTA general body meets once a year. During the year, the executive committee meets regularly. Various activities are conducted under the leadership of the PTA.';
-    var introParagraphs = introText.split(/\n\s*\n/).map(function (part) {
-      return part.trim();
-    }).filter(Boolean);
+    var introParagraphs = splitParagraphs(introText);
     var rows = rowsFromTable(doc).map(function (row) {
       var cells = row.querySelectorAll('td');
       return {
@@ -288,9 +310,7 @@
 
     card.innerHTML = ''
       + '<h2>PTA Executive Body</h2>'
-      + '<div class="pta-intro">' + introParagraphs.map(function (paragraph) {
-          return '<p>' + escapeHtml(paragraph) + '</p>';
-        }).join('') + '</div>'
+      + '<div class="pta-intro">' + renderParagraphHtml(introParagraphs) + '</div>'
       + '<div class="pta-leadership">'
       + rows.slice(0, 3).map(function (item) {
           return '<div class="pta-leader-card"><div class="role-tag">' + escapeHtml(item.role || 'Committee Member') + '</div><div class="name">' + escapeHtml(item.name) + '</div></div>';
@@ -315,12 +335,12 @@
     var validFrom = yearValue(inputValue(inputs[2]));
     var validTo = yearValue(inputValue(inputs[3]));
     var schoolCode = inputValue(inputs[4]);
-    var notes = text(doc.querySelector('.block-body textarea'));
+    var notesParagraphs = splitParagraphs(longValue(doc.querySelector('.block-body textarea')));
 
     updatePageTitle('CBSE Details');
     card.innerHTML = ''
       + '<h2>CBSE Details</h2>'
-      + (notes ? '<p>' + escapeHtml(notes) + '</p>' : '')
+      + (notesParagraphs.length ? renderParagraphHtml(notesParagraphs) : '')
       + '<div class="cbse-badge-row">'
       + '<div class="cbse-badge"><div class="badge-icon"></div><div class="badge-value">CBSE</div><div class="badge-label">Affiliated Board</div></div>'
       + '<div class="cbse-badge"><div class="badge-icon"></div><div class="badge-value"><span class="p-num">' + escapeHtml(affiliationNo || '—') + '</span></div><div class="badge-label">Affiliation Number</div></div>'
