@@ -5570,20 +5570,20 @@
       var outer = document.getElementById('wtOuter');
       var belt = document.getElementById('wtBelt');
       if (!outer || !belt) return;
-      var originals = Array.from(belt.children);
-      originals.forEach(function (s) { belt.appendChild(s.cloneNode(true)); });
-      originals.forEach(function (s) { belt.appendChild(s.cloneNode(true)); });
-      function oneSetWidth() {
-        var w = 0;
-        originals.forEach(function (s) { w += s.offsetWidth; });
-        return w;
-      }
+      var originals = [];
       var SPEED = 0.7;
       var x = 0;
       var paused = false;
       var isDrag = false;
       var dragStartClient = 0;
       var dragStartX = 0;
+      var animationFrameId = null;
+
+      function oneSetWidth() {
+        var w = 0;
+        originals.forEach(function (s) { w += s.offsetWidth; });
+        return w;
+      }
       function draw() { belt.style.transform = 'translateX(' + (-x) + 'px)'; }
       function loop() {
         if (!paused && !isDrag) {
@@ -5593,8 +5593,19 @@
           if (sw > 0 && x >= sw) x -= sw;
         }
         draw();
-        requestAnimationFrame(loop);
+        animationFrameId = requestAnimationFrame(loop);
       }
+
+      window.reinitWhyUsScroll = function() {
+        if (animationFrameId) cancelAnimationFrame(animationFrameId);
+        x = 0;
+        draw();
+        originals = Array.from(belt.children);
+        originals.forEach(function (s) { belt.appendChild(s.cloneNode(true)); });
+        originals.forEach(function (s) { belt.appendChild(s.cloneNode(true)); });
+        loop();
+      };
+
       outer.addEventListener('mouseenter', function () { paused = true; });
       outer.addEventListener('mouseleave', function () { paused = false; });
       outer.addEventListener('mousedown', function (e) {
@@ -5623,7 +5634,8 @@
         draw();
       }, { passive: true });
       outer.addEventListener('touchend', function () { isDrag = false; paused = false; }, { passive: true });
-      loop();
+      
+      window.reinitWhyUsScroll();
     })();
   </script>
 
@@ -6251,6 +6263,9 @@
                 '</div>'
               ].join('');
             }).join('');
+            if (typeof window.reinitWhyUsScroll === 'function') {
+              window.reinitWhyUsScroll();
+            }
           }
         }
 
