@@ -6,7 +6,7 @@
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-DBNE16BEN6"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
+    function gtag() { dataLayer.push(arguments); }
     gtag("js", new Date());
     gtag("config", "G-DBNE16BEN6");
   </script>
@@ -2019,6 +2019,27 @@
       gap: 24px;
     }
 
+    .content-loading-state {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 190px;
+      padding: 28px 24px;
+      border-radius: 16px;
+      border: 1px dashed rgba(14, 107, 107, 0.25);
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.96) 0%, rgba(245, 241, 233, 0.98) 100%);
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      text-align: center;
+    }
+
+    .news-grid>.content-loading-state {
+      grid-column: 1 / -1;
+    }
+
     .news-card {
       border-radius: 14px;
       overflow: hidden;
@@ -2428,6 +2449,11 @@
       gap: 32px;
       flex-wrap: wrap;
       padding: 40px 0 20px;
+    }
+
+    .polaroid-wall>.content-loading-state {
+      width: min(420px, 100%);
+      min-height: 240px;
     }
 
     @keyframes polaroidFloat {
@@ -4974,7 +5000,7 @@
             <!-- Inner grid lines -->
             <div class="about-img-grid"></div>
             <!-- Year tag -->
-            <span class="about-year-tag">Est. 1994</span>
+            <span class="about-year-tag">Est. 2010</span>
           </div>
 
           <!-- Floating A+ badge -->
@@ -5011,61 +5037,8 @@
         <p>Stay connected with the latest happenings, achievements, and events from our school community.</p>
         <div class="divider"></div>
       </div>
-      <div class="news-grid">
-
-        <!-- Card 1 -->
-        <div class="news-card">
-          <img class="news-thumb"
-            src="https://lorettocentralschool.com/wp-content/uploads/2026/02/whatsapp-image-2026-02-03-at-3.33.27-pm.jpeg"
-            alt="Farewell Programme"
-            onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
-          <div class="news-thumb-placeholder n1" style="display:none;">🎓</div>
-          <div class="news-body">
-            <div class="news-meta"><span class="news-date">03 Feb 2026</span><span class="news-tag-pill">Events</span>
-            </div>
-            <h3>Bidding Adieu: Farewell Programme for Grade X</h2>
-              <p>Loretto Central School organised a heartfelt farewell for Grade X Batch 2025–26, graced
-                by Manager Rev.
-                Fr. Francis Crasta and Principal Rev. Fr. Jason Vijay Monis.</p>
-              <button class="read-more-btn" onclick="openNewsModal('nm1')">Read More →</button>
-          </div>
-        </div>
-
-        <!-- Card 2 -->
-        <div class="news-card">
-          <img class="news-thumb"
-            src="https://lorettocentralschool.com/wp-content/uploads/2026/01/whatsapp-image-2026-01-26-at-9.29.16-am.jpeg"
-            alt="Republic Day 2026" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
-          <div class="news-thumb-placeholder n2" style="display:none;">🇮🇳</div>
-          <div class="news-body">
-            <div class="news-meta"><span class="news-date">26 Jan 2026</span><span
-                class="news-tag-pill">Celebration</span></div>
-            <h3>Celebrating India's Glory: 77th Republic Day</h2>
-              <p>Loretto Central School celebrated the 77th Republic Day with great patriotism, featuring
-                flag hoisting,
-                cultural performances, and a march past by students.</p>
-              <button class="read-more-btn" onclick="openNewsModal('nm2')">Read More →</button>
-          </div>
-        </div>
-
-        <!-- Card 3 -->
-        <div class="news-card">
-          <img class="news-thumb"
-            src="https://lorettocentralschool.com/wp-content/uploads/2026/01/whatsapp-image-2026-01-05-at-3.19.29-pm-1.jpeg"
-            alt="National Karate Competition"
-            onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
-          <div class="news-thumb-placeholder n3" style="display:none;">🥋</div>
-          <div class="news-body">
-            <div class="news-meta"><span class="news-date">05 Jan 2026</span><span
-                class="news-tag-pill">Achievement</span></div>
-            <h3>Outstanding Performance at National Level Open Karate Competition</h2>
-              <p>18 students won 8 Gold and 7 Silver medals at the National Level Open Karate Competition
-                held at Father
-                Mullers Indoor Stadium, Kankanadi.</p>
-              <button class="read-more-btn" onclick="openNewsModal('nm3')">Read More →</button>
-          </div>
-        </div>
-
+      <div class="news-grid" aria-live="polite">
+        <div class="content-loading-state" role="status">(loading news.....)</div>
       </div>
 
       <div class="news-view-all">
@@ -5354,7 +5327,7 @@
         animationFrameId = requestAnimationFrame(loop);
       }
 
-      window.reinitWhyUsScroll = function() {
+      window.reinitWhyUsScroll = function () {
         if (animationFrameId) cancelAnimationFrame(animationFrameId);
         x = 0;
         draw();
@@ -5392,7 +5365,7 @@
         draw();
       }, { passive: true });
       outer.addEventListener('touchend', function () { isDrag = false; paused = false; }, { passive: true });
-      
+
       window.reinitWhyUsScroll();
     })();
   </script>
@@ -5408,7 +5381,9 @@
         <div class="divider"></div>
       </div>
 
-      <div class="polaroid-wall"></div>
+      <div class="polaroid-wall" aria-live="polite">
+        <div class="content-loading-state" role="status">(loading testimonials.....)</div>
+      </div>
     </div>
   </section>
 
@@ -5873,9 +5848,9 @@
         if (Array.isArray(about.paragraphs) && about.paragraphs.length) {
           var aboutTextHost = document.getElementById('aboutText');
           if (aboutTextHost) {
-            var toRemove = Array.from(aboutTextHost.children).filter(function(c) { return c.tagName === 'P'; });
-            toRemove.forEach(function(c) { c.remove(); });
-            about.paragraphs.forEach(function(p) {
+            var toRemove = Array.from(aboutTextHost.children).filter(function (c) { return c.tagName === 'P'; });
+            toRemove.forEach(function (c) { c.remove(); });
+            about.paragraphs.forEach(function (p) {
               var pEl = document.createElement('p');
               pEl.textContent = p;
               aboutTextHost.appendChild(pEl);
@@ -5905,8 +5880,8 @@
           if (aboutImgWrap) {
             // Find existing ones and remove them to re-render
             var existing = aboutImgWrap.querySelectorAll('.about-mini-card');
-            existing.forEach(function(ex) { ex.remove(); });
-            about.miniCards.slice(0, 2).forEach(function(item, idx) {
+            existing.forEach(function (ex) { ex.remove(); });
+            about.miniCards.slice(0, 2).forEach(function (item, idx) {
               var mc = document.createElement('div');
               mc.className = 'about-mini-card about-mini-' + (idx + 1);
               mc.innerHTML = '<span class="mc-icon"><i class="fa-solid ' + (item.icon || 'fa-star') + '"></i></span> ' + (item.text || '');
@@ -6059,11 +6034,6 @@
               `;
             });
 
-            // Remove the static modals now that dynamic ones are injected
-            ['nm1', 'nm2', 'nm3'].forEach(id => {
-              const m = document.getElementById(id);
-              if (m) m.remove();
-            });
           }
         }
 
