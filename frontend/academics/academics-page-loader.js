@@ -351,7 +351,7 @@
   }
 
   async function initFormerHeadsPage() {
-    if (!//academics/2-former-heads/.test(window.location.pathname)) return;
+    if (!/\/academics\/2-former-heads/.test(window.location.pathname)) return;
 
     var doc = document;
     var fallback = collectFormerHeadsFallback(doc);
@@ -444,7 +444,7 @@
   }
 
   async function initBookListPage() {
-    if (!//academics/5-book-list/.test(window.location.pathname)) return;
+    if (!/\/academics\/5-book-list/.test(window.location.pathname)) return;
 
     var doc = document;
     var fallback = collectBookListFallback(doc);
@@ -498,7 +498,7 @@
   }
 
   async function initSchoolCircularsPage() {
-    if (!//academics/4-school-circulars/.test(window.location.pathname)) return;
+    if (!/\/academics\/4-school-circulars/.test(window.location.pathname)) return;
 
     var doc = document;
     var fallback = collectSchoolCircularsFallback(doc);
