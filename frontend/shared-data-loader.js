@@ -5,18 +5,25 @@
 
 /* ── API BASE RESOLUTION ── */
 var API_BASE_KEY = 'loretto_api_base';
-var RESOLVED_API_BASE = window.location.hostname === 'localhost' ? (sessionStorage.getItem(API_BASE_KEY) || '') : 'https://lcscbse-production.up.railway.app/api';
+var PROD_API_BASE = 'https://lcscbse-production.up.railway.app/api';
+var IS_LOCAL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+var RESOLVED_API_BASE = IS_LOCAL ? (sessionStorage.getItem(API_BASE_KEY) || '') : PROD_API_BASE;
+
+// On production, mark the API base as valid immediately — no probing needed
+if (!IS_LOCAL) {
+  sessionStorage.setItem(API_BASE_KEY, PROD_API_BASE);
+  sessionStorage.setItem(API_BASE_KEY + '_ok', 'true');
+}
 
 async function resolveApiBase() {
   const cachedOk = sessionStorage.getItem(API_BASE_KEY + '_ok') === 'true';
   if (RESOLVED_API_BASE && cachedOk) return RESOLVED_API_BASE;
-  
-  // Try common local ports if on localhost
+
+  // Only probe on localhost
   const candidates = [
     'http://localhost:3000/api',
     'http://127.0.0.1:3000/api',
-    'http://localhost:8000/api',
-    window.location.origin + '/api'
+    'http://localhost:8000/api'
   ];
 
   for (const base of candidates) {
@@ -35,8 +42,8 @@ async function resolveApiBase() {
       // ignore probe failures
     }
   }
-  
-  // Fallback
+
+  // Fallback to proxy
   RESOLVED_API_BASE = '/api';
   return '/api';
 }

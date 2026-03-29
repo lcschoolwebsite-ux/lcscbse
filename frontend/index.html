@@ -6323,7 +6323,7 @@
               const primaryImage = (item.image && item.image.trim()) || (Array.isArray(item.images) && item.images.length ? item.images[0] : '');
               const hasImage = !!primaryImage;
               const emoji = ['🎓', '🇮🇳', '🥋', '🏅', '🏆', '🎉'][i % 6];
-              const modalId = 'dnm' + item.id;
+              const modalId = 'dnm' + (item._id || item.id || i);
 
               const excerptText = item.excerpt || (item.content ? item.content.substring(0, 100) + '...' : '');
 

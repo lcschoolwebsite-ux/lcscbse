@@ -9,6 +9,11 @@
   var path = window.location.pathname;
   var isLoginPage = /\/admin\/admin-login\.html$/i.test(path) || /\/admin-login\.html$/i.test(path);
 
+  // Hide page immediately to prevent flash/flicker before auth check completes
+  if (!isLoginPage) {
+    document.documentElement.style.visibility = 'hidden';
+  }
+
   function normalizeOrigin(value) {
     return (value || '').replace(/\/+$/, '');
   }
@@ -430,7 +435,13 @@
       if (!result.authenticated) {
         clearToken();
         redirectToLogin();
+      } else {
+        // Auth confirmed — reveal the page
+        document.documentElement.style.visibility = '';
       }
+    }).catch(function () {
+      // On network error, show the page anyway (fail open for UX)
+      document.documentElement.style.visibility = '';
     });
   }
 })();
