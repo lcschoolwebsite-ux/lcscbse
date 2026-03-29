@@ -388,7 +388,7 @@
         + '<div style="font-size:1.2rem;"></div>'
         + '<div style="font-size:0.8rem;font-weight:700;color:var(--navy);">' + (card.kicker || ('Card ' + (index + 1))) + '</div>'
         + '<button class="act-btn" style="margin-left:auto;" title="Edit"></button>'
-        + '<button class="act-btn del" title="Delete"></button>'
+        + '<button class="act-btn del" title="Delete" onclick="this.parentElement.parentElement.remove()"></button>'
         + '</div>'
         + '<div class="form-grid">'
         + '<div class="form-field"><label>Title</label><input type="text" value="' + (card.title || '').replace(/"/g, '&quot;') + '"/></div>'
@@ -398,6 +398,27 @@
         + '</div>';
     }).join('');
   }
+
+  window.addWhyUsCard = function () {
+    var host = document.getElementById('whyUsCards');
+    if (!host) return;
+    var index = qsa('div[style*="border-radius:10px"]', host).length + 1;
+    var html = ''
+      + '<div style="background:var(--bg);border-radius:10px;padding:16px;border:1.5px solid var(--border);">'
+      + '<div style="display:flex;gap:10px;align-items:center;margin-bottom:12px;">'
+      + '<div style="font-size:1.2rem;"></div>'
+      + '<div style="font-size:0.8rem;font-weight:700;color:var(--navy);">Card ' + index + '</div>'
+      + '<button class="act-btn" style="margin-left:auto;" title="Edit"></button>'
+      + '<button class="act-btn del" title="Delete" onclick="this.parentElement.parentElement.remove()"></button>'
+      + '</div>'
+      + '<div class="form-grid">'
+      + '<div class="form-field"><label>Title</label><input type="text" value="New Feature"/></div>'
+      + '<div class="form-field"><label>Description</label><textarea style="min-height:60px;"></textarea></div>'
+      + '<div class="form-field"><label>Icon / Class</label><input type="text" value=""/></div>'
+      + '</div>'
+      + '</div>';
+    host.insertAdjacentHTML('beforeend', html);
+  };
 
   function collectGalleryData() {
     var rows = qsa('#panel-gallery tbody tr');

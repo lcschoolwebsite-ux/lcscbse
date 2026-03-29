@@ -1467,7 +1467,7 @@
           <div class="section-block-header">
             <div class="section-block-title"><span class="icon">⭐</span> "Why Choose Us" Cards <span class="count-pill">8 cards</span></div>
             <div class="section-block-actions">
-              <button class="btn-sm outline">+ Add Card</button>
+              <button class="btn-sm outline" onclick="addWhyUsCard()">+ Add Card</button>
               <button class="btn-sm gold" onclick="saveSection('Why Us')"> Save</button>
             </div>
           </div>
@@ -1479,7 +1479,7 @@
                   <div style="font-size:1.2rem;"></div>
                   <div style="font-size:0.8rem;font-weight:700;color:var(--navy);">Card 1</div>
                   <button class="act-btn" style="margin-left:auto;" title="Edit" onclick="openWhyModal(1)"></button>
-                  <button class="act-btn del" title="Delete"></button>
+                  <button class="act-btn del" title="Delete" onclick="this.parentElement.parentElement.remove()"></button>
                 </div>
                 <div class="form-grid">
                   <div class="form-field"><label>Title</label><input type="text" value="Expert Faculty"/></div>
@@ -1492,7 +1492,7 @@
                   <div style="font-size:1.2rem;"></div>
                   <div style="font-size:0.8rem;font-weight:700;color:var(--navy);">Card 2</div>
                   <button class="act-btn" style="margin-left:auto;" title="Edit" onclick="openWhyModal(2)"></button>
-                  <button class="act-btn del" title="Delete"></button>
+                  <button class="act-btn del" title="Delete" onclick="this.parentElement.parentElement.remove()"></button>
                 </div>
                 <div class="form-grid">
                   <div class="form-field"><label>Title</label><input type="text" value="Award-Winning Results"/></div>
