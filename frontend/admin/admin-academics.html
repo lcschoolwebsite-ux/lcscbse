@@ -333,7 +333,8 @@
         <div class="at-div"></div>
         <button class="atbtn out" id="previewBtn" onclick="window.open('../academics/index.html','_blank')"> Preview</button>
         <button class="atbtn tl" onclick="refreshData()"> Refresh</button>
-        <button class="atbtn gd" onclick="openAddModal()">＋ Add New</button>
+        <button class="atbtn gd" id="publishBtn" onclick="publishCurrentTab()"> Publish Page</button>
+        <button class="atbtn gd" id="addNewBtn" onclick="openAddModal()">＋ Add New</button>
       </div>
     </div>
 
@@ -365,7 +366,8 @@
             <div class="blk-acts"><button class="atbtn gd" onclick="saveAcademicsOverview()"> Save Overview</button></div>
           </div>
           <div class="blkbody">
-            <div class="fg c2">
+            <div class="fg c3">
+              <div class="f"><label>Page Banner Title <span class="dbh">bannerTitle</span></label><input type="text" id="ac-banner-title" placeholder="Academics" /></div>
               <div class="f"><label>Hero Badge <span class="dbh">heroBadge</span></label><input type="text" id="ac-hero-badge" placeholder="Academic Excellence · holistic Growth" /></div>
               <div class="f"><label>Hero Title <span class="dbh">heroTitle</span></label><input type="text" id="ac-hero-title" placeholder="Academics at Loretto" /></div>
             </div>
@@ -398,6 +400,23 @@
         <div class="dbbar">
           <span class="dd"></span> MongoDB · Collection: <code>faculty</code> · Schema: <code>{ name, subject, qualification, experience, photo }</code>
           <span class="ep">GET · POST /api/faculty &nbsp;|&nbsp; PUT · DELETE /api/faculty/:id</span>
+        </div>
+
+        <div class="block">
+          <div class="blk-hd">
+            <div class="blk-title"><span class="ic"></span> Faculty Page Info <span class="dbc">academics.faculty-page</span></div>
+            <div class="blk-acts">
+              <button class="atbtn gd" onclick="saveFacultyPageContent()"> Save Page Content</button>
+            </div>
+          </div>
+          <div class="blkbody">
+            <div class="fg c2">
+              <div class="f"><label>Banner Title <span class="dbh">bannerTitle</span></label><input type="text" id="faculty-page-banner-title" placeholder="Faculty" /></div>
+              <div class="f"><label>Page Title <span class="dbh">pageTitle</span></label><input type="text" id="faculty-page-title" placeholder="Faculty" /></div>
+            </div>
+            <div class="f" style="margin-top:12px;"><label>Intro Paragraph <span class="dbh">introText</span></label><textarea id="faculty-page-intro" placeholder="Introduce the teaching staff and academic guidance provided by the faculty team."></textarea></div>
+            <div class="f" style="margin-top:12px;"><label>Faculty List Heading <span class="dbh">listTitle</span></label><input type="text" id="faculty-page-list-title" placeholder="Teaching Staff" /></div>
+          </div>
         </div>
 
         <!-- Stats -->
@@ -547,17 +566,19 @@
           <div>
             <div class="block">
               <div class="blk-hd">
-                <div class="blk-title"><span class="ic"></span> CBSE Page Info <span class="dbc">academics.cbsePage</span></div>
-                <div class="blk-acts"><button class="atbtn gd" onclick="toast('CBSE page info saved!')"> Save</button></div>
+                <div class="blk-title"><span class="ic"></span> CBSE Page Info <span class="dbc">academics.cbse-circulars</span></div>
+                <div class="blk-acts"><button class="atbtn gd" onclick="saveCbsePageContent()"> Save</button></div>
               </div>
               <div class="blkbody">
-                <div class="fg">
-                  <div class="f"><label>Affiliation No. <span class="dbh">cbsePage.affiliationNo</span></label><input type="text" value="831368" /></div>
-                  <div class="f"><label>Valid Until <span class="dbh">cbsePage.validUntil</span></label><input type="text" value="31 March 2029" /></div>
-                  <div class="f"><label>Official CBSE Website <span class="dbh">cbsePage.officialSite</span></label><input type="url" value="https://cbse.gov.in" /></div>
-                  <div class="f"><label>Hero Badge Text <span class="dbh">cbsePage.badge</span></label><input type="text" value="CBSE Board · Official Notices" /></div>
-                  <div class="f"><label>Hero Description <span class="dbh">cbsePage.heroDesc</span></label><textarea style="min-height:70px;">All official circulars, notifications, and directives issued by the Central Board of Secondary Education (CBSE), New Delhi that are relevant to Loretto Central School are published here.</textarea></div>
+                <div class="fg c2">
+                  <div class="f"><label>Banner Title <span class="dbh">bannerTitle</span></label><input type="text" id="cbse-page-banner-title" value="CBSE Circulars" /></div>
+                  <div class="f"><label>Hero Badge Text <span class="dbh">badge</span></label><input type="text" id="cbse-page-badge" value="CBSE Board · Official Notices" /></div>
                 </div>
+                <div class="fg c2" style="margin-top:12px;">
+                  <div class="f"><label>Hero Title <span class="dbh">heroTitle</span></label><input type="text" id="cbse-page-hero-title" value="CBSE Circulars" /></div>
+                  <div class="f"><label>Section Title <span class="dbh">sectionTitle</span></label><input type="text" id="cbse-page-section-title" value="CBSE Circulars" /></div>
+                </div>
+                <div class="f" style="margin-top:12px;"><label>Hero Description <span class="dbh">heroDesc</span></label><textarea id="cbse-page-hero-desc" style="min-height:70px;">All official circulars, notifications, and directives issued by the Central Board of Secondary Education (CBSE), New Delhi that are relevant to Loretto Central School are published here.</textarea></div>
               </div>
             </div>
           </div>
@@ -592,7 +613,7 @@
           <div>
             <div class="block">
               <div class="blk-hd">
-                <div class="blk-title"><span class="ic"></span> School Circulars Page Info <span class="dbc">academics.schoolPage</span></div>
+                <div class="blk-title"><span class="ic"></span> School Circulars Page Info <span class="dbc">academics.school-circulars</span></div>
                 <div class="blk-acts"><button class="atbtn gd" onclick="saveSchoolCircularPage()"> Save</button></div>
               </div>
               <div class="blkbody">
@@ -623,8 +644,33 @@ Parents are requested to acknowledge receipt of circulars with signature in the 
       <div class="panel" id="tab-booklist">
 
         <div class="dbbar">
-          <span class="dd"></span> MongoDB · Collection: <code>documents</code> · Filter: <code>{ category: "book-list" }</code> + <code>academics.bookList</code>
+          <span class="dd"></span> MongoDB · Collection: <code>documents</code> · Filter: <code>{ category: "book-list" }</code> + <code>academics.book-list</code>
           <span class="ep">GET · POST /api/documents &nbsp;|&nbsp; PUT · DELETE /api/documents/:id</span>
+        </div>
+
+        <div class="block">
+          <div class="blk-hd">
+            <div class="blk-title"><span class="ic"></span> Book List Page Info <span class="dbc">academics.book-list</span></div>
+            <div class="blk-acts"><button class="atbtn gd" onclick="saveBookListContent()"> Save Page Content</button></div>
+          </div>
+          <div class="blkbody">
+            <div class="fg c2">
+              <div class="f"><label>Banner Title <span class="dbh">bannerTitle</span></label><input type="text" id="book-page-banner-title" value="Book List" /></div>
+              <div class="f"><label>Hero Badge <span class="dbh">heroBadge</span></label><input type="text" id="book-page-hero-badge" placeholder="Academic Session · Books & Resources" /></div>
+            </div>
+            <div class="fg c2" style="margin-top:12px;">
+              <div class="f"><label>Hero Title <span class="dbh">heroTitle</span></label><input type="text" id="book-page-hero-title" value="Book List" /></div>
+              <div class="f"><label>Academic Year <span class="dbh">academicYear</span></label><input type="text" id="book-page-academic-year" value="2024–25" /></div>
+            </div>
+            <div class="f" style="margin-top:12px;"><label>Hero Description <span class="dbh">heroText</span></label><textarea id="book-page-hero-text" placeholder="Introduce the class-wise book list and explain how students can use the PDF and table below."></textarea></div>
+            <div class="fg c2" style="margin-top:12px;">
+              <div class="f"><label>Section Title <span class="dbh">sectionTitle</span></label><input type="text" id="book-page-section-title" value="Book List" /></div>
+              <div class="f"><label>Download Box Title <span class="dbh">downloadTitle</span></label><input type="text" id="book-page-download-title" value="Download Book List - PDF" /></div>
+            </div>
+            <div class="f" style="margin-top:12px;"><label>Download Box Description <span class="dbh">downloadText</span></label><textarea id="book-page-download-text" placeholder="Add a short description for the PDF download section."></textarea></div>
+            <div class="f" style="margin-top:12px;"><label>Instructions Title <span class="dbh">instructionsTitle</span></label><input type="text" id="book-page-instructions-title" placeholder="Before You Download" /></div>
+            <div class="f" style="margin-top:12px;"><label>Instructions <span class="dbh">instructionItems[ ]</span></label><textarea id="book-page-instruction-items" style="min-height:120px;" placeholder="Enter one instruction per line"></textarea><div class="fhint">Enter one point per line.</div></div>
+          </div>
         </div>
 
         <!-- PDF Download option -->
@@ -656,7 +702,7 @@ Parents are requested to acknowledge receipt of circulars with signature in the 
         <!-- Inline book table editor -->
         <div class="block">
           <div class="blk-hd">
-            <div class="blk-title"><span class="ic"></span> Book List by Class <span class="dbc">academics.bookList.classes[ ]</span></div>
+            <div class="blk-title"><span class="ic"></span> Book List by Class <span class="dbc">academics.book-list.classes[ ]</span></div>
             <div class="blk-acts">
               <button class="atbtn out" onclick="addBookClass()">＋ Add Class Group</button>
               <button class="atbtn gd" onclick="saveBookListContent()"> Save All</button>
@@ -838,7 +884,59 @@ var TAB_META = {
   formerheads: { title:'Academics — Former Heads',    sub:'Content block + management timeline for ../academics/2-former-heads.html',   preview:'../academics/2-former-heads.html' },
   cbse:        { title:'Academics — CBSE Circulars',  sub:'Collection: documents · filter: category=cbse-circular', preview:'../academics/3-cbse-circulars.html' },
   school:      { title:'Academics — School Circulars',sub:'Collection: documents · filter: category=school-circular', preview:'../academics/4-school-circulars.html' },
-  booklist:    { title:'Academics — Book List',       sub:'Collection: documents + academics.bookList',          preview:'../academics/5-book-list.html' },
+  booklist:    { title:'Academics — Book List',       sub:'Collection: documents + academics.book-list',         preview:'../academics/5-book-list.html' },
+};
+var ACTIVE_TAB = 'overview';
+var PUBLISH_LABELS = {
+  overview: ' Publish Overview',
+  faculty: ' Publish Faculty Page',
+  formerheads: ' Publish Former Heads',
+  cbse: ' Publish CBSE Page',
+  school: ' Publish School Page',
+  booklist: ' Publish Book List'
+};
+var PUBLISH_MESSAGES = {
+  overview: 'Academics overview published!',
+  faculty: 'Faculty page published!',
+  formerheads: 'Former Heads page published!',
+  cbse: 'CBSE circulars page published!',
+  school: 'School circulars page published!',
+  booklist: 'Book list page published!'
+};
+var ADD_ACTIONS = {
+  overview: { label: '＋ Add New', hidden: true },
+  faculty: { label: '＋ Add Faculty', action: openAddModal },
+  formerheads: { label: '＋ Add Former Head', action: openFormerHeadModal },
+  cbse: { label: '＋ Add Circular', action: openCBSEModal },
+  school: { label: '＋ Add Circular', action: openSchoolCircModal },
+  booklist: { label: '＋ Add Class Group', action: addBookClass }
+};
+var ACADEMICS_OVERVIEW_DEFAULTS = {
+  bannerTitle: 'Academics',
+  heroBadge: 'Academic Excellence · Holistic Growth',
+  heroTitle: 'Academics at Loretto',
+  heroDesc: '',
+  icons: {
+    faculty: '🎓',
+    circular: '📢',
+    curriculum: '📚',
+    calendar: '📅'
+  }
+};
+var FACULTY_PAGE_KEY = 'academics.faculty-page';
+var FACULTY_PAGE_DEFAULTS = {
+  bannerTitle: 'Faculty',
+  pageTitle: 'Faculty',
+  introText: '',
+  listTitle: 'Teaching Staff'
+};
+var CBSE_CIRCULARS_PAGE_KEY = 'academics.cbse-circulars';
+var CBSE_CIRCULARS_DEFAULTS = {
+  bannerTitle: 'CBSE Circulars',
+  badge: '',
+  heroTitle: 'CBSE Circulars',
+  heroDesc: '',
+  sectionTitle: 'CBSE Circulars'
 };
 var SCHOOL_CIRCULARS_PAGE_KEY = 'academics.school-circulars';
 var ACADEMICS_MAIN_KEY = 'academics.main';
@@ -860,8 +958,36 @@ var SCHOOL_CIRCULARS_DEFAULTS = {
   ]
 };
 var BOOK_LIST_CONTENT_KEY = 'academics.book-list';
+var BOOK_LIST_PAGE_DEFAULTS = {
+  bannerTitle: 'Book List',
+  heroBadge: '',
+  heroTitle: 'Book List',
+  heroText: '',
+  academicYear: '',
+  sectionTitle: 'Book List',
+  downloadTitle: 'Download Book List - PDF',
+  downloadText: '',
+  instructionsTitle: '',
+  instructionItems: []
+};
+
+function updateTopbarActions(id) {
+  var publishBtn = document.getElementById('publishBtn');
+  if (publishBtn) {
+    publishBtn.textContent = PUBLISH_LABELS[id] || ' Publish Page';
+  }
+
+  var addBtn = document.getElementById('addNewBtn');
+  var config = ADD_ACTIONS[id] || {};
+  if (!addBtn) return;
+
+  addBtn.textContent = config.label || '＋ Add New';
+  addBtn.style.display = config.hidden ? 'none' : '';
+  addBtn.onclick = typeof config.action === 'function' ? config.action : function () {};
+}
 
 function goTab(id) {
+  ACTIVE_TAB = id;
   TABS.forEach(function(t) {
     document.getElementById('tab-'+t).classList.toggle('active', t === id);
   });
@@ -876,11 +1002,13 @@ function goTab(id) {
     document.getElementById('atSub').textContent = m.sub;
     document.getElementById('previewBtn').onclick = function(){ window.open(m.preview,'_blank'); };
   }
+  updateTopbarActions(id);
   // Load data on first visit
   if (id === 'overview' && !window._overviewLoaded) loadAcademicsOverview();
   if (id === 'faculty' && !window._facultyLoaded) loadFaculty();
   if (id === 'formerheads' && !window._fhLoaded) loadFormerHeads();
   if (id === 'cbse' && !window._cbseLoaded) loadDocuments('cbse-circular','cbse-loading','cbse-list','cnt-cbse');
+  if (id === 'cbse' && !window._cbsePageLoaded) loadCbsePageContent();
   if (id === 'school' && !window._schoolLoaded) loadDocuments('school-circular','school-loading','school-list','cnt-school');
   if (id === 'school' && !window._schoolPageLoaded) loadSchoolCircularPage();
   if (id === 'booklist' && !window._bookListLoaded) loadBookListAdmin();
@@ -908,6 +1036,31 @@ function getAcademicDocDateValue(item) {
   return item.date || (item.meta && item.meta.date) || item.updatedAt || item.createdAt || '';
 }
 
+async function publishCurrentTab() {
+  var success = false;
+
+  if (ACTIVE_TAB === 'overview') {
+    success = await saveAcademicsOverview({ silentSuccess: true, notify: false });
+  } else if (ACTIVE_TAB === 'faculty') {
+    success = await saveFacultyPageContent({ silentSuccess: true, notify: false });
+  } else if (ACTIVE_TAB === 'formerheads') {
+    success = await saveFormerHeadsPage({ silentSuccess: true, notify: false });
+  } else if (ACTIVE_TAB === 'cbse') {
+    success = await saveCbsePageContent({ silentSuccess: true, notify: false });
+  } else if (ACTIVE_TAB === 'school') {
+    success = await saveSchoolCircularPage({ silentSuccess: true, notify: false });
+  } else if (ACTIVE_TAB === 'booklist') {
+    success = await saveBookListContent({ silentSuccess: true, notify: false });
+    if (success && document.getElementById('bookPdfUrl').value.trim()) {
+      success = await saveBookListPDF({ silentSuccess: true, notify: false });
+    }
+  }
+
+  if (!success) return;
+  notifyAcademicsPublicRefresh();
+  toast(PUBLISH_MESSAGES[ACTIVE_TAB] || 'Page published!');
+}
+
 /* ════════════════════════════════════════════
    FACULTY — LOAD, RENDER, FILTER
 ════════════════════════════════════════════ */
@@ -916,14 +1069,20 @@ var _allFaculty = [];
 async function loadFaculty() {
   window._facultyLoaded = true;
   try {
-    var res = await fetch(API_BASE + '/api/faculty');
-    var data = await res.json();
+    var responses = await Promise.all([
+      fetch(API_BASE + '/api/faculty'),
+      fetch(API_BASE + '/api/content/' + FACULTY_PAGE_KEY)
+    ]);
+    var data = await responses[0].json();
+    var pageItem = await responses[1].json();
+    hydrateFacultyPageContent(pageItem && pageItem.data ? pageItem.data : FACULTY_PAGE_DEFAULTS);
     _allFaculty = Array.isArray(data) ? data : [];
     renderFaculty(_allFaculty);
     updateFacultyTiles(_allFaculty);
     document.getElementById('cnt-faculty').textContent = _allFaculty.length;
     document.getElementById('sb-faculty-count').textContent = _allFaculty.length;
   } catch(e) {
+    hydrateFacultyPageContent(FACULTY_PAGE_DEFAULTS);
     document.getElementById('faculty-loading').textContent = ' Could not connect to API. Is the server running?';
     toast('Cannot reach /api/faculty', 'err');
   }
@@ -975,6 +1134,43 @@ function filterFaculty() {
     return (f.name||'').toLowerCase().includes(q) || (f.subject||'').toLowerCase().includes(q);
   }) : _allFaculty;
   renderFaculty(filtered);
+}
+
+function hydrateFacultyPageContent(data) {
+  document.getElementById('faculty-page-banner-title').value = data.bannerTitle || FACULTY_PAGE_DEFAULTS.bannerTitle;
+  document.getElementById('faculty-page-title').value = data.pageTitle || FACULTY_PAGE_DEFAULTS.pageTitle;
+  document.getElementById('faculty-page-intro').value = data.introText || FACULTY_PAGE_DEFAULTS.introText;
+  document.getElementById('faculty-page-list-title').value = data.listTitle || FACULTY_PAGE_DEFAULTS.listTitle;
+}
+
+function collectFacultyPageContent() {
+  return {
+    bannerTitle: document.getElementById('faculty-page-banner-title').value.trim(),
+    pageTitle: document.getElementById('faculty-page-title').value.trim(),
+    introText: document.getElementById('faculty-page-intro').value.trim(),
+    listTitle: document.getElementById('faculty-page-list-title').value.trim()
+  };
+}
+
+async function saveFacultyPageContent(options) {
+  options = options || {};
+  var body = collectFacultyPageContent();
+  try {
+    var res = await fetch(API_BASE + '/api/content/' + FACULTY_PAGE_KEY, {
+      method: 'POST',
+      headers: apiHeaders(),
+      body: JSON.stringify(body)
+    });
+    var data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Failed to save faculty page content');
+    hydrateFacultyPageContent(data && data.data ? data.data : body);
+    if (!options.silentSuccess) toast('Faculty page content saved to MongoDB!');
+    if (options.notify !== false) notifyAcademicsPublicRefresh();
+    return true;
+  } catch (e) {
+    toast(e.message || 'Failed to save faculty page content', 'err');
+    return false;
+  }
 }
 
 /* ════════════════════════════════════════════
@@ -1274,7 +1470,8 @@ function collectFormerHeadsPageData() {
   };
 }
 
-async function saveFormerHeadsPage() {
+async function saveFormerHeadsPage(options) {
+  options = options || {};
   var body = collectFormerHeadsPageData();
   try {
     var res = await fetch(API_BASE + '/api/content/' + FH_CONTENT_KEY, {
@@ -1285,10 +1482,12 @@ async function saveFormerHeadsPage() {
     var data = await res.json();
     if (!res.ok) throw new Error(data.error || 'Failed to save page content');
     _fhPage = buildFHPageData(data);
-    toast('Former Heads page content saved to MongoDB!');
-    notifyAcademicsPublicRefresh();
+    if (!options.silentSuccess) toast('Former Heads page content saved to MongoDB!');
+    if (options.notify !== false) notifyAcademicsPublicRefresh();
+    return true;
   } catch (e) {
     toast(e.message || 'Failed to save page content', 'err');
+    return false;
   }
 }
 
@@ -1559,6 +1758,63 @@ async function saveCircular() {
   } catch(e) { toast(e.message,'err'); }
 }
 
+function hydrateCbsePageContent(data) {
+  document.getElementById('cbse-page-banner-title').value = data.bannerTitle || CBSE_CIRCULARS_DEFAULTS.bannerTitle;
+  document.getElementById('cbse-page-badge').value = data.badge || CBSE_CIRCULARS_DEFAULTS.badge;
+  document.getElementById('cbse-page-hero-title').value = data.heroTitle || CBSE_CIRCULARS_DEFAULTS.heroTitle;
+  document.getElementById('cbse-page-section-title').value = data.sectionTitle || CBSE_CIRCULARS_DEFAULTS.sectionTitle;
+  document.getElementById('cbse-page-hero-desc').value = data.heroDesc || CBSE_CIRCULARS_DEFAULTS.heroDesc;
+}
+
+function collectCbsePageContent() {
+  return {
+    bannerTitle: document.getElementById('cbse-page-banner-title').value.trim(),
+    badge: document.getElementById('cbse-page-badge').value.trim(),
+    heroTitle: document.getElementById('cbse-page-hero-title').value.trim(),
+    sectionTitle: document.getElementById('cbse-page-section-title').value.trim(),
+    heroDesc: document.getElementById('cbse-page-hero-desc').value.trim()
+  };
+}
+
+async function loadCbsePageContent() {
+  window._cbsePageLoaded = true;
+  try {
+    var res = await fetch(API_BASE + '/api/content/' + CBSE_CIRCULARS_PAGE_KEY);
+    var item = await res.json();
+    var data = item && item.data && typeof item.data === 'object' ? item.data : {};
+    hydrateCbsePageContent({
+      bannerTitle: data.bannerTitle || CBSE_CIRCULARS_DEFAULTS.bannerTitle,
+      badge: data.badge || CBSE_CIRCULARS_DEFAULTS.badge,
+      heroTitle: data.heroTitle || CBSE_CIRCULARS_DEFAULTS.heroTitle,
+      sectionTitle: data.sectionTitle || CBSE_CIRCULARS_DEFAULTS.sectionTitle,
+      heroDesc: data.heroDesc || CBSE_CIRCULARS_DEFAULTS.heroDesc
+    });
+  } catch (e) {
+    hydrateCbsePageContent(CBSE_CIRCULARS_DEFAULTS);
+  }
+}
+
+async function saveCbsePageContent(options) {
+  options = options || {};
+  var body = collectCbsePageContent();
+  try {
+    var res = await fetch(API_BASE + '/api/content/' + CBSE_CIRCULARS_PAGE_KEY, {
+      method: 'POST',
+      headers: apiHeaders(),
+      body: JSON.stringify(body)
+    });
+    var data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Failed to save CBSE page info');
+    hydrateCbsePageContent(data && data.data ? data.data : body);
+    if (!options.silentSuccess) toast('CBSE page info saved to MongoDB!');
+    if (options.notify !== false) notifyAcademicsPublicRefresh();
+    return true;
+  } catch (e) {
+    toast(e.message || 'Failed to save CBSE page info', 'err');
+    return false;
+  }
+}
+
 function hydrateSchoolCircularPage(data) {
   document.getElementById('school-page-banner-title').value = data.bannerTitle || SCHOOL_CIRCULARS_DEFAULTS.bannerTitle;
   document.getElementById('school-page-academic-year').value = data.academicYear || SCHOOL_CIRCULARS_DEFAULTS.academicYear;
@@ -1615,7 +1871,8 @@ async function loadSchoolCircularPage() {
   }
 }
 
-async function saveSchoolCircularPage() {
+async function saveSchoolCircularPage(options) {
+  options = options || {};
   var body = collectSchoolCircularPage();
   try {
     var res = await fetch(API_BASE + '/api/content/' + SCHOOL_CIRCULARS_PAGE_KEY, {
@@ -1626,10 +1883,12 @@ async function saveSchoolCircularPage() {
     var data = await res.json();
     if (!res.ok) throw new Error(data.error || 'Failed');
     hydrateSchoolCircularPage(data && data.data ? data.data : body);
-    toast('School circular page info saved to MongoDB!');
-    notifyAcademicsPublicRefresh();
+    if (!options.silentSuccess) toast('School circular page info saved to MongoDB!');
+    if (options.notify !== false) notifyAcademicsPublicRefresh();
+    return true;
   } catch (e) {
     toast(e.message || 'Failed to save school circular page info', 'err');
+    return false;
   }
 }
 
@@ -1745,6 +2004,42 @@ function renderBookListEditor(groups) {
   });
 }
 
+function hydrateBookListPageContent(data, pdfDoc) {
+  var academicYear = (data && data.academicYear)
+    || (pdfDoc && pdfDoc.meta && pdfDoc.meta.academicYear)
+    || BOOK_LIST_PAGE_DEFAULTS.academicYear;
+  document.getElementById('book-page-banner-title').value = data.bannerTitle || BOOK_LIST_PAGE_DEFAULTS.bannerTitle;
+  document.getElementById('book-page-hero-badge').value = data.heroBadge || BOOK_LIST_PAGE_DEFAULTS.heroBadge;
+  document.getElementById('book-page-hero-title').value = data.heroTitle || BOOK_LIST_PAGE_DEFAULTS.heroTitle;
+  document.getElementById('book-page-hero-text').value = data.heroText || BOOK_LIST_PAGE_DEFAULTS.heroText;
+  document.getElementById('book-page-academic-year').value = academicYear;
+  document.getElementById('book-page-section-title').value = data.sectionTitle || BOOK_LIST_PAGE_DEFAULTS.sectionTitle;
+  document.getElementById('book-page-download-title').value = data.downloadTitle || BOOK_LIST_PAGE_DEFAULTS.downloadTitle;
+  document.getElementById('book-page-download-text').value = data.downloadText || BOOK_LIST_PAGE_DEFAULTS.downloadText;
+  document.getElementById('book-page-instructions-title').value = data.instructionsTitle || BOOK_LIST_PAGE_DEFAULTS.instructionsTitle;
+  document.getElementById('book-page-instruction-items').value = Array.isArray(data.instructionItems) && data.instructionItems.length
+    ? data.instructionItems.join('\n')
+    : BOOK_LIST_PAGE_DEFAULTS.instructionItems.join('\n');
+}
+
+function collectBookListPageContent() {
+  return {
+    bannerTitle: document.getElementById('book-page-banner-title').value.trim(),
+    heroBadge: document.getElementById('book-page-hero-badge').value.trim(),
+    heroTitle: document.getElementById('book-page-hero-title').value.trim(),
+    heroText: document.getElementById('book-page-hero-text').value.trim(),
+    academicYear: document.getElementById('book-page-academic-year').value.trim(),
+    sectionTitle: document.getElementById('book-page-section-title').value.trim(),
+    downloadTitle: document.getElementById('book-page-download-title').value.trim(),
+    downloadText: document.getElementById('book-page-download-text').value.trim(),
+    instructionsTitle: document.getElementById('book-page-instructions-title').value.trim(),
+    instructionItems: document.getElementById('book-page-instruction-items').value
+      .split('\n')
+      .map(function (item) { return item.trim(); })
+      .filter(Boolean)
+  };
+}
+
 async function loadBookListAdmin() {
   window._bookListLoaded = true;
   var fallbackGroups = collectBookListGroups();
@@ -1755,17 +2050,20 @@ async function loadBookListAdmin() {
     ]);
     var contentItem = await responses[0].json();
     var docs = await responses[1].json();
-    var groups = contentItem && contentItem.data && Array.isArray(contentItem.data.classes) && contentItem.data.classes.length
-      ? contentItem.data.classes
+    var contentData = contentItem && contentItem.data && typeof contentItem.data === 'object' ? contentItem.data : {};
+    var pdfDoc = Array.isArray(docs) && docs.length ? docs[0] : null;
+    hydrateBookListPageContent(contentData, pdfDoc);
+    var groups = Array.isArray(contentData.classes) && contentData.classes.length
+      ? contentData.classes
       : fallbackGroups;
     renderBookListEditor(groups);
 
-    var pdfDoc = Array.isArray(docs) && docs.length ? docs[0] : null;
     document.getElementById('bookPdfDocId').value = pdfDoc && pdfDoc._id ? pdfDoc._id : '';
     document.getElementById('bookPdfTitle').value = pdfDoc && pdfDoc.title ? pdfDoc.title : 'Book List 2024–25';
     document.getElementById('bookPdfAcademicYear').value = pdfDoc && pdfDoc.meta && pdfDoc.meta.academicYear ? pdfDoc.meta.academicYear : '2024–25';
     document.getElementById('bookPdfUrl').value = pdfDoc && pdfDoc.url ? pdfDoc.url : '';
   } catch (e) {
+    hydrateBookListPageContent(BOOK_LIST_PAGE_DEFAULTS, null);
     renderBookListEditor(fallbackGroups);
   }
 }
@@ -1814,12 +2112,13 @@ async function uploadBookPDF(input) {
   } catch(e) { toast(e.message,'err'); }
 }
 
-async function saveBookListPDF() {
+async function saveBookListPDF(options) {
+  options = options || {};
   var id = document.getElementById('bookPdfDocId').value.trim();
   var title = document.getElementById('bookPdfTitle').value.trim() || 'Book List';
   var academicYear = document.getElementById('bookPdfAcademicYear').value.trim();
   var url = document.getElementById('bookPdfUrl').value.trim();
-  if (!url) { toast('Please enter or upload a PDF URL','err'); return; }
+  if (!url) { toast('Please enter or upload a PDF URL','err'); return false; }
   var body = {
     title: title,
     url: url,
@@ -1835,34 +2134,21 @@ async function saveBookListPDF() {
     var data = await res.json();
     if (!res.ok) throw new Error(data.error||'Failed');
     if (data && data._id) document.getElementById('bookPdfDocId').value = data._id;
-    toast('Book list PDF saved to MongoDB!');
-    notifyAcademicsPublicRefresh();
-  } catch(e) { toast(e.message,'err'); }
+    if (!options.silentSuccess) toast('Book list PDF saved to MongoDB!');
+    if (options.notify !== false) notifyAcademicsPublicRefresh();
+    return true;
+  } catch(e) {
+    toast(e.message,'err');
+    return false;
+  }
 }
 
 /* ════════════════════════════════════════════
    ACADEMICS OVERVIEW
    ════════════════════════════════════════════ */
-async function loadAcademicsOverview() {
-  window._overviewLoaded = true;
-  try {
-    var res = await fetch(API_BASE + '/api/content/' + ACADEMICS_MAIN_KEY);
-    var item = await res.json();
-    var data = item && item.data ? item.data : {};
-    document.getElementById('ac-hero-badge').value = data.heroBadge || 'Academic Excellence · Holistic Growth';
-    document.getElementById('ac-hero-title').value = data.heroTitle || 'Academics at Loretto';
-    document.getElementById('ac-hero-desc').value = data.heroDesc || '';
-    if (data.icons) {
-      document.getElementById('ac-icon-faculty').value = data.icons.faculty || '🎓';
-      document.getElementById('ac-icon-circular').value = data.icons.circular || '📢';
-      document.getElementById('ac-icon-curriculum').value = data.icons.curriculum || '📚';
-      document.getElementById('ac-icon-calendar').value = data.icons.calendar || '📅';
-    }
-  } catch(e) { console.error('Failed to load academics overview', e); }
-}
-
-async function saveAcademicsOverview() {
-  var body = {
+function collectAcademicsOverview() {
+  return {
+    bannerTitle: document.getElementById('ac-banner-title').value.trim(),
     heroBadge: document.getElementById('ac-hero-badge').value.trim(),
     heroTitle: document.getElementById('ac-hero-title').value.trim(),
     heroDesc: document.getElementById('ac-hero-desc').value.trim(),
@@ -1873,36 +2159,81 @@ async function saveAcademicsOverview() {
       calendar: document.getElementById('ac-icon-calendar').value.trim()
     }
   };
+}
+
+async function loadAcademicsOverview() {
+  window._overviewLoaded = true;
+  try {
+    var res = await fetch(API_BASE + '/api/content/' + ACADEMICS_MAIN_KEY);
+    var item = await res.json();
+    var data = item && item.data ? item.data : {};
+    document.getElementById('ac-banner-title').value = data.bannerTitle || ACADEMICS_OVERVIEW_DEFAULTS.bannerTitle;
+    document.getElementById('ac-hero-badge').value = data.heroBadge || ACADEMICS_OVERVIEW_DEFAULTS.heroBadge;
+    document.getElementById('ac-hero-title').value = data.heroTitle || ACADEMICS_OVERVIEW_DEFAULTS.heroTitle;
+    document.getElementById('ac-hero-desc').value = data.heroDesc || ACADEMICS_OVERVIEW_DEFAULTS.heroDesc;
+    document.getElementById('ac-icon-faculty').value = data.icons && data.icons.faculty ? data.icons.faculty : ACADEMICS_OVERVIEW_DEFAULTS.icons.faculty;
+    document.getElementById('ac-icon-circular').value = data.icons && data.icons.circular ? data.icons.circular : ACADEMICS_OVERVIEW_DEFAULTS.icons.circular;
+    document.getElementById('ac-icon-curriculum').value = data.icons && data.icons.curriculum ? data.icons.curriculum : ACADEMICS_OVERVIEW_DEFAULTS.icons.curriculum;
+    document.getElementById('ac-icon-calendar').value = data.icons && data.icons.calendar ? data.icons.calendar : ACADEMICS_OVERVIEW_DEFAULTS.icons.calendar;
+  } catch(e) {
+    document.getElementById('ac-banner-title').value = ACADEMICS_OVERVIEW_DEFAULTS.bannerTitle;
+    document.getElementById('ac-hero-badge').value = ACADEMICS_OVERVIEW_DEFAULTS.heroBadge;
+    document.getElementById('ac-hero-title').value = ACADEMICS_OVERVIEW_DEFAULTS.heroTitle;
+    document.getElementById('ac-hero-desc').value = ACADEMICS_OVERVIEW_DEFAULTS.heroDesc;
+    document.getElementById('ac-icon-faculty').value = ACADEMICS_OVERVIEW_DEFAULTS.icons.faculty;
+    document.getElementById('ac-icon-circular').value = ACADEMICS_OVERVIEW_DEFAULTS.icons.circular;
+    document.getElementById('ac-icon-curriculum').value = ACADEMICS_OVERVIEW_DEFAULTS.icons.curriculum;
+    document.getElementById('ac-icon-calendar').value = ACADEMICS_OVERVIEW_DEFAULTS.icons.calendar;
+    console.error('Failed to load academics overview', e);
+  }
+}
+
+async function saveAcademicsOverview(options) {
+  options = options || {};
+  var body = collectAcademicsOverview();
   try {
     var res = await fetch(API_BASE + '/api/content/' + ACADEMICS_MAIN_KEY, {
       method: 'POST',
       headers: apiHeaders(),
       body: JSON.stringify(body)
     });
-    if (!res.ok) throw new Error('Failed to save overview');
-    toast('Academics overview saved to MongoDB!');
-    notifyAcademicsPublicRefresh();
-  } catch(e) { toast(e.message, 'err'); }
+    var data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Failed to save overview');
+    if (!options.silentSuccess) toast('Academics overview saved to MongoDB!');
+    if (options.notify !== false) notifyAcademicsPublicRefresh();
+    return true;
+  } catch(e) {
+    toast(e.message, 'err');
+    return false;
+  }
 }
 
-async function saveBookListContent() {
+async function saveBookListContent(options) {
+  options = options || {};
   var groups = collectBookListGroups();
   if (!groups.length) {
     toast('Add at least one class group before saving', 'err');
-    return;
+    return false;
   }
+  var body = collectBookListPageContent();
+  body.classes = groups;
   try {
     var res = await fetch(API_BASE + '/api/content/' + BOOK_LIST_CONTENT_KEY, {
       method: 'POST',
       headers: apiHeaders(),
-      body: JSON.stringify({ classes: groups })
+      body: JSON.stringify(body)
     });
     var data = await res.json();
     if (!res.ok) throw new Error(data.error || 'Failed');
-    toast('Book list saved to MongoDB!');
-    notifyAcademicsPublicRefresh();
+    var savedData = data && data.data ? data.data : body;
+    hydrateBookListPageContent(savedData, null);
+    renderBookListEditor(savedData.classes || groups);
+    if (!options.silentSuccess) toast('Book list page content saved to MongoDB!');
+    if (options.notify !== false) notifyAcademicsPublicRefresh();
+    return true;
   } catch (e) {
     toast(e.message || 'Failed to save book list', 'err');
+    return false;
   }
 }
 
@@ -1910,8 +2241,8 @@ async function saveBookListContent() {
    REFRESH + BOOT
 ════════════════════════════════════════════ */
 function refreshData() {
-  window._facultyLoaded=false; window._fhLoaded=false;
-  window._cbseLoaded=false; window._schoolLoaded=false; window._schoolPageLoaded=false; window._bookListLoaded=false;
+  window._overviewLoaded=false; window._facultyLoaded=false; window._fhLoaded=false;
+  window._cbseLoaded=false; window._cbsePageLoaded=false; window._schoolLoaded=false; window._schoolPageLoaded=false; window._bookListLoaded=false;
   var active = document.querySelector('.panel.active');
   if (active) {
     var id = active.id.replace('tab-','');
@@ -1929,12 +2260,12 @@ document.addEventListener('keydown', function(e) {
 
 /* ── BOOT: load academics on page load ── */
 window.addEventListener('DOMContentLoaded', function() {
+  updateTopbarActions(ACTIVE_TAB);
   loadAcademicsOverview();
   loadFaculty();
   // Pre-load document counts
   fetch(API_BASE+'/api/documents').then(function(r){return r.json();}).then(function(data){
     if (!Array.isArray(data)) return;
-    document.getElementById('cnt-faculty').textContent = data.filter(function(d){return d.category==='faculty';}).length; 
     document.getElementById('cnt-cbse').textContent    = data.filter(function(d){return d.category==='cbse-circular';}).length;
     document.getElementById('cnt-school').textContent  = data.filter(function(d){return d.category==='school-circular';}).length;
   }).catch(function(){});
