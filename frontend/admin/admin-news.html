@@ -13,7 +13,7 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>News & Events — Admin | Loretto Central School</title>
-  <script src="/admin/admin-auth.js"></script>
+  <script src="/admin/admin-auth.js?v=20260330-1"></script>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Nunito:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
   <script src="/admin/adminfooter.js"></script>
   <style>
@@ -895,11 +895,25 @@ function addGalleryUrl() {
   updatePreview();
 }
 
-function removeGalleryImage(index) {
+async function removeGalleryImage(index) {
+  var url = _galleryImages[index] || '';
+
+  if (url && window.AdminCloudinary && window.AdminCloudinary.isCloudinaryUrl(url)) {
+    var deleted = await window.AdminCloudinary.deleteByUrl(url, {
+      confirmMessage: 'Delete this gallery image from Cloudinary?',
+      successMessage: 'Gallery image deleted from Cloudinary. Save the article to keep this change.'
+    });
+    if (!deleted) return;
+  }
+
   _galleryImages.splice(index, 1);
   renderGalleryPreview();
   syncGalleryUrlsTextarea();
   updatePreview();
+
+  if (!url || !window.AdminCloudinary || !window.AdminCloudinary.isCloudinaryUrl(url)) {
+    toast('Gallery image removed. Save the article to keep this change.');
+  }
 }
 
 function renderGalleryPreview() {

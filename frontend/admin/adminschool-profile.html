@@ -13,7 +13,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>About Us — Admin | Loretto Central School</title>
-  <script src="/admin/admin-auth.js"></script>
+  <script src="/admin/admin-auth.js?v=20260330-1"></script>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800&family=Nunito:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -455,7 +455,7 @@
                   <div class="cld-gallery-slot" style="background:var(--bg);border-radius:10px;border:1.5px solid var(--border);padding:12px;">
                     <div class="cld-thumb" style="width:100%;height:90px;margin-bottom:8px;">
                       <img src="https://school.edu/wp-content/uploads/2023/06/cropped-20230601_095851-1.jpg" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none'" />
-                      <div class="cld-thumb-overlay"><button class="del" onclick="this.closest('.cld-gallery-slot').remove()"> Remove</button></div>
+                      <div class="cld-thumb-overlay"><button class="del" onclick="removeGallerySlot(this)"> Remove</button></div>
                       <div class="cld-transform-tag">w_800,q_auto,f_auto</div>
                     </div>
                     <input type="text" placeholder="Alt text..." value="Loretto Central School Campus" style="width:100%;padding:5px 9px;border:1.5px solid var(--border);border-radius:7px;font-family:Nunito;font-size:.76rem;margin-bottom:6px;background:var(--white);color:var(--text);outline:none;" />
@@ -466,7 +466,7 @@
                   <div class="cld-gallery-slot" style="background:var(--bg);border-radius:10px;border:1.5px solid var(--border);padding:12px;">
                     <div class="cld-thumb" style="width:100%;height:90px;margin-bottom:8px;">
                       <img src="https://school.edu/wp-content/uploads/2023/06/20230620_145648.jpg" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none'" />
-                      <div class="cld-thumb-overlay"><button class="del" onclick="this.closest('.cld-gallery-slot').remove()"> Remove</button></div>
+                      <div class="cld-thumb-overlay"><button class="del" onclick="removeGallerySlot(this)"> Remove</button></div>
                       <div class="cld-transform-tag">w_800,q_auto,f_auto</div>
                     </div>
                     <input type="text" placeholder="Alt text..." value="School Campus" style="width:100%;padding:5px 9px;border:1.5px solid var(--border);border-radius:7px;font-family:Nunito;font-size:.76rem;margin-bottom:6px;background:var(--white);color:var(--text);outline:none;" />
@@ -477,7 +477,7 @@
                   <div class="cld-gallery-slot" style="background:var(--bg);border-radius:10px;border:1.5px solid var(--border);padding:12px;">
                     <div class="cld-thumb" style="width:100%;height:90px;margin-bottom:8px;">
                       <img src="https://school.edu/wp-content/uploads/2023/06/20230621_103346.jpg" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none'" />
-                      <div class="cld-thumb-overlay"><button class="del" onclick="this.closest('.cld-gallery-slot').remove()"> Remove</button></div>
+                      <div class="cld-thumb-overlay"><button class="del" onclick="removeGallerySlot(this)"> Remove</button></div>
                       <div class="cld-transform-tag">w_800,q_auto,f_auto</div>
                     </div>
                     <input type="text" placeholder="Alt text..." value="School Grounds" style="width:100%;padding:5px 9px;border:1.5px solid var(--border);border-radius:7px;font-family:Nunito;font-size:.76rem;margin-bottom:6px;background:var(--white);color:var(--text);outline:none;" />
@@ -1351,8 +1351,22 @@ Welcome to Loretto Central School. As your Principal, it is my mission to ensure
     showToast('Image URL applied!');
   }
 
-  function removeCldImg(imgId, thumbId) {
+  async function removeCldImg(imgId, thumbId) {
     var img = document.getElementById(imgId);
+    var widget = img && img.closest ? img.closest('.cld-widget') : null;
+    var urlInput = widget ? widget.querySelector('input[type="url"]') : null;
+
+    if (window.AdminCloudinary && urlInput && urlInput.value.trim()) {
+      var deleted = await window.AdminCloudinary.deleteInputAsset(urlInput, {
+        confirmMessage: 'Delete this image from Cloudinary?',
+        successMessage: 'Image deleted from Cloudinary. Save the page to keep this change.'
+      });
+      if (!deleted) return;
+    } else if (urlInput) {
+      urlInput.value = '';
+      urlInput.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+
     if (img) img.src = '';
   }
 
@@ -1402,8 +1416,16 @@ Welcome to Loretto Central School. As your Principal, it is my mission to ensure
 
     if (removeBtn && !removeBtn.__uploadRemoveBound) {
       removeBtn.__uploadRemoveBound = true;
-      removeBtn.addEventListener('click', function (e) {
+      removeBtn.addEventListener('click', async function (e) {
         e.preventDefault();
+        if (window.AdminCloudinary && urlInput.value.trim()) {
+          await window.AdminCloudinary.deleteInputAsset(urlInput, {
+            button: removeBtn,
+            confirmMessage: 'Delete this image from Cloudinary?',
+            successMessage: 'Image deleted from Cloudinary. Save the page to keep this change.'
+          });
+          return;
+        }
         urlInput.value = '';
         urlInput.dispatchEvent(new Event('input', { bubbles: true }));
       });
@@ -1756,6 +1778,27 @@ Welcome to Loretto Central School. As your Principal, it is my mission to ensure
     enhanceGallerySlot(slot);
   }
 
+  async function removeGallerySlot(trigger) {
+    var slot = trigger && trigger.closest ? trigger.closest('.cld-gallery-slot') : null;
+    if (!slot) return;
+
+    var urlInput = slot.querySelector('input[type="url"]');
+    var url = urlInput ? urlInput.value.trim() : '';
+
+    if (url && window.AdminCloudinary && window.AdminCloudinary.isCloudinaryUrl(url)) {
+      var deleted = await window.AdminCloudinary.deleteByUrl(url, {
+        button: trigger,
+        confirmMessage: 'Delete this gallery image from Cloudinary and remove the slot?',
+        successMessage: 'Gallery image deleted from Cloudinary. Save the page to keep this change.'
+      });
+      if (!deleted) return;
+    } else if (url && !window.confirm('Remove this gallery slot?')) {
+      return;
+    }
+
+    slot.remove();
+  }
+
   /* ── ADD PARAGRAPH ── */
   var paraCount = 6;
   function addParagraph() {
@@ -1981,11 +2024,33 @@ Welcome to Loretto Central School. As your Principal, it is my mission to ensure
     showToast('Annual report updated.');
   }
 
-  document.addEventListener('click', function (e) {
+  function rowCloudinaryUrl(row) {
+    if (!row) return '';
+    if (row.closest('#tab-report')) {
+      var reportCells = row.querySelectorAll('td');
+      return reportCells[2] ? text(reportCells[2]) : '';
+    }
+    if (row.closest('#tab-management, #tab-pta')) {
+      var photo = row.querySelector('img');
+      return photo ? (photo.getAttribute('src') || '') : '';
+    }
+    return '';
+  }
+
+  document.addEventListener('click', async function (e) {
     var delBtn = e.target.closest('.ab.del');
     if (delBtn) {
       var row = delBtn.closest('tr');
       if (row && row.closest('#tab-management, #tab-pta, #tab-report')) {
+        var assetUrl = rowCloudinaryUrl(row);
+        if (assetUrl && window.AdminCloudinary && window.AdminCloudinary.isCloudinaryUrl(assetUrl)) {
+          var deleted = await window.AdminCloudinary.deleteByUrl(assetUrl, {
+            button: delBtn,
+            confirmMessage: 'Delete this uploaded file from Cloudinary and remove the row?',
+            successMessage: 'Deleted from Cloudinary. Save the page to keep this change.'
+          });
+          if (!deleted) return;
+        }
         row.remove();
         return;
       }

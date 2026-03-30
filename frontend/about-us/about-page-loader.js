@@ -288,8 +288,7 @@
   function renderPta(doc) {
     var card = document.querySelector('.content-card');
     if (!card) return;
-    var introText = longValue(doc.querySelector('#ptaIntroText'))
-      || 'The Parent-Teacher Association (PTA) plays a vital supportive role in the functioning of the school. The main motive of the PTA is to build a strong relationship between the school and the children\'s families, supporting holistic development and a nurturing community. The PTA general body meets once a year. During the year, the executive committee meets regularly. Various activities are conducted under the leadership of the PTA.';
+    var introText = longValue(doc.querySelector('#ptaIntroText'));
     var introParagraphs = splitParagraphs(introText);
     var rows = rowsFromTable(doc).map(function (row) {
       var cells = row.querySelectorAll('td');
@@ -377,7 +376,6 @@
     updatePageTitle('Annual Report');
     card.innerHTML = ''
       + '<h2>Annual Report</h2>'
-      + '<p>The Annual Report of Loretto Central School provides a comprehensive overview of the school\'s achievements, academic performance, extracurricular milestones, and institutional summary for each academic year.</p>'
       + '<div class="report-grid">'
       + reports.map(function (item) {
           var reportTitle = item.title || ('Annual Report ' + item.year);

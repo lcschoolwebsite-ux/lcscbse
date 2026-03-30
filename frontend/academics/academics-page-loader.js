@@ -1,63 +1,89 @@
 (function () {
   var doc = document;
   var ACADEMICS_MAIN_KEY = 'academics.main';
+  var FACULTY_PAGE_KEY = 'academics.faculty-page';
   var FORMER_HEADS_KEY = 'academics.former-heads';
+  var CBSE_CIRCULARS_KEY = 'academics.cbse-circulars';
   var SCHOOL_CIRCULARS_KEY = 'academics.school-circulars';
   var BOOK_LIST_KEY = 'academics.book-list';
-  var ACADEMICS_OVERVIEW_DEFAULTS = {
-    bannerTitle: 'Academics',
-    heroBadge: 'Academic Excellence · Holistic Growth',
-    heroTitle: 'Academics at Loretto',
-    heroDesc: 'Loretto Central School nurtures academic discipline, strong values, and joyful learning through an evolving curriculum, dedicated teachers, and transparent communication with families.',
-    icons: {
-      faculty: '🎓',
-      circular: '📢',
-      curriculum: '📚',
-      calendar: '📅'
+
+  var DEFAULTS = {
+    overview: {
+      bannerTitle: 'Academics',
+      heroBadge: '',
+      heroTitle: 'Academics',
+      heroDesc: '',
+      icons: {
+        faculty: '🎓',
+        circular: '📢',
+        curriculum: '📚',
+        calendar: '📅'
+      }
+    },
+    faculty: {
+      bannerTitle: 'Faculty',
+      pageTitle: 'Faculty',
+      introText: '',
+      listTitle: 'Teaching Staff'
+    },
+    formerHeads: {
+      bannerTitle: 'Former Heads',
+      heroBadge: '',
+      heroTitle: 'Former Heads',
+      heroText: '',
+      legacyTitle: '',
+      legacyText: '',
+      stats: [],
+      journeyTitle: '',
+      journeyItems: []
+    },
+    cbse: {
+      bannerTitle: 'CBSE Circulars',
+      badge: '',
+      heroTitle: 'CBSE Circulars',
+      heroText: '',
+      sectionTitle: 'CBSE Circulars'
+    },
+    school: {
+      bannerTitle: 'School Circulars',
+      badge: '',
+      heroTitle: 'School Circulars',
+      heroText: '',
+      academicYear: '',
+      addressedTo: '',
+      distribution: '',
+      sectionTitle: 'School Circulars',
+      guideTitle: '',
+      guideItems: []
+    },
+    bookList: {
+      bannerTitle: 'Book List',
+      heroBadge: '',
+      heroTitle: 'Book List',
+      heroText: '',
+      academicYear: '',
+      sectionTitle: 'Book List',
+      downloadTitle: 'Download Book List - PDF',
+      downloadText: '',
+      instructionsTitle: '',
+      instructionItems: [],
+      classes: []
     }
   };
-  var SCHOOL_CIRCULARS_DEFAULTS = {
-    bannerTitle: 'School Circulars',
-    badge: 'Internal Notices · Academic Year 2024–25',
-    heroTitle: 'School Circulars',
-    heroText: "Official circulars, notices, and announcements issued by Loretto Central School's administration to students, parents, and staff are published here. All circulars are organised by date, newest first.",
-    academicYear: '2024 – 2025',
-    addressedTo: 'Parents · Students · Staff',
-    distribution: 'School Diary & Website',
-    sectionTitle: 'Recent School Circulars',
-    guideTitle: 'How to Receive Circulars',
-    guideItems: [
-      "All circulars are pasted in the student's school diary — please check daily",
-      'Important circulars are posted on this page and the school notice board',
-      'Urgent notices may be communicated via SMS or phone call to registered parent numbers',
-      'Parents are requested to acknowledge receipt of circulars with signature in the diary'
-    ]
-  };
-  var BOOK_LIST_DEFAULTS = {
-    bannerTitle: 'Book List 2024–25',
-    heroBadge: 'Academic Year 2024–25 · CBSE Prescribed',
-    heroTitle: 'Book List 2024–25',
-    heroText: 'The prescribed textbooks and stationery list for all classes at Loretto Central School for the Academic Year 2024–25. All textbooks are NCERT / CBSE approved. Parents are requested to purchase only the books listed below.',
-    academicYear: '2024 – 2025',
-    sectionTitle: 'Prescribed Book List by Class',
-    downloadTitle: 'Download Official Book List — PDF',
-    downloadText: "The school's official prescribed book list as shared with parents at the beginning of the academic year.",
-    instructionsTitle: 'Important Instructions',
-    instructionItems: [
-      'Purchase only NCERT and school-approved books — do not buy any additional guides or workbooks without school permission',
-      'Second-hand NCERT books in good condition are permitted — verify the correct edition before purchasing',
-      "All books must be covered with brown paper and labelled with student's name, class, and roll number",
-      'Notebooks and stationery requirements will be communicated separately by class teachers at the start of the year',
-      'Book lists are subject to minor revision — final list will be confirmed at the time of admission / re-enrollment'
-    ]
-  };
 
-  function textOf(node) {
-    return node ? String(node.textContent || '').trim() : '';
-  }
-
-  /* Icons Map */
   var PAGE_ICONS = {
+    faculty: {
+      hero: '🎓',
+      tiles: []
+    },
+    'former-heads': {
+      hero: '🎓',
+      tiles: ['🕊️', '🕰️', '🥇', '📜']
+    },
+    'cbse-circulars': {
+      hero: '📢',
+      tiles: []
+    },
     'school-circulars': {
       hero: '📢',
       tiles: ['📅', '🗞️', '👨‍👩‍👧‍👦', '📦']
@@ -65,42 +91,19 @@
     'book-list': {
       hero: '📚',
       tiles: ['🎒', '📖', '📝', '📍']
-    },
-    'former-heads': {
-      hero: '🎓',
-      tiles: ['🕊️', '🕰️', '🥇', '📜']
     }
   };
 
-  function setPageIcons(type) {
-    var icons = PAGE_ICONS[type];
-    if (!icons) return;
+  function textOf(node) {
+    return node ? String(node.textContent || '').trim() : '';
+  }
 
-    // Hero Icon
-    var heroIcon = document.querySelector('.acad-hero-icon');
-    if (heroIcon && !heroIcon.textContent.trim()) {
-      heroIcon.textContent = icons.hero;
-    }
-
-    // Tile Icons
-    var tileIcons = document.querySelectorAll('.acad-tile-icon');
-    tileIcons.forEach(function (el, i) {
-      if (el && !el.textContent.trim() && icons.tiles[i]) {
-        el.textContent = icons.tiles[i];
-      }
-    });
-
-    // Subnav Active State Force (just in case)
-    var subnavLinks = document.querySelectorAll('.acad-subnav-inner a');
-    subnavLinks.forEach(function(link) {
-      if (link.getAttribute('href').indexOf(type.substring(0, 10)) !== -1) {
-        link.classList.add('active');
-      }
-    });
+  function normalizeText(value) {
+    return value == null ? '' : String(value).trim();
   }
 
   function escapeHtml(value) {
-    return (value == null ? '' : String(value))
+    return normalizeText(value)
       .replace(/&/g, '&amp;')
       .replace(/</g, '&lt;')
       .replace(/>/g, '&gt;')
@@ -111,10 +114,6 @@
   function asNumber(value, fallback) {
     var parsed = parseInt(value, 10);
     return Number.isFinite(parsed) ? parsed : (fallback || 0);
-  }
-
-  function normalizeText(value) {
-    return value == null ? '' : String(value).trim();
   }
 
   function formatDisplayDate(value) {
@@ -128,18 +127,74 @@
     });
   }
 
-  function isFormerHeadRecord(item) {
-    if (!item || !normalizeText(item.name)) return false;
-    var group = normalizeText(item.group).toLowerCase();
-    var designation = normalizeText(item.designation).toLowerCase();
-    var period = normalizeText(item.period || item.role);
+  function matchesPath(patterns) {
+    var path = normalizeText(window.location.pathname).replace(/\/+$/, '');
+    return patterns.some(function (pattern) {
+      return pattern.test(path);
+    });
+  }
 
-    if (group === 'former-heads' || group === 'formerheads' || group === 'former_heads') return true;
-    if (/former head|former principal|head of institution/.test(designation)) return true;
-    if (/\b(19|20)\d{2}\b/.test(period)) return true;
-    if (/(founding|present|term|phase|year)/i.test(period)) return true;
+  function setTextById(id, value, hideIfEmpty) {
+    var node = doc.getElementById(id);
+    if (!node) return;
+    var text = normalizeText(value);
+    node.textContent = text;
+    if (hideIfEmpty) {
+      node.style.display = text ? '' : 'none';
+    }
+  }
 
-    return false;
+  function setHtmlById(id, html, hideIfEmpty) {
+    var node = doc.getElementById(id);
+    if (!node) return;
+    var content = normalizeText(html) ? html : '';
+    node.innerHTML = content;
+    if (hideIfEmpty) {
+      node.style.display = content ? '' : 'none';
+    }
+  }
+
+  function cloneData(value) {
+    return JSON.parse(JSON.stringify(value));
+  }
+
+  function normalizeDocumentUrl(value) {
+    var url = normalizeText(value);
+    if (!url) return '';
+    if (/^(https?:)?\/\//i.test(url)) return url;
+    return 'https://' + url.replace(/^\/+/, '');
+  }
+
+  function getOpenableDocumentUrl(value) {
+    var url = normalizeDocumentUrl(value);
+    if (!url) return '';
+    return 'https://docs.google.com/gview?embedded=1&url=' + encodeURIComponent(url);
+  }
+
+  function countBookRows(groups) {
+    return (Array.isArray(groups) ? groups : []).reduce(function (total, group) {
+      return total + ((group && Array.isArray(group.rows)) ? group.rows.length : 0);
+    }, 0);
+  }
+
+  function setPageIcons(type) {
+    var icons = PAGE_ICONS[type];
+    if (!icons) return;
+
+    var heroIcon = doc.querySelector('.acad-hero-icon');
+    if (heroIcon && !textOf(heroIcon)) {
+      heroIcon.textContent = icons.hero || '';
+    }
+
+    Array.prototype.forEach.call(doc.querySelectorAll('.acad-tile-icon'), function (node, index) {
+      if (!textOf(node) && icons.tiles[index]) {
+        node.textContent = icons.tiles[index];
+      }
+    });
+  }
+
+  function extractContentData(item) {
+    return item && item.data && typeof item.data === 'object' ? item.data : (item || {});
   }
 
   async function fetchJson(endpoint) {
@@ -152,32 +207,18 @@
     return response.json();
   }
 
-  async function loadAcademicsOverviewContent() {
+  async function loadContent(key) {
     if (typeof window.loadContentBlock === 'function') {
-      return window.loadContentBlock(ACADEMICS_MAIN_KEY);
+      return window.loadContentBlock(key);
     }
-    return fetchJson('content/' + ACADEMICS_MAIN_KEY);
+    return fetchJson('content/' + key);
   }
 
-  async function loadFormerHeadsContent() {
-    if (typeof window.loadContentBlock === 'function') {
-      return window.loadContentBlock(FORMER_HEADS_KEY);
+  async function loadFaculty() {
+    if (typeof window.loadFacultyData === 'function') {
+      return window.loadFacultyData();
     }
-    return fetchJson('content/' + FORMER_HEADS_KEY);
-  }
-
-  async function loadSchoolCircularsContent() {
-    if (typeof window.loadContentBlock === 'function') {
-      return window.loadContentBlock(SCHOOL_CIRCULARS_KEY);
-    }
-    return fetchJson('content/' + SCHOOL_CIRCULARS_KEY);
-  }
-
-  async function loadBookListContent() {
-    if (typeof window.loadContentBlock === 'function') {
-      return window.loadContentBlock(BOOK_LIST_KEY);
-    }
-    return fetchJson('content/' + BOOK_LIST_KEY);
+    return fetchJson('faculty');
   }
 
   async function loadFormerHeadsPeople() {
@@ -192,46 +233,6 @@
       return window.loadDocumentsData();
     }
     return fetchJson('documents');
-  }
-
-  function collectFormerHeadsFallback(doc) {
-    return {
-      bannerTitle: textOf(doc.getElementById('formerHeadsBannerTitle')),
-      heroBadge: textOf(doc.getElementById('formerHeadsHeroBadge')),
-      heroTitle: textOf(doc.getElementById('formerHeadsHeroTitle')),
-      heroText: textOf(doc.getElementById('formerHeadsHeroText')),
-      legacyTitle: textOf(doc.getElementById('formerHeadsLegacyTitle')),
-      legacyText: textOf(doc.getElementById('formerHeadsLegacyText')),
-      stats: Array.prototype.map.call(doc.querySelectorAll('#formerHeadsStats .acad-tile'), function (tile, index) {
-        return {
-          label: textOf(tile.querySelector('.acad-tile-label')),
-          value: textOf(tile.querySelector('.acad-tile-value')),
-          order: index + 1
-        };
-      }),
-      journeyTitle: textOf(doc.getElementById('formerHeadsJourneyTitle')),
-      journeyItems: Array.prototype.map.call(doc.querySelectorAll('#formerHeadsJourneyList li'), function (item, index) {
-        return {
-          text: textOf(item),
-          order: index + 1
-        };
-      })
-    };
-  }
-
-  function collectAcademicsOverviewFallback(doc) {
-    return {
-      bannerTitle: textOf(doc.getElementById('academicsBannerTitle')) || ACADEMICS_OVERVIEW_DEFAULTS.bannerTitle,
-      heroBadge: textOf(doc.getElementById('academicsHeroBadge')) || ACADEMICS_OVERVIEW_DEFAULTS.heroBadge,
-      heroTitle: textOf(doc.getElementById('academicsHeroTitle')) || ACADEMICS_OVERVIEW_DEFAULTS.heroTitle,
-      heroDesc: textOf(doc.getElementById('academicsHeroDesc')) || ACADEMICS_OVERVIEW_DEFAULTS.heroDesc,
-      icons: {
-        faculty: textOf(doc.querySelector('[data-acad-icon="faculty"]')) || ACADEMICS_OVERVIEW_DEFAULTS.icons.faculty,
-        circular: textOf(doc.querySelector('[data-acad-icon="circular"]')) || ACADEMICS_OVERVIEW_DEFAULTS.icons.circular,
-        curriculum: textOf(doc.querySelector('[data-acad-icon="curriculum"]')) || ACADEMICS_OVERVIEW_DEFAULTS.icons.curriculum,
-        calendar: textOf(doc.querySelector('[data-acad-icon="calendar"]')) || ACADEMICS_OVERVIEW_DEFAULTS.icons.calendar
-      }
-    };
   }
 
   function normalizeStats(items, fallback) {
@@ -266,137 +267,106 @@
     });
   }
 
-  function mergeFormerHeadsContent(stored, fallback) {
-    var raw = stored && stored.data && typeof stored.data === 'object' ? stored.data : (stored || {});
-    return {
-      bannerTitle: normalizeText(raw.bannerTitle) || fallback.bannerTitle,
-      heroBadge: normalizeText(raw.heroBadge) || fallback.heroBadge,
-      heroTitle: normalizeText(raw.heroTitle) || fallback.heroTitle,
-      heroText: normalizeText(raw.heroText) || fallback.heroText,
-      legacyTitle: normalizeText(raw.legacyTitle) || fallback.legacyTitle,
-      legacyText: normalizeText(raw.legacyText) || fallback.legacyText,
-      stats: normalizeStats(raw.stats, fallback.stats),
-      journeyTitle: normalizeText(raw.journeyTitle) || fallback.journeyTitle,
-      journeyItems: normalizeJourney(raw.journeyItems, fallback.journeyItems)
-    };
-  }
-
-  function mergeAcademicsOverviewContent(stored, fallback) {
-    var raw = stored && stored.data && typeof stored.data === 'object' ? stored.data : (stored || {});
+  function normalizeOverviewContent(item) {
+    var raw = extractContentData(item);
+    var defaults = DEFAULTS.overview;
     var rawIcons = raw.icons && typeof raw.icons === 'object' ? raw.icons : {};
-
     return {
-      bannerTitle: normalizeText(raw.bannerTitle) || fallback.bannerTitle || ACADEMICS_OVERVIEW_DEFAULTS.bannerTitle,
-      heroBadge: normalizeText(raw.heroBadge) || fallback.heroBadge || ACADEMICS_OVERVIEW_DEFAULTS.heroBadge,
-      heroTitle: normalizeText(raw.heroTitle) || fallback.heroTitle || ACADEMICS_OVERVIEW_DEFAULTS.heroTitle,
-      heroDesc: normalizeText(raw.heroDesc || raw.heroText) || fallback.heroDesc || ACADEMICS_OVERVIEW_DEFAULTS.heroDesc,
+      bannerTitle: normalizeText(raw.bannerTitle) || defaults.bannerTitle,
+      heroBadge: normalizeText(raw.heroBadge),
+      heroTitle: normalizeText(raw.heroTitle) || defaults.heroTitle,
+      heroDesc: normalizeText(raw.heroDesc || raw.heroText),
       icons: {
-        faculty: normalizeText(rawIcons.faculty) || fallback.icons.faculty || ACADEMICS_OVERVIEW_DEFAULTS.icons.faculty,
-        circular: normalizeText(rawIcons.circular) || fallback.icons.circular || ACADEMICS_OVERVIEW_DEFAULTS.icons.circular,
-        curriculum: normalizeText(rawIcons.curriculum) || fallback.icons.curriculum || ACADEMICS_OVERVIEW_DEFAULTS.icons.curriculum,
-        calendar: normalizeText(rawIcons.calendar) || fallback.icons.calendar || ACADEMICS_OVERVIEW_DEFAULTS.icons.calendar
+        faculty: normalizeText(rawIcons.faculty) || defaults.icons.faculty,
+        circular: normalizeText(rawIcons.circular) || defaults.icons.circular,
+        curriculum: normalizeText(rawIcons.curriculum) || defaults.icons.curriculum,
+        calendar: normalizeText(rawIcons.calendar) || defaults.icons.calendar
       }
     };
   }
 
-  function collectSchoolCircularsFallback(doc) {
+  function normalizeFacultyPageContent(item) {
+    var raw = extractContentData(item);
+    var defaults = DEFAULTS.faculty;
     return {
-      bannerTitle: textOf(doc.getElementById('schoolCircularsBannerTitle')) || SCHOOL_CIRCULARS_DEFAULTS.bannerTitle,
-      badge: textOf(doc.getElementById('schoolCircularsBadge')) || SCHOOL_CIRCULARS_DEFAULTS.badge,
-      heroTitle: textOf(doc.getElementById('schoolCircularsHeroTitle')) || SCHOOL_CIRCULARS_DEFAULTS.heroTitle,
-      heroText: textOf(doc.getElementById('schoolCircularsHeroText')) || SCHOOL_CIRCULARS_DEFAULTS.heroText,
-      academicYear: textOf(doc.getElementById('schoolCircularsAcademicYear')) || SCHOOL_CIRCULARS_DEFAULTS.academicYear,
-      addressedTo: textOf(doc.getElementById('schoolCircularsAddressedTo')) || SCHOOL_CIRCULARS_DEFAULTS.addressedTo,
-      distribution: textOf(doc.getElementById('schoolCircularsDistribution')) || SCHOOL_CIRCULARS_DEFAULTS.distribution,
-      sectionTitle: textOf(doc.getElementById('schoolCircularsSectionTitle')) || SCHOOL_CIRCULARS_DEFAULTS.sectionTitle,
-      guideTitle: textOf(doc.getElementById('schoolCircularsGuideTitle')) || SCHOOL_CIRCULARS_DEFAULTS.guideTitle,
-      guideItems: Array.prototype.map.call(doc.querySelectorAll('#schoolCircularsGuideList li'), function (item) {
-        return textOf(item);
-      }).filter(Boolean)
+      bannerTitle: normalizeText(raw.bannerTitle) || defaults.bannerTitle,
+      pageTitle: normalizeText(raw.pageTitle || raw.heroTitle) || defaults.pageTitle,
+      introText: normalizeText(raw.introText || raw.heroText),
+      listTitle: normalizeText(raw.listTitle || raw.sectionTitle) || defaults.listTitle
     };
   }
 
-  function collectBookListFallback(doc) {
-    var groups = [];
-    var current = null;
-    Array.prototype.forEach.call(doc.querySelectorAll('#bookListTableBody tr'), function (row) {
-      if (row.classList.contains('book-class-header')) {
-        current = {
-          title: textOf(row.querySelector('td')),
-          rows: []
-        };
-        groups.push(current);
-        return;
-      }
-      var cells = row.querySelectorAll('td');
-      if (!cells.length) return;
-      if (!current) {
-        current = { title: 'Book List', rows: [] };
-        groups.push(current);
-      }
-      current.rows.push({
-        subject: textOf(cells[0]),
-        title: textOf(cells[1]),
-        publisher: textOf(cells[2]),
-        className: textOf(cells[3])
-      });
-    });
+  function normalizeFormerHeadsContent(item) {
+    var raw = extractContentData(item);
+    var defaults = DEFAULTS.formerHeads;
     return {
-      bannerTitle: textOf(doc.getElementById('bookListBannerTitle')) || BOOK_LIST_DEFAULTS.bannerTitle,
-      heroBadge: textOf(doc.getElementById('bookListHeroBadge')) || BOOK_LIST_DEFAULTS.heroBadge,
-      heroTitle: textOf(doc.getElementById('bookListHeroTitle')) || BOOK_LIST_DEFAULTS.heroTitle,
-      heroText: textOf(doc.getElementById('bookListHeroText')) || BOOK_LIST_DEFAULTS.heroText,
-      academicYear: textOf(doc.getElementById('bookListAcademicYear')) || BOOK_LIST_DEFAULTS.academicYear,
-      sectionTitle: textOf(doc.getElementById('bookListSectionTitle')) || BOOK_LIST_DEFAULTS.sectionTitle,
-      downloadTitle: textOf(doc.getElementById('bookListDownloadTitle')) || BOOK_LIST_DEFAULTS.downloadTitle,
-      downloadText: textOf(doc.getElementById('bookListDownloadText')) || BOOK_LIST_DEFAULTS.downloadText,
-      instructionsTitle: textOf(doc.getElementById('bookListInstructionsTitle')) || BOOK_LIST_DEFAULTS.instructionsTitle,
-      instructionItems: Array.prototype.map.call(doc.querySelectorAll('#bookListInstructionsList li'), function (item) {
-        return textOf(item);
-      }).filter(Boolean),
-      classes: groups
+      bannerTitle: normalizeText(raw.bannerTitle) || defaults.bannerTitle,
+      heroBadge: normalizeText(raw.heroBadge),
+      heroTitle: normalizeText(raw.heroTitle) || defaults.heroTitle,
+      heroText: normalizeText(raw.heroText),
+      legacyTitle: normalizeText(raw.legacyTitle),
+      legacyText: normalizeText(raw.legacyText),
+      stats: normalizeStats(raw.stats, defaults.stats),
+      journeyTitle: normalizeText(raw.journeyTitle),
+      journeyItems: normalizeJourney(raw.journeyItems, defaults.journeyItems)
     };
   }
 
-  function mergeSchoolCircularsContent(stored, fallback) {
-    var raw = stored && stored.data && typeof stored.data === 'object' ? stored.data : (stored || {});
+  function normalizeCbseContent(item) {
+    var raw = extractContentData(item);
+    var defaults = DEFAULTS.cbse;
     return {
-      bannerTitle: normalizeText(raw.bannerTitle) || fallback.bannerTitle,
-      badge: normalizeText(raw.badge) || fallback.badge,
-      heroTitle: normalizeText(raw.heroTitle) || fallback.heroTitle,
-      heroText: normalizeText(raw.heroDesc || raw.heroText) || fallback.heroText,
-      academicYear: normalizeText(raw.academicYear) || fallback.academicYear,
-      addressedTo: normalizeText(raw.addressedTo) || fallback.addressedTo,
-      distribution: normalizeText(raw.distribution) || fallback.distribution,
-      sectionTitle: normalizeText(raw.sectionTitle) || fallback.sectionTitle,
-      guideTitle: normalizeText(raw.guideTitle) || fallback.guideTitle || SCHOOL_CIRCULARS_DEFAULTS.guideTitle,
-      guideItems: Array.isArray(raw.guideItems) && raw.guideItems.length
-        ? raw.guideItems.map(normalizeText).filter(Boolean)
-        : ((Array.isArray(fallback.guideItems) && fallback.guideItems.length ? fallback.guideItems : SCHOOL_CIRCULARS_DEFAULTS.guideItems).map(normalizeText).filter(Boolean))
+      bannerTitle: normalizeText(raw.bannerTitle) || defaults.bannerTitle,
+      badge: normalizeText(raw.badge),
+      heroTitle: normalizeText(raw.heroTitle) || defaults.heroTitle,
+      heroText: normalizeText(raw.heroDesc || raw.heroText),
+      sectionTitle: normalizeText(raw.sectionTitle) || defaults.sectionTitle
     };
   }
 
-  function mergeBookListContent(stored, fallback) {
-    var raw = stored && stored.data && typeof stored.data === 'object' ? stored.data : (stored || {});
+  function normalizeSchoolCircularsContent(item) {
+    var raw = extractContentData(item);
+    var defaults = DEFAULTS.school;
     return {
-      bannerTitle: normalizeText(raw.bannerTitle) || fallback.bannerTitle,
-      heroBadge: normalizeText(raw.heroBadge) || fallback.heroBadge,
-      heroTitle: normalizeText(raw.heroTitle) || fallback.heroTitle,
-      heroText: normalizeText(raw.heroText) || fallback.heroText,
-      academicYear: normalizeText(raw.academicYear) || fallback.academicYear,
-      sectionTitle: normalizeText(raw.sectionTitle) || fallback.sectionTitle,
-      downloadTitle: normalizeText(raw.downloadTitle) || fallback.downloadTitle,
-      downloadText: normalizeText(raw.downloadText) || fallback.downloadText,
-      instructionsTitle: normalizeText(raw.instructionsTitle) || fallback.instructionsTitle,
-      instructionItems: Array.isArray(raw.instructionItems) && raw.instructionItems.length
-        ? raw.instructionItems.map(normalizeText).filter(Boolean)
-        : (Array.isArray(fallback.instructionItems) && fallback.instructionItems.length ? fallback.instructionItems : BOOK_LIST_DEFAULTS.instructionItems),
-      classes: Array.isArray(raw.classes) && raw.classes.length ? raw.classes : fallback.classes
+      bannerTitle: normalizeText(raw.bannerTitle) || defaults.bannerTitle,
+      badge: normalizeText(raw.badge),
+      heroTitle: normalizeText(raw.heroTitle) || defaults.heroTitle,
+      heroText: normalizeText(raw.heroDesc || raw.heroText),
+      academicYear: normalizeText(raw.academicYear),
+      addressedTo: normalizeText(raw.addressedTo),
+      distribution: normalizeText(raw.distribution),
+      sectionTitle: normalizeText(raw.sectionTitle) || defaults.sectionTitle,
+      guideTitle: normalizeText(raw.guideTitle),
+      guideItems: Array.isArray(raw.guideItems) ? raw.guideItems.map(normalizeText).filter(Boolean) : defaults.guideItems
+    };
+  }
+
+  function normalizeBookListContent(item) {
+    var raw = extractContentData(item);
+    var defaults = DEFAULTS.bookList;
+    return {
+      bannerTitle: normalizeText(raw.bannerTitle) || defaults.bannerTitle,
+      heroBadge: normalizeText(raw.heroBadge),
+      heroTitle: normalizeText(raw.heroTitle) || defaults.heroTitle,
+      heroText: normalizeText(raw.heroText),
+      academicYear: normalizeText(raw.academicYear),
+      sectionTitle: normalizeText(raw.sectionTitle) || defaults.sectionTitle,
+      downloadTitle: normalizeText(raw.downloadTitle) || defaults.downloadTitle,
+      downloadText: normalizeText(raw.downloadText),
+      instructionsTitle: normalizeText(raw.instructionsTitle),
+      instructionItems: Array.isArray(raw.instructionItems) ? raw.instructionItems.map(normalizeText).filter(Boolean) : defaults.instructionItems,
+      classes: Array.isArray(raw.classes) ? raw.classes : defaults.classes
     };
   }
 
   function renderFormerHeadsStats(container, stats) {
     if (!container) return;
+    if (!Array.isArray(stats) || !stats.length) {
+      container.innerHTML = '';
+      container.style.display = 'none';
+      return;
+    }
+    container.style.display = '';
     container.innerHTML = stats.map(function (item) {
       return ''
         + '<div class="acad-tile">'
@@ -408,7 +378,12 @@
   }
 
   function renderFormerHeadsTimeline(container, items) {
-    if (!container || !items.length) return;
+    if (!container) return;
+    if (!Array.isArray(items) || !items.length) {
+      container.innerHTML = '<div class="head-item"><div class="head-name">Former head records will appear here.</div></div>';
+      return;
+    }
+
     container.innerHTML = items.map(function (item) {
       var period = normalizeText(item.period || item.role);
       var note = normalizeText(item.bio || item.contact);
@@ -441,107 +416,98 @@
   }
 
   function renderFormerHeadsJourney(container, items) {
-    if (!container || !items.length) return;
+    if (!container) return;
+    if (!Array.isArray(items) || !items.length) {
+      container.innerHTML = '';
+      container.style.display = 'none';
+      return;
+    }
+    container.style.display = '';
     container.innerHTML = items.map(function (item) {
       return '<li>' + escapeHtml(item.text) + '</li>';
     }).join('');
   }
 
-  function applyAcademicsOverviewIcons(icons) {
-    ['faculty', 'circular', 'curriculum', 'calendar'].forEach(function (key) {
-      Array.prototype.forEach.call(doc.querySelectorAll('[data-acad-icon="' + key + '"]'), function (node) {
-        node.textContent = icons[key] || ACADEMICS_OVERVIEW_DEFAULTS.icons[key] || '';
-      });
-    });
+  function renderFacultyGrid(container, loading, items) {
+    if (!container) return;
+    if (!Array.isArray(items) || !items.length) {
+      if (loading) {
+        loading.textContent = 'Faculty information will appear here soon.';
+        loading.style.display = 'block';
+      }
+      container.style.display = 'none';
+      container.innerHTML = '';
+      return;
+    }
+
+    if (loading) loading.style.display = 'none';
+    container.style.display = 'grid';
+    container.innerHTML = items.map(function (item) {
+      var name = normalizeText(item.name);
+      var initials = name
+        ? name.split(/\s+/).map(function (part) { return part.charAt(0); }).join('').substring(0, 2).toUpperCase()
+        : '?';
+      var photo = normalizeText(item.photo);
+      var qualification = normalizeText(item.qualification || item.note);
+      var experience = normalizeText(item.experience);
+      return ''
+        + '<div class="faculty-card">'
+        + (photo
+            ? '<img class="faculty-avatar faculty-avatar-photo" src="' + escapeHtml(photo) + '" alt="' + escapeHtml(name || 'Faculty') + '" />'
+            : '<div class="faculty-avatar faculty-avatar-fallback">' + escapeHtml(initials) + '</div>')
+        + '<div class="faculty-name">' + escapeHtml(name) + '</div>'
+        + '<div class="faculty-subject">' + escapeHtml(item.subject || '') + '</div>'
+        + '<div class="faculty-qual">' + escapeHtml(qualification) + '</div>'
+        + '<div class="faculty-exp">' + escapeHtml(experience ? experience + ' Years Experience' : '') + '</div>'
+        + '</div>';
+    }).join('');
   }
 
-  async function initAcademicsOverviewPage() {
-    var path = normalizeText(window.location.pathname).replace(/\/+$/, '');
-    if (!(path === '/academics' || path.indexOf('/academics/index.html') !== -1)) return;
-
-    var fallback = collectAcademicsOverviewFallback(doc);
-
-    try {
-      var content = await loadAcademicsOverviewContent();
-      var merged = mergeAcademicsOverviewContent(content, fallback);
-
-      if (doc.getElementById('academicsBannerTitle')) doc.getElementById('academicsBannerTitle').textContent = merged.bannerTitle;
-      if (doc.getElementById('academicsHeroBadge')) {
-        doc.getElementById('academicsHeroBadge').textContent = merged.heroBadge;
-        doc.getElementById('academicsHeroBadge').style.display = merged.heroBadge ? 'inline-flex' : 'none';
+  function renderCbseCircularsList(container, loading, items) {
+    if (!container) return;
+    if (!Array.isArray(items) || !items.length) {
+      if (loading) {
+        loading.textContent = 'No CBSE circulars have been published yet.';
+        loading.style.display = 'block';
       }
-      if (doc.getElementById('academicsHeroTitle')) doc.getElementById('academicsHeroTitle').textContent = merged.heroTitle;
-      if (doc.getElementById('academicsHeroDesc')) doc.getElementById('academicsHeroDesc').textContent = merged.heroDesc;
-
-      applyAcademicsOverviewIcons(merged.icons);
-
-      document.title = (merged.bannerTitle || merged.heroTitle || ACADEMICS_OVERVIEW_DEFAULTS.bannerTitle) + ' | Loretto Central School';
-    } catch (error) {
-      applyAcademicsOverviewIcons(fallback.icons);
-      console.error('Could not load Academics overview content:', error);
-    }
-  }
-
-  async function initFormerHeadsPage() {
-    var path = window.location.pathname;
-    if (!(path.indexOf('2-former-heads') !== -1 || path.indexOf('former') !== -1)) return;
-
-    console.log('[Loretto] Initializing Former Heads page...');
-    setPageIcons('former-heads');
-    var fallback = collectFormerHeadsFallback(doc);
-
-    try {
-      var content = await loadFormerHeadsContent();
-      var merged = mergeFormerHeadsContent(content, fallback);
-
-      if (doc.getElementById('formerHeadsBannerTitle')) doc.getElementById('formerHeadsBannerTitle').textContent = merged.bannerTitle;
-      if (doc.getElementById('formerHeadsHeroBadge')) {
-        doc.getElementById('formerHeadsHeroBadge').textContent = merged.heroBadge;
-        doc.getElementById('formerHeadsHeroBadge').style.display = merged.heroBadge ? 'inline-block' : 'none';
-      }
-      if (doc.getElementById('formerHeadsHeroTitle')) doc.getElementById('formerHeadsHeroTitle').textContent = merged.heroTitle;
-      if (doc.getElementById('formerHeadsHeroText')) doc.getElementById('formerHeadsHeroText').textContent = merged.heroText;
-      if (doc.getElementById('formerHeadsLegacyTitle')) doc.getElementById('formerHeadsLegacyTitle').textContent = merged.legacyTitle;
-      if (doc.getElementById('formerHeadsLegacyText')) doc.getElementById('formerHeadsLegacyText').textContent = merged.legacyText;
-      if (doc.getElementById('formerHeadsJourneyTitle')) doc.getElementById('formerHeadsJourneyTitle').textContent = merged.journeyTitle;
-      renderFormerHeadsStats(doc.getElementById('formerHeadsStats'), merged.stats);
-      renderFormerHeadsJourney(doc.getElementById('formerHeadsJourneyList'), merged.journeyItems);
-
-      if (merged.bannerTitle) {
-        document.title = merged.bannerTitle + ' | Academics | Loretto Central School';
-      }
-    } catch (error) {
-      console.error('Could not load Former Heads page content:', error);
+      container.style.display = 'none';
+      container.innerHTML = '';
+      return;
     }
 
-    try {
-      var people = await loadFormerHeadsPeople();
-      var formerHeads = (Array.isArray(people) ? people : []).filter(function (item) {
-        return isFormerHeadRecord(item) && item.visible !== false;
-      }).sort(function (a, b) {
-        return asNumber(a.order, 9999) - asNumber(b.order, 9999);
-      });
-
-      if (formerHeads.length) {
-        renderFormerHeadsTimeline(doc.getElementById('formerHeadsTimeline'), formerHeads);
-      }
-    } catch (error) {
-      console.error('Could not load Former Heads timeline data:', error);
-    }
+    if (loading) loading.style.display = 'none';
+    container.style.display = 'block';
+    container.innerHTML = items.map(function (item, index) {
+      var sourceUrl = normalizeDocumentUrl(item.url || (item.meta && item.meta.url));
+      var docUrl = getOpenableDocumentUrl(sourceUrl) || sourceUrl;
+      var badge = normalizeText(item.type || (item.meta && item.meta.badge) || (index === 0 ? 'NEW' : 'CBSE'));
+      var source = normalizeText(item.description || (item.meta && item.meta.source));
+      var metaParts = [source, formatDisplayDate(item.date)].filter(Boolean);
+      return ''
+        + '<a href="' + escapeHtml(docUrl || '#') + '" target="_blank" rel="noopener noreferrer" class="circular-item" aria-label="Open circular PDF">'
+        + '<div class="circ-icon"></div>'
+        + '<div class="circ-body">'
+        + '<div class="circ-title">' + escapeHtml(item.title || item.name || 'Untitled Circular') + '</div>'
+        + '<div class="circ-meta">' + escapeHtml(metaParts.join(' · ')) + '</div>'
+        + '</div>'
+        + '<span class="circ-badge' + (index === 0 ? ' circ-new' : '') + '">' + escapeHtml(badge) + '</span>'
+        + '</a>';
+    }).join('');
   }
 
   function renderSchoolCircularsList(container, items) {
     if (!container) return;
-    if (!items.length) {
-      container.innerHTML = '<div class="circular-item" style="cursor:default;"><div class="circ-icon"></div><div class="circ-body"><div class="circ-title">No school circulars published yet</div><div class="circ-meta">Add school circulars from the admin panel to show them here.</div></div><span class="circ-badge">EMPTY</span></div>';
+    if (!Array.isArray(items) || !items.length) {
+      container.innerHTML = '<div class="circular-item" style="cursor:default;"><div class="circ-icon"></div><div class="circ-body"><div class="circ-title">No school circulars published yet</div><div class="circ-meta">Published circulars will appear here.</div></div><span class="circ-badge">EMPTY</span></div>';
       return;
     }
+
     container.innerHTML = items.map(function (item) {
       var title = normalizeText(item.title || item.name) || 'Untitled Circular';
-      var metaText = normalizeText(item.description || (item.meta && item.meta.source) || 'Loretto Central School');
+      var metaText = normalizeText(item.description || (item.meta && item.meta.source));
       var dateText = formatDisplayDate(item.date);
       var badge = normalizeText(item.meta && item.meta.badge) || 'NOTICE';
-      var url = normalizeText(item.url);
+      var url = normalizeDocumentUrl(item.url);
       var tag = badge.toUpperCase() === 'LATEST' || badge.toUpperCase() === 'RECENT' ? ' circ-new' : '';
       var cardInner = ''
         + '<div class="circ-icon"></div>'
@@ -561,7 +527,11 @@
 
   function renderBookListTable(container, groups) {
     if (!container) return;
-    if (!Array.isArray(groups) || !groups.length) return;
+    if (!Array.isArray(groups) || !groups.length) {
+      container.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:18px;color:#5a6e6e;">Book list details will appear here.</td></tr>';
+      return;
+    }
+
     container.innerHTML = groups.map(function (group) {
       var rows = Array.isArray(group.rows) ? group.rows : [];
       var header = '<tr class="book-class-header"><td colspan="4"> ' + escapeHtml(group.title || 'Book List') + '</td></tr>';
@@ -577,131 +547,203 @@
     }).join('');
   }
 
-  async function initBookListPage() {
-    var path = window.location.pathname;
-    if (!(path.indexOf('5-book-list') !== -1 || path.indexOf('book') !== -1)) return;
+  function isFormerHeadRecord(item) {
+    if (!item || !normalizeText(item.name)) return false;
+    var group = normalizeText(item.group).toLowerCase();
+    var designation = normalizeText(item.designation).toLowerCase();
+    var period = normalizeText(item.period || item.role);
 
-    console.log('[Loretto] Initializing Book List page...');
-    setPageIcons('book-list');
-    var fallback = collectBookListFallback(doc);
+    if (group === 'former-heads' || group === 'formerheads' || group === 'former_heads') return true;
+    if (/former head|former principal|head of institution/.test(designation)) return true;
+    if (/\b(19|20)\d{2}\b/.test(period)) return true;
+    if (/(founding|present|term|phase|year)/i.test(period)) return true;
+    return false;
+  }
 
-    try {
-      var content = await loadBookListContent();
-      var merged = mergeBookListContent(content, fallback);
+  async function initAcademicsOverviewPage() {
+    if (!matchesPath([/\/academics$/, /\/academics\/index\.html$/])) return;
 
-      if (doc.getElementById('bookListBannerTitle')) doc.getElementById('bookListBannerTitle').textContent = merged.bannerTitle;
-      if (doc.getElementById('bookListHeroBadge')) doc.getElementById('bookListHeroBadge').textContent = merged.heroBadge;
-      if (doc.getElementById('bookListHeroTitle')) doc.getElementById('bookListHeroTitle').textContent = merged.heroTitle;
-      if (doc.getElementById('bookListHeroText')) doc.getElementById('bookListHeroText').textContent = merged.heroText;
-      if (doc.getElementById('bookListAcademicYear')) doc.getElementById('bookListAcademicYear').textContent = merged.academicYear;
-      if (doc.getElementById('bookListSectionTitle')) doc.getElementById('bookListSectionTitle').textContent = merged.sectionTitle;
-      if (doc.getElementById('bookListDownloadTitle')) doc.getElementById('bookListDownloadTitle').textContent = merged.downloadTitle;
-      if (doc.getElementById('bookListDownloadText')) doc.getElementById('bookListDownloadText').textContent = merged.downloadText;
-      if (doc.getElementById('bookListInstructionsTitle')) doc.getElementById('bookListInstructionsTitle').textContent = merged.instructionsTitle;
-      if (doc.getElementById('bookListInstructionsList')) {
-        doc.getElementById('bookListInstructionsList').innerHTML = merged.instructionItems.map(function (item) {
-          return '<li>' + escapeHtml(item) + '</li>';
-        }).join('');
-      }
-      renderBookListTable(doc.getElementById('bookListTableBody'), merged.classes);
+    var content = normalizeOverviewContent(await loadContent(ACADEMICS_MAIN_KEY));
+    setTextById('academicsBannerTitle', content.bannerTitle);
+    setTextById('academicsHeroBadge', content.heroBadge, true);
+    setTextById('academicsHeroTitle', content.heroTitle, true);
+    setTextById('academicsHeroDesc', content.heroDesc, true);
 
-      if (merged.bannerTitle) document.title = merged.bannerTitle + ' | Academics | Loretto Central School';
-    } catch (error) {
-      console.error('Could not load Book List content:', error);
-    }
+    ['faculty', 'circular', 'curriculum', 'calendar'].forEach(function (key) {
+      Array.prototype.forEach.call(doc.querySelectorAll('[data-acad-icon="' + key + '"]'), function (node) {
+        node.textContent = content.icons[key] || DEFAULTS.overview.icons[key] || '';
+      });
+    });
 
-    try {
-      var docs = await loadDocuments();
-      var pdfDoc = (Array.isArray(docs) ? docs : []).filter(function (item) {
-        return item && item.category === 'book-list' && item.visible !== false;
-      })[0] || null;
+    document.title = (content.bannerTitle || DEFAULTS.overview.bannerTitle) + ' | Loretto Central School';
+  }
 
-      if (pdfDoc) {
-        var academicYear = normalizeText(pdfDoc.meta && pdfDoc.meta.academicYear);
-        if (doc.getElementById('bookListBannerTitle') && normalizeText(pdfDoc.title)) doc.getElementById('bookListBannerTitle').textContent = normalizeText(pdfDoc.title);
-        if (doc.getElementById('bookListHeroTitle') && normalizeText(pdfDoc.title)) doc.getElementById('bookListHeroTitle').textContent = normalizeText(pdfDoc.title);
-        if (doc.getElementById('bookListAcademicYear') && academicYear) doc.getElementById('bookListAcademicYear').textContent = academicYear.replace(/-/g, '–');
-        if (doc.getElementById('bookListDownloadTitle') && normalizeText(pdfDoc.title)) doc.getElementById('bookListDownloadTitle').textContent = 'Download ' + normalizeText(pdfDoc.title) + ' — PDF';
-        if (doc.getElementById('bookListDownloadLink') && normalizeText(pdfDoc.url)) {
-          doc.getElementById('bookListDownloadLink').href = normalizeText(pdfDoc.url);
-          doc.getElementById('bookListDownloadLink').target = '_blank';
-          doc.getElementById('bookListDownloadLink').rel = 'noopener noreferrer';
-        }
-      }
-    } catch (error) {
-      console.error('Could not load Book List PDF:', error);
-    }
+  async function initFacultyPage() {
+    if (!matchesPath([/\/academics\/1-faculty\.html$/])) return;
+
+    var pageContent = normalizeFacultyPageContent(await loadContent(FACULTY_PAGE_KEY));
+    var faculty = await loadFaculty();
+    var visibleFaculty = (Array.isArray(faculty) ? faculty : []).filter(function (item) {
+      return item && item.visible !== false;
+    }).sort(function (a, b) {
+      return asNumber(a.order, 9999) - asNumber(b.order, 9999);
+    });
+
+    setTextById('facultyBannerTitle', pageContent.bannerTitle);
+    setTextById('facultyPageTitle', pageContent.pageTitle, true);
+    setTextById('facultyPageIntro', pageContent.introText, true);
+    setTextById('facultyListTitle', pageContent.listTitle, true);
+    renderFacultyGrid(doc.getElementById('faculty-grid'), doc.getElementById('faculty-loading'), visibleFaculty);
+    document.title = (pageContent.bannerTitle || DEFAULTS.faculty.bannerTitle) + ' | Academics | Loretto Central School';
+  }
+
+  async function initFormerHeadsPage() {
+    if (!matchesPath([/\/academics\/2-former-heads\.html$/])) return;
+
+    setPageIcons('former-heads');
+    var content = normalizeFormerHeadsContent(await loadContent(FORMER_HEADS_KEY));
+    var people = await loadFormerHeadsPeople();
+    var formerHeads = (Array.isArray(people) ? people : []).filter(function (item) {
+      return isFormerHeadRecord(item) && item.visible !== false;
+    }).sort(function (a, b) {
+      return asNumber(a.order, 9999) - asNumber(b.order, 9999);
+    });
+
+    setTextById('formerHeadsBannerTitle', content.bannerTitle);
+    setTextById('formerHeadsHeroBadge', content.heroBadge, true);
+    setTextById('formerHeadsHeroTitle', content.heroTitle, true);
+    setTextById('formerHeadsHeroText', content.heroText, true);
+    setTextById('formerHeadsLegacyTitle', content.legacyTitle, true);
+    setTextById('formerHeadsLegacyText', content.legacyText, true);
+    setTextById('formerHeadsJourneyTitle', content.journeyTitle, true);
+    renderFormerHeadsStats(doc.getElementById('formerHeadsStats'), content.stats);
+    renderFormerHeadsTimeline(doc.getElementById('formerHeadsTimeline'), formerHeads);
+    renderFormerHeadsJourney(doc.getElementById('formerHeadsJourneyList'), content.journeyItems);
+    document.title = (content.bannerTitle || DEFAULTS.formerHeads.bannerTitle) + ' | Academics | Loretto Central School';
+  }
+
+  async function initCbseCircularsPage() {
+    if (!matchesPath([/\/academics\/3-cbse-circulars\.html$/])) return;
+
+    setPageIcons('cbse-circulars');
+    var content = normalizeCbseContent(await loadContent(CBSE_CIRCULARS_KEY));
+    var docs = await loadDocuments();
+    var circulars = (Array.isArray(docs) ? docs : []).filter(function (item) {
+      return item && item.category === 'cbse-circular' && item.visible !== false;
+    }).sort(function (a, b) {
+      var orderDiff = asNumber(a.order, 9999) - asNumber(b.order, 9999);
+      if (orderDiff !== 0) return orderDiff;
+      return new Date(b.date || b.createdAt || 0) - new Date(a.date || a.createdAt || 0);
+    });
+
+    setTextById('cbseBannerTitle', content.bannerTitle);
+    setTextById('cbseBadge', content.badge, true);
+    setTextById('cbseHeroTitle', content.heroTitle, true);
+    setTextById('cbseHeroText', content.heroText, true);
+    setTextById('cbseSectionTitle', content.sectionTitle, true);
+    renderCbseCircularsList(doc.getElementById('cbseCircularsList'), doc.getElementById('cbseCircularsLoading'), circulars);
+    document.title = (content.bannerTitle || DEFAULTS.cbse.bannerTitle) + ' | Academics | Loretto Central School';
   }
 
   async function initSchoolCircularsPage() {
-    var path = window.location.pathname;
-    if (!(path.indexOf('4-school-circulars') !== -1 || path.indexOf('circular') !== -1)) return;
+    if (!matchesPath([/\/academics\/4-school-circulars\.html$/])) return;
 
-    console.log('[Loretto] Initializing School Circulars page...');
     setPageIcons('school-circulars');
-    var fallback = collectSchoolCircularsFallback(doc);
+    var content = normalizeSchoolCircularsContent(await loadContent(SCHOOL_CIRCULARS_KEY));
+    var docs = await loadDocuments();
+    var circulars = (Array.isArray(docs) ? docs : []).filter(function (item) {
+      return item && item.category === 'school-circular' && item.visible !== false;
+    }).sort(function (a, b) {
+      var orderDiff = asNumber(a.order, 9999) - asNumber(b.order, 9999);
+      if (orderDiff !== 0) return orderDiff;
+      return new Date(b.date || b.createdAt || 0) - new Date(a.date || a.createdAt || 0);
+    });
 
-    try {
-      var content = await loadSchoolCircularsContent();
-      var merged = mergeSchoolCircularsContent(content, fallback);
-
-      if (doc.getElementById('schoolCircularsBannerTitle')) doc.getElementById('schoolCircularsBannerTitle').textContent = merged.bannerTitle;
-      if (doc.getElementById('schoolCircularsBadge')) doc.getElementById('schoolCircularsBadge').textContent = merged.badge;
-      if (doc.getElementById('schoolCircularsHeroTitle')) doc.getElementById('schoolCircularsHeroTitle').textContent = merged.heroTitle;
-      if (doc.getElementById('schoolCircularsHeroText')) doc.getElementById('schoolCircularsHeroText').textContent = merged.heroText;
-      if (doc.getElementById('schoolCircularsAcademicYear')) doc.getElementById('schoolCircularsAcademicYear').textContent = merged.academicYear;
-      if (doc.getElementById('schoolCircularsAddressedTo')) doc.getElementById('schoolCircularsAddressedTo').textContent = merged.addressedTo;
-      if (doc.getElementById('schoolCircularsDistribution')) doc.getElementById('schoolCircularsDistribution').textContent = merged.distribution;
-      if (doc.getElementById('schoolCircularsSectionTitle')) doc.getElementById('schoolCircularsSectionTitle').textContent = merged.sectionTitle;
-      if (doc.getElementById('schoolCircularsGuideTitle')) {
-        doc.getElementById('schoolCircularsGuideTitle').textContent = merged.guideTitle;
-        doc.getElementById('schoolCircularsGuideTitle').style.display = merged.guideTitle ? '' : 'none';
-      }
-      if (doc.getElementById('schoolCircularsGuideList')) {
-        var guideItems = Array.isArray(merged.guideItems) ? merged.guideItems.filter(Boolean) : [];
-        doc.getElementById('schoolCircularsGuideList').innerHTML = guideItems.map(function (item) {
-          return '<li>' + escapeHtml(item) + '</li>';
-        }).join('');
-        doc.getElementById('schoolCircularsGuideList').style.display = guideItems.length ? '' : 'none';
-      }
-      if (merged.bannerTitle) document.title = merged.bannerTitle + ' | Academics | Loretto Central School';
-    } catch (error) {
-      console.error('Could not load School Circulars page content:', error);
-    }
-
-    try {
-      var docs = await loadDocuments();
-      var schoolCirculars = (Array.isArray(docs) ? docs : []).filter(function (item) {
-        return item && item.category === 'school-circular' && item.visible !== false;
-      }).sort(function (a, b) {
-        var orderDiff = asNumber(a.order, 9999) - asNumber(b.order, 9999);
-        if (orderDiff !== 0) return orderDiff;
-        var aTime = a.date ? new Date(a.date).getTime() : 0;
-        var bTime = b.date ? new Date(b.date).getTime() : 0;
-        return bTime - aTime;
-      });
-
-      if (doc.getElementById('schoolCircularsCount')) {
-        doc.getElementById('schoolCircularsCount').textContent = schoolCirculars.length ? String(schoolCirculars.length) : 'Throughout Year';
-      }
-
-      renderSchoolCircularsList(doc.getElementById('schoolCircularsList'), schoolCirculars);
-    } catch (error) {
-      console.error('Could not load School Circulars documents:', error);
-    }
+    setTextById('schoolCircularsBannerTitle', content.bannerTitle);
+    setTextById('schoolCircularsBadge', content.badge, true);
+    setTextById('schoolCircularsHeroTitle', content.heroTitle, true);
+    setTextById('schoolCircularsHeroText', content.heroText, true);
+    setTextById('schoolCircularsAcademicYear', content.academicYear);
+    setTextById('schoolCircularsAddressedTo', content.addressedTo);
+    setTextById('schoolCircularsDistribution', content.distribution);
+    setTextById('schoolCircularsSectionTitle', content.sectionTitle, true);
+    setTextById('schoolCircularsGuideTitle', content.guideTitle, true);
+    setHtmlById('schoolCircularsGuideList', content.guideItems.map(function (item) {
+      return '<li>' + escapeHtml(item) + '</li>';
+    }).join(''), true);
+    setTextById('schoolCircularsCount', circulars.length ? String(circulars.length) : '0');
+    renderSchoolCircularsList(doc.getElementById('schoolCircularsList'), circulars);
+    document.title = (content.bannerTitle || DEFAULTS.school.bannerTitle) + ' | Academics | Loretto Central School';
   }
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', function () {
-      initAcademicsOverviewPage();
-      initFormerHeadsPage();
-      initSchoolCircularsPage();
-      initBookListPage();
+  async function initBookListPage() {
+    if (!matchesPath([/\/academics\/5-book-list\.html$/])) return;
+
+    setPageIcons('book-list');
+    var content = normalizeBookListContent(await loadContent(BOOK_LIST_KEY));
+    var docs = await loadDocuments();
+    var pdfDoc = (Array.isArray(docs) ? docs : []).filter(function (item) {
+      return item && item.category === 'book-list' && item.visible !== false;
+    })[0] || null;
+    var classGroups = Array.isArray(content.classes) ? content.classes : [];
+    var bookCount = countBookRows(classGroups);
+    var academicYear = normalizeText(content.academicYear || (pdfDoc && pdfDoc.meta && pdfDoc.meta.academicYear));
+    var downloadUrl = normalizeDocumentUrl(pdfDoc && pdfDoc.url);
+    var titleFromPdf = normalizeText(pdfDoc && pdfDoc.title);
+
+    setTextById('bookListBannerTitle', titleFromPdf || content.bannerTitle);
+    setTextById('bookListHeroBadge', content.heroBadge, true);
+    setTextById('bookListHeroTitle', titleFromPdf || content.heroTitle, true);
+    setTextById('bookListHeroText', content.heroText, true);
+    setTextById('bookListGroupCount', classGroups.length ? String(classGroups.length) : '0');
+    setTextById('bookListBookCount', bookCount ? String(bookCount) : '0');
+    setTextById('bookListAcademicYear', academicYear);
+    setTextById('bookListPdfStatus', downloadUrl ? 'Available' : 'Pending');
+    setTextById('bookListSectionTitle', content.sectionTitle, true);
+    setTextById('bookListDownloadTitle', titleFromPdf ? 'Download ' + titleFromPdf + ' - PDF' : content.downloadTitle, true);
+    setTextById('bookListDownloadText', content.downloadText, true);
+    setTextById('bookListInstructionsTitle', content.instructionsTitle, true);
+    setHtmlById('bookListInstructionsList', content.instructionItems.map(function (item) {
+      return '<li>' + escapeHtml(item) + '</li>';
+    }).join(''), true);
+    renderBookListTable(doc.getElementById('bookListTableBody'), classGroups);
+
+    var downloadLink = doc.getElementById('bookListDownloadLink');
+    if (downloadLink) {
+      if (downloadUrl) {
+        downloadLink.href = downloadUrl;
+        downloadLink.target = '_blank';
+        downloadLink.rel = 'noopener noreferrer';
+        downloadLink.style.display = '';
+      } else {
+        downloadLink.removeAttribute('href');
+        downloadLink.style.display = 'none';
+      }
+    }
+
+    document.title = (titleFromPdf || content.bannerTitle || DEFAULTS.bookList.bannerTitle) + ' | Academics | Loretto Central School';
+  }
+
+  function boot() {
+    Promise.allSettled([
+      initAcademicsOverviewPage(),
+      initFacultyPage(),
+      initFormerHeadsPage(),
+      initCbseCircularsPage(),
+      initSchoolCircularsPage(),
+      initBookListPage()
+    ]).then(function (results) {
+      results.forEach(function (result) {
+        if (result.status === 'rejected') {
+          console.error('[academics-page-loader]', result.reason);
+        }
+      });
     });
+  }
+
+  if (doc.readyState === 'loading') {
+    doc.addEventListener('DOMContentLoaded', boot);
   } else {
-    initAcademicsOverviewPage();
-    initFormerHeadsPage();
-    initSchoolCircularsPage();
-    initBookListPage();
+    boot();
   }
 })();

@@ -4,128 +4,68 @@
   var DEFAULTS = {
     hero: {
       title: 'Admissions',
-      desc: "Begin your child's journey of excellence at Loretto Central School — where every learner is valued, nurtured, and inspired.",
+      desc: '',
       bgImage: ''
     },
     subnav: ['Overview', 'Admission Enquiry', 'Transfer Certificate Format', 'Fee Structure'],
     status: {
-      academicYear: '2025–2026',
+      academicYear: '',
       isOpen: true,
-      badge: 'Admissions Open for 2025–26',
-      notice: 'Admissions for the academic year 2025–26 are now open. Visit the school office or download the application form to begin the process.'
+      badge: '',
+      notice: ''
     },
     overview: {
-      formsHeading: 'Download Application Forms',
-      formsDesc: 'Choose the appropriate application form based on the class you are applying for. Fill in the form carefully and submit it to the school office along with the required documents.',
-      stepsTitle: 'Admission Process at a Glance',
-      highlights: [
-        { order: '1', icon: '🏫', title: 'CBSE Affiliated', desc: 'Fully affiliated to CBSE, New Delhi (Affiliation No. 831368), offering LKG to Class X education.' },
-        { order: '2', icon: '🌍', title: 'All Are Welcome', desc: 'Open to boys and girls of all communities — irrespective of caste, creed, or social status.' },
-        { order: '3', icon: '📋', title: 'Simple Process', desc: 'Download the application form, fill it with the required documents, and submit to the school office.' }
-      ],
-      steps: [
-        { order: '1', title: 'Download Form', desc: 'Download the relevant application form from this page or collect it from the school office.' },
-        { order: '2', title: 'Fill & Prepare', desc: 'Complete the form with accurate details. Gather required documents: TC, birth certificate, photos, etc.' },
-        { order: '3', title: 'Submit at Office', desc: 'Submit the filled form with all documents at the school office during working hours.' },
-        { order: '4', title: 'Confirmation', desc: 'Pay the prescribed fees upon confirmation. Fee payment can be done in instalments as permitted.' }
-      ],
+      formsHeading: 'Application Forms',
+      formsDesc: '',
+      stepsTitle: '',
+      highlights: [],
+      steps: [],
       cta: {
-        heading: 'Have Questions About Admissions?',
-        desc: 'Visit the school office or explore our detailed Admission Enquiry page for complete rules and guidelines.',
-        label: 'Admission Enquiry →',
+        heading: '',
+        desc: '',
+        label: '',
         link: '2-admission-enquiry.html'
       }
     },
     enquiryPage: {
-      formsHeading: 'Download Application Forms',
-      formsDesc: "Choose the form that applies to your child's class:",
-      intro: 'Committed to our core value of nurturing excellence, we at Loretto Central School ensure that optimum learning happens for your child in an environment that is student-centric, fosters mutual respect, and stimulates innovation. With an intention to serve the student and parent communities and remain completely impartial, the school follows an explicit admission process.',
-      rules: [
-        'The school, which mainly runs for the Christian minority community, is also open for admission to boys and girls irrespective of caste, creed, or social status.',
-        'The child should complete the age prescribed by the Government to be admitted to the 1st standard.',
-        'Every student for admission and withdrawal from the school must be introduced by letter or in person by someone responsible to the Head of the School.',
-        'Application for admission should be made in the prescribed form, which can be obtained from the office, and must be submitted along with the Transfer Certificate from the school previously attended.',
-        'Every pupil on admission shall pay the prescribed fees. No fees shall be refunded for any cause.',
-        'The payment may be made in instalments as prescribed by the school management. The entire fee is to be remitted by February end.',
-        'Pupils coming from secondary or primary schools should produce a Transfer Certificate and Conduct Certificate issued by the Head of the School concerned.',
-        'Pupils coming from schools outside Dakshina Kannada district or outside Karnataka State will be admitted on production of a Transfer Certificate duly countersigned by the concerned authorities of the Department of Education, in strict conformity with the rules and standards issued by the department.',
-        'In the case of admission of pupils coming from primary or secondary schools, the date of birth furnished in the Transfer Certificate will be taken as correct.',
-        'The admission application must be signed by the father or mother or, in their absence, by the guardian who has been authorized by the parents. The letter of authorization must be filed with the admission form.'
-      ],
-      documentsIntro: 'Please bring the following documents when submitting your application to the school office:',
-      documents: [
-        'Completed Application Form (downloaded and filled)',
-        'Transfer Certificate (TC) from previous school (for Classes 1–8)',
-        'Conduct Certificate from previous school (where applicable)',
-        'Original Birth Certificate of the child',
-        'Recent passport-size photographs of the student (2–4 copies)',
-        'Aadhar Card copy of student and parent/guardian',
-        'Caste Certificate / Community Certificate (if applicable)',
-        'Previous academic records / report card'
-      ],
+      formsHeading: 'Application Forms',
+      formsDesc: '',
+      intro: '',
+      rules: [],
+      documentsIntro: '',
+      documents: [],
       officeInfo: {
-        heading: 'School Office Information',
-        address: 'Loretto Central School\nLoretto Padavu, Bantwal\nDakshina Kannada – 574219',
-        phone: 'Please enquire during school working hours',
-        website: 'https://lorettocentralschool.edu.in'
+        heading: '',
+        address: '',
+        phone: '',
+        website: ''
       },
-      quickTips: [
-        'Collect or download forms in advance',
-        'Fill all fields accurately and completely',
-        'Keep original documents ready for verification',
-        'Submit during office working hours only',
-        'Fees once paid are non-refundable'
-      ]
+      quickTips: []
     },
     feePage: {
-      year: '2025–2026',
-      intro: 'The fee structure below is applicable for the Academic Year 2025–2026. Fees are to be paid as per the schedule prescribed by the school management. Please download the official fee structure PDF for the most current and complete details.',
-      overviewTitle: 'Fee Structure Overview',
-      overviewText: 'The official fee structure for the academic year 2025–26 is available for download below. The table below provides a general overview of fee categories applicable across classes.',
-      rows: [
-        { group: '', feeType: 'Tuition Fee', amount: 'Core academic instruction charges', frequency: 'Annual / Term' },
-        { group: '', feeType: 'Admission / Registration Fee', amount: 'One-time fee at the time of new admission', frequency: 'One-time' },
-        { group: '', feeType: 'Development Fee', amount: 'Infrastructure and facility development', frequency: 'Annual' },
-        { group: '', feeType: 'Library Fee', amount: 'Access to school library and reading resources', frequency: 'Annual' },
-        { group: '', feeType: 'Laboratory Fee', amount: 'Science / Computer lab usage charges', frequency: 'Annual' },
-        { group: '', feeType: 'Sports & Activities Fee', amount: 'Co-curricular and sports activities', frequency: 'Annual' },
-        { group: '', feeType: 'Examination Fee', amount: 'Internal and CBSE board examination charges', frequency: 'Annual' }
-      ],
-      notes: [
-        'The entire fee for the academic year is to be remitted by the end of February.',
-        'Fee payment may be made in instalments as prescribed by the school management.',
-        'No fees shall be refunded for any cause once paid.',
-        'Every pupil on admission shall pay the prescribed admission fees before commencement of classes.',
-        'Online fee payment is available. Please visit the Online Fees Payment section for details.',
-        'For fee-related queries, kindly contact the school office during working hours.',
-        'Fee structure is subject to revision by the management for subsequent academic years.'
-      ],
-      paymentMethods: [
-        { icon: '🏫', title: 'School Office (Cash / DD)', desc: 'Pay in person at the school accounts office during working hours. Demand Drafts are also accepted.', link: '' },
-        { icon: '🌐', title: 'Online Payment', desc: 'Pay conveniently through our online payment portal. Secure and instant.', link: 'https://school.edu/online-fees-payment/' },
-        { icon: '🏦', title: 'NEFT / Bank Transfer', desc: "Direct bank transfer to the school's bank account. Contact the office for bank details.", link: '' }
-      ],
-      pdfTitle: 'Download Official Fee Structure PDF',
-      pdfDesc: 'Download the complete and up-to-date fee structure for Academic Year 2025–2026, including class-wise breakdowns and all applicable charges.'
+      year: '',
+      intro: '',
+      overviewTitle: '',
+      overviewText: '',
+      rows: [],
+      notes: [],
+      paymentMethods: [],
+      pdfTitle: '',
+      pdfDesc: ''
     },
     tcPage: {
-      intro: 'The Transfer Certificate (TC) is an official document issued by a school to a student upon leaving, confirming their enrollment details, academic standing, and conduct. A TC from the previous school is mandatory for admission to Loretto Central School for students transferring from other institutions.',
-      previewIntro: 'The following CBSE-standard Transfer Certificate format is in use for our CBSE-affiliated school:',
-      rulesTitle: 'When is TC Required?',
-      rules: [
-        'Transferring from any other school to Loretto Central School for Classes 1–8',
-        'Students coming from schools outside Dakshina Kannada district',
-        'Students transferring from schools outside Karnataka State (TC must be countersigned)',
-        'When a student leaves Loretto Central School to join another institution'
-      ],
-      notePrimary: 'The date of birth mentioned in the Transfer Certificate from the previous school will be taken as final and correct for admission purposes.',
-      noteSecondary: 'Students from outside Karnataka must have their TC countersigned by the concerned District Education Officer (DEO) before submission.',
-      pdfTitle: 'Download Official TC Format',
-      pdfDesc: 'Download the official CBSE-standard Transfer Certificate format used by Loretto Central School.'
+      intro: '',
+      previewIntro: '',
+      rulesTitle: '',
+      rules: [],
+      notePrimary: '',
+      noteSecondary: '',
+      pdfTitle: '',
+      pdfDesc: ''
     },
     seo: {
-      title: 'Admissions | Loretto Central School',
-      desc: 'Apply for admissions at Loretto Central School. Download application forms, view fee structure, and explore admission guidelines.'
+      title: '',
+      desc: ''
     }
   };
 
@@ -465,6 +405,10 @@
       var ctaTitle = cta.querySelector('h3');
       var ctaDesc = cta.querySelector('p');
       var ctaLink = cta.querySelector('a');
+      var hasCtaContent = normalizeText(settings.overview.cta.heading)
+        || normalizeText(settings.overview.cta.desc)
+        || normalizeText(settings.overview.cta.label);
+      cta.style.display = hasCtaContent ? '' : 'none';
       if (ctaTitle) ctaTitle.textContent = settings.overview.cta.heading;
       if (ctaDesc) ctaDesc.textContent = settings.overview.cta.desc;
       if (ctaLink) {
@@ -529,10 +473,18 @@
 
     var infoCard = document.querySelector('.sidebar .info-card');
     if (infoCard) {
-      infoCard.innerHTML = '<h4>' + escapeHtml(settings.enquiryPage.officeInfo.heading) + '</h4>'
-        + '<div class="info-row"><span>📍</span><span>' + formatTextHtml(settings.enquiryPage.officeInfo.address) + '</span></div>'
-        + '<div class="info-row"><span>🕒</span><span>' + escapeHtml(settings.enquiryPage.officeInfo.phone) + '</span></div>'
-        + '<div class="info-row"><span>🌐</span><span><a href="' + escapeHtml(settings.enquiryPage.officeInfo.website) + '" target="_blank" rel="noopener noreferrer" style="color:var(--gold-light)">' + escapeHtml(settings.enquiryPage.officeInfo.website.replace(/^https?:\/\//, '')) + '</a></span></div>';
+      var officeRows = [];
+      if (normalizeText(settings.enquiryPage.officeInfo.address)) {
+        officeRows.push('<div class="info-row"><span>📍</span><span>' + formatTextHtml(settings.enquiryPage.officeInfo.address) + '</span></div>');
+      }
+      if (normalizeText(settings.enquiryPage.officeInfo.phone)) {
+        officeRows.push('<div class="info-row"><span>🕒</span><span>' + escapeHtml(settings.enquiryPage.officeInfo.phone) + '</span></div>');
+      }
+      if (normalizeText(settings.enquiryPage.officeInfo.website)) {
+        officeRows.push('<div class="info-row"><span>🌐</span><span><a href="' + escapeHtml(settings.enquiryPage.officeInfo.website) + '" target="_blank" rel="noopener noreferrer" style="color:var(--gold-light)">' + escapeHtml(settings.enquiryPage.officeInfo.website.replace(/^https?:\/\//, '')) + '</a></span></div>');
+      }
+      infoCard.innerHTML = (normalizeText(settings.enquiryPage.officeInfo.heading) ? '<h4>' + escapeHtml(settings.enquiryPage.officeInfo.heading) + '</h4>' : '')
+        + officeRows.join('');
     }
 
     if (sidebarCards[1]) {

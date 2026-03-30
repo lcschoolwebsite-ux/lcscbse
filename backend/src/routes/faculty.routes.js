@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { Faculty } from '../models/Faculty.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
 import { requireAdmin } from '../middleware/adminAuth.js';
+import { deleteCloudinaryAssets } from '../utils/cloudinaryAssets.js';
 
 const router = Router();
 
@@ -41,7 +42,8 @@ router.delete(
   asyncHandler(async (req, res) => {
     const item = await Faculty.findByIdAndDelete(req.params.id);
     if (!item) return res.status(404).json({ error: 'Faculty member not found' });
-    res.json({ ok: true });
+    const cloudinary = await deleteCloudinaryAssets([{ url: item.photo }], { suppressErrors: true });
+    res.json({ ok: true, cloudinary });
   })
 );
 

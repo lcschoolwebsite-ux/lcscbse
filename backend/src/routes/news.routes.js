@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { News } from '../models/News.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
 import { requireAdmin } from '../middleware/adminAuth.js';
+import { deleteCloudinaryAssets } from '../utils/cloudinaryAssets.js';
 
 const router = Router();
 
@@ -41,7 +42,11 @@ router.delete(
   asyncHandler(async (req, res) => {
     const item = await News.findByIdAndDelete(req.params.id);
     if (!item) return res.status(404).json({ error: 'News item not found' });
-    res.json({ ok: true });
+    const cloudinary = await deleteCloudinaryAssets(
+      [item.image].concat(Array.isArray(item.images) ? item.images : []).map((url) => ({ url })),
+      { suppressErrors: true }
+    );
+    res.json({ ok: true, cloudinary });
   })
 );
 

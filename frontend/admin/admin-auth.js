@@ -42,6 +42,15 @@
     document.head.appendChild(style);
   }
 
+  function injectAdminCloudinaryHelper() {
+    if (document.getElementById('loretto-admin-cloudinary-helper')) return;
+
+    var script = document.createElement('script');
+    script.id = 'loretto-admin-cloudinary-helper';
+    script.src = '/admin/admin-cloudinary.js?v=20260330-1';
+    document.head.appendChild(script);
+  }
+
   function trimText(value) {
     return (value || '').replace(/\s+/g, ' ').trim();
   }
@@ -424,11 +433,13 @@
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', function () {
+      injectAdminCloudinaryHelper();
       injectAdminUiFixes();
       repairAdminUi(document);
       watchAdminUi();
     });
   } else {
+    injectAdminCloudinaryHelper();
     injectAdminUiFixes();
     repairAdminUi(document);
     watchAdminUi();

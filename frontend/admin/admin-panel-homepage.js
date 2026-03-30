@@ -84,6 +84,92 @@
     if (!isBusy && idleLabel) button.textContent = idleLabel;
   }
 
+  function ensureUploadZoneDeleteButton(zone, key, getUrl, clear, label, successMessage) {
+    if (!zone || !zone.parentElement) return;
+
+    var host = zone.parentElement;
+    var button = qs('[data-cloudinary-zone-delete="' + key + '"]', host);
+    if (!button) {
+      button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'btn-sm outline';
+      button.dataset.cloudinaryZoneDelete = key;
+      button.textContent = 'Delete from Cloudinary';
+      button.style.marginTop = '10px';
+      host.insertBefore(button, zone.nextSibling);
+
+      button.addEventListener('click', async function () {
+        var url = typeof getUrl === 'function' ? getUrl() : '';
+        if (!url) {
+          toast('No ' + label + ' uploaded yet.', true);
+          return;
+        }
+        if (!window.AdminCloudinary) {
+          toast('Cloudinary delete helper is not available.', true);
+          return;
+        }
+
+        var deleted = await window.AdminCloudinary.deleteByUrl(url, {
+          button: button,
+          confirmMessage: 'Delete the ' + label + ' from Cloudinary?',
+          successMessage: successMessage
+        });
+        if (deleted && typeof clear === 'function') {
+          clear();
+        }
+      });
+    }
+
+    button.style.display = (typeof getUrl === 'function' && getUrl()) ? 'inline-flex' : 'none';
+  }
+
+  function syncUploadZoneDeleteButtons() {
+    var heroBlocks = qsa('.section-block', panel('hero'));
+    if (heroBlocks[0]) {
+      ensureUploadZoneDeleteButton(
+        qs('.upload-zone', heroBlocks[0]),
+        'hero',
+        function () { return state.heroImage; },
+        function () {
+          state.heroImage = '';
+          populateHero({ backgroundImage: '' });
+        },
+        'hero background image',
+        'Hero background deleted from Cloudinary. Save Hero to keep the change.'
+      );
+    }
+
+    var aboutBlocks = qsa('.section-block', panel('about'));
+    if (aboutBlocks[2]) {
+      ensureUploadZoneDeleteButton(
+        qs('.upload-zone', aboutBlocks[2]),
+        'about',
+        function () { return state.aboutImage; },
+        function () {
+          state.aboutImage = '';
+          populateAbout({ image: '' });
+        },
+        'about section image',
+        'About image deleted from Cloudinary. Save About to keep the change.'
+      );
+    }
+
+    var settingsBlocks = qsa('.section-block', panel('settings'));
+    if (settingsBlocks[0]) {
+      ensureUploadZoneDeleteButton(
+        qs('.upload-zone', settingsBlocks[0]),
+        'logo',
+        function () { return state.logo; },
+        function () {
+          state.logo = '';
+          populateSettings({ logo: '' });
+        },
+        'site logo',
+        'Logo deleted from Cloudinary. Save Settings to keep the change.'
+      );
+    }
+  }
+
   function escapeAttr(value) {
     return String(value || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
   }
@@ -257,6 +343,7 @@
       state.heroImage ? 'Hero background connected to Cloudinary' : 'Click to upload hero background photo',
       state.heroImage ? 'Stored in MongoDB and delivered from Cloudinary.<br><strong>' + state.heroImage + '</strong>' : 'Recommended: 1920x1080px'
     );
+    syncUploadZoneDeleteButtons();
 
     if (contentInputs[0]) contentInputs[0].value = data.badgeText || contentInputs[0].value;
     if (qs('#heroSubtext', heroPanel)) qs('#heroSubtext', heroPanel).value = data.subtitle || qs('#heroSubtext', heroPanel).value;
@@ -353,6 +440,7 @@
           ? 'No dedicated About image uploaded. This section will use the Hero image.<br><strong>' + state.heroImage + '</strong>'
           : 'Optional override. If empty, the homepage hero image will be used here.')
     );
+    syncUploadZoneDeleteButtons();
 
     if (Array.isArray(data.miniCards)) {
       if (miniInputs[0]) miniInputs[0].value = data.miniCards[0] && data.miniCards[0].icon || miniInputs[0].value;
@@ -624,6 +712,7 @@
       state.logo ? 'Logo connected to Cloudinary' : 'Upload Logo',
       state.logo ? 'Stored in MongoDB and delivered from Cloudinary.<br><strong>' + state.logo + '</strong>' : 'PNG with transparent bg'
     );
+    syncUploadZoneDeleteButtons();
   }
 
   function renderTestimonialsTable() {
@@ -714,9 +803,23 @@
     qsa('[data-action="delete-gallery-row"]').forEach(function (btn) {
       if (btn.dataset.bound === 'true') return;
       btn.dataset.bound = 'true';
-      btn.addEventListener('click', function () {
+      btn.addEventListener('click', async function () {
         var row = btn.closest('tr');
-        if (row) row.remove();
+        if (!row) return;
+
+        var urlInput = qsa('input', row)[0];
+        var url = urlInput ? urlInput.value.trim() : '';
+
+        if (url && window.AdminCloudinary) {
+          var deleted = await window.AdminCloudinary.deleteByUrl(url, {
+            button: btn,
+            confirmMessage: 'Delete this gallery image from Cloudinary and remove the row?',
+            successMessage: 'Gallery image deleted from Cloudinary. Save Gallery to keep the change.'
+          });
+          if (!deleted) return;
+        }
+
+        row.remove();
       });
     });
 

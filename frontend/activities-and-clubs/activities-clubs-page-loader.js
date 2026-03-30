@@ -2,126 +2,18 @@
   'use strict';
 
   var REGISTRY = {
-    'western-dance': {
-      file: '1-western-dance.html',
-      type: 'activity',
-      hero: {
-        icon: '',
-        badge: 'Performing Arts · Dance',
-        title: 'Western Dance',
-        description: 'Loretto Central School celebrates the joy of movement through its vibrant Western Dance programme. Students learn a variety of contemporary dance styles in a fun, disciplined environment that builds confidence, rhythm, and self-expression.'
-      }
-    },
-    'thinkers-space': {
-      file: '2-thinkers-space.html',
-      type: 'activity',
-      hero: {
-        icon: '',
-        badge: 'Critical Thinking · Debate',
-        title: 'Thinkers Space .In',
-        description: 'Thinkers Space .In is a unique intellectual forum at Loretto Central School that encourages students to think critically, question deeply, and articulate their ideas with confidence. Through debates, discussions, and thought experiments, students develop essential 21st-century skills.'
-      }
-    },
-    'classical-dance': {
-      file: '3-classical-dance.html',
-      type: 'activity',
-      hero: {
-        icon: '',
-        badge: 'Performing Arts · Classical',
-        title: 'Classical Dance',
-        description: 'The Classical Dance programme at Loretto Central School offers students a gateway into the rich heritage of Indian classical dance traditions. Under the guidance of a trained instructor, students learn the discipline, grace, and storytelling art of classical forms.'
-      }
-    },
-    'karate-class': {
-      file: '4-karate-class.html',
-      type: 'activity',
-      hero: {
-        icon: '',
-        badge: 'Martial Arts · Self-Defence',
-        title: 'Karate Class',
-        description: 'The Karate programme at Loretto Central School is conducted by a certified instructor and teaches students the discipline, focus, and self-defence skills of this respected martial art. Students have excelled at national-level competitions.'
-      }
-    },
-    'chess-class': {
-      file: '5-chess-class.html',
-      type: 'activity',
-      hero: {
-        icon: '',
-        badge: 'Strategy · Mind Sports',
-        title: 'Chess Class',
-        description: 'Chess at Loretto Central School is more than a game. It is a mental workout that sharpens strategic thinking, patience, and problem-solving for beginners and experienced players alike.'
-      }
-    },
-    'english-club': {
-      file: '6-english-club.html',
-      type: 'club',
-      hero: {
-        icon: '',
-        badge: 'Language · Literature',
-        title: 'English Club',
-        description: 'The English Club at Loretto Central School is a vibrant space for students who love language, literature, and creative expression. Through a range of activities, students develop fluency, confidence, and a deep appreciation for the English language.'
-      }
-    },
-    'social-club': {
-      file: '7-social-club.html',
-      type: 'club',
-      hero: {
-        icon: '',
-        badge: 'Community · Service',
-        title: 'Social Club',
-        description: 'The Social Club at Loretto Central School nurtures compassion, civic responsibility, and community spirit. Guided by the motto "Love Through Service," students engage in meaningful social activities that make a real difference.'
-      }
-    },
-    'eco-club': {
-      file: '8-eco-club.html',
-      type: 'club',
-      hero: {
-        icon: '',
-        badge: 'Environment · Sustainability',
-        title: 'Eco Club',
-        description: 'The Eco Club at Loretto Central School champions environmental awareness and sustainable living. Students are inspired to be guardians of the planet through hands-on activities, green campaigns, and a deep connection with nature.'
-      }
-    },
-    'kannada-club': {
-      file: '9-kannada-club.html',
-      type: 'club',
-      hero: {
-        icon: 'ಕ',
-        badge: 'Language · Culture',
-        title: 'Kannada Club',
-        description: 'The Kannada Club at Loretto Central School celebrates the rich language, literature, and culture of Karnataka. The club brings students closer to their regional roots and fosters pride in Kannada heritage.'
-      }
-    },
-    'maths-club': {
-      file: '10-maths-club.html',
-      type: 'club',
-      hero: {
-        icon: '',
-        badge: 'Mathematics · Logic',
-        title: 'Maths Club',
-        description: 'The Maths Club at Loretto Central School transforms mathematics from a subject into an adventure. Through puzzles, competitions, and explorations, students discover the beauty, logic, and real-world power of mathematics.'
-      }
-    },
-    'science-club': {
-      file: '11-science-club.html',
-      type: 'club',
-      hero: {
-        icon: '',
-        badge: 'Science · Innovation',
-        title: 'Science Club',
-        description: 'The Science Club at Loretto Central School fuels curiosity and a love for discovery. Through experiments, projects, and explorations, students experience science beyond the textbook in a hands-on way.'
-      }
-    },
-    'hindi-club': {
-      file: '12-hindi-club.html',
-      type: 'club',
-      hero: {
-        icon: '🇮🇳',
-        badge: 'Language · National',
-        title: 'Hindi Club',
-        description: 'The Hindi Club at Loretto Central School fosters love for India\'s national language and its rich literary traditions. Students develop strong Hindi language skills and a deeper connection to national culture.'
-      }
-    }
+    'western-dance': { file: '1-western-dance.html', type: 'activity' },
+    'thinkers-space': { file: '2-thinkers-space.html', type: 'activity' },
+    'classical-dance': { file: '3-classical-dance.html', type: 'activity' },
+    'karate-class': { file: '4-karate-class.html', type: 'activity' },
+    'chess-class': { file: '5-chess-class.html', type: 'activity' },
+    'english-club': { file: '6-english-club.html', type: 'club' },
+    'social-club': { file: '7-social-club.html', type: 'club' },
+    'eco-club': { file: '8-eco-club.html', type: 'club' },
+    'kannada-club': { file: '9-kannada-club.html', type: 'club' },
+    'maths-club': { file: '10-maths-club.html', type: 'club' },
+    'science-club': { file: '11-science-club.html', type: 'club' },
+    'hindi-club': { file: '12-hindi-club.html', type: 'club' }
   };
 
   var DETAIL_BY_FILE = Object.keys(REGISTRY).reduce(function (map, slug) {
@@ -192,10 +84,10 @@
       file: defaults.file,
       type: (remoteData && remoteData.type) || defaults.type,
       hero: {
-        icon: hero.icon != null ? hero.icon : defaults.hero.icon,
-        badge: hero.badge || defaults.hero.badge,
-        title: hero.title || defaults.hero.title,
-        description: hero.description || defaults.hero.description
+        icon: hero.icon != null ? hero.icon : '',
+        badge: hero.badge || '',
+        title: hero.title || '',
+        description: hero.description || ''
       },
       infoTiles: infoTiles,
       content: {
@@ -283,9 +175,10 @@
   }
 
   function renderUnavailable(title) {
+    var heading = title || 'This Page';
     return '<div class="ac-hero-card"><div class="ac-hero-card-inner"><div class="ac-hero-text">'
       + '<span class="ac-hero-badge">Page Unavailable</span>'
-      + '<h2>' + escapeHtml(title) + '</h2>'
+      + '<h2>' + escapeHtml(heading) + '</h2>'
       + '<p>This page is currently hidden from the public site. Please check back later.</p>'
       + '</div></div></div>'
       + '<div class="notice-box"><p><strong>Return:</strong> Browse the other activities and clubs from the navigation above.</p></div>';
@@ -293,16 +186,16 @@
 
   function updateDetailShell(data) {
     var bannerTitle = document.querySelector('.page-banner h1');
-    if (bannerTitle) bannerTitle.textContent = data.hero.title;
+    if (bannerTitle && data.hero.title) bannerTitle.textContent = data.hero.title;
 
     var crumb = document.querySelector('.breadcrumb span:last-child');
-    if (crumb) crumb.textContent = data.hero.title;
+    if (crumb && data.hero.title) crumb.textContent = data.hero.title;
 
     var activeLink = document.querySelector('.ac-subnav-section a.active');
-    if (activeLink) activeLink.textContent = data.hero.title;
+    if (activeLink && data.hero.title) activeLink.textContent = data.hero.title;
 
     updateMeta(
-      data.seo.title || (data.hero.title + ' | Activities & Clubs | Loretto Central School'),
+      data.seo.title || (data.hero.title ? data.hero.title + ' | Activities & Clubs | Loretto Central School' : ''),
       data.seo.description || data.hero.description
     );
   }
@@ -341,22 +234,26 @@
   }
 
   function renderIndexCard(data) {
+    var title = data.hero.title || 'Activity';
+    var badges = [
+      '<span class="activity-badge">' + escapeHtml(data.type === 'club' ? 'Club' : 'Activity') + '</span>'
+    ];
+    if (data.hero.badge) {
+      badges.push('<span class="activity-badge">' + escapeHtml(data.hero.badge) + '</span>');
+    }
     var gallery = data.settings.showGallery ? normalizeArray(data.content.gallery).filter(Boolean).slice(0, 4) : [];
     var galleryHtml = gallery.length
       ? '<div class="activity-gallery">' + gallery.map(function (url, index) {
-          return '<img src="' + escapeHtml(url) + '" alt="' + escapeHtml(data.hero.title) + ' photo ' + (index + 1) + '" loading="lazy" />';
+          return '<img src="' + escapeHtml(url) + '" alt="' + escapeHtml(title) + ' photo ' + (index + 1) + '" loading="lazy" />';
         }).join('') + '</div>'
       : '<div class="activity-placeholder"><span>' + placeholderIcon(data) + '</span></div>';
 
     return '<a class="activity-card" href="' + escapeHtml(data.file) + '">'
       + galleryHtml
       + '<div class="activity-body">'
-      + '<div class="activity-name">' + escapeHtml(data.hero.title) + '</div>'
-      + '<div class="activity-meta">'
-      + '<span class="activity-badge">' + escapeHtml(data.type === 'club' ? 'Club' : 'Activity') + '</span>'
-      + '<span class="activity-badge">' + escapeHtml(data.hero.badge) + '</span>'
-      + '</div>'
-      + '<p class="activity-desc">' + escapeHtml(data.hero.description) + '</p>'
+      + '<div class="activity-name">' + escapeHtml(title) + '</div>'
+      + '<div class="activity-meta">' + badges.join('') + '</div>'
+      + (data.hero.description ? '<p class="activity-desc">' + escapeHtml(data.hero.description) + '</p>' : '')
       + '</div>'
       + '</a>';
   }
@@ -387,7 +284,7 @@
     }));
 
     var visible = items.filter(function (item) {
-      return item && item.settings.live;
+      return item && item.hasRemoteData && item.settings.live;
     });
 
     if (!visible.length) {

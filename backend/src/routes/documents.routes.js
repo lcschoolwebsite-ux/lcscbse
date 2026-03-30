@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { Document } from '../models/Document.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
 import { requireAdmin } from '../middleware/adminAuth.js';
+import { deleteCloudinaryAssets } from '../utils/cloudinaryAssets.js';
 
 const router = Router();
 
@@ -43,7 +44,8 @@ router.delete(
   asyncHandler(async (req, res) => {
     const item = await Document.findByIdAndDelete(req.params.id);
     if (!item) return res.status(404).json({ error: 'Document not found' });
-    res.json({ ok: true });
+    const cloudinary = await deleteCloudinaryAssets([{ url: item.url }], { suppressErrors: true });
+    res.json({ ok: true, cloudinary });
   })
 );
 

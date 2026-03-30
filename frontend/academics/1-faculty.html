@@ -546,7 +546,7 @@
 <div class="page-banner">
   <div class="container">
     <div class="page-banner-content">
-      <h1>Faculty</h1>
+      <h1 id="facultyBannerTitle">Faculty</h1>
       <div class="breadcrumb">
         <a href="../index.html">Home</a><span>›</span>
         <a href="index.html">Academics</a><span>›</span>
@@ -563,17 +563,17 @@
     <a href="2-former-heads.html">Former Heads</a>
     <a href="3-cbse-circulars.html">CBSE Circulars</a>
     <a href="4-school-circulars.html">School Circulars</a>
-    <a href="5-book-list.html">Book List 2024–25</a>
+    <a href="5-book-list.html">Book List</a>
   </div>
 </div>
 
 <section class="page-content">
   <div class="container">
     <div class="content-card">
-      <h2>Our Faculty</h2>
-      <p>Loretto Central School is proud of its team of qualified, experienced, and dedicated educators committed to delivering academic excellence.</p>
+      <h2 id="facultyPageTitle"></h2>
+      <p id="facultyPageIntro"></p>
 
-      <h3 style="margin:32px 0 16px;">Teaching Staff</h3>
+      <h3 id="facultyListTitle" style="margin:32px 0 16px;"></h3>
       <div id="faculty-loading" style="text-align:center;padding:40px 0;font-family:'Nunito',sans-serif;color:#5a6e6e;">
         Loading faculty...
       </div>
@@ -585,46 +585,6 @@
 <script src="/components/Navbar.js"></script>
 <script src="/components/Footer.js"></script>
 <script src="/shared-data-loader.js"></script>
-
-<script>
-  window.addEventListener('DOMContentLoaded', () => {
-    renderFacultyListWithInitials('faculty-grid');
-  });
-
-  // Custom rendering for faculty if needed specifically (using the one from loader for now)
-  // but if we want to match exactly the initials logic:
-  async function renderFacultyListWithInitials(containerId) {
-    const container = document.getElementById(containerId);
-    const loading = document.getElementById('faculty-loading');
-    if (!container) return;
-    
-    const faculty = await loadFacultyData();
-    
-    if (faculty.length === 0) {
-      if (loading) loading.textContent = 'Faculty information coming soon.';
-      return;
-    }
-
-    if (loading) loading.style.display = 'none';
-    container.style.display = 'grid';
-    container.innerHTML = faculty.map(item => {
-      const initials = item.name ? item.name.split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase() : '?';
-      return `
-        <div class="faculty-card">
-          ${item.photo
-            ? `<img class="faculty-avatar faculty-avatar-photo" src="${item.photo}" alt="${item.name}" />`
-            : `<div class="faculty-avatar faculty-avatar-fallback">${initials}</div>`
-          }
-          <div class="faculty-name">${item.name || ''}</div>
-          <div class="faculty-subject">${item.subject || ''}</div>
-          <div class="faculty-qual">${item.qualification || ''}</div>
-          <div class="faculty-exp">${item.experience || '0'} Years Experience</div>
-        </div>`;
-    }).join('');
-  }
-  
-  // Override default if needed
-  window.renderFacultyList = renderFacultyListWithInitials;
-</script>
+<script src="/academics/academics-page-loader.js?v=20260330-1"></script>
 </body>
 </html>
