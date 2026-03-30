@@ -257,6 +257,11 @@
   }
 
   async function fetchFirstJson(path) {
+    var endpoint = String(path || '').replace(/^\/+/, '');
+    if (endpoint && typeof window.fetchData === 'function') {
+      return window.fetchData(endpoint);
+    }
+
     var bases = await getApiBases();
 
     for (var index = 0; index < bases.length; index += 1) {

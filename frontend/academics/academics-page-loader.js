@@ -127,6 +127,21 @@
     });
   }
 
+  function getDocumentDateValue(item) {
+    if (!item || typeof item !== 'object') return '';
+    return item.date
+      || (item.meta && (item.meta.date || item.meta.publishedAt || item.meta.displayDate))
+      || item.updatedAt
+      || item.createdAt
+      || '';
+  }
+
+  function getDocumentTimestamp(item) {
+    var value = getDocumentDateValue(item);
+    var parsed = Date.parse(value);
+    return Number.isNaN(parsed) ? 0 : parsed;
+  }
+
   function matchesPath(patterns) {
     var path = normalizeText(window.location.pathname).replace(/\/+$/, '');
     return patterns.some(function (pattern) {
@@ -198,6 +213,9 @@
   }
 
   async function fetchJson(endpoint) {
+    if (typeof window.fetchData === 'function') {
+      return window.fetchData(endpoint);
+    }
     var base = '/api';
     if (typeof window.resolveApiBase === 'function') {
       base = await window.resolveApiBase();
@@ -482,7 +500,7 @@
       var docUrl = getOpenableDocumentUrl(sourceUrl) || sourceUrl;
       var badge = normalizeText(item.type || (item.meta && item.meta.badge) || (index === 0 ? 'NEW' : 'CBSE'));
       var source = normalizeText(item.description || (item.meta && item.meta.source));
-      var metaParts = [source, formatDisplayDate(item.date)].filter(Boolean);
+      var metaParts = [source, formatDisplayDate(getDocumentDateValue(item))].filter(Boolean);
       return ''
         + '<a href="' + escapeHtml(docUrl || '#') + '" target="_blank" rel="noopener noreferrer" class="circular-item" aria-label="Open circular PDF">'
         + '<div class="circ-icon"></div>'
@@ -505,7 +523,7 @@
     container.innerHTML = items.map(function (item) {
       var title = normalizeText(item.title || item.name) || 'Untitled Circular';
       var metaText = normalizeText(item.description || (item.meta && item.meta.source));
-      var dateText = formatDisplayDate(item.date);
+      var dateText = formatDisplayDate(getDocumentDateValue(item));
       var badge = normalizeText(item.meta && item.meta.badge) || 'NOTICE';
       var url = normalizeDocumentUrl(item.url);
       var tag = badge.toUpperCase() === 'LATEST' || badge.toUpperCase() === 'RECENT' ? ' circ-new' : '';
@@ -633,7 +651,7 @@
     }).sort(function (a, b) {
       var orderDiff = asNumber(a.order, 9999) - asNumber(b.order, 9999);
       if (orderDiff !== 0) return orderDiff;
-      return new Date(b.date || b.createdAt || 0) - new Date(a.date || a.createdAt || 0);
+      return getDocumentTimestamp(b) - getDocumentTimestamp(a);
     });
 
     setTextById('cbseBannerTitle', content.bannerTitle);
@@ -656,7 +674,7 @@
     }).sort(function (a, b) {
       var orderDiff = asNumber(a.order, 9999) - asNumber(b.order, 9999);
       if (orderDiff !== 0) return orderDiff;
-      return new Date(b.date || b.createdAt || 0) - new Date(a.date || a.createdAt || 0);
+      return getDocumentTimestamp(b) - getDocumentTimestamp(a);
     });
 
     setTextById('schoolCircularsBannerTitle', content.bannerTitle);

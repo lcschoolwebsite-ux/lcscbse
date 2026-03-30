@@ -195,6 +195,9 @@
 
   async function fetchJson(endpoint) {
     try {
+      if (typeof window.fetchData === 'function') {
+        return await window.fetchData(endpoint);
+      }
       var base = '/api';
       if (typeof window.resolveApiBase === 'function') {
         base = await window.resolveApiBase();

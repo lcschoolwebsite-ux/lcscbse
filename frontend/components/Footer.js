@@ -20,6 +20,9 @@
 
   async function loadContact() {
     try {
+      if (typeof window.loadContactData === 'function') {
+        return await window.loadContactData();
+      }
       const res = await fetch(R + 'api/contact');
       if (res.ok) return await res.json();
     } catch (e) { }

@@ -73,12 +73,29 @@
     return match ? match[0] : '';
   }
 
+  function scheduleBackground(task) {
+    if (typeof task !== 'function') return;
+    if (typeof window.requestIdleCallback === 'function') {
+      window.requestIdleCallback(task, { timeout: 1500 });
+      return;
+    }
+    window.setTimeout(task, 250);
+  }
+
   var PROD_API_BASE = 'https://lcscbse-production.up.railway.app/api';
   var IS_LOCAL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
 
   async function loadAboutBlock(slug) {
     try {
+      if (typeof window.loadAboutSection === 'function') {
+        var cachedPayload = await window.loadAboutSection(slug);
+        return cachedPayload && cachedPayload.data ? cachedPayload.data : cachedPayload;
+      }
+
       var base = IS_LOCAL ? 'http://localhost:3000/api' : PROD_API_BASE;
+      if (typeof window.resolveApiBase === 'function') {
+        base = await window.resolveApiBase();
+      }
       var response = await fetch(base + '/about/' + slug);
       if (!response.ok) return null;
       var payload = await response.json().catch(function () { return null; });
@@ -86,6 +103,27 @@
     } catch (error) {
       return null;
     }
+  }
+
+  function prefetchSiblingSections(currentSectionName) {
+    if (typeof window.fetchData !== 'function') return;
+
+    var seen = Object.create(null);
+    var slugs = Object.keys(SECTION_BY_FILE).map(function (file) {
+      return SECTION_BY_FILE[file];
+    }).filter(function (slug) {
+      if (!slug || slug === currentSectionName || seen[slug]) return false;
+      seen[slug] = true;
+      return true;
+    });
+
+    scheduleBackground(function () {
+      slugs.forEach(function (slug, index) {
+        window.setTimeout(function () {
+          window.fetchData('about/' + slug);
+        }, index * 150);
+      });
+    });
   }
 
   function parseHtmlPayload(data) {
@@ -396,6 +434,8 @@
     var payload = await loadAboutBlock(section);
     var doc = parseHtmlPayload(payload);
     if (!doc) return;
+
+    prefetchSiblingSections(section);
 
     if (section === 'school-profile') return renderSchoolProfile(doc);
     if (section === 'management') return renderManagement(doc);

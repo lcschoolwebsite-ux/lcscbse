@@ -13,7 +13,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Academics — Admin | Loretto Central School</title>
-  <script src="/admin/admin-auth.js?v=20260330-1"></script>
+  <script src="/admin/admin-auth.js?v=20260330-2"></script>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800&family=Nunito:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
   <script src="/admin/adminfooter.js?v=20260329-1"></script>
   <style>
@@ -897,6 +897,17 @@ function toast(msg, type) {
   setTimeout(function(){ t.classList.remove('show'); }, 3200);
 }
 
+function notifyAcademicsPublicRefresh() {
+  if (typeof window.notifyPublicDataChanged === 'function') {
+    window.notifyPublicDataChanged('academics');
+  }
+}
+
+function getAcademicDocDateValue(item) {
+  if (!item || typeof item !== 'object') return '';
+  return item.date || (item.meta && item.meta.date) || item.updatedAt || item.createdAt || '';
+}
+
 /* ════════════════════════════════════════════
    FACULTY — LOAD, RENDER, FILTER
 ════════════════════════════════════════════ */
@@ -1007,6 +1018,7 @@ async function saveFaculty() {
     var data = await res.json();
     if (!res.ok) throw new Error(data.error || 'Failed');
     toast(id ? 'Faculty updated in MongoDB!' : 'Faculty added to MongoDB!');
+    notifyAcademicsPublicRefresh();
     closeFacultyModal();
     window._facultyLoaded = false;
     loadFaculty();
@@ -1019,6 +1031,7 @@ async function deleteFaculty(id) {
     var res = await fetch(API_BASE+'/api/faculty/'+id, { method:'DELETE', headers:apiHeaders() });
     if (!res.ok) throw new Error('Failed');
     toast('Faculty deleted!');
+    notifyAcademicsPublicRefresh();
     window._facultyLoaded = false;
     loadFaculty();
   } catch(e) { toast(e.message, 'err'); }
@@ -1273,6 +1286,7 @@ async function saveFormerHeadsPage() {
     if (!res.ok) throw new Error(data.error || 'Failed to save page content');
     _fhPage = buildFHPageData(data);
     toast('Former Heads page content saved to MongoDB!');
+    notifyAcademicsPublicRefresh();
   } catch (e) {
     toast(e.message || 'Failed to save page content', 'err');
   }
@@ -1400,6 +1414,7 @@ async function saveFH() {
     var data = await res.json();
     if (!res.ok) throw new Error(data.error||'Failed');
     toast('Saved to MongoDB!');
+    notifyAcademicsPublicRefresh();
     closeFHModal();
     window._fhLoaded=false; loadFormerHeads();
   } catch(e) { toast(e.message,'err'); }
@@ -1410,6 +1425,7 @@ async function deleteFH(id) {
   try {
     await fetch(API_BASE+'/api/management/'+id,{method:'DELETE',headers:apiHeaders()});
     toast('Deleted!');
+    notifyAcademicsPublicRefresh();
     window._fhLoaded=false; loadFormerHeads();
   } catch(e) { toast(e.message,'err'); }
 }
@@ -1461,11 +1477,12 @@ function renderDocList(list, loadingId, listId, category) {
   listEl.innerHTML = list.map(function(d) {
     var sourceText = (d.description || (d.meta && d.meta.source) || '').trim();
     var badgeText = ((d.meta && d.meta.badge) || '').trim();
+    var dateText = getAcademicDocDateValue(d) ? new Date(getAcademicDocDateValue(d)).toLocaleDateString('en-IN',{day:'2-digit',month:'long',year:'numeric'}) : '';
     return '<div class="circ-item">'
       + '<div class="circ-ic"></div>'
       + '<div class="circ-body">'
       + '<div class="circ-title">' + (d.title||'Untitled') + '</div>'
-      + '<div class="circ-meta">' + [sourceText, (d.date ? new Date(d.date).toLocaleDateString('en-IN',{day:'2-digit',month:'long',year:'numeric'}) : '')].filter(Boolean).join(' · ') + '</div>'
+      + '<div class="circ-meta">' + [sourceText, dateText].filter(Boolean).join(' · ') + '</div>'
       + '</div>'
       + '<div class="circ-acts">'
       + (badgeText ? '<span class="pill new" style="margin-right:6px;">' + badgeText + '</span>' : '')
@@ -1500,7 +1517,7 @@ function editDoc(id, category) {
   document.getElementById('circ-category').value = d.category;
   document.getElementById('circ-edit-id').value  = d._id;
   document.getElementById('circ-title').value    = d.title  || '';
-  document.getElementById('circ-date').value     = d.date   ? d.date.split('T')[0] : '';
+  document.getElementById('circ-date').value     = getAcademicDocDateValue(d) ? String(getAcademicDocDateValue(d)).split('T')[0] : '';
   document.getElementById('circ-url').value      = d.url    || '';
   document.getElementById('circ-badge').value    = (d.meta && d.meta.badge) || '';
   document.getElementById('circ-source').value   = d.description || (d.meta && d.meta.source) || '';
@@ -1520,7 +1537,8 @@ async function saveCircular() {
     description: source,
     meta: {
       badge: badge,
-      source: source
+      source: source,
+      date: document.getElementById('circ-date').value
     }
   };
   if (!body.title) { toast('Title is required','err'); return; }
@@ -1530,6 +1548,7 @@ async function saveCircular() {
     var data = await res.json();
     if (!res.ok) throw new Error(data.error||'Failed');
     toast('Circular saved to MongoDB!');
+    notifyAcademicsPublicRefresh();
     closeCircModal();
     var loadId = category==='cbse-circular' ? 'cbse-loading' : 'school-loading';
     var listId = category==='cbse-circular' ? 'cbse-list'    : 'school-list';
@@ -1608,6 +1627,7 @@ async function saveSchoolCircularPage() {
     if (!res.ok) throw new Error(data.error || 'Failed');
     hydrateSchoolCircularPage(data && data.data ? data.data : body);
     toast('School circular page info saved to MongoDB!');
+    notifyAcademicsPublicRefresh();
   } catch (e) {
     toast(e.message || 'Failed to save school circular page info', 'err');
   }
@@ -1618,6 +1638,7 @@ async function deleteDoc(id, category) {
   try {
     await fetch(API_BASE+'/api/documents/'+id,{method:'DELETE',headers:apiHeaders()});
     toast('Deleted!');
+    notifyAcademicsPublicRefresh();
     var loadId = category==='cbse-circular' ? 'cbse-loading' : 'school-loading';
     var listId = category==='cbse-circular' ? 'cbse-list'    : 'school-list';
     var cntId  = category==='cbse-circular' ? 'cnt-cbse'     : 'cnt-school';
@@ -1815,6 +1836,7 @@ async function saveBookListPDF() {
     if (!res.ok) throw new Error(data.error||'Failed');
     if (data && data._id) document.getElementById('bookPdfDocId').value = data._id;
     toast('Book list PDF saved to MongoDB!');
+    notifyAcademicsPublicRefresh();
   } catch(e) { toast(e.message,'err'); }
 }
 
@@ -1859,6 +1881,7 @@ async function saveAcademicsOverview() {
     });
     if (!res.ok) throw new Error('Failed to save overview');
     toast('Academics overview saved to MongoDB!');
+    notifyAcademicsPublicRefresh();
   } catch(e) { toast(e.message, 'err'); }
 }
 
@@ -1877,6 +1900,7 @@ async function saveBookListContent() {
     var data = await res.json();
     if (!res.ok) throw new Error(data.error || 'Failed');
     toast('Book list saved to MongoDB!');
+    notifyAcademicsPublicRefresh();
   } catch (e) {
     toast(e.message || 'Failed to save book list', 'err');
   }

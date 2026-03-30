@@ -41,6 +41,15 @@
     return Array.isArray(value) ? value : [];
   }
 
+  function scheduleBackground(task) {
+    if (typeof task !== 'function') return;
+    if (typeof window.requestIdleCallback === 'function') {
+      window.requestIdleCallback(task, { timeout: 1500 });
+      return;
+    }
+    window.setTimeout(task, 250);
+  }
+
   function withApiBase(path) {
     return (window.__activitiesApiBase || '/api').replace(/\/+$/, '') + path;
   }
@@ -59,6 +68,10 @@
 
   async function loadActivity(slug) {
     try {
+      if (typeof window.fetchData === 'function') {
+        var cachedPayload = await window.fetchData('activities-clubs/' + slug);
+        return cachedPayload && cachedPayload.data ? cachedPayload.data : null;
+      }
       var response = await fetch(withApiBase('/activities-clubs/' + slug));
       if (!response.ok) return null;
       var payload = await response.json().catch(function () { return null; });
@@ -66,6 +79,22 @@
     } catch (error) {
       return null;
     }
+  }
+
+  function prefetchSiblingActivities(currentSlug) {
+    if (typeof window.fetchData !== 'function') return;
+
+    var slugs = Object.keys(REGISTRY).filter(function (slug) {
+      return slug && slug !== currentSlug;
+    });
+
+    scheduleBackground(function () {
+      slugs.forEach(function (slug, index) {
+        window.setTimeout(function () {
+          window.fetchData('activities-clubs/' + slug);
+        }, index * 150);
+      });
+    });
   }
 
   function normalizeActivity(slug, remoteData) {
@@ -268,6 +297,7 @@
 
     updateDetailShell(data);
     card.innerHTML = data.settings.live ? renderDetail(data) : renderUnavailable(data.hero.title);
+    prefetchSiblingActivities(slug);
   }
 
   async function initIndex() {

@@ -96,7 +96,7 @@
 
   async function fetchJson(endpoint) {
     try {
-      if (typeof window.fetchData === 'function' && endpoint.indexOf('?') === -1) {
+      if (typeof window.fetchData === 'function') {
         return await window.fetchData(endpoint);
       }
 

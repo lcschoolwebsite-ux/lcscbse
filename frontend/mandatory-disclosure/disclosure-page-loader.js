@@ -141,6 +141,9 @@
 
   async function fetchJson(endpoint) {
     try {
+      if (typeof window.fetchData === 'function') {
+        return await window.fetchData(endpoint);
+      }
       var base = await resolveApiBase();
       var response = await fetch(String(base).replace(/\/+$/, '') + '/' + String(endpoint || '').replace(/^\/+/, ''));
       if (!response.ok) return null;
@@ -151,28 +154,40 @@
   }
 
   async function loadDisclosureSettings() {
+    if (typeof window.loadSettingData === 'function') {
+      var settingsPayload = await window.loadSettingData('disclosure-pages');
+      return settingsPayload && settingsPayload.data ? settingsPayload.data : (settingsPayload || {});
+    }
     var payload = await fetchJson('settings/disclosure-pages');
     return payload && payload.data ? payload.data : (payload || {});
   }
 
+  async function loadDisclosureDocumentsCollection() {
+    var payload = null;
+    if (typeof window.loadDocumentsData === 'function') {
+      payload = await window.loadDocumentsData();
+    } else {
+      payload = await fetchJson('documents');
+    }
+    return Array.isArray(payload) ? payload : [];
+  }
+
   async function loadDisclosureDocument(pageNum) {
     if (!PDF_ENABLED_PAGES[pageNum]) return null;
-    
+
+    var items = await loadDisclosureDocumentsCollection();
+
     // Try primary category first (e.g. disclosure-1)
     var primaryCat = 'disclosure-' + pageNum;
-    var payload = await fetchJson('documents?category=' + primaryCat);
-    var items = Array.isArray(payload) ? payload : [];
     var doc = items.find(function (item) {
       return item && item.category === primaryCat && item.url && item.visible !== false;
     });
-    
+
     if (doc) return doc;
 
     // Fallback to padded category (e.g. disclosure-01) if applicable
     if (pageNum < 10) {
       var paddedCat = 'disclosure-0' + pageNum;
-      payload = await fetchJson('documents?category=' + paddedCat);
-      items = Array.isArray(payload) ? payload : [];
       doc = items.find(function (item) {
         return item && item.category === paddedCat && item.url && item.visible !== false;
       });
@@ -183,14 +198,8 @@
   }
 
   async function loadAllDisclosureDocuments() {
-    var payload = null;
-    if (typeof window.loadDocumentsData === 'function') {
-      payload = await window.loadDocumentsData();
-    } else {
-      payload = await fetchJson('documents');
-    }
-
-    return (Array.isArray(payload) ? payload : []).filter(function (item) {
+    var items = await loadDisclosureDocumentsCollection();
+    return items.filter(function (item) {
       return item
         && /^disclosure-\d+$/.test(normalizeText(item.category))
         && normalizeText(item.url)

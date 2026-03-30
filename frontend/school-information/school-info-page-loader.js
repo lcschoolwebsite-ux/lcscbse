@@ -82,7 +82,21 @@
     return text(clone);
   }
 
+  function scheduleBackground(task) {
+    if (typeof task !== 'function') return;
+    if (typeof window.requestIdleCallback === 'function') {
+      window.requestIdleCallback(task, { timeout: 1500 });
+      return;
+    }
+    window.setTimeout(task, 250);
+  }
+
   async function loadSchoolInfo(slug) {
+    if (typeof window.fetchData === 'function') {
+      var cachedPayload = await window.fetchData('school-info/' + slug);
+      return cachedPayload && cachedPayload.data ? cachedPayload.data : null;
+    }
+
     var base = '/api';
 
     if (typeof window.resolveApiBase === 'function') {
@@ -103,6 +117,27 @@
     } catch (error) {
       return null;
     }
+  }
+
+  function prefetchSiblingSections(currentSlug) {
+    if (typeof window.fetchData !== 'function') return;
+
+    var seen = Object.create(null);
+    var slugs = Object.keys(SECTION_BY_FILE).map(function (file) {
+      return SECTION_BY_FILE[file];
+    }).filter(function (slug) {
+      if (!slug || slug === currentSlug || seen[slug]) return false;
+      seen[slug] = true;
+      return true;
+    });
+
+    scheduleBackground(function () {
+      slugs.forEach(function (slug, index) {
+        window.setTimeout(function () {
+          window.fetchData('school-info/' + slug);
+        }, index * 150);
+      });
+    });
   }
 
   function parseHtmlPayload(data) {
@@ -362,6 +397,7 @@
     addRuntimeStyles();
     updatePageTitle(title);
     card.innerHTML = rendered;
+    prefetchSiblingSections(section);
   }
 
   init();

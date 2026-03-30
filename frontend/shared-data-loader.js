@@ -5,63 +5,227 @@
 
 /* ── API BASE RESOLUTION ── */
 var API_BASE_KEY = 'loretto_api_base';
+var API_BASE_OK_KEY = API_BASE_KEY + '_ok';
 var PROD_API_BASE = 'https://lcscbse-production.up.railway.app/api';
 var IS_LOCAL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
-var RESOLVED_API_BASE = IS_LOCAL ? (sessionStorage.getItem(API_BASE_KEY) || '') : PROD_API_BASE;
+var RESOLVED_API_BASE = IS_LOCAL ? '' : PROD_API_BASE;
+var CACHE_PREFIX = 'loretto_cache_';
+var CACHE_TTL_MS = 5 * 60 * 1000;
+var CACHE_BUST_KEY = 'loretto_public_cache_bust';
+var REQUEST_CACHE = Object.create(null);
+var PENDING_REQUESTS = Object.create(null);
+var API_BASE_PROMISE = null;
+var ACTIVE_CACHE_BUST_TOKEN = '';
+
+function storageGet(key) {
+  try {
+    return sessionStorage.getItem(key);
+  } catch (error) {
+    return null;
+  }
+}
+
+function storageSet(key, value) {
+  try {
+    sessionStorage.setItem(key, value);
+  } catch (error) {
+    // Ignore storage failures.
+  }
+}
+
+function storageRemove(key) {
+  try {
+    sessionStorage.removeItem(key);
+  } catch (error) {
+    // Ignore storage failures.
+  }
+}
+
+function persistentGet(key) {
+  try {
+    return localStorage.getItem(key);
+  } catch (error) {
+    return null;
+  }
+}
+
+function persistentSet(key, value) {
+  try {
+    localStorage.setItem(key, value);
+  } catch (error) {
+    // Ignore storage failures.
+  }
+}
+
+if (IS_LOCAL) {
+  RESOLVED_API_BASE = storageGet(API_BASE_KEY) || '';
+}
+
+ACTIVE_CACHE_BUST_TOKEN = persistentGet(CACHE_BUST_KEY) || '';
 
 // On production, mark the API base as valid immediately — no probing needed
 if (!IS_LOCAL) {
-  sessionStorage.setItem(API_BASE_KEY, PROD_API_BASE);
-  sessionStorage.setItem(API_BASE_KEY + '_ok', 'true');
+  storageSet(API_BASE_KEY, PROD_API_BASE);
+  storageSet(API_BASE_OK_KEY, 'true');
 }
 
 async function resolveApiBase() {
-  const cachedOk = sessionStorage.getItem(API_BASE_KEY + '_ok') === 'true';
+  if (!IS_LOCAL) return PROD_API_BASE;
+
+  var cachedOk = storageGet(API_BASE_OK_KEY) === 'true';
   if (RESOLVED_API_BASE && cachedOk) return RESOLVED_API_BASE;
+  if (API_BASE_PROMISE) return API_BASE_PROMISE;
 
-  // Only probe on localhost
-  const candidates = [
-    'http://localhost:3000/api',
-    'http://127.0.0.1:3000/api',
-    'http://localhost:8000/api'
-  ];
+  API_BASE_PROMISE = (async function () {
+    var candidates = [
+      'http://localhost:3000/api',
+      'http://127.0.0.1:3000/api',
+      'http://localhost:8000/api'
+    ];
 
-  for (const base of candidates) {
-    try {
-      const res = await fetch(base + '/health', { method: 'GET' });
-      if (res.ok) {
-        const data = await res.json();
-        if (data && data.service === 'loretto-backend') {
-          RESOLVED_API_BASE = base;
-          sessionStorage.setItem(API_BASE_KEY, base);
-          sessionStorage.setItem(API_BASE_KEY + '_ok', 'true');
-          return base;
+    for (var i = 0; i < candidates.length; i += 1) {
+      var base = candidates[i];
+      try {
+        var res = await fetch(base + '/health', { method: 'GET' });
+        if (res.ok) {
+          var data = await res.json().catch(function () { return null; });
+          if (data && data.service === 'loretto-backend') {
+            RESOLVED_API_BASE = base;
+            storageSet(API_BASE_KEY, base);
+            storageSet(API_BASE_OK_KEY, 'true');
+            return base;
+          }
         }
+      } catch (error) {
+        // Ignore probe failures.
       }
-    } catch (e) {
-      // ignore probe failures
     }
+
+    RESOLVED_API_BASE = '/api';
+    return '/api';
+  })();
+
+  try {
+    return await API_BASE_PROMISE;
+  } finally {
+    API_BASE_PROMISE = null;
+  }
+}
+
+function cacheKey(endpoint) {
+  return String(endpoint || '').replace(/^\/+/, '');
+}
+
+function readCacheEntry(key) {
+  var memoryEntry = REQUEST_CACHE[key];
+  if (memoryEntry && memoryEntry.ts) return memoryEntry;
+
+  var raw = storageGet(CACHE_PREFIX + key);
+  if (!raw) return null;
+
+  try {
+    var parsed = JSON.parse(raw);
+    if (!parsed || typeof parsed !== 'object' || !parsed.ts) return null;
+    REQUEST_CACHE[key] = parsed;
+    return parsed;
+  } catch (error) {
+    storageRemove(CACHE_PREFIX + key);
+    return null;
+  }
+}
+
+function cacheGet(key, allowStale) {
+  var entry = readCacheEntry(key);
+  if (!entry) return null;
+
+  if (!allowStale && (Date.now() - entry.ts) > CACHE_TTL_MS) {
+    delete REQUEST_CACHE[key];
+    storageRemove(CACHE_PREFIX + key);
+    return null;
   }
 
-  // Fallback to proxy
-  RESOLVED_API_BASE = '/api';
-  return '/api';
+  return entry.data;
+}
+
+function cacheSet(key, data) {
+  var entry = { ts: Date.now(), data: data };
+  REQUEST_CACHE[key] = entry;
+  storageSet(CACHE_PREFIX + key, JSON.stringify(entry));
+}
+
+function syncExternalCacheBust() {
+  var latestToken = persistentGet(CACHE_BUST_KEY) || '';
+  if (ACTIVE_CACHE_BUST_TOKEN === latestToken) return;
+  ACTIVE_CACHE_BUST_TOKEN = latestToken;
+  clearSharedDataCache();
 }
 
 /**
  * Generic Fetch Helper
  */
 async function fetchData(endpoint) {
+  syncExternalCacheBust();
+  var key = cacheKey(endpoint);
+  var cached = cacheGet(key, false);
+  if (cached !== null) return cached;
+  if (PENDING_REQUESTS[key]) return PENDING_REQUESTS[key];
+
+  PENDING_REQUESTS[key] = (async function () {
+    try {
+      var base = await resolveApiBase();
+      var response = await fetch(String(base).replace(/\/+$/, '') + '/' + key);
+      if (!response.ok) throw new Error('HTTP error! status: ' + response.status);
+      var data = await response.json();
+      cacheSet(key, data);
+      return data;
+    } catch (error) {
+      var stale = cacheGet(key, true);
+      if (stale !== null) {
+        console.warn('Using stale cached data for ' + key + ' after fetch failed.', error);
+        return stale;
+      }
+      console.error('Could not load ' + key + ' data:', error);
+      return null;
+    } finally {
+      delete PENDING_REQUESTS[key];
+    }
+  })();
+
+  return PENDING_REQUESTS[key];
+}
+
+function clearSharedDataCache() {
+  REQUEST_CACHE = Object.create(null);
+  PENDING_REQUESTS = Object.create(null);
+
   try {
-    const base = await resolveApiBase();
-    const response = await fetch(`${base}/${endpoint}`);
-    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-    return await response.json();
+    for (var i = sessionStorage.length - 1; i >= 0; i -= 1) {
+      var key = sessionStorage.key(i);
+      if (key && key.indexOf(CACHE_PREFIX) === 0) {
+        sessionStorage.removeItem(key);
+      }
+    }
   } catch (error) {
-    console.error(`Could not load ${endpoint} data:`, error);
-    return null;
+    // Ignore storage failures.
   }
 }
+
+function bumpSharedDataCacheVersion(scope) {
+  var payload = JSON.stringify({
+    scope: scope || 'all',
+    ts: Date.now()
+  });
+  ACTIVE_CACHE_BUST_TOKEN = payload;
+  persistentSet(CACHE_BUST_KEY, payload);
+  clearSharedDataCache();
+}
+
+window.addEventListener('storage', function (event) {
+  if (event && event.key === CACHE_BUST_KEY) {
+    ACTIVE_CACHE_BUST_TOKEN = event.newValue || '';
+    clearSharedDataCache();
+  }
+});
 
 // ── DATA FETCHERS ──────────────────────────────────────────
 
@@ -74,6 +238,20 @@ async function loadContactData() { return await fetchData('contact'); }
 async function loadAboutSection(section) { return await fetchData(`about/${section}`); }
 async function loadSettingData(key) { return await fetchData(`settings/${key}`); }
 async function loadContentBlock(key) { return await fetchData(`content/${key}`); }
+
+window.resolveApiBase = resolveApiBase;
+window.fetchData = fetchData;
+window.clearSharedDataCache = clearSharedDataCache;
+window.bumpSharedDataCacheVersion = bumpSharedDataCacheVersion;
+window.loadNewsData = loadNewsData;
+window.loadFacultyData = loadFacultyData;
+window.loadManagementData = loadManagementData;
+window.loadDocumentsData = loadDocumentsData;
+window.loadTestimonialsData = loadTestimonialsData;
+window.loadContactData = loadContactData;
+window.loadAboutSection = loadAboutSection;
+window.loadSettingData = loadSettingData;
+window.loadContentBlock = loadContentBlock;
 
 // ── RENDERING HELPERS ──────────────────────────────────────
 

@@ -8,6 +8,7 @@
   var RETURN_KEY = 'lorettoAdminReturnTo';
   var RESOLVED_API_BASE_KEY = 'lorettoAdminApiBase';
   var RESOLVED_OK_KEY = 'lorettoAdminApiBase_ok';
+  var PUBLIC_CACHE_BUST_KEY = 'loretto_public_cache_bust';
   var path = window.location.pathname;
   // Match both /admin-login and /admin-login.html (Cloudflare strips .html via 308)
   var isLoginPage = /\/admin-login(\.html)?$/i.test(path);
@@ -371,6 +372,17 @@
     return finalHeaders;
   }
 
+  function notifyPublicDataChanged(scope) {
+    try {
+      localStorage.setItem(PUBLIC_CACHE_BUST_KEY, JSON.stringify({
+        scope: scope || 'all',
+        ts: Date.now()
+      }));
+    } catch (error) {
+      // Ignore localStorage failures.
+    }
+  }
+
   var nativeFetch = window.fetch.bind(window);
   window.fetch = function (input, init) {
     var url = typeof input === 'string' ? input : (input && input.url) || '';
@@ -418,6 +430,7 @@
       headers.forEach(function (value, key) { obj[key] = value; });
       return obj;
     },
+    notifyPublicDataChanged: notifyPublicDataChanged,
     logout: function () {
       clearToken();
       clearReturnUrl();
@@ -427,6 +440,7 @@
 
   window.ADMIN_TOKEN = getToken();
   window.ADMIN_IDENTIFIER = getIdentifier();
+  window.notifyPublicDataChanged = notifyPublicDataChanged;
   window.apiHeaders = window.apiHeaders || function (base) {
     return window.AdminAuth.apiHeaders(base || { 'Content-Type': 'application/json' });
   };
