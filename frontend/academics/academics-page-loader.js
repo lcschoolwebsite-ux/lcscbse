@@ -601,6 +601,9 @@
 
     var pageContent = normalizeFacultyPageContent(await loadContent(FACULTY_PAGE_KEY));
     var faculty = await loadFaculty();
+    console.log('[Academics] Faculty Page Content:', pageContent);
+    console.log('[Academics] Faculty List Data:', faculty);
+
     var visibleFaculty = (Array.isArray(faculty) ? faculty : []).filter(function (item) {
       return item && item.visible !== false;
     }).sort(function (a, b) {
@@ -646,6 +649,7 @@
     setPageIcons('cbse-circulars');
     var content = normalizeCbseContent(await loadContent(CBSE_CIRCULARS_KEY));
     var docs = await loadDocuments();
+    console.log('[Academics] Total Documents fetched:', docs ? docs.length : 0);
     var circulars = (Array.isArray(docs) ? docs : []).filter(function (item) {
       return item && item.category === 'cbse-circular' && item.visible !== false;
     }).sort(function (a, b) {
@@ -653,6 +657,7 @@
       if (orderDiff !== 0) return orderDiff;
       return getDocumentTimestamp(b) - getDocumentTimestamp(a);
     });
+    console.log('[Academics] Filtered CBSE Circulars:', circulars.length);
 
     setTextById('cbseBannerTitle', content.bannerTitle);
     setTextById('cbseBadge', content.badge, true);

@@ -1029,6 +1029,9 @@ function notifyAcademicsPublicRefresh() {
   if (typeof window.notifyPublicDataChanged === 'function') {
     window.notifyPublicDataChanged('academics');
   }
+  if (typeof window.bumpSharedDataCacheVersion === 'function') {
+    window.bumpSharedDataCacheVersion('academics');
+  }
 }
 
 function getAcademicDocDateValue(item) {

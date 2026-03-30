@@ -7,8 +7,8 @@
 var API_BASE_KEY = 'loretto_api_base';
 var API_BASE_OK_KEY = API_BASE_KEY + '_ok';
 var PROD_API_BASE = 'https://lcscbse-production.up.railway.app/api';
-var IS_LOCAL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
-var RESOLVED_API_BASE = IS_LOCAL ? '' : PROD_API_BASE;
+var IS_LOCAL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.hostname.indexOf('.local') !== -1);
+var RESOLVED_API_BASE = '';
 var CACHE_PREFIX = 'loretto_cache_';
 var CACHE_TTL_MS = 5 * 60 * 1000;
 var CACHE_BUST_KEY = 'loretto_public_cache_bust';
@@ -63,33 +63,33 @@ if (IS_LOCAL) {
 
 ACTIVE_CACHE_BUST_TOKEN = persistentGet(CACHE_BUST_KEY) || '';
 
-// On production, mark the API base as valid immediately — no probing needed
-if (!IS_LOCAL) {
-  storageSet(API_BASE_KEY, PROD_API_BASE);
-  storageSet(API_BASE_OK_KEY, 'true');
-}
-
 async function resolveApiBase() {
-  if (!IS_LOCAL) return PROD_API_BASE;
-
   var cachedOk = storageGet(API_BASE_OK_KEY) === 'true';
-  if (RESOLVED_API_BASE && cachedOk) return RESOLVED_API_BASE;
+  var cachedBase = storageGet(API_BASE_KEY);
+  if (cachedBase && cachedOk) return cachedBase;
+
   if (API_BASE_PROMISE) return API_BASE_PROMISE;
 
   API_BASE_PROMISE = (async function () {
+    var origin = window.location.origin.replace(/\/+$/, '');
     var candidates = [
+      '/api',
+      origin + '/api',
       'http://localhost:3000/api',
       'http://127.0.0.1:3000/api',
-      'http://localhost:8000/api'
+      'https://lcscbse-production.up.railway.app/api' // Legacy Railway
     ];
 
     for (var i = 0; i < candidates.length; i += 1) {
       var base = candidates[i];
+      if (!base) continue;
       try {
-        var res = await fetch(base + '/health', { method: 'GET' });
+        var probeUrl = String(base).replace(/\/+$/, '') + '/health';
+        var res = await fetch(probeUrl, { method: 'GET', mode: 'cors' });
         if (res.ok) {
           var data = await res.json().catch(function () { return null; });
-          if (data && data.service === 'loretto-backend') {
+          // If the backend has our health footprint, we use it
+          if (data && (data.service === 'loretto-backend' || data.ok === true)) {
             RESOLVED_API_BASE = base;
             storageSet(API_BASE_KEY, base);
             storageSet(API_BASE_OK_KEY, 'true');
@@ -101,8 +101,10 @@ async function resolveApiBase() {
       }
     }
 
-    RESOLVED_API_BASE = '/api';
-    return '/api';
+    // Default fallback if probing fails
+    var fallback = IS_LOCAL ? 'http://localhost:3000/api' : '/api';
+    RESOLVED_API_BASE = fallback;
+    return fallback;
   })();
 
   try {
