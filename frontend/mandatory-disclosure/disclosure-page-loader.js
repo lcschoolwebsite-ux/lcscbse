@@ -117,19 +117,20 @@
       }
     }
 
+    var origin = window.location.origin.replace(/\/+$/, '');
     var candidates = [
       '/api',
-      window.location.origin.replace(/\/+$/, '') + '/api',
+      origin + '/api',
+      'https://lcscbse-production.up.railway.app/api',
       'http://localhost:3000/api',
-      'http://127.0.0.1:3000/api',
-      'https://lcscbse-production.up.railway.app/api'
+      'http://127.0.0.1:3000/api'
     ];
 
     for (var i = 0; i < candidates.length; i += 1) {
       var base = String(candidates[i] || '').replace(/\/+$/, '');
       if (!base) continue;
       try {
-        var response = await fetch(base + '/health');
+        var response = await fetch(base + '/health', { method: 'GET', mode: 'cors' });
         if (response.ok) return base;
       } catch (error) {
         /* ignore probe failures */

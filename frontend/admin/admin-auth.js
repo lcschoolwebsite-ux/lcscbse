@@ -229,9 +229,12 @@
   }
 
   function getCandidateApiBases() {
+    var origin = window.location.origin.replace(/\/+$/, '');
     var candidates = [
+      '/api',
+      origin + '/api',
       'https://lcscbse-production.up.railway.app',
-      window.location.origin,
+      origin,
       'http://localhost:3000',
       'http://127.0.0.1:3000',
       'http://localhost:8000',

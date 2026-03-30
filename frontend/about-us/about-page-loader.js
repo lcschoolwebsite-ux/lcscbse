@@ -82,9 +82,6 @@
     window.setTimeout(task, 250);
   }
 
-  var PROD_API_BASE = 'https://lcscbse-production.up.railway.app/api';
-  var IS_LOCAL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
-
   async function loadAboutBlock(slug) {
     try {
       if (typeof window.loadAboutSection === 'function') {
@@ -92,11 +89,13 @@
         return cachedPayload && cachedPayload.data ? cachedPayload.data : cachedPayload;
       }
 
-      var base = IS_LOCAL ? 'http://localhost:3000/api' : PROD_API_BASE;
+      var base = '/api';
       if (typeof window.resolveApiBase === 'function') {
         base = await window.resolveApiBase();
+      } else if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+        base = 'http://localhost:3000/api';
       }
-      var response = await fetch(base + '/about/' + slug);
+      var response = await fetch(base.replace(/\/+$/, '') + '/about/' + slug);
       if (!response.ok) return null;
       var payload = await response.json().catch(function () { return null; });
       return payload && payload.data ? payload.data : null;
