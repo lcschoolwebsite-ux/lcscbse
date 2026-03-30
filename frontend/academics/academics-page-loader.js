@@ -597,7 +597,7 @@
   }
 
   async function initFacultyPage() {
-    if (!matchesPath([/\/academics\/1-faculty\.html$/])) return;
+    if (!matchesPath([/\/academics\/1-faculty(\.html)?$/])) return;
 
     var pageContent = normalizeFacultyPageContent(await loadContent(FACULTY_PAGE_KEY));
     var faculty = await loadFaculty();
@@ -619,7 +619,7 @@
   }
 
   async function initFormerHeadsPage() {
-    if (!matchesPath([/\/academics\/2-former-heads\.html$/])) return;
+    if (!matchesPath([/\/academics\/2-former-heads(\.html)?$/])) return;
 
     setPageIcons('former-heads');
     var content = normalizeFormerHeadsContent(await loadContent(FORMER_HEADS_KEY));
@@ -644,7 +644,7 @@
   }
 
   async function initCbseCircularsPage() {
-    if (!matchesPath([/\/academics\/3-cbse-circulars\.html$/])) return;
+    if (!matchesPath([/\/academics\/3-cbse-circulars(\.html)?$/])) return;
 
     setPageIcons('cbse-circulars');
     var content = normalizeCbseContent(await loadContent(CBSE_CIRCULARS_KEY));
@@ -669,7 +669,7 @@
   }
 
   async function initSchoolCircularsPage() {
-    if (!matchesPath([/\/academics\/4-school-circulars\.html$/])) return;
+    if (!matchesPath([/\/academics\/4-school-circulars(\.html)?$/])) return;
 
     setPageIcons('school-circulars');
     var content = normalizeSchoolCircularsContent(await loadContent(SCHOOL_CIRCULARS_KEY));
@@ -700,7 +700,7 @@
   }
 
   async function initBookListPage() {
-    if (!matchesPath([/\/academics\/5-book-list\.html$/])) return;
+    if (!matchesPath([/\/academics\/5-book-list(\.html)?$/])) return;
 
     setPageIcons('book-list');
     var content = normalizeBookListContent(await loadContent(BOOK_LIST_KEY));
