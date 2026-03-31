@@ -440,7 +440,7 @@
             <table class="tbl" id="faculty-table" style="display:none;">
               <thead>
                 <tr>
-                  <th>Photo</th><th>Name</th><th>Subject</th><th>Qualification</th><th>Experience</th><th>Actions</th>
+                  <th>Photo</th><th>Name</th><th>Subject</th><th>Qualification</th><th>Experience</th><th>Order</th><th>Actions</th>
                 </tr>
               </thead>
               <tbody id="faculty-tbody"></tbody>
@@ -752,9 +752,10 @@ Parents are requested to acknowledge receipt of circulars with signature in the 
           <div class="f"><label>Full Name <span class="req">*</span> <span class="dbh">name</span></label><input type="text" id="f-name" placeholder="e.g. Mrs. Anitha Pais" /></div>
           <div class="f"><label>Subject <span class="req">*</span> <span class="dbh">subject</span></label><input type="text" id="f-subject" placeholder="e.g. Mathematics" /></div>
         </div>
-        <div class="fg c2">
+        <div class="fg c3">
           <div class="f"><label>Qualification <span class="dbh">qualification</span></label><input type="text" id="f-qual" placeholder="e.g. M.Sc., B.Ed." /></div>
-          <div class="f"><label>Experience (years) <span class="dbh">experience</span></label><input type="text" id="f-exp" placeholder="e.g. 12" /></div>
+          <div class="f"><label>Experience <span class="dbh">experience</span></label><input type="text" id="f-exp" placeholder="e.g. 12" /></div>
+          <div class="f"><label>Order <span class="dbh">order</span></label><input type="number" id="f-order" min="0" value="0" /></div>
         </div>
         <div class="f">
           <label>Photo <span class="dbh">photo</span></label>
@@ -1112,6 +1113,7 @@ function renderFaculty(list) {
       + '<td><span class="pill cbse">' + (f.subject||'—') + '</span></td>'
       + '<td class="td-m">' + (f.qualification||'—') + '</td>'
       + '<td class="td-m">' + (f.experience ? (String(f.experience).toLowerCase().includes('yr') ? f.experience : f.experience + ' yrs') : '—') + '</td>'
+      + '<td class="td-m">#' + (f.order||0) + '</td>'
       + '<td><div class="abtns">'
       + '<button class="ab" aria-label="Edit faculty member" onclick="editFaculty(\''+f._id+'\')">E</button>'
       + '<button class="ab del" aria-label="Delete faculty member" onclick="deleteFaculty(\''+f._id+'\')">×</button>'
@@ -1189,6 +1191,7 @@ function openFacultyModal(faculty) {
   document.getElementById('f-qual').value    = faculty ? faculty.qualification || '' : '';
   document.getElementById('f-exp').value     = faculty ? faculty.experience   || '' : '';
   document.getElementById('f-photo').value   = faculty ? faculty.photo || '' : '';
+  document.getElementById('f-order').value   = faculty ? faculty.order || 0  : 0;
   previewFacultyPhoto(faculty ? faculty.photo || '' : '');
   document.getElementById('facultyModal').classList.add('open');
 }
@@ -1208,6 +1211,7 @@ async function saveFaculty() {
     qualification: document.getElementById('f-qual').value.trim(),
     experience:    document.getElementById('f-exp').value.trim(),
     photo:         document.getElementById('f-photo').value.trim(),
+    order:         parseInt(document.getElementById('f-order').value) || 0,
   };
   if (!body.name || !body.subject) { toast('Name and subject are required', 'err'); return; }
   try {
