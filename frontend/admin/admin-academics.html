@@ -1111,7 +1111,7 @@ function renderFaculty(list) {
       + '<td class="td-b">' + (f.name||'—') + '</td>'
       + '<td><span class="pill cbse">' + (f.subject||'—') + '</span></td>'
       + '<td class="td-m">' + (f.qualification||'—') + '</td>'
-      + '<td class="td-m">' + (f.experience ? f.experience + ' yrs' : '—') + '</td>'
+      + '<td class="td-m">' + (f.experience ? (String(f.experience).toLowerCase().includes('yr') ? f.experience : f.experience + ' yrs') : '—') + '</td>'
       + '<td><div class="abtns">'
       + '<button class="ab" aria-label="Edit faculty member" onclick="editFaculty(\''+f._id+'\')">E</button>'
       + '<button class="ab del" aria-label="Delete faculty member" onclick="deleteFaculty(\''+f._id+'\')">×</button>'

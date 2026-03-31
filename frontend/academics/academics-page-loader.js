@@ -476,7 +476,7 @@
         + '<div class="faculty-name">' + escapeHtml(name) + '</div>'
         + '<div class="faculty-subject">' + escapeHtml(item.subject || '') + '</div>'
         + '<div class="faculty-qual">' + escapeHtml(qualification) + '</div>'
-        + '<div class="faculty-exp">' + escapeHtml(experience ? experience + ' Years Experience' : '') + '</div>'
+        + '<div class="faculty-exp">' + (experience ? (experience.toLowerCase().includes('year') ? escapeHtml(experience) : escapeHtml(experience + ' Years Experience')) : '') + '</div>'
         + '</div>';
     }).join('');
   }

@@ -5,7 +5,7 @@ const facultySchema = new mongoose.Schema(
     name: { type: String, required: true, trim: true },
     subject: { type: String, required: true, trim: true },
     qualification: { type: String, default: '' },
-    experience: { type: Number, default: 0 },
+    experience: { type: String, default: '0' },
     photo: { type: String, default: '' },
     note: { type: String, default: '' },
     visible: { type: Boolean, default: true },
