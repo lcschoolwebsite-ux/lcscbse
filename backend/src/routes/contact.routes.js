@@ -105,6 +105,7 @@ router.post(
     let autoReplyError = '';
     const resendConfigured = Boolean(env.resendApiKey);
 
+    console.log('[DEBUG] Contact recipient resolved to:', recipient);
     if (settings.emailNotifications && recipient) {
       try {
         const result = await sendResendEmail({
