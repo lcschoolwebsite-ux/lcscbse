@@ -188,21 +188,17 @@ router.post(
             ? 'saved_email_failed'
             : 'saved_without_email';
 
-    // If we at least saved it and admin email sent, consider it a full success 
-    // from the user's perspective, even if auto-reply failed (e.g., due to resend testing restrictions).
-    const isSuccess = adminEmailSent || autoReplySent || !resendConfigured;
-
-    const publicMessage = isSuccess
-      ? 'Your message has been submitted successfully! We will get back to you soon.'
-      : 'Your enquiry was saved, but email delivery failed right now. Please call the school office or try again later.';
+    // The enquiry is always saved in the database successfully.
+    // Email delivery is a background concern — do not surface delivery failures to the visitor.
+    // The admin can view all enquiries in the admin panel regardless of email status.
+    const publicMessage = 'Your message has been submitted successfully! We will get back to you soon.';
 
     res.status(201).json({
       ok: true,
       message: publicMessage,
       emailSent: adminEmailSent || autoReplySent,
       adminEmailSent,
-      // Pass true if it's considered a success so frontend shows full green success.
-      autoReplySent: isSuccess, 
+      autoReplySent: true, // Always true from user perspective — enquiry is saved
       deliveryStatus
     });
   })

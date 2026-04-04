@@ -1789,14 +1789,14 @@
         const data = await res.json().catch(() => ({}));
         if (!res.ok) throw new Error(data.error || 'Could not send message');
 
-        msg.classList.add(data.autoReplySent === false ? 'warning' : 'success');
+        msg.classList.add('success');
         msg.innerHTML = '<i class="fas fa-check-circle"></i> ' + (data.message || 'Thank you! We will get back to you soon.');
         form.reset();
-        setTimeout(() => { msg.style.display = 'none'; }, 5000);
+        setTimeout(() => { msg.style.display = 'none'; }, 8000);
       } catch (error) {
         msg.classList.add('error');
         msg.innerHTML = '<i class="fas fa-exclamation-circle"></i> ' + (error.message || 'Something went wrong. Please try again.');
-        setTimeout(() => { msg.style.display = 'none'; }, 5000);
+        setTimeout(() => { msg.style.display = 'none'; }, 6000);
       } finally {
         btn.disabled = false;
         btn.innerHTML = '<span>Send Message</span> <i class="fas fa-paper-plane"></i>';
