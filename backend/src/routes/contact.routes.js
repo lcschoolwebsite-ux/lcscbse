@@ -107,7 +107,8 @@ router.post(
     const resendConfigured = Boolean(env.resendApiKey);
 
     console.log('[DEBUG] Contact recipient resolved to:', recipient);
-    if (settings.emailNotifications && recipient) {
+    // FORCE TEST: ignoring settings.emailNotifications temporarily
+    if (recipient) {
       try {
         const result = await sendResendEmail({
           from: env.resendFromEmail,
