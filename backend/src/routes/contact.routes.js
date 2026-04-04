@@ -213,6 +213,16 @@ router.get(
   })
 );
 
+router.delete(
+  '/inquiries/:id',
+  requireAdmin,
+  asyncHandler(async (req, res) => {
+    const item = await ContactInquiry.findByIdAndDelete(req.params.id);
+    if (!item) return res.status(404).json({ error: 'Enquiry not found' });
+    res.json({ ok: true });
+  })
+);
+
 router.post(
   '/',
   requireAdmin,

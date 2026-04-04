@@ -935,6 +935,9 @@
       <a class="nav-link" onclick="showPanel('contact')">
         <span class="icon"></span> Contact Info
       </a>
+      <a class="nav-link" id="nav-inquiries" onclick="showPanel('inquiries');loadContactInquiries()">
+        <span class="icon">📬</span> Contact Inquiries <span class="badge" id="inquiriesBadge" style="display:none"></span>
+      </a>
       <a class="nav-link" onclick="showPanel('footer')">
         <span class="icon"></span> Footer
       </a>
@@ -1826,6 +1829,54 @@
       </div>
 
       <!-- ════════════════════════════
+           CONTACT INQUIRIES PANEL
+      ════════════════════════════ -->
+      <div class="panel" id="panel-inquiries">
+        <div class="section-block">
+          <div class="section-block-header">
+            <div class="section-block-title"><span class="icon">📬</span> Contact Form Submissions <span class="count-pill" id="inquiriesCount"></span></div>
+            <div class="section-block-actions">
+              <button class="btn-sm outline" onclick="loadContactInquiries()">🔄 Refresh</button>
+            </div>
+          </div>
+          <div class="section-block-body" style="padding:0;">
+            <div id="inquiriesLoading" style="padding:32px;text-align:center;color:var(--text-muted);font-size:0.88rem;">Loading enquiries…</div>
+            <div id="inquiriesEmpty" style="display:none;padding:48px;text-align:center;">
+              <div style="font-size:2.5rem;margin-bottom:12px;">📭</div>
+              <div style="font-weight:700;color:var(--navy);margin-bottom:6px;">No enquiries yet</div>
+              <div style="color:var(--text-muted);font-size:0.85rem;">Contact form submissions will appear here.</div>
+            </div>
+            <div id="inquiriesError" style="display:none;padding:32px;text-align:center;color:#e74c3c;font-size:0.85rem;"></div>
+            <div style="overflow-x:auto;">
+            <table class="data-table" id="inquiriesTable" style="display:none;">
+              <thead>
+                <tr>
+                  <th>Date</th><th>Name</th><th>Email / Phone</th><th>Subject</th><th>Message</th><th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="inquiriesTbody"></tbody>
+            </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Inquiry Detail Modal -->
+        <div class="modal-overlay" id="inquiryModal" onclick="if(event.target===this)closeInquiryModal()" style="z-index:2000;">
+          <div class="modal-box" style="max-width:640px;">
+            <div class="modal-header">
+              <div class="modal-title" id="inquiryModalTitle">Enquiry Details</div>
+              <button class="modal-close" onclick="closeInquiryModal()">×</button>
+            </div>
+            <div class="modal-body" id="inquiryModalBody" style="padding:24px;"></div>
+            <div class="modal-footer">
+              <button class="topbar-btn outline" onclick="closeInquiryModal()">Close</button>
+              <button class="topbar-btn" style="background:#e74c3c;color:#fff;border:none;" id="inquiryDeleteBtn">Delete Enquiry</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════════════════════════════
            FOOTER PANEL
       ════════════════════════════ -->
       <div class="panel" id="panel-footer">
@@ -2089,6 +2140,7 @@
     gallery:      ['Gallery', 'Gallery grid categories'],
     cta:          ['Admissions CTA', 'Call-to-action banner section'],
     contact:      ['Contact Info', 'Address, phone, email & form'],
+    inquiries:    ['Contact Inquiries', 'All messages submitted via the contact form'],
     footer:       ['Footer', 'Footer links, social media & copyright'],
     seo:          ['SEO & Meta Tags', 'Search engine & social metadata'],
     settings:     ['General Settings', 'School name, logo, colours & notice'],
@@ -2158,6 +2210,137 @@
   function triggerUpload(id) { document.getElementById(id)?.click(); }
 
   /* ══ Ctrl+S handled by AdminNavbar.js ══ */
+
+  /* ════════════════════════════════════════════
+     CONTACT INQUIRIES — Admin Inbox
+  ════════════════════════════════════════════ */
+  var _inquiries = [];
+  var _currentInquiryId = null;
+
+  var ADMIN_API = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+    ? window.location.origin
+    : 'https://lcscbse-production.up.railway.app';
+
+  function getAdminToken() {
+    return localStorage.getItem('lorettoAdminToken') || sessionStorage.getItem('lorettoAdminToken') || '';
+  }
+
+  async function loadContactInquiries() {
+    var loading = document.getElementById('inquiriesLoading');
+    var empty   = document.getElementById('inquiriesEmpty');
+    var err     = document.getElementById('inquiriesError');
+    var table   = document.getElementById('inquiriesTable');
+    var tbody   = document.getElementById('inquiriesTbody');
+    var count   = document.getElementById('inquiriesCount');
+    var badge   = document.getElementById('inquiriesBadge');
+
+    loading.style.display = 'block';
+    empty.style.display   = 'none';
+    err.style.display     = 'none';
+    table.style.display   = 'none';
+
+    try {
+      var token = getAdminToken();
+      var res = await fetch(ADMIN_API + '/api/contact/inquiries', {
+        headers: { 'x-admin-token': token, 'Authorization': 'Bearer ' + token }
+      });
+      if (!res.ok) throw new Error('HTTP ' + res.status + ' — Check admin login');
+      _inquiries = await res.json();
+    } catch(e) {
+      loading.style.display = 'none';
+      err.style.display = 'block';
+      err.textContent = '⚠️ Could not load enquiries: ' + e.message;
+      return;
+    }
+
+    loading.style.display = 'none';
+
+    if (!_inquiries.length) {
+      empty.style.display = 'block';
+      count.textContent = '';
+      badge.style.display = 'none';
+      return;
+    }
+
+    count.textContent = _inquiries.length + ' total';
+    badge.textContent = _inquiries.length;
+    badge.style.display = 'inline';
+
+    tbody.innerHTML = _inquiries.map(function(inq) {
+      var d = new Date(inq.createdAt);
+      var dateStr = d.toLocaleDateString('en-IN', {day:'2-digit',month:'short',year:'numeric'}) +
+                    '<br><span style="font-size:0.72rem;color:var(--text-muted)">' +
+                    d.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'}) + '</span>';
+      var msgShort = (inq.message || '').slice(0, 60) + ((inq.message||'').length > 60 ? '…' : '');
+      return '<tr style="cursor:pointer" onclick="openInquiry(\'' + inq._id + '\')">'
+        + '<td style="white-space:nowrap;font-size:0.8rem;">' + dateStr + '</td>'
+        + '<td class="td-bold">' + escHtml(inq.name || '—') + '</td>'
+        + '<td style="font-size:0.8rem;"><a href="mailto:' + escHtml(inq.email||'') + '" onclick="event.stopPropagation()">' + escHtml(inq.email||'—') + '</a>'
+          + (inq.phone ? '<br><span style="color:var(--text-muted);font-size:0.75rem;">' + escHtml(inq.phone) + '</span>' : '') + '</td>'
+        + '<td style="font-size:0.82rem;">' + escHtml(inq.subject||'General Enquiry') + '</td>'
+        + '<td class="td-muted" style="font-size:0.8rem;max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + escHtml(msgShort) + '</td>'
+        + '<td><div class="action-btns">'
+          + '<button class="act-btn" title="View" onclick="event.stopPropagation();openInquiry(\'' + inq._id + '\')">👁</button>'
+          + '<button class="act-btn del" title="Delete" onclick="event.stopPropagation();confirmDeleteInquiry(\'' + inq._id + '\')">✕</button>'
+          + '</div></td>'
+        + '</tr>';
+    }).join('');
+
+    table.style.display = 'table';
+  }
+
+  function escHtml(str) {
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  function openInquiry(id) {
+    var inq = _inquiries.find(function(i){ return i._id === id; });
+    if (!inq) return;
+    _currentInquiryId = id;
+    var d = new Date(inq.createdAt);
+    document.getElementById('inquiryModalTitle').textContent = 'Enquiry from ' + (inq.name || 'Unknown');
+    document.getElementById('inquiryModalBody').innerHTML = [
+      '<table style="width:100%;border-collapse:collapse;font-size:0.88rem;">',
+      row('Date', d.toLocaleString('en-IN')),
+      row('Name', escHtml(inq.name||'')),
+      row('Email', '<a href="mailto:'+escHtml(inq.email||'')+'">'+escHtml(inq.email||'')+'</a>'),
+      row('Phone', escHtml(inq.phone||'—')),
+      row('Subject', escHtml(inq.subject||'General Enquiry')),
+      '</table>',
+      '<div style="margin-top:16px;">',
+        '<div style="font-size:0.72rem;font-weight:700;color:var(--gold);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:8px;">Message</div>',
+        '<div style="background:var(--bg,#f8f6f0);border-radius:10px;padding:16px;font-size:0.88rem;line-height:1.7;white-space:pre-wrap;">'+escHtml(inq.message||'')+'</div>',
+      '</div>'
+    ].join('');
+    document.getElementById('inquiryDeleteBtn').onclick = function(){ confirmDeleteInquiry(id); };
+    document.getElementById('inquiryModal').classList.add('open');
+  }
+
+  function row(label, value) {
+    return '<tr><td style="padding:8px 0;font-weight:700;color:var(--navy);width:90px;vertical-align:top;">'+label+'</td><td style="padding:8px 0 8px 12px;">'+value+'</td></tr>';
+  }
+
+  function closeInquiryModal() {
+    document.getElementById('inquiryModal').classList.remove('open');
+    _currentInquiryId = null;
+  }
+
+  async function confirmDeleteInquiry(id) {
+    if (!confirm('Delete this enquiry permanently? This cannot be undone.')) return;
+    var token = getAdminToken();
+    try {
+      var res = await fetch(ADMIN_API + '/api/contact/inquiries/' + id, {
+        method: 'DELETE',
+        headers: { 'x-admin-token': token, 'Authorization': 'Bearer ' + token }
+      });
+      if (!res.ok) throw new Error('Delete failed');
+      closeInquiryModal();
+      showToast('Enquiry deleted.');
+      loadContactInquiries();
+    } catch(e) {
+      alert('Could not delete: ' + e.message);
+    }
+  }
 </script>
 <script src="/admin/admin-panel-homepage.js?v=20260330-1"></script>
 </body>
