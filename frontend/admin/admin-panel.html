@@ -2151,7 +2151,7 @@
     document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
     const panel = document.getElementById('panel-' + id);
     if (panel) panel.classList.add('active');
-    const link = document.querySelector(`.nav-link[onclick="showPanel('${id}')"]`);
+    const link = document.querySelector(`.nav-link[onclick*="showPanel('${id}')"]`);
     if (link) link.classList.add('active');
     const info = panelTitles[id] || [id, ''];
     document.getElementById('topbarTitle').childNodes[0].textContent = info[0] + ' ';

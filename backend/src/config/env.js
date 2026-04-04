@@ -13,6 +13,6 @@ export const env = {
   cloudinaryApiKey: process.env.CLOUDINARY_API_KEY || '',
   cloudinaryApiSecret: process.env.CLOUDINARY_API_SECRET || '',
   resendApiKey: process.env.RESEND_API_KEY || '',
-  resendFromEmail: process.env.RESEND_FROM_EMAIL || 'Loretto Central School <onboarding@resend.dev>',
+  resendFromEmail: process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev',
   contactEmail: process.env.CONTACT_EMAIL || ''
 };
