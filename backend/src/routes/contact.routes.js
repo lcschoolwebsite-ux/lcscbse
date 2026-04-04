@@ -86,7 +86,7 @@ router.post(
       return res.status(403).json({ error: 'Contact form is currently disabled' });
     }
 
-    const recipient = (settings.recipientEmail || env.contactEmail || settings.email || '')
+    const recipient = (settings.recipientEmail || env.contactEmail || settings.email || env.adminEmail || '')
       .trim()
       .toLowerCase();
 
