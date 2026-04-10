@@ -317,15 +317,24 @@
     if (!doc) return '';
 
     var bannerInput = doc.querySelector('#bannerUrlInput');
+    var inputVal = valueOf(bannerInput);
+    if (inputVal && inputVal.indexOf('cloudinary.com/demo/image/upload') === -1) return inputVal;
+
     var bannerImg = doc.querySelector('#bannerImg');
-    return valueOf(bannerInput) || (bannerImg ? String(bannerImg.getAttribute('src') || '').trim() : '');
+    var imgSrc = bannerImg ? String(bannerImg.getAttribute('src') || '').trim() : '';
+    // Skip the demo image used in admin placeholders
+    if (imgSrc && imgSrc.indexOf('cloudinary.com/demo/image/upload') === -1) return imgSrc;
+
+    return '';
   }
 
   function applySharedBannerImage(url) {
     var cleanUrl = String(url || '').trim();
     if (!cleanUrl) return;
 
-    var banners = document.querySelectorAll('.page-banner, .page-hero');
+    // Target multiple possible banner classes used across 70+ pages
+    var selectors = '.page-banner, .page-hero, .acad-hero, .acad-overview-hero, .inner-banner, .sub-page-hero';
+    var banners = document.querySelectorAll(selectors);
     if (!banners.length) return;
 
     var styleId = 'lcs-shared-banner-style';
@@ -334,28 +343,33 @@
       runtimeStyle = document.createElement('style');
       runtimeStyle.id = styleId;
       runtimeStyle.textContent = 
-        '.page-banner.lcs-shared-banner::before, .page-hero.lcs-shared-banner::before { display: none !important; } ' +
-        '.page-banner.lcs-shared-banner, .page-hero.lcs-shared-banner { ' +
+        '.lcs-shared-banner::before, .lcs-shared-banner::after { display: none !important; background-image: none !important; } ' +
+        '.lcs-shared-banner { ' +
           'background-position: center !important; ' +
           'background-size: cover !important; ' +
+          'background-repeat: no-repeat !important; ' +
           'background-attachment: scroll !important; ' +
           'background-color: #094f4f !important; ' +
-          'min-height: 220px; ' + // Ensure visibility
+          'min-height: 220px !important; ' +
+          'position: relative !important; ' +
+          'overflow: hidden !important; ' +
         '}';
       document.head.appendChild(runtimeStyle);
     }
 
-    var overlay = 'linear-gradient(135deg, rgba(9,79,79,0.85) 0%, rgba(14,107,107,0.76) 60%, rgba(18,122,122,0.7) 100%)';
-    var finalStyle = overlay + ', url("' + cleanUrl.replace(/"/g, '\\"') + '")';
+    var overlay = 'linear-gradient(135deg, rgba(9,79,79,0.82) 0%, rgba(14,107,107,0.74) 60%, rgba(18,122,122,0.7) 100%)';
+    var finalBackground = overlay + ', url("' + cleanUrl.replace(/"/g, '\\"') + '") center/cover no-repeat';
 
     banners.forEach(function(banner) {
       banner.classList.add('lcs-shared-banner');
-      banner.style.setProperty('background-image', finalStyle, 'important');
+      // Using background shorthand to clear all legacy background properties (color, image, position)
+      banner.style.setProperty('background', finalBackground, 'important');
     });
   }
 
   async function syncSharedBanner() {
-    if (!document.querySelector('.page-banner, .page-hero')) return;
+    var selectors = '.page-banner, .page-hero, .acad-hero, .acad-overview-hero, .inner-banner, .sub-page-hero';
+    if (!document.querySelector(selectors)) return;
 
     var cacheKey = 'lcsSharedBannerImage';
     var fallbackUrl = R + 'IMGS/school%20img.webp';
