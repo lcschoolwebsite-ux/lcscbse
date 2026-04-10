@@ -6005,7 +6005,7 @@
           const newsGrid = document.querySelector('.news-grid');
           if (newsGrid && newsData.length > 0) {
             newsGrid.innerHTML = '';
-            const topNews = newsData; // Showing all news as requested
+            const topNews = newsData.slice(0, 3); // Showing only the 3 most recent news articles
 
             let modalsContainer = document.getElementById('dynamic-news-modals');
             if (!modalsContainer) {
