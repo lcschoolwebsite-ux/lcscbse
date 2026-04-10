@@ -325,7 +325,6 @@
     var cleanUrl = String(url || '').trim();
     if (!cleanUrl) return;
 
-    // Target both .page-banner and .page-hero for flexibility across 70+ pages
     var banners = document.querySelectorAll('.page-banner, .page-hero');
     if (!banners.length) return;
 
@@ -334,55 +333,60 @@
     if (!runtimeStyle) {
       runtimeStyle = document.createElement('style');
       runtimeStyle.id = styleId;
-      // Force hide any existing hardcoded ::before background images and apply the shared banner logic
       runtimeStyle.textContent = 
         '.page-banner.lcs-shared-banner::before, .page-hero.lcs-shared-banner::before { display: none !important; } ' +
         '.page-banner.lcs-shared-banner, .page-hero.lcs-shared-banner { ' +
-          'background-image: linear-gradient(135deg, rgba(9,79,79,0.85) 0%, rgba(14,107,107,0.76) 60%, rgba(18,122,122,0.7) 100%) !important; ' +
           'background-position: center !important; ' +
           'background-size: cover !important; ' +
           'background-attachment: scroll !important; ' +
+          'background-color: #094f4f !important; ' +
+          'min-height: 220px; ' + // Ensure visibility
         '}';
       document.head.appendChild(runtimeStyle);
     }
 
+    var overlay = 'linear-gradient(135deg, rgba(9,79,79,0.85) 0%, rgba(14,107,107,0.76) 60%, rgba(18,122,122,0.7) 100%)';
+    var finalStyle = overlay + ', url("' + cleanUrl.replace(/"/g, '\\"') + '")';
+
     banners.forEach(function(banner) {
       banner.classList.add('lcs-shared-banner');
-      // Apply the dynamic image URL
-      banner.style.backgroundImage = 'linear-gradient(135deg, rgba(9,79,79,0.85) 0%, rgba(14,107,107,0.76) 60%, rgba(18,122,122,0.7) 100%), url("' + cleanUrl.replace(/"/g, '\\"') + '")';
+      banner.style.setProperty('background-image', finalStyle, 'important');
     });
   }
 
   async function syncSharedBanner() {
-    // Check if any banner element exists before bothering with the fetch
     if (!document.querySelector('.page-banner, .page-hero')) return;
 
     var cacheKey = 'lcsSharedBannerImage';
-    var fallbackUrl = '/IMGS/school%20img.webp'; // Default fallback image from the site
+    var fallbackUrl = R + 'IMGS/school%20img.webp';
 
     try {
       var cached = window.sessionStorage && window.sessionStorage.getItem(cacheKey);
-      if (cached) {
+      if (cached && cached !== 'null') {
         applySharedBannerImage(cached);
         return;
       }
     } catch (error) { }
 
     try {
-      // First try to fetch from the school profile (About Us section)
-      var payload = await fetchFirstJson('/about/school-profile');
-      var data = payload && payload.data ? payload.data : null;
-      var bannerUrl = getBannerUrlFromAboutPayload(data);
-      
+      // 1. Try School Profile (the designated place for the shared banner)
+      var profile = await fetchFirstJson('/about/school-profile');
+      var bannerUrl = getBannerUrlFromAboutPayload(profile ? profile.data : null);
+
+      // 2. Fallback to Home Hero (often where users upload the main school photo)
+      if (!bannerUrl) {
+        var hero = await fetchFirstJson('/content/Hero');
+        var heroData = hero ? hero.data : null;
+        if (heroData && typeof heroData.backgroundImage === 'string' && heroData.backgroundImage.trim()) {
+          bannerUrl = heroData.backgroundImage.trim();
+        }
+      }
+
       var finalUrl = bannerUrl || fallbackUrl;
-      
       applySharedBannerImage(finalUrl);
-      
-      try {
-        if (window.sessionStorage) window.sessionStorage.setItem(cacheKey, finalUrl);
-      } catch (error) { }
+
+      if (window.sessionStorage) window.sessionStorage.setItem(cacheKey, finalUrl);
     } catch (error) {
-      // If API fails, use fallback
       applySharedBannerImage(fallbackUrl);
     }
   }
