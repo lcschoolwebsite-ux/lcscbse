@@ -746,7 +746,8 @@ async function saveArticle(asDraft) {
   if (!date)    { toast('Date is required', true); return; }
   if (!excerpt) { toast('Excerpt is required', true); return; }
 
-  var body = { title, category: cat, date, excerpt, content, image, images };
+  var visible = document.getElementById('f-publish').checked;
+  var body = { title, category: cat, date, excerpt, content, image, images, visible };
 
   try {
     var url    = id ? API_BASE + '/api/news/' + id : API_BASE + '/api/news';
@@ -754,8 +755,8 @@ async function saveArticle(asDraft) {
     var res = await fetch(url, { method, headers: apiH(), body: JSON.stringify(body) });
     var data = await res.json();
     if (!res.ok) throw new Error(data.error || 'Save failed');
-    if (typeof window.notifyPublicDataChanged === 'function') {
-      window.notifyPublicDataChanged('news');
+    if (typeof window.bumpSharedDataCacheVersion === 'function') {
+      window.bumpSharedDataCacheVersion('news');
     }
     toast(id ? 'Article updated!' : (asDraft ? 'Saved as draft!' : 'Article published!'));
     closeModal();
@@ -772,8 +773,8 @@ async function deleteArticle(id) {
   try {
     var res = await fetch(API_BASE + '/api/news/' + id, { method:'DELETE', headers: apiH() });
     if (!res.ok) throw new Error('Delete failed');
-    if (typeof window.notifyPublicDataChanged === 'function') {
-      window.notifyPublicDataChanged('news');
+    if (typeof window.bumpSharedDataCacheVersion === 'function') {
+      window.bumpSharedDataCacheVersion('news');
     }
     toast('Article deleted!');
     loadNews();
@@ -800,8 +801,8 @@ async function bulkDelete() {
       return fetch(API_BASE + '/api/news/' + id, { method:'DELETE', headers: apiH() });
     }));
     if (responses.some(function(res){ return !res.ok; })) throw new Error('Delete failed');
-    if (typeof window.notifyPublicDataChanged === 'function') {
-      window.notifyPublicDataChanged('news');
+    if (typeof window.bumpSharedDataCacheVersion === 'function') {
+      window.bumpSharedDataCacheVersion('news');
     }
     toast(ids.length + ' articles deleted!');
     document.getElementById('bulk-del-btn').style.display = 'none';

@@ -10,7 +10,7 @@ var PROD_API_BASE = 'https://lcscbse-production.up.railway.app/api';
 var IS_LOCAL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.hostname.indexOf('.local') !== -1);
 var RESOLVED_API_BASE = '';
 var CACHE_PREFIX = 'loretto_cache_';
-var CACHE_TTL_MS = 5 * 60 * 1000;
+var CACHE_TTL_MS = 1 * 60 * 1000; // Reduced to 1 minute for better responsiveness
 var CACHE_BUST_KEY = 'loretto_public_cache_bust';
 var REQUEST_CACHE = Object.create(null);
 var PENDING_REQUESTS = Object.create(null);
