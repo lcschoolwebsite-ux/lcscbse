@@ -392,7 +392,8 @@ async function renderNewsList(containerId, paginationId, page = 1) {
   if (!container) return;
   const paginationContainer = paginationId ? document.getElementById(paginationId) : null;
   
-  const news = await loadNewsData();
+  const allNews = await loadNewsData();
+  const news = allNews.filter(n => n.visible !== false);
   
   if (news.length === 0) {
     container.innerHTML = '<div class="empty-msg">No news articles found.</div>';
@@ -400,8 +401,12 @@ async function renderNewsList(containerId, paginationId, page = 1) {
     return;
   }
 
-  // Sorting news by date descending
-  news.sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0));
+  // Improved sorting: Date primary, createdAt secondary
+  news.sort((a, b) => {
+    const da = new Date(a.date || a.createdAt || 0);
+    const db = new Date(b.date || b.createdAt || 0);
+    return db - da; // Latest first
+  });
 
   const totalPages = Math.ceil(news.length / NEWS_PAGE_SIZE);
   const start = (page - 1) * NEWS_PAGE_SIZE;
@@ -423,7 +428,11 @@ async function renderNewsList(containerId, paginationId, page = 1) {
         </button>
       </div>
     </article>
-  `).join('');
+  `).join('') + `
+    <div style="grid-column: 1 / -1; text-align: center; margin-top: 20px; font-size: 0.8rem; color: var(--text-muted); opacity: 0.6;">
+      Showing ${start + 1}–${Math.min(start + NEWS_PAGE_SIZE, news.length)} of ${news.length} articles
+    </div>
+  `;
   
   if (container.style.display === 'none') container.style.display = 'grid';
   const loader = document.getElementById('news-loading');
