@@ -128,6 +128,11 @@ function readCacheEntry(key) {
   try {
     var parsed = JSON.parse(raw);
     if (!parsed || typeof parsed !== 'object' || !parsed.ts) return null;
+    if ((parsed.bust || '') !== (ACTIVE_CACHE_BUST_TOKEN || '')) {
+      delete REQUEST_CACHE[key];
+      storageRemove(CACHE_PREFIX + key);
+      return null;
+    }
     REQUEST_CACHE[key] = parsed;
     return parsed;
   } catch (error) {
@@ -150,7 +155,7 @@ function cacheGet(key, allowStale) {
 }
 
 function cacheSet(key, data) {
-  var entry = { ts: Date.now(), data: data };
+  var entry = { ts: Date.now(), data: data, bust: ACTIVE_CACHE_BUST_TOKEN || '' };
   REQUEST_CACHE[key] = entry;
   storageSet(CACHE_PREFIX + key, JSON.stringify(entry));
 }
@@ -313,6 +318,21 @@ function getNewsGalleryImages(item) {
   });
 }
 
+function getNewsPlaceholderClass(item, index) {
+  const source = String(
+    (item && (item._id || item.id || item.title || item.date)) ||
+    index ||
+    'news'
+  );
+  let hash = 0;
+
+  for (let i = 0; i < source.length; i += 1) {
+    hash = (hash + source.charCodeAt(i)) % 6;
+  }
+
+  return 'n' + (hash + 1);
+}
+
 function extractStructuredContent(data) {
   if (!data || typeof data !== 'object') return null;
 
@@ -375,9 +395,9 @@ async function renderNewsList(containerId) {
     return;
   }
 
-  container.innerHTML = news.map(item => `
+  container.innerHTML = news.map((item, index) => `
     <article class="news-card">
-      ${getPrimaryNewsImage(item) ? `<img src="${getPrimaryNewsImage(item)}" class="news-img" alt="${item.title}">` : `<div class="news-img-placeholder n${(item.id % 6) + 1}"></div>`}
+      ${getPrimaryNewsImage(item) ? `<img src="${getPrimaryNewsImage(item)}" class="news-img" alt="${item.title}">` : `<div class="news-img-placeholder ${getNewsPlaceholderClass(item, index)}"></div>`}
       <div class="news-body">
         <div class="news-meta">
           <span class="news-date">${formatDisplayDate(item.date)}</span>
@@ -611,7 +631,7 @@ function openNewsModal(item) {
     <div class="modal-overlay open" id="news-modal" onclick="if(event.target==this) closeNewsModal()">
       <div class="modal">
         <button class="modal-close" onclick="closeNewsModal()"></button>
-        ${primaryImage ? `<button type="button" class="modal-main-image-btn" data-news-image="${encodeURIComponent(primaryImage)}" data-news-alt="${encodeURIComponent(item.title || 'News image')}"><img src="${primaryImage}" class="modal-img" alt="${item.title}"></button>` : `<div class="modal-img-placeholder n${(item.id % 6) + 1}"></div>`}
+        ${primaryImage ? `<button type="button" class="modal-main-image-btn" data-news-image="${encodeURIComponent(primaryImage)}" data-news-alt="${encodeURIComponent(item.title || 'News image')}"><img src="${primaryImage}" class="modal-img" alt="${item.title}"></button>` : `<div class="modal-img-placeholder ${getNewsPlaceholderClass(item, 0)}"></div>`}
         <div class="modal-body">
           <div class="modal-meta">
             <span class="modal-date">${formatDisplayDate(item.date)}</span>

@@ -754,6 +754,9 @@ async function saveArticle(asDraft) {
     var res = await fetch(url, { method, headers: apiH(), body: JSON.stringify(body) });
     var data = await res.json();
     if (!res.ok) throw new Error(data.error || 'Save failed');
+    if (typeof window.notifyPublicDataChanged === 'function') {
+      window.notifyPublicDataChanged('news');
+    }
     toast(id ? 'Article updated!' : (asDraft ? 'Saved as draft!' : 'Article published!'));
     closeModal();
     loadNews();
@@ -769,6 +772,9 @@ async function deleteArticle(id) {
   try {
     var res = await fetch(API_BASE + '/api/news/' + id, { method:'DELETE', headers: apiH() });
     if (!res.ok) throw new Error('Delete failed');
+    if (typeof window.notifyPublicDataChanged === 'function') {
+      window.notifyPublicDataChanged('news');
+    }
     toast('Article deleted!');
     loadNews();
   } catch(e) { toast(e.message, true); }
@@ -790,9 +796,13 @@ async function bulkDelete() {
   if (!ids.length) return;
   if (!confirm('Delete ' + ids.length + ' selected article(s)?')) return;
   try {
-    await Promise.all(ids.map(function(id){
+    var responses = await Promise.all(ids.map(function(id){
       return fetch(API_BASE + '/api/news/' + id, { method:'DELETE', headers: apiH() });
     }));
+    if (responses.some(function(res){ return !res.ok; })) throw new Error('Delete failed');
+    if (typeof window.notifyPublicDataChanged === 'function') {
+      window.notifyPublicDataChanged('news');
+    }
     toast(ids.length + ' articles deleted!');
     document.getElementById('bulk-del-btn').style.display = 'none';
     loadNews();
