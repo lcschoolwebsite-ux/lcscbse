@@ -386,7 +386,8 @@ function extractStructuredContent(data) {
 }
 
 async function renderNewsList(containerId, paginationId, page = 1) {
-  const pageSize = window.innerWidth < 768 ? 6 : 9;
+  // Set to 6 for both for now so user can see pagination working with 7 items
+  const pageSize = 6; 
   const container = document.getElementById(containerId);
   if (!container) return;
   const paginationContainer = paginationId ? document.getElementById(paginationId) : null;
