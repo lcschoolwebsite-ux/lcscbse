@@ -385,9 +385,8 @@ function extractStructuredContent(data) {
   };
 }
 
-var NEWS_PAGE_SIZE = 9;
-
 async function renderNewsList(containerId, paginationId, page = 1) {
+  const pageSize = window.innerWidth < 768 ? 6 : 9;
   const container = document.getElementById(containerId);
   if (!container) return;
   const paginationContainer = paginationId ? document.getElementById(paginationId) : null;
@@ -408,9 +407,9 @@ async function renderNewsList(containerId, paginationId, page = 1) {
     return db - da; // Latest first
   });
 
-  const totalPages = Math.ceil(news.length / NEWS_PAGE_SIZE);
-  const start = (page - 1) * NEWS_PAGE_SIZE;
-  const paginatedNews = news.slice(start, start + NEWS_PAGE_SIZE);
+  const totalPages = Math.ceil(news.length / pageSize);
+  const start = (page - 1) * pageSize;
+  const paginatedNews = news.slice(start, start + pageSize);
 
   container.innerHTML = paginatedNews.map((item, index) => `
     <article class="news-card">
@@ -430,7 +429,7 @@ async function renderNewsList(containerId, paginationId, page = 1) {
     </article>
   `).join('') + `
     <div style="grid-column: 1 / -1; text-align: center; margin-top: 20px; font-size: 0.8rem; color: var(--text-muted); opacity: 0.6;">
-      Showing ${start + 1}–${Math.min(start + NEWS_PAGE_SIZE, news.length)} of ${news.length} articles
+      Showing ${start + 1}–${Math.min(start + pageSize, news.length)} of ${news.length} articles
     </div>
   `;
   
@@ -439,7 +438,7 @@ async function renderNewsList(containerId, paginationId, page = 1) {
   if (loader) loader.style.display = 'none';
 
   if (paginationContainer) {
-    if (news.length <= NEWS_PAGE_SIZE) {
+    if (news.length <= pageSize) {
       paginationContainer.style.display = 'none';
     } else {
       renderPagination(paginationId, totalPages, page, (newPage) => {
