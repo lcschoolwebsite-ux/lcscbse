@@ -385,7 +385,95 @@ function extractStructuredContent(data) {
   };
 }
 
-async function renderNewsList(containerId) {
+var NEWS_PAGE_SIZE = 9;
+
+async function renderNewsList(containerId, paginationId, page = 1) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  const paginationContainer = paginationId ? document.getElementById(paginationId) : null;
+  
+  const news = await loadNewsData();
+  
+  if (news.length === 0) {
+    container.innerHTML = '<div class="empty-msg">No news articles found.</div>';
+    if (paginationContainer) paginationContainer.style.display = 'none';
+    return;
+  }
+
+  // Sorting news by date descending
+  news.sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0));
+
+  const totalPages = Math.ceil(news.length / NEWS_PAGE_SIZE);
+  const start = (page - 1) * NEWS_PAGE_SIZE;
+  const paginatedNews = news.slice(start, start + NEWS_PAGE_SIZE);
+
+  container.innerHTML = paginatedNews.map((item, index) => `
+    <article class="news-card">
+      ${getPrimaryNewsImage(item) ? `<img src="${getPrimaryNewsImage(item)}" class="news-img" alt="${item.title}">` : `<div class="news-img-placeholder ${getNewsPlaceholderClass(item, index)}"></div>`}
+      <div class="news-body">
+        <div class="news-meta">
+          <span class="news-date">${formatDisplayDate(item.date)}</span>
+          <span class="news-tag">${item.category || 'General'}</span>
+        </div>
+        <h3>${item.title || 'Untitled'}</h3>
+        <p class="news-excerpt">${item.excerpt || ''}</p>
+        <button class="read-more-btn" onclick="openNewsModal(${JSON.stringify(item).replace(/"/g, '&quot;')})">
+          Read Story 
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+        </button>
+      </div>
+    </article>
+  `).join('');
+  
+  if (container.style.display === 'none') container.style.display = 'grid';
+  const loader = document.getElementById('news-loading');
+  if (loader) loader.style.display = 'none';
+
+  if (paginationContainer) {
+    if (news.length <= NEWS_PAGE_SIZE) {
+      paginationContainer.style.display = 'none';
+    } else {
+      renderPagination(paginationId, totalPages, page, (newPage) => {
+        renderNewsList(containerId, paginationId, newPage);
+        window.scrollTo({ top: container.offsetTop - 150, behavior: 'smooth' });
+      });
+      paginationContainer.style.display = 'flex';
+    }
+  }
+}
+
+function renderPagination(containerId, totalPages, currentPage, onPageChange) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+
+  window._onLcscPageChange = onPageChange;
+
+  let html = '';
+  
+  // Prev button
+  html += `<button class="page-btn" ${currentPage === 1 ? 'disabled' : ''} onclick="_onLcscPageChange(${currentPage - 1})" aria-label="Previous Page">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+  </button>`;
+
+  // Page numbers
+  const range = 2; // How many pages around current page
+  for (let i = 1; i <= totalPages; i++) {
+    if (i === 1 || i === totalPages || (i >= currentPage - range && i <= currentPage + range)) {
+      html += `<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="_onLcscPageChange(${i})">${i}</button>`;
+    } else if (i === currentPage - range - 1 || i === currentPage + range + 1) {
+      html += `<span class="page-dots">...</span>`;
+    }
+  }
+
+  // Next button
+  html += `<button class="page-btn" ${currentPage === totalPages ? 'disabled' : ''} onclick="_onLcscPageChange(${currentPage + 1})" aria-label="Next Page">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+  </button>`;
+
+  container.innerHTML = html;
+}
+
+async function renderNewsListOld(containerId) {
   const container = document.getElementById(containerId);
   if (!container) return;
   const news = await loadNewsData();

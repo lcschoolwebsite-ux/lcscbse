@@ -393,6 +393,56 @@
     .footer-bottom { border-top: 1px solid rgba(255,255,255,0.1); padding: 18px 24px; text-align: center; font-size: 0.78rem; color: rgba(255,255,255,0.45); }
 
     /* ── RESPONSIVE ── */
+    /* ── PAGINATION ── */
+    .pagination {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
+      margin-top: 54px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+    }
+    .page-btn {
+      min-width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--white);
+      color: var(--navy);
+      border: 2.5px solid var(--border);
+      border-radius: 12px;
+      font-weight: 800;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    }
+    .page-btn:hover:not(:disabled) {
+      border-color: var(--gold);
+      color: var(--gold);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px rgba(200, 150, 12, 0.18);
+    }
+    .page-btn.active {
+      background: linear-gradient(135deg, #106f6f 0%, #094f4f 100%);
+      color: #fff;
+      border-color: #094f4f;
+      box-shadow: 0 10px 24px rgba(10, 80, 80, 0.25);
+    }
+    .page-btn:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+      filter: grayscale(1);
+    }
+    .page-dots {
+      color: var(--text-muted);
+      font-weight: 700;
+      font-size: 1.2rem;
+      padding: 0 6px;
+    }
+
     @media (max-width: 900px) { .news-grid { grid-template-columns: repeat(2,1fr); } }
     @media (max-width: 600px) { .news-grid { grid-template-columns: 1fr; } .footer-grid { grid-template-columns: 1fr; } .modal-body { padding: 24px 20px 28px; } .modal-title { font-size: 1.3rem; } .modal-gallery { grid-template-columns: 1fr; gap: 14px; } .modal-gallery-img { height: 160px; } .modal-image-viewer { padding: 16px; } .modal-image-viewer-close { top: 12px; right: 12px; } .tb-search { display: none; } }
   
@@ -467,6 +517,7 @@
       Loading news...
     </div>
     <div class="news-grid" id="news-grid" style="display:none;"></div>
+    <div id="news-pagination" class="pagination" style="display:none;"></div>
     </div><!-- /container -->
 </section>
 
@@ -479,7 +530,7 @@
 
 <script>
   window.addEventListener('DOMContentLoaded', () => {
-    renderNewsList('news-grid');
+    renderNewsList('news-grid', 'news-pagination');
   });
 
   // Export for modal access if needed
