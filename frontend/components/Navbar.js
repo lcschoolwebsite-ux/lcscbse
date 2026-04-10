@@ -324,26 +324,42 @@
   function applySharedBannerImage(url) {
     var cleanUrl = String(url || '').trim();
     if (!cleanUrl) return;
-    var banner = document.querySelector('.page-banner');
-    if (!banner) return;
 
-    var runtimeStyle = document.getElementById('lcs-shared-banner-style');
+    // Target both .page-banner and .page-hero for flexibility across 70+ pages
+    var banners = document.querySelectorAll('.page-banner, .page-hero');
+    if (!banners.length) return;
+
+    var styleId = 'lcs-shared-banner-style';
+    var runtimeStyle = document.getElementById(styleId);
     if (!runtimeStyle) {
       runtimeStyle = document.createElement('style');
-      runtimeStyle.id = 'lcs-shared-banner-style';
-      runtimeStyle.textContent = '.page-banner.lcs-shared-banner::before{display:none !important;}';
+      runtimeStyle.id = styleId;
+      // Force hide any existing hardcoded ::before background images and apply the shared banner logic
+      runtimeStyle.textContent = 
+        '.page-banner.lcs-shared-banner::before, .page-hero.lcs-shared-banner::before { display: none !important; } ' +
+        '.page-banner.lcs-shared-banner, .page-hero.lcs-shared-banner { ' +
+          'background-image: linear-gradient(135deg, rgba(9,79,79,0.85) 0%, rgba(14,107,107,0.76) 60%, rgba(18,122,122,0.7) 100%) !important; ' +
+          'background-position: center !important; ' +
+          'background-size: cover !important; ' +
+          'background-attachment: scroll !important; ' +
+        '}';
       document.head.appendChild(runtimeStyle);
     }
 
-    banner.classList.add('lcs-shared-banner');
-    banner.style.background = 'linear-gradient(135deg, rgba(9,79,79,0.82) 0%, rgba(14,107,107,0.74) 60%, rgba(18,122,122,0.7) 100%), url("' + cleanUrl.replace(/"/g, '\\"') + '") center/cover no-repeat';
+    banners.forEach(function(banner) {
+      banner.classList.add('lcs-shared-banner');
+      // Apply the dynamic image URL
+      banner.style.backgroundImage = 'linear-gradient(135deg, rgba(9,79,79,0.85) 0%, rgba(14,107,107,0.76) 60%, rgba(18,122,122,0.7) 100%), url("' + cleanUrl.replace(/"/g, '\\"') + '")';
+    });
   }
 
   async function syncSharedBanner() {
-    var banner = document.querySelector('.page-banner');
-    if (!banner) return;
+    // Check if any banner element exists before bothering with the fetch
+    if (!document.querySelector('.page-banner, .page-hero')) return;
 
     var cacheKey = 'lcsSharedBannerImage';
+    var fallbackUrl = '/IMGS/school%20img.webp'; // Default fallback image from the site
+
     try {
       var cached = window.sessionStorage && window.sessionStorage.getItem(cacheKey);
       if (cached) {
@@ -353,15 +369,22 @@
     } catch (error) { }
 
     try {
+      // First try to fetch from the school profile (About Us section)
       var payload = await fetchFirstJson('/about/school-profile');
       var data = payload && payload.data ? payload.data : null;
       var bannerUrl = getBannerUrlFromAboutPayload(data);
-      if (!bannerUrl) return;
-      applySharedBannerImage(bannerUrl);
+      
+      var finalUrl = bannerUrl || fallbackUrl;
+      
+      applySharedBannerImage(finalUrl);
+      
       try {
-        if (window.sessionStorage) window.sessionStorage.setItem(cacheKey, bannerUrl);
+        if (window.sessionStorage) window.sessionStorage.setItem(cacheKey, finalUrl);
       } catch (error) { }
-    } catch (error) { }
+    } catch (error) {
+      // If API fails, use fallback
+      applySharedBannerImage(fallbackUrl);
+    }
   }
 
   function applySiteSettings(siteSettings) {
