@@ -344,7 +344,7 @@
       + '</p></div>';
   }
 
-  function renderPolicyTabs(title, body) {
+  function renderPolicyGrid(title, body) {
     var table = body.querySelector('table.te');
     if (!table) return '';
 
@@ -352,7 +352,8 @@
       var inputs = row.querySelectorAll('input');
       return {
         title: inputValue(inputs[0]),
-        url: inputValue(inputs[1])
+        desc: inputValue(inputs[1]),
+        url: inputValue(inputs[2])
       };
     }).filter(function (tab) {
       return tab.title && tab.url;
@@ -361,16 +362,16 @@
     if (!rows.length) return '';
 
     var html = renderSectionHeading(title);
-    html += '<div class="policy-tabs-container">';
-    html += '<div class="policy-tabs-list">';
-    rows.forEach(function (tab, i) {
-      html += '<button class="policy-tab-btn' + (i === 0 ? ' active' : '') + '" data-pdf="' + escapeHtml(tab.url) + '">' + escapeHtml(tab.title) + '</button>';
+    html += '<div class="document-grid">';
+    rows.forEach(function (tab) {
+      html += '<a href="' + escapeHtml(tab.url) + '" target="_blank" class="doc-card">'
+        + '<div class="doc-badge"><i class="fas fa-file-pdf"></i> View File</div>'
+        + '<div class="doc-icon-box"><i class="fas fa-file-shield"></i></div>'
+        + '<div class="doc-title">' + escapeHtml(tab.title) + '</div>'
+        + '<div class="doc-desc">' + escapeHtml(tab.desc || 'Official school policy document') + '</div>'
+        + '<div class="doc-meta"><i class="fas fa-check-circle"></i> Official PDF Available</div>'
+        + '</a>';
     });
-    html += '</div>';
-    html += '<div class="policy-tab-viewer">';
-    html += '<iframe src="' + escapeHtml(rows[0].url) + '" width="100%" height="700px" style="border:1px solid var(--border); border-radius:12px; background:var(--light-bg);"></iframe>';
-    html += '</div>';
-    html += '<div style="text-align:center; margin-top:15px;"><a href="' + escapeHtml(rows[0].url) + '" target="_blank" class="open-pdf-btn" style="display:inline-block; padding:10px 20px; background:var(--navy); color:white; text-decoration:none; border-radius:8px; font-weight:700;">Open PDF in New Tab</a></div>';
     html += '</div>';
 
     return html;
@@ -389,7 +390,7 @@
     }
 
     if (/Policy Tabs/i.test(title)) {
-      return renderPolicyTabs(title, body);
+      return renderPolicyGrid(title, body);
     }
 
     var entries = extractTextEntries(body);
@@ -433,18 +434,6 @@
     addRuntimeStyles();
     updatePageTitle(title);
     card.innerHTML = rendered;
-    
-    // Add event listener for policy tabs
-    document.querySelectorAll('.policy-tab-btn').forEach(function(btn) {
-      btn.onclick = function() {
-        var container = this.closest('.policy-tabs-container');
-        container.querySelectorAll('.policy-tab-btn').forEach(function(b){ b.classList.remove('active'); });
-        this.classList.add('active');
-        var pdfUrl = this.getAttribute('data-pdf');
-        container.querySelector('iframe').src = pdfUrl;
-        container.querySelector('.open-pdf-btn').href = pdfUrl;
-      };
-    });
 
     prefetchSiblingSections(section);
   }
