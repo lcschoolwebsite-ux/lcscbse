@@ -391,7 +391,7 @@
       return renderDownloadBox(title, body);
     }
 
-    if (/Policy|Tab/i.test(title)) {
+    if (/Policy/i.test(title) || /\bTab\b/i.test(title)) {
       return renderPolicyGrid(title, body);
     }
 
