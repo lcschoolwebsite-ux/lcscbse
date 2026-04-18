@@ -867,7 +867,7 @@ function addFC(id){
   var c=document.getElementById(id);if(!c)return;
   var n=c.children.length+1;
   var d=document.createElement('div');d.className='fce';
-  d.innerHTML='<div class="fch"><span class="fcn">Card '+n+'</span><button class="ab del" style="margin-left:auto" onclick="this.closest(\'.fce\').remove()"></button></div>'
+  d.innerHTML='<div class="fch"><span class="fcn">Card '+n+'</span><button class="ab del" style="margin-left:auto" onclick="this.closest(\'.fce\').remove()">×</button></div>'
     +'<input placeholder="Emoji icon..."/><input placeholder="Title..."/><textarea placeholder="Description..."></textarea>';
   c.appendChild(d);d.querySelector('input').focus();
 }
@@ -879,7 +879,7 @@ function addTR(tbodyId,cols){
   var tb=document.getElementById(tbodyId);if(!tb)return;
   var tr=document.createElement('tr');
   var cells='';for(var i=0;i<cols;i++)cells+='<td><input type="text" placeholder="Value..."/></td>';
-  cells+='<td><button class="ab del" onclick="this.closest(\'tr\').remove()"></button></td>';
+  cells+='<td><button class="ab del" onclick="this.closest(\'tr\').remove()">×</button></td>';
   tr.innerHTML=cells;tb.appendChild(tr);tr.querySelector('input').focus();
 }
 
@@ -895,7 +895,7 @@ function addPolicyRow(tbodyId){
     +'<td><input type="text" placeholder="Short description..." '+sync+'/></td>'
     +'<td><div class="cld-row"><input type="url" id="p-up-'+n+'" placeholder="PDF URL..." '+sync+'/><button class="cld-up" onclick="document.getElementById(\'p-f-'+n+'\').click()"> Upload</button>'
     +'<input type="file" id="p-f-'+n+'" accept="application/pdf" style="display:none" onchange="cldUp(this,\'p-up-'+n+'\'); this.setAttribute(\'value\', \'\')"/></div></td>'
-    +'<td><button class="ab del" onclick="this.closest(\'tr\').remove()"></button></td>';
+    +'<td><button class="ab del" onclick="this.closest(\'tr\').remove()">×</button></td>';
   tb.appendChild(tr);tr.querySelector('input').focus();
 }
 
