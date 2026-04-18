@@ -848,13 +848,20 @@ Parents are requested to acknowledge receipt of circulars with signature in the 
         </div>
         <div class="f"><label>Source / Issued By <span class="dbh">category → meta</span></label><input type="text" id="circ-source" placeholder="e.g. CBSE, New Delhi · Academic Year 2024–25" /></div>
         <div class="f">
-          <label>File URL (Cloudinary PDF) <span class="req">*</span> <span class="dbh">url</span></label>
+          <label>Document Type / Source</label>
+          <div style="display:flex;gap:12px;margin:8px 0;">
+            <label style="display:flex;align-items:center;gap:6px;font-size:.8rem;cursor:pointer;"><input type="radio" name="circ-type" value="pdf" checked onclick="toggleCircType('pdf')"/> PDF Document</label>
+            <label style="display:flex;align-items:center;gap:6px;font-size:.8rem;cursor:pointer;"><input type="radio" name="circ-type" value="link" onclick="toggleCircType('link')"/> Direct Website Link</label>
+          </div>
+        </div>
+        <div class="f">
+          <label id="circ-url-label">File URL (Cloudinary PDF) <span class="req">*</span> <span class="dbh">url</span></label>
           <div class="cld-url-row">
             <input type="url" id="circ-url" placeholder="https://res.cloudinary.com/your-cloud/raw/upload/..." />
-            <button class="cld-upload-btn file-btn" onclick="document.getElementById('circ-file').click()"> Upload PDF</button>
+            <button class="cld-upload-btn file-btn" id="circ-up-btn" onclick="document.getElementById('circ-file').click()"> Upload PDF</button>
             <input type="file" id="circ-file" accept="application/pdf" style="display:none;" onchange="uploadCircularPDF(this)" />
           </div>
-          <div class="fhint">Upload as <code>raw</code> resource type in Cloudinary. PDF will be downloadable from the public page.</div>
+          <div class="fhint" id="circ-url-hint">Upload as <code>raw</code> resource type in Cloudinary. PDF will be downloadable from the public page.</div>
         </div>
       </div>
     </div>
@@ -1705,6 +1712,8 @@ function openCBSEModal() {
   document.getElementById('circ-edit-id').value=''; document.getElementById('circ-title').value='';
   document.getElementById('circ-date').value=''; document.getElementById('circ-url').value='';
   document.getElementById('circ-badge').value='NEW'; document.getElementById('circ-source').value='CBSE, New Delhi';
+  document.querySelector('input[name="circ-type"][value="pdf"]').checked = true;
+  toggleCircType('pdf');
   document.getElementById('circModal').classList.add('open');
 }
 function openSchoolCircModal() {
@@ -1713,9 +1722,19 @@ function openSchoolCircModal() {
   document.getElementById('circ-edit-id').value=''; document.getElementById('circ-title').value='';
   document.getElementById('circ-date').value=''; document.getElementById('circ-url').value='';
   document.getElementById('circ-badge').value='LATEST'; document.getElementById('circ-source').value='Loretto Central School';
+  document.querySelector('input[name="circ-type"][value="pdf"]').checked = true;
+  toggleCircType('pdf');
   document.getElementById('circModal').classList.add('open');
 }
 function closeCircModal() { document.getElementById('circModal').classList.remove('open'); }
+
+function toggleCircType(type) {
+  var isPdf = type === 'pdf';
+  document.getElementById('circ-url-label').textContent = isPdf ? 'File URL (Cloudinary PDF) *' : 'Direct Link URL *';
+  document.getElementById('circ-url').placeholder = isPdf ? 'https://res.cloudinary.com/...' : 'https://cbse.gov.in/...';
+  document.getElementById('circ-up-btn').style.display = isPdf ? '' : 'none';
+  document.getElementById('circ-url-hint').style.display = isPdf ? '' : 'none';
+}
 
 function editDoc(id, category) {
   var d = (_allDocs[category]||[]).find(function(x){ return x._id===id; });
@@ -1727,6 +1746,11 @@ function editDoc(id, category) {
   document.getElementById('circ-url').value      = d.url    || '';
   document.getElementById('circ-badge').value    = (d.meta && d.meta.badge) || '';
   document.getElementById('circ-source').value   = d.description || (d.meta && d.meta.source) || '';
+  
+  var isExternal = d.meta && d.meta.isExternal;
+  document.querySelector('input[name="circ-type"][value="'+(isExternal?'link':'pdf')+'"]').checked = true;
+  toggleCircType(isExternal?'link':'pdf');
+
   document.getElementById('circModal').classList.add('open');
 }
 
@@ -1735,6 +1759,7 @@ async function saveCircular() {
   var category = document.getElementById('circ-category').value;
   var badge    = document.getElementById('circ-badge').value.trim();
   var source   = document.getElementById('circ-source').value.trim();
+  var isExternal = document.querySelector('input[name="circ-type"]:checked').value === 'link';
   var body = {
     title:    document.getElementById('circ-title').value.trim(),
     date:     document.getElementById('circ-date').value,
@@ -1744,7 +1769,8 @@ async function saveCircular() {
     meta: {
       badge: badge,
       source: source,
-      date: document.getElementById('circ-date').value
+      date: document.getElementById('circ-date').value,
+      isExternal: isExternal
     }
   };
   if (!body.title) { toast('Title is required','err'); return; }

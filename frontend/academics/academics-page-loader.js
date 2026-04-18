@@ -497,13 +497,15 @@
     container.style.display = 'block';
     container.innerHTML = items.map(function (item, index) {
       var sourceUrl = normalizeDocumentUrl(item.url || (item.meta && item.meta.url));
-      var docUrl = getOpenableDocumentUrl(sourceUrl) || sourceUrl;
+      var isExternal = item.meta && item.meta.isExternal;
+      var docUrl = isExternal ? sourceUrl : (getOpenableDocumentUrl(sourceUrl) || sourceUrl);
+      var iconClass = isExternal ? 'fa-square-up-right' : 'fa-file-pdf';
       var badge = normalizeText(item.type || (item.meta && item.meta.badge) || (index === 0 ? 'NEW' : 'CBSE'));
       var source = normalizeText(item.description || (item.meta && item.meta.source));
       var metaParts = [source, formatDisplayDate(getDocumentDateValue(item))].filter(Boolean);
       return ''
         + '<a href="' + escapeHtml(docUrl || '#') + '" target="_blank" rel="noopener noreferrer" class="circular-item" aria-label="Open circular PDF">'
-        + '<div class="circ-icon"></div>'
+        + '<div class="circ-icon"><i class="fas ' + iconClass + '"></i></div>'
         + '<div class="circ-body">'
         + '<div class="circ-title">' + escapeHtml(item.title || item.name || 'Untitled Circular') + '</div>'
         + '<div class="circ-meta">' + escapeHtml(metaParts.join(' · ')) + '</div>'
@@ -526,9 +528,10 @@
       var dateText = formatDisplayDate(getDocumentDateValue(item));
       var badge = normalizeText(item.meta && item.meta.badge) || 'NOTICE';
       var url = normalizeDocumentUrl(item.url);
-      var tag = badge.toUpperCase() === 'LATEST' || badge.toUpperCase() === 'RECENT' ? ' circ-new' : '';
+      var isExternal = item.meta && item.meta.isExternal;
+      var iconClass = isExternal ? 'fa-square-up-right' : 'fa-file-pdf';
       var cardInner = ''
-        + '<div class="circ-icon"></div>'
+        + '<div class="circ-icon"><i class="fas ' + iconClass + '"></i></div>'
         + '<div class="circ-body">'
         + '<div class="circ-title">' + escapeHtml(title) + '</div>'
         + '<div class="circ-meta">' + escapeHtml([metaText, dateText].filter(Boolean).join(' · ')) + '</div>'
