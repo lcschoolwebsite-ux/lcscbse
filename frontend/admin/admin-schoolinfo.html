@@ -177,7 +177,7 @@
       <a class="sl" onclick="go('facilities')"><span class="ic"></span> Facilities</a>
       <a class="sl" onclick="go('harassment')"><span class="ic"></span> Prev. of Harassment</a>
       <a class="sl" onclick="go('childprotect')"><span class="ic"></span> Child Protection</a>
-      <a class="sl" onclick="go('privacy')"><span class="ic"></span> Privacy Policy</a>
+      <a class="sl" onclick="go('privacy')"><span class="ic"></span> Privacy and Policy</a>
       <div class="sb-sec">Other</div>
       <a class="sl" href="admin-panel.html"><span class="ic"></span> Dashboard</a>
       <a class="sl" href="admin-academics.html"><span class="ic"></span> Academics</a>
@@ -216,7 +216,7 @@
       <a onclick="go('facilities')"> Facilities</a>
       <a onclick="go('harassment')"> Harassment Policy</a>
       <a onclick="go('childprotect')"> Child Protection</a>
-      <a onclick="go('privacy')"> Privacy Policy</a>
+      <a onclick="go('privacy')"> Privacy and Policy</a>
     </nav>
 
     <div class="pbody">
@@ -658,61 +658,21 @@
 
       <!-- ===== PRIVACY POLICY ===== -->
       <div class="panel" id="tab-privacy">
-        <div class="chip note">ℹ MongoDB collection: <code style="margin-left:4px;font-family:monospace;font-size:.85em;">school_info</code> · document: <code style="font-family:monospace;font-size:.85em;">privacy_policy</code></div>
-        <div class="two-col">
-          <div>
-            <div class="block"><div class="bh"><div class="bt"> Introduction <span class="dbc">privacy.intro</span></div><div class="ba"><button class="btn gd" onclick="save()"> Save</button></div></div>
-              <div class="bb"><div class="fg">
-                <div class="f"><label>Intro Para</label><textarea>Loretto Central School is committed to protecting the privacy and personal information of all visitors to our website and members of our school community. This Privacy Policy explains how we collect, use, store, and protect your information.</textarea></div>
-                <div class="f"><label>Highlight Box</label><textarea>This policy applies to the official website at www.school.edu and all associated digital platforms. By using our website, you agree to the terms of this policy.</textarea></div>
-                <div class="fg c2">
-                  <div class="f"><label>Website URL <span class="dbh">websiteUrl</span></label><input type="url" value="https://www.school.edu"/></div>
-                  <div class="f"><label>Last Updated <span class="dbh">lastUpdated</span></label><input type="date" value="2024-04-01"/></div>
-                </div>
-              </div></div>
-            </div>
+        <div class="chip note">ℹ Manage Privacy and Policy documents (PDFs) here. These will appear as tabs on the website.</div>
+        
+        <div class="block">
+          <div class="bh"><div class="bt"> Introduction <span class="dbc">privacy.intro</span></div><div class="ba"><button class="btn gd" onclick="save()"> Save</button></div></div>
+          <div class="bb"><div class="fg">
+            <div class="f"><label>Introductory Paragraph</label><textarea>Loretto Central School is committed to protecting the privacy of our community. Please find our official policy documents below.</textarea></div>
+          </div></div>
+        </div>
 
-            <div class="block"><div class="bh"><div class="bt"> Information We Collect <span class="dbc">privacy.dataCollected[]</span></div><div class="ba"><button class="btn gd" onclick="save()"> Save</button></div></div>
-              <div class="bb"><div class="le" id="priv-col">
-                <div class="lr"><input value="Contact Form Data: Name, email, phone number, and message when submitting an enquiry"/><button class="ab del" onclick="this.closest('.lr').remove()"></button></div>
-                <div class="lr"><input value="Admission Enquiry Data: Student name, class, parent details submitted during admission enquiries"/><button class="ab del" onclick="this.closest('.lr').remove()"></button></div>
-                <div class="lr"><input value="Usage Data: Pages visited, time spent, and browser/device information collected anonymously"/><button class="ab del" onclick="this.closest('.lr').remove()"></button></div>
-                <div class="lr"><input value="Cookies: Small data files stored on your device to improve browsing experience"/><button class="ab del" onclick="this.closest('.lr').remove()"></button></div>
-              </div><button class="add-btn" onclick="addLR('priv-col')">＋ Add Item</button></div>
-            </div>
-
-            <div class="block"><div class="bh"><div class="bt"> Data Protection <span class="dbc">privacy.dataProtection[]</span></div><div class="ba"><button class="btn gd" onclick="save()"> Save</button></div></div>
-              <div class="bb"><div class="le" id="priv-dp">
-                <div class="lr"><input value="All personal data is stored securely and accessed only by authorised school personnel"/><button class="ab del" onclick="this.closest('.lr').remove()"></button></div>
-                <div class="lr"><input value="We do not sell, trade, or share your personal information with third parties"/><button class="ab del" onclick="this.closest('.lr').remove()"></button></div>
-                <div class="lr"><input value="Data collected for admission purposes is used solely for school administration"/><button class="ab del" onclick="this.closest('.lr').remove()"></button></div>
-                <div class="lr"><input value="Student data is handled in compliance with applicable data protection laws"/><button class="ab del" onclick="this.closest('.lr').remove()"></button></div>
-                <div class="lr"><input value="Our website uses HTTPS encryption to protect data transmitted online"/><button class="ab del" onclick="this.closest('.lr').remove()"></button></div>
-              </div><button class="add-btn" onclick="addLR('priv-dp')">＋ Add Point</button></div>
-            </div>
-          </div>
-
-          <div>
-            <div class="block"><div class="bh"><div class="bt"> How We Use Data — Cards <span class="dbc">privacy.usageCards[]</span></div><div class="ba"><button class="btn out" onclick="addFC('priv-cards')">＋</button><button class="btn gd" onclick="save()"> Save</button></div></div>
-              <div class="bb"><div class="fcg" id="priv-cards" style="grid-template-columns:1fr;">
-                <div class="fce"><div class="fch"><span class="fcn">1</span><button class="ab del" style="margin-left:auto" onclick="this.closest('.fce').remove()"></button></div><input value=""/><input value="Communication"/><textarea>To respond to enquiries, admission requests, and general queries in a timely manner.</textarea></div>
-                <div class="fce"><div class="fch"><span class="fcn">2</span><button class="ab del" style="margin-left:auto" onclick="this.closest('.fce').remove()"></button></div><input value=""/><input value="Website Improvement"/><textarea>Anonymised analytics data used to improve website content, navigation, and performance.</textarea></div>
-                <div class="fce"><div class="fch"><span class="fcn">3</span><button class="ab del" style="margin-left:auto" onclick="this.closest('.fce').remove()"></button></div><input value=""/><input value="School Updates"/><textarea>With your consent, we may send school news, circulars, and event notifications.</textarea></div>
-              </div></div>
-            </div>
-
-            <div class="block"><div class="bh"><div class="bt"> Your Rights Table <span class="dbc">privacy.rights[]</span></div><div class="ba"><button class="btn out" onclick="addTR('priv-rt',2)">＋</button><button class="btn gd" onclick="save()"> Save</button></div></div>
-              <div class="bb" style="padding:0;">
-                <table class="te"><thead><tr><th>Right</th><th>Description</th><th style="width:34px"></th></tr></thead>
-                <tbody id="priv-rt">
-                  <tr><td><input value="Access"/></td><td><input value="Request a copy of personal data we hold about you"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
-                  <tr><td><input value="Correction"/></td><td><input value="Request correction of inaccurate or incomplete data"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
-                  <tr><td><input value="Deletion"/></td><td><input value="Request deletion of your personal data (subject to legal obligations)"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
-                  <tr><td><input value="Opt-Out"/></td><td><input value="Unsubscribe from school communications at any time"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
-                  <tr><td><input value="Complaint"/></td><td><input value="Lodge a complaint if you feel your data rights are violated"/></td><td><button class="ab del" onclick="this.closest('tr').remove()"></button></td></tr>
-                </tbody></table>
-              </div>
-            </div>
+        <div class="block">
+          <div class="bh"><div class="bt"> Policy Tabs <span class="dbc">privacy.policyTabs[]</span></div><div class="ba"><button class="btn out" onclick="addPolicyRow('priv-tabs')">＋ Add Tab</button><button class="btn gd" onclick="save()"> Save</button></div></div>
+          <div class="bb" style="padding:0;">
+            <table class="te"><thead><tr><th>Tab Title</th><th>PDF Document Link</th><th style="width:34px"></th></tr></thead>
+            <tbody id="priv-tabs">
+            </tbody></table>
           </div>
         </div>
       </div>
@@ -749,7 +709,7 @@ var META={
   facilities:   {t:'School Info — Facilities',               s:'school_info.facilities',                p:'../school-information/6-facilities.html'},
   harassment:   {t:'School Info — Prevention of Harassment', s:'school_info.harassment',                p:'../school-information/7-prevention-sexual-harassment.html'},
   childprotect: {t:'School Info — Child Protection Policy',  s:'school_info.childProtect',              p:'../school-information/8-child-protection-policy.html'},
-  privacy:      {t:'School Info — Privacy Policy',           s:'school_info.privacy_policy',            p:'../school-information/9-website-privacy-policy.html'},
+  privacy:      {t:'School Info — Privacy and Policy',       s:'school_info.privacy_policy',            p:'../school-information/9-website-privacy-policy.html'},
 };
 
 function apiJson(url, options){
@@ -836,6 +796,20 @@ async function go(id){
     document.getElementById('prevBtn').onclick=function(){window.open(m.p,'_blank')};
   }
   await loadSection(id);
+  if(id==='privacy') ensurePrivacyBlocks();
+}
+
+function ensurePrivacyBlocks(){
+  var panel=getPanel('privacy'); if(!panel) return;
+  if(!document.getElementById('priv-tabs')){
+    // If it's the old two-col layout, wipe it and reset to simple layout
+    panel.innerHTML = '<div class="chip note">ℹ Manage Privacy and Policy documents (PDFs) here. These will appear as tabs on the website.</div>'
+      +'<div class="block"><div class="bh"><div class="bt"> Introduction <span class="dbc">privacy.intro</span></div><div class="ba"><button class="btn gd" onclick="save()"> Save</button></div></div>'
+      +'<div class="bb"><div class="fg"><div class="f"><label>Introductory Paragraph</label><textarea>Loretto Central School is committed to protecting the privacy of our community. Please find our official policy documents below.</textarea></div></div></div></div>'
+      +'<div class="block"><div class="bh"><div class="bt"> Policy Tabs <span class="dbc">privacy.policyTabs[]</span></div><div class="ba"><button class="btn out" onclick="addPolicyRow(\'priv-tabs\')">＋ Add Tab</button><button class="btn gd" onclick="save()"> Save</button></div></div>'
+      +'<div class="bb" style="padding:0;"><table class="te"><thead><tr><th>Tab Title</th><th>PDF Document Link</th><th style="width:34px"></th></tr></thead>'
+      +'<tbody id="priv-tabs"></tbody></table></div></div>';
+  }
 }
 
 /* ═══════════════════════════════════
@@ -902,6 +876,20 @@ function addTR(tbodyId,cols){
 }
 
 /* ═══════════════════════════════════
+   POLICY ROW HELPER
+═══════════════════════════════════ */
+function addPolicyRow(tbodyId){
+  var tb=document.getElementById(tbodyId);if(!tb)return;
+  var tr=document.createElement('tr');
+  var n=Date.now();
+  tr.innerHTML='<td><input type="text" placeholder="Tab Title (e.g. Privacy Policy)..."/></td>'
+    +'<td><div class="cld-row"><input type="url" id="p-up-'+n+'" placeholder="PDF URL..."/><button class="cld-up" onclick="document.getElementById(\'p-f-'+n+'\').click()"> Upload</button>'
+    +'<input type="file" id="p-f-'+n+'" accept="application/pdf" style="display:none" onchange="cldUp(this,\'p-up-'+n+'\')"/></div></td>'
+    +'<td><button class="ab del" onclick="this.closest(\'tr\').remove()"></button></td>';
+  tb.appendChild(tr);tr.querySelector('input').focus();
+}
+
+/* ═══════════════════════════════════
    CLOUDINARY UPLOAD
 ═══════════════════════════════════ */
 async function cldUp(input,outputId){
@@ -922,7 +910,7 @@ async function cldUp(input,outputId){
 ═══════════════════════════════════ */
 // Admin token prompt removed
 document.addEventListener('keydown',function(e){if((e.ctrlKey||e.metaKey)&&e.key==='s'){e.preventDefault();save();}});
-loadSection(currentTab);
+loadSection(currentTab).then(function(){ if(currentTab==='privacy') ensurePrivacyBlocks(); });
 </script>
 </body>
 </html>

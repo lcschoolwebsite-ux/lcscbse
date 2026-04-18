@@ -12,7 +12,7 @@
 
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Website Privacy Policy | School Information | Loretto Central School</title>
+  <title>Privacy and Policy | School Information | Loretto Central School</title>
   <link rel="shortcut icon" href="../favicon.ico" type="image/x-icon">
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800&family=Nunito:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <style>
@@ -373,6 +373,31 @@
     .notice-box { background: var(--navy-dark); border-radius: 10px; padding: 20px 24px; margin: 28px 0 0; }
     .notice-box p { color: rgba(255,255,255,0.78); font-size: 0.9rem; line-height: 1.72; margin: 0; }
     .notice-box strong { color: var(--gold-light); }
+    
+    /* POLICY TABS */
+    .policy-tabs-container { margin-top: 32px; }
+    .policy-tabs-list { display: flex; gap: 10px; overflow-x: auto; margin-bottom: 24px; padding-bottom: 12px; scrollbar-width: thin; scrollbar-color: var(--gold) transparent; }
+    .policy-tabs-list::-webkit-scrollbar { height: 6px; }
+    .policy-tabs-list::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 10px; }
+    .policy-tab-btn {
+      padding: 12px 24px;
+      background: var(--light-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: var(--navy);
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      white-space: nowrap;
+    }
+    .policy-tab-btn:hover { background: var(--gold-pale); border-color: var(--gold); transform: translateY(-2px); }
+    .policy-tab-btn.active { background: var(--navy); color: var(--white); border-color: var(--navy); box-shadow: 0 6px 18px rgba(14,107,107,0.25); }
+    .policy-tab-viewer { border-radius: 16px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.1); border: 1px solid var(--border); transition: all 0.3s ease; }
+    .policy-tab-viewer:hover { box-shadow: 0 15px 45px rgba(0,0,0,0.15); }
+    .open-pdf-btn:hover { background: var(--navy-dark) !important; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(9,79,79,0.3); }
+
     @media (max-width: 768px) { .feat-grid { grid-template-columns: 1fr 1fr; } }
     @media (max-width: 480px) { .feat-grid { grid-template-columns: 1fr; } }
   </style>
@@ -386,13 +411,13 @@
 <div class="page-banner">
   <div class="container">
     <div class="page-banner-content">
-      <h1>Website Privacy Policy</h1>
+      <h1>Privacy and Policy</h1>
       <div class="breadcrumb">
         <a href="../index.html">Home</a>
         <span>›</span>
         <span>School Information</span>
         <span>›</span>
-        <span>Website Privacy Policy</span>
+        <span>Privacy and Policy</span>
       </div>
     </div>
   </div>
@@ -408,7 +433,7 @@
     <a href="6-facilities.html">Facilities in the School</a>
     <a href="7-prevention-sexual-harassment.html">Prevention of Sexual Harassment</a>
     <a href="8-child-protection-policy.html">Child Protection Policy</a>
-    <a href="9-website-privacy-policy.html" class="active">Website Privacy Policy</a>
+    <a href="9-website-privacy-policy.html" class="active">Privacy and Policy</a>
   </div>
 </div>
 

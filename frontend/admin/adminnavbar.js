@@ -196,7 +196,7 @@
     {c:'School Info',t:'Facilities',                       u:A+'admin-schoolinfo.html'},
     {c:'School Info',t:'Prevention of Harassment',         u:A+'admin-schoolinfo.html'},
     {c:'School Info',t:'Child Protection Policy',          u:A+'admin-schoolinfo.html'},
-    {c:'School Info',t:'Website Privacy Policy',           u:A+'admin-schoolinfo.html'},
+    {c:'School Info',t:'Privacy and Policy',           u:A+'admin-schoolinfo.html'},
     {c:'Activities', t:'Western Dance',                    u:A+'admin-activities.html'},
     {c:'Activities', t:'Thinkers Space',                   u:A+'admin-activities.html'},
     {c:'Activities', t:'Classical Dance',                  u:A+'admin-activities.html'},
@@ -327,7 +327,7 @@
             [A+'admin-schoolinfo.html', 'Facilities'],
             [A+'admin-schoolinfo.html', 'Prevention of Harassment'],
             [A+'admin-schoolinfo.html', 'Child Protection Policy'],
-            [A+'admin-schoolinfo.html', 'Privacy Policy'],
+            [A+'admin-schoolinfo.html', 'Privacy and Policy'],
           ]) + '</div>')
 
       + navItem(A+'admin-activities.html', 'Activities &amp; Clubs',
@@ -419,7 +419,7 @@
         ['Facilities',               A+'admin-schoolinfo.html'],
         ['Prevention of Harassment', A+'admin-schoolinfo.html'],
         ['Child Protection Policy',  A+'admin-schoolinfo.html'],
-        ['Privacy Policy',           A+'admin-schoolinfo.html'],
+        ['Privacy and Policy',           A+'admin-schoolinfo.html'],
       ]],
       ['Activities & Clubs',   A+'admin-activities.html',     [
         ['Western Dance',            A+'admin-activities.html'],

@@ -98,7 +98,7 @@
     '    <div class="footer-bottom">',
     '      <span>&#169; <span class="lcs-ft-yr"></span> Loretto Central School, Bantwal. All rights reserved. &nbsp;&#183;&nbsp; CBSE Affiliation No. 831368</span>',
     '      <div class="footer-bottom-links">',
-    '        <a href="' + R + 'school-information/9-website-privacy-policy.html">Privacy Policy</a>',
+    '        <a href="' + R + 'school-information/9-website-privacy-policy.html">Privacy and Policy</a>',
     '        <a href="' + R + 'mandatory-disclosure.html">Mandatory Disclosure</a>',
     '      </div>',
     '    </div>',
