@@ -356,11 +356,11 @@
         url: inputValue(inputs[2])
       };
     }).filter(function (tab) {
-      return tab.title && tab.url;
+      return tab.title || tab.url;
     });
 
     if (!rows.length) {
-      return renderSectionHeading(title) + '<div class="notice-box"><p>No policy documents have been uploaded yet.</p></div>';
+      return renderSectionHeading(title) + '<div class="notice-box"><p>Detected the Policy section, but the cards seem empty. Please re-save in Admin.</p></div>';
     }
 
     var html = renderSectionHeading(title);
