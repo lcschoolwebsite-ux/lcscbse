@@ -1996,20 +1996,20 @@ function createBookHeaderRow(label) {
 }
 
 function deleteBookSection(btn) {
-  if (!confirm('Are you sure you want to delete this class group and its book records?')) return;
+  if (!confirm('Are you sure you want to delete this class group and ALL its book records?')) return;
   var hdr = btn.closest('tr');
-  var tbody = hdr.parentElement;
-  if (!tbody) return;
-  var rows = Array.prototype.slice.call(tbody.querySelectorAll('tr'));
-  var start = rows.indexOf(hdr);
-  if (start === -1) return;
+  if (!hdr) return;
   
-  var toDel = [hdr];
-  for (var i = start + 1; i < rows.length; i++) {
-    if (rows[i].classList.contains('book-class-hd')) break;
-    toDel.push(rows[i]);
+  // Find and remove all rows until the next header or end of tbody
+  var nxt = hdr.nextElementSibling;
+  while (nxt && !nxt.classList.contains('book-class-hd')) {
+    var toRem = nxt;
+    nxt = nxt.nextElementSibling;
+    toRem.remove();
   }
-  toDel.forEach(function(r){ r.remove(); });
+  
+  // Finally remove the header itself
+  hdr.remove();
 }
 
 function collectBookListGroups() {
