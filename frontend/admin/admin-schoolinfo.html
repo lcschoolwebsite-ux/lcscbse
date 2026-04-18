@@ -658,21 +658,23 @@
 
       <!-- ===== PRIVACY POLICY ===== -->
       <div class="panel" id="tab-privacy">
-        <div class="chip note">ℹ Manage Privacy and Policy documents (PDFs) here. These will appear as tabs on the website.</div>
+        <div class="chip note">ℹ Manage Privacy and Policy documents (PDFs) here. These will appear as cards on the website.</div>
         
-        <div class="block">
-          <div class="bh"><div class="bt"> Introduction <span class="dbc">privacy.intro</span></div><div class="ba"><button class="btn gd" onclick="save()"> Save</button></div></div>
-          <div class="bb"><div class="fg">
-            <div class="f"><label>Introductory Paragraph</label><textarea>Loretto Central School is committed to protecting the privacy of our community. Please find our official policy documents below.</textarea></div>
-          </div></div>
-        </div>
+        <div id="school-info-snapshot">
+          <div class="block">
+            <div class="bh"><div class="bt"> Introduction <span class="dbc">privacy.intro</span></div><div class="ba"><button class="btn gd" onclick="save()"> Save</button></div></div>
+            <div class="bb"><div class="fg">
+              <div class="f"><label>Introductory Paragraph</label><textarea>Loretto Central School is committed to protecting the privacy of our community. Please find our official policy documents below.</textarea></div>
+            </div></div>
+          </div>
 
-        <div class="block">
-          <div class="bh"><div class="bt"> Policy Tabs <span class="dbc">privacy.policyTabs[]</span></div><div class="ba"><button class="btn out" onclick="addPolicyRow('priv-tabs')">＋ Add Card</button><button class="btn gd" onclick="save()"> Save</button></div></div>
-          <div class="bb" style="padding:0;">
-            <table class="te"><thead><tr><th>Card Title</th><th>Description</th><th>PDF Document Link</th><th style="width:34px"></th></tr></thead>
-            <tbody id="priv-tabs">
-            </tbody></table>
+          <div class="block">
+            <div class="bh"><div class="bt"> Policy Tabs <span class="dbc">privacy.policyTabs[]</span></div><div class="ba"><button class="btn out" onclick="addPolicyRow('priv-tabs')">＋ Add Card</button><button class="btn gd" onclick="save()"> Save</button></div></div>
+            <div class="bb" style="padding:0;">
+              <table class="te"><thead><tr><th>Card Title</th><th>Description</th><th>PDF Document Link</th><th style="width:34px"></th></tr></thead>
+              <tbody id="priv-tabs">
+              </tbody></table>
+            </div>
           </div>
         </div>
       </div>
@@ -805,12 +807,14 @@ function ensurePrivacyBlocks(){
   var panel=getPanel('privacy'); if(!panel) return;
   if(!document.getElementById('priv-tabs')){
     // If it's the old two-col layout, wipe it and reset to simple layout
-    panel.innerHTML = '<div class="chip note">ℹ Manage Privacy and Policy documents (PDFs) here. These will appear as tabs on the website.</div>'
+    panel.innerHTML = '<div class="chip note">ℹ Manage Privacy and Policy documents (PDFs) here. These will appear as cards on the website.</div>'
+      +'<div id="school-info-snapshot">'
       +'<div class="block"><div class="bh"><div class="bt"> Introduction <span class="dbc">privacy.intro</span></div><div class="ba"><button class="btn gd" onclick="save()"> Save</button></div></div>'
       +'<div class="bb"><div class="fg"><div class="f"><label>Introductory Paragraph</label><textarea>Loretto Central School is committed to protecting the privacy of our community. Please find our official policy documents below.</textarea></div></div></div></div>'
       +'<div class="block"><div class="bh"><div class="bt"> Policy Tabs <span class="dbc">privacy.policyTabs[]</span></div><div class="ba"><button class="btn out" onclick="addPolicyRow(\'priv-tabs\')">＋ Add Card</button><button class="btn gd" onclick="save()"> Save</button></div></div>'
       +'<div class="bb" style="padding:0;"><table class="te"><thead><tr><th>Card Title</th><th>Description</th><th>PDF Document Link</th><th style="width:34px"></th></tr></thead>'
-      +'<tbody id="priv-tabs"></tbody></table></div></div>';
+      +'<tbody id="priv-tabs"></tbody></table></div></div>'
+      +'</div>';
   }
 }
 
