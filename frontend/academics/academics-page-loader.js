@@ -503,14 +503,16 @@
       var badge = normalizeText(item.type || (item.meta && item.meta.badge) || (index === 0 ? 'NEW' : 'CBSE'));
       var source = normalizeText(item.description || (item.meta && item.meta.source));
       var metaParts = [source, formatDisplayDate(getDocumentDateValue(item))].filter(Boolean);
+      var typeLabel = isExternal ? 'LINK' : 'PDF';
+      var targetAttr = isExternal ? ' target="_blank" rel="noopener noreferrer"' : '';
       return ''
-        + '<a href="' + escapeHtml(docUrl || '#') + '" target="_blank" rel="noopener noreferrer" class="circular-item" aria-label="Open circular PDF">'
+        + '<a href="' + escapeHtml(docUrl || '#') + '"' + targetAttr + ' class="circular-item" aria-label="Open circular ' + typeLabel + '">'
         + '<div class="circ-icon"><i class="fas ' + iconClass + '"></i></div>'
         + '<div class="circ-body">'
         + '<div class="circ-title">' + escapeHtml(item.title || item.name || 'Untitled Circular') + '</div>'
         + '<div class="circ-meta">' + escapeHtml(metaParts.join(' · ')) + '</div>'
         + '</div>'
-        + '<span class="circ-badge' + (index === 0 ? ' circ-new' : '') + '">' + escapeHtml(badge) + '</span>'
+        + '<span class="circ-badge ' + (isExternal ? 'circ-link' : 'circ-pdf') + '">' + typeLabel + '</span>'
         + '</a>';
     }).join('');
   }
@@ -528,18 +530,19 @@
       var dateText = formatDisplayDate(getDocumentDateValue(item));
       var badge = normalizeText(item.meta && item.meta.badge) || 'NOTICE';
       var url = normalizeDocumentUrl(item.url);
-      var isExternal = item.meta && item.meta.isExternal;
-      var iconClass = isExternal ? 'fa-square-up-right' : 'fa-file-pdf';
+      var typeLabel = isExternal ? 'LINK' : 'PDF';
+      var targetAttr = isExternal ? ' target="_blank" rel="noopener noreferrer"' : '';
+      var tagClass = badge.toUpperCase() === 'LATEST' || badge.toUpperCase() === 'RECENT' ? ' circ-new' : '';
       var cardInner = ''
         + '<div class="circ-icon"><i class="fas ' + iconClass + '"></i></div>'
         + '<div class="circ-body">'
         + '<div class="circ-title">' + escapeHtml(title) + '</div>'
         + '<div class="circ-meta">' + escapeHtml([metaText, dateText].filter(Boolean).join(' · ')) + '</div>'
         + '</div>'
-        + '<span class="circ-badge' + tag + '">' + escapeHtml(badge) + '</span>';
+        + '<span class="circ-badge ' + (isExternal ? 'circ-link' : 'circ-pdf') + ' ' + tagClass + '">' + typeLabel + '</span>';
 
       if (url) {
-        return '<a class="circular-item" href="' + escapeHtml(url) + '" target="_blank" rel="noopener noreferrer">' + cardInner + '</a>';
+        return '<a class="circular-item" href="' + escapeHtml(url) + '"' + targetAttr + '>' + cardInner + '</a>';
       }
 
       return '<div class="circular-item" style="cursor:default;">' + cardInner + '</div>';
