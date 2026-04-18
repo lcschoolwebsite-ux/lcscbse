@@ -755,6 +755,8 @@ function clonePanelWithFormState(panel){
       return;
     }
 
+    if(field.type==='file') return;
+
     target.value=field.value;
     target.setAttribute('value',field.value);
   });
