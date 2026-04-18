@@ -5930,14 +5930,23 @@
         if (Array.isArray(whyUs.cards) && whyUs.cards.length) {
           var whyUsHost = document.getElementById('wtBelt');
           if (whyUsHost) {
+            var capFix = function(str) {
+              if (!str) return '';
+              return str.toLowerCase().replace(/\b\w/g, function(l) { return l.toUpperCase(); });
+            };
+            var sentFix = function(str) {
+              if (!str) return '';
+              var s = str.toLowerCase();
+              return s.charAt(0).toUpperCase() + s.slice(1);
+            };
             whyUsHost.innerHTML = whyUs.cards.map(function (card, index) {
               return [
                 '<div class="wt-step">',
                 '<div class="wt-dot"></div>',
                 '<div class="wt-card">',
                 '<div class="wt-icon"><i class="fa-solid ' + (card.icon || 'fa-star') + '</i></div>',
-                '<div class="wt-title">' + (card.title || '') + '</div>',
-                '<div class="wt-text">' + (card.text || '') + '</div>',
+                '<div class="wt-title">' + capFix(card.title) + '</div>',
+                '<div class="wt-text">' + sentFix(card.text) + '</div>',
                 '</div>',
                 '</div>'
               ].join('');
