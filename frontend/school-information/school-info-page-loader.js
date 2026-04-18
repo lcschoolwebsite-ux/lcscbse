@@ -359,7 +359,9 @@
       return tab.title && tab.url;
     });
 
-    if (!rows.length) return '';
+    if (!rows.length) {
+      return renderSectionHeading(title) + '<div class="notice-box"><p>No policy documents have been uploaded yet.</p></div>';
+    }
 
     var html = renderSectionHeading(title);
     html += '<div class="document-grid">';
@@ -389,7 +391,7 @@
       return renderDownloadBox(title, body);
     }
 
-    if (/Policy Tabs/i.test(title)) {
+    if (/Policy|Tab/i.test(title)) {
       return renderPolicyGrid(title, body);
     }
 

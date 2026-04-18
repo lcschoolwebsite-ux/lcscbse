@@ -761,6 +761,8 @@ function clonePanelWithFormState(panel){
 
     target.value=field.value;
     target.setAttribute('value',field.value);
+    // Sync back to source to be sure for next clones
+    field.setAttribute('value', field.value);
   });
 
   return clone;
