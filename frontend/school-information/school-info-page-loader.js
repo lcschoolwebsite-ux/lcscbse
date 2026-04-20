@@ -404,10 +404,20 @@
 
   function renderDownloadBox(title, body) {
     var url = inputValue(body.querySelector('#cal-pdf')) || inputValue(body.querySelector('.cld-row input[type="url"]'));
-    if (!url) return '';
 
     var cardTitle = escapeHtml(title || 'School Calendar PDF');
-    var safeUrl   = escapeHtml(url);
+    var safeUrl   = url ? escapeHtml(url) : '';
+
+    var btnHtml = safeUrl
+      ? [
+          '<a href="' + safeUrl + '" target="_blank" rel="noopener noreferrer" class="cal-pdf-btn">',
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">',
+              '<path d="M12 15V3"/><path d="M17 10l-5 5-5-5"/><path d="M20 21H4"/>',
+            '</svg>',
+            'Download Calendar PDF',
+          '</a>'
+        ].join('')
+      : '<span class="cal-pdf-btn" style="opacity:0.55;cursor:default;pointer-events:none;">&#128197; Calendar PDF Coming Soon</span>';
 
     return [
       '<div class="cal-pdf-card">',
@@ -416,21 +426,16 @@
           '<span class="cal-pdf-tag">&#128196;&nbsp; Official Document</span>',
           '<div class="cal-pdf-title">' + cardTitle + '</div>',
           '<div class="cal-pdf-desc">Download the complete academic calendar for the current session &mdash; important dates, holidays, events &amp; examinations all in one place.</div>',
-          '<a href="' + safeUrl + '" target="_blank" rel="noopener noreferrer" class="cal-pdf-btn">',
-            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">',
-              '<path d="M12 15V3"/><path d="M17 10l-5 5-5-5"/><path d="M20 21H4"/>',
-            '</svg>',
-            'Download Calendar PDF',
-          '</a>',
+          btnHtml,
         '</div>',
         '<div class="cal-pdf-divider"></div>',
         '<div class="cal-pdf-meta">',
           '<div class="cal-pdf-meta-icon">&#128274;</div>',
           '<div class="cal-pdf-meta-label">Format</div>',
           '<div class="cal-pdf-meta-val">PDF</div>',
-          '<div class="cal-pdf-meta-icon" style="margin-top:12px">&#9989;</div>',
-          '<div class="cal-pdf-meta-label">Verified</div>',
-          '<div class="cal-pdf-meta-val">Official</div>',
+          '<div class="cal-pdf-meta-icon" style="margin-top:12px">' + (safeUrl ? '&#9989;' : '&#128336;') + '</div>',
+          '<div class="cal-pdf-meta-label">' + (safeUrl ? 'Verified' : 'Status') + '</div>',
+          '<div class="cal-pdf-meta-val">' + (safeUrl ? 'Official' : 'Pending') + '</div>',
         '</div>',
       '</div>'
     ].join('');
