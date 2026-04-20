@@ -429,8 +429,16 @@
         }
       }
 
-      // CRITICAL: For FormData, many browsers fail if ANY headers object is passed that was manually constructed
-      // but doesn't include the boundary. If we only added auth tokens, we should be fine, but some environments are sensitive.
+      // CRITICAL: Ensure Content-Type is NOT set for FormData.
+      // Even if deleted in panels, the interceptor might have re-added it via new Headers(h)
+      // or the browser might be confused by the existence of a headers object.
+      if (isFormData && nextInit.headers) {
+        if (nextInit.headers instanceof Headers) {
+          nextInit.headers.delete('Content-Type');
+        } else {
+          delete nextInit.headers['Content-Type'];
+        }
+      }
       
       return nativeFetch(resolvedUrl, nextInit).then(function (res) {
         if (res.status === 401 && !isLoginPage) {
