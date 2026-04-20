@@ -238,11 +238,13 @@
         '.cal-pdf-meta{flex-direction:row;justify-content:center;gap:24px;}',
       '}',
 
-      /* ── Uniform Image Card ── */
-      '.uni-img-card{margin:0 0 24px;border-radius:14px;overflow:hidden;box-shadow:0 8px 28px rgba(14,107,107,0.14);position:relative;}',
-      '.uni-img-card img{width:100%;display:block;max-height:340px;object-fit:cover;transition:transform 0.4s ease;}',
-      '.uni-img-card:hover img{transform:scale(1.03);}',
-      '.uni-img-badge{position:absolute;bottom:12px;left:12px;background:linear-gradient(135deg,rgba(9,79,79,0.9),rgba(14,107,107,0.85));color:#fff;font-size:0.7rem;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;padding:5px 12px;border-radius:6px;backdrop-filter:blur(4px);border:1px solid rgba(255,255,255,0.15);}'
+      /* ── Uniform Image Grid ── */
+      '.uni-img-grid{display:grid;grid-template-columns:repeat(4, 1fr);gap:16px;margin:20px 0 32px;}',
+      '.uni-img-item{border-radius:12px;overflow:hidden;box-shadow:0 8px 24px rgba(9,79,79,0.12);position:relative;background:rgba(255,255,255,0.05);}',
+      '.uni-img-item img{width:100%;aspect-ratio:3/4.2;object-fit:cover;display:block;transition:transform 0.5s cubic-bezier(0.4,0,0.2,1);}',
+      '.uni-img-item:hover img{transform:scale(1.08);}',
+      '@media(max-width:850px){.uni-img-grid{grid-template-columns:repeat(2, 1fr);gap:12px;}}',
+      '@media(max-width:480px){.uni-img-grid{grid-template-columns:1fr;}}'
     ].join('');
     document.head.appendChild(style);
   }
@@ -290,17 +292,22 @@
     }).filter(Boolean);
   }
 
-  function extractUniformImage(body) {
-    var imgInput = body.querySelector('.blk-uni-img');
-    return imgInput ? inputValue(imgInput) : '';
+  function extractUniformImages(body) {
+    return Array.prototype.slice.call(body.querySelectorAll('.blk-uni-img')).map(function (input) {
+      return inputValue(input);
+    }).filter(Boolean);
   }
 
-  function renderUniformImage(imgUrl, label) {
-    if (!imgUrl) return '';
-    return '<div class="uni-img-card">'
-      + '<img src="' + escapeHtml(imgUrl) + '" alt="' + escapeHtml(label) + ' uniform photo" loading="lazy"/>'
-      + '<div class="uni-img-badge">' + escapeHtml(label) + ' Uniform</div>'
-      + '</div>';
+  function renderUniformImages(urls, label) {
+    if (!urls.length) return '';
+    var html = '<div class="uni-img-grid">';
+    urls.forEach(function (url, idx) {
+      html += '<div class="uni-img-item">'
+        + '<img src="' + escapeHtml(url) + '" alt="' + escapeHtml(label) + ' uniform slot ' + (idx + 1) + '" loading="lazy"/>'
+        + '</div>';
+    });
+    html += '</div>';
+    return html;
   }
 
   function extractCards(body) {
@@ -525,11 +532,11 @@
     html += renderTextBlock(title, entries, fields, !isIntroLike && !items.length && !cards.length && !tableData);
     html += renderCards(title, cards);
 
-    /* ── Uniform image — shown above the list if uploaded ── */
+    /* ── Uniform images — shown above the list if uploaded ── */
     var isUniformBlock = /boys|girls/i.test(title) && /uniform/i.test(title);
     if (isUniformBlock) {
       var uniLabel = /boys/i.test(title) ? "Boys'" : "Girls'";
-      html += renderUniformImage(extractUniformImage(body), uniLabel);
+      html += renderUniformImages(extractUniformImages(body), uniLabel);
     }
 
     html += renderList(title, items);
