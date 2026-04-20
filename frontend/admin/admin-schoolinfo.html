@@ -896,8 +896,7 @@ function toast(msg,err){
   setTimeout(function(){t.classList.remove('show')},3000);
 }
 
-var API_BASE=window.location.origin;
-// Admin token logic removed
+var API_BASE = ''; 
 
 async function save(){
   try{
@@ -972,15 +971,31 @@ async function cldUp(input,outputId){
   toast('Uploading to Cloudinary...');
   var fd=new FormData();fd.append('file',input.files[0]);
   try{
-    var res=await fetch(API_BASE+'/api/upload',{method:'POST',body:fd});
-    var data=await res.json();
-    if(!res.ok||!data.url)throw new Error(data.error||'Upload failed');
-    var el=document.getElementById(outputId);if(el){
+    var res = await fetch('/api/upload', {
+      method: 'POST',
+      body: fd
+    });
+    
+    var responseText = await res.text();
+    var data;
+    try {
+      data = JSON.parse(responseText);
+    } catch (e) {
+      console.error('Invalid Response Body:', responseText);
+      throw new Error('Server returned non-JSON response (Status: ' + res.status + '). Please check console for details.');
+    }
+    
+    if(!res.ok||!data.url) throw new Error(data.error||'Upload failed');
+    var el=document.getElementById(outputId);
+    if(el){
       el.value=data.url;
       el.setAttribute('value', data.url);
     }
     toast('Uploaded to Cloudinary!');
-  }catch(e){toast(e.message,true)}
+  }catch(e){
+    console.error('Upload Error Details:', e);
+    toast(e.message,true);
+  }
 }
 
 /* ═══════════════════════════════════
