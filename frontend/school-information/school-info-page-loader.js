@@ -532,14 +532,15 @@
     html += renderTextBlock(title, entries, fields, !isIntroLike && !items.length && !cards.length && !tableData);
     html += renderCards(title, cards);
 
-    /* ── Uniform images — shown above the list if uploaded ── */
+    html += renderList(title, items);
+
+    /* ── Uniform images — shown below the list if uploaded ── */
     var isUniformBlock = /boys|girls/i.test(title) && /uniform/i.test(title);
     if (isUniformBlock) {
       var uniLabel = /boys/i.test(title) ? "Boys'" : "Girls'";
       html += renderUniformImages(extractUniformImages(body), uniLabel);
     }
 
-    html += renderList(title, items);
     html += renderTable(title, tableData);
 
     return html;
