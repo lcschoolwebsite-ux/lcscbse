@@ -1283,8 +1283,8 @@ var SETTINGS_KEY = 'disclosure-pages';
 var PDF_PAGE_NUMBERS = [1,2,3,4,5,6,7,8,9,10,12,13,14,15,16,17,18,19,20,21,22,23];
 var _pdfUrls = {};
 var _pdfDocs = {};
-var API_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? 'http://localhost:3000' : 'https://lcscbse-production.up.railway.app';
-var ADMIN_TOKEN = localStorage.getItem('token') || '';
+var API_BASE = localStorage.getItem('lorettoAdminApiBase') || (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? 'http://localhost:3000' : 'https://lcscbse-production.up.railway.app');
+var ADMIN_TOKEN = (window.AdminAuth && typeof window.AdminAuth.getToken === 'function') ? window.AdminAuth.getToken() : (localStorage.getItem('token') || '');
 var _saveInFlight = false;
 
 /* ── OVERVIEW TABLE ── */
@@ -1792,7 +1792,13 @@ async function uploadPDF(input, urlInputId, pageNum) {
   showToast('Uploading PDF to Cloudinary...');
   var fd=new FormData(); fd.append('file',input.files[0]);
   try {
-    var res=await fetch(API_BASE+'/api/upload',{method:'POST',headers:{'x-admin-token':ADMIN_TOKEN},body:fd});
+    var headers = apiH({});
+    delete headers['Content-Type'];
+    var res = await fetch(API_BASE + '/api/upload', {
+      method: 'POST',
+      headers: headers,
+      body: fd
+    });
     var data=await res.json();
     if (!res.ok||!data.url) throw new Error(data.error||'Upload failed');
     var el=document.getElementById(urlInputId); if(el) el.value=data.url;
