@@ -994,7 +994,7 @@ async function cldUp(input,outputId){
     toast('Uploaded to Cloudinary!');
   }catch(e){
     console.error('Upload Error Details:', e);
-    toast(e.message,true);
+    toast('🔴 RELOAD ERROR: ' + e.message,true);
   }
 }
 

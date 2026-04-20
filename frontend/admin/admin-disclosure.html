@@ -1819,7 +1819,7 @@ async function uploadPDF(input, urlInputId, pageNum) {
     showToast('PDF uploaded!');
   } catch (e) {
     console.error('Upload Error Details:', e);
-    showToast(e.message, true);
+    showToast('🔴 ERROR: ' + e.message, true);
   }
 }
 

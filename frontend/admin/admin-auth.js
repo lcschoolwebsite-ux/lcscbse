@@ -295,7 +295,9 @@
   }
 
   function getToken() {
-    return sessionStorage.getItem(TOKEN_KEY) || '';
+    var tok = sessionStorage.getItem(TOKEN_KEY) || localStorage.getItem(TOKEN_KEY);
+    if (!tok) tok = localStorage.getItem('token'); // Legacy fallback
+    return tok || '';
   }
 
   function getIdentifier() {
@@ -482,4 +484,5 @@
       document.documentElement.style.visibility = '';
     });
   }
+  console.log('[AdminAuth] v20260420-1 loaded');
 })();
