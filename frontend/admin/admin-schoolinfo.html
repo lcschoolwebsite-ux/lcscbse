@@ -13,7 +13,7 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>School Information — Admin | Loretto Central School</title>
-  <script src="/admin/admin-auth.js?v=20260330-1"></script>
+  <script src="/admin/admin-auth.js?v=20260420-1"></script>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800&family=Nunito:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
   <script src="/admin/adminfooter.js"></script>
   <style>
@@ -897,7 +897,7 @@ function toast(msg,err){
 }
 
 var API_BASE = ''; 
-
+var ADMIN_TOKEN = (window.AdminAuth && typeof window.AdminAuth.getToken === 'function') ? window.AdminAuth.getToken() : (localStorage.getItem('token') || '');
 async function save(){
   try{
     await apiJson(API_BASE+'/api/school-info',{
