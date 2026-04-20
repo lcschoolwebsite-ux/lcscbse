@@ -240,9 +240,11 @@
 
       /* ── Uniform Image Grid ── */
       '.uni-img-grid{display:grid;grid-template-columns:repeat(4, 1fr);gap:16px;margin:20px 0 32px;}',
-      '.uni-img-item{border-radius:12px;overflow:hidden;box-shadow:0 8px 24px rgba(9,79,79,0.12);position:relative;background:rgba(255,255,255,0.05);}',
+      '.uni-img-item{display:block;border-radius:12px;overflow:hidden;box-shadow:0 8px 24px rgba(9,79,79,0.12);position:relative;background:rgba(255,255,255,0.05);cursor:zoom-in;text-decoration:none !important;}',
       '.uni-img-item img{width:100%;aspect-ratio:3/4.2;object-fit:cover;display:block;transition:transform 0.5s cubic-bezier(0.4,0,0.2,1);}',
-      '.uni-img-item:hover img{transform:scale(1.08);}',
+      '.uni-img-item:hover img{transform:scale(1.08);filter:brightness(0.85);}',
+      '.uni-img-view-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(9,79,79,0.45);color:#fff;font-size:0.75rem;font-weight:700;opacity:0;transition:opacity 0.3s ease;backdrop-filter:blur(2px);}',
+      '.uni-img-item:hover .uni-img-view-overlay{opacity:1;}',
       '@media(max-width:850px){.uni-img-grid{grid-template-columns:repeat(2, 1fr);gap:12px;}}',
       '@media(max-width:480px){.uni-img-grid{grid-template-columns:1fr;}}'
     ].join('');
@@ -302,9 +304,11 @@
     if (!urls.length) return '';
     var html = '<div class="uni-img-grid">';
     urls.forEach(function (url, idx) {
-      html += '<div class="uni-img-item">'
-        + '<img src="' + escapeHtml(url) + '" alt="' + escapeHtml(label) + ' uniform slot ' + (idx + 1) + '" loading="lazy"/>'
-        + '</div>';
+      var safeUrl = escapeHtml(url);
+      html += '<a href="' + safeUrl + '" target="_blank" rel="noopener noreferrer" class="uni-img-item">'
+        + '<img src="' + safeUrl + '" alt="' + escapeHtml(label) + ' uniform slot ' + (idx + 1) + '" loading="lazy"/>'
+        + '<div class="uni-img-view-overlay">View Full Image</div>'
+        + '</a>';
     });
     html += '</div>';
     return html;
