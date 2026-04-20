@@ -236,7 +236,13 @@
         '.cal-pdf-card{flex-direction:column;padding:30px 24px;gap:24px;text-align:center;}',
         '.cal-pdf-divider{display:none;}',
         '.cal-pdf-meta{flex-direction:row;justify-content:center;gap:24px;}',
-      '}'
+      '}',
+
+      /* ── Uniform Image Card ── */
+      '.uni-img-card{margin:0 0 24px;border-radius:14px;overflow:hidden;box-shadow:0 8px 28px rgba(14,107,107,0.14);position:relative;}',
+      '.uni-img-card img{width:100%;display:block;max-height:340px;object-fit:cover;transition:transform 0.4s ease;}',
+      '.uni-img-card:hover img{transform:scale(1.03);}',
+      '.uni-img-badge{position:absolute;bottom:12px;left:12px;background:linear-gradient(135deg,rgba(9,79,79,0.9),rgba(14,107,107,0.85));color:#fff;font-size:0.7rem;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;padding:5px 12px;border-radius:6px;backdrop-filter:blur(4px);border:1px solid rgba(255,255,255,0.15);}'
     ].join('');
     document.head.appendChild(style);
   }
@@ -279,6 +285,19 @@
     return Array.prototype.slice.call(body.querySelectorAll('.le .lr input')).map(function (input) {
       return inputValue(input);
     }).filter(Boolean);
+  }
+
+  function extractUniformImage(body) {
+    var imgInput = body.querySelector('.blk-uni-img');
+    return imgInput ? inputValue(imgInput) : '';
+  }
+
+  function renderUniformImage(imgUrl, label) {
+    if (!imgUrl) return '';
+    return '<div class="uni-img-card">'
+      + '<img src="' + escapeHtml(imgUrl) + '" alt="' + escapeHtml(label) + ' uniform photo" loading="lazy"/>'
+      + '<div class="uni-img-badge">' + escapeHtml(label) + ' Uniform</div>'
+      + '</div>';
   }
 
   function extractCards(body) {
@@ -502,6 +521,14 @@
 
     html += renderTextBlock(title, entries, fields, !isIntroLike && !items.length && !cards.length && !tableData);
     html += renderCards(title, cards);
+
+    /* ── Uniform image — shown above the list if uploaded ── */
+    var isUniformBlock = /boys|girls/i.test(title) && /uniform/i.test(title);
+    if (isUniformBlock) {
+      var uniLabel = /boys/i.test(title) ? "Boys'" : "Girls'";
+      html += renderUniformImage(extractUniformImage(body), uniLabel);
+    }
+
     html += renderList(title, items);
     html += renderTable(title, tableData);
 
