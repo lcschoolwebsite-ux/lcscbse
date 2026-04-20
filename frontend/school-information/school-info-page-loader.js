@@ -269,7 +269,10 @@
   }
 
   function extractFieldPairs(body) {
-    return Array.prototype.slice.call(body.querySelectorAll('.f input')).map(function (input) {
+    return Array.prototype.slice.call(body.querySelectorAll('.f input')).filter(function (input) {
+      /* Skip Cloudinary upload URL inputs — they are not display fields */
+      return !input.classList.contains('blk-uni-img') && !input.closest('.cld-row');
+    }).map(function (input) {
       var wrapper = input.closest('.f');
       var label = labelText(wrapper);
       return {
