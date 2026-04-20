@@ -1283,7 +1283,7 @@ var SETTINGS_KEY = 'disclosure-pages';
 var PDF_PAGE_NUMBERS = [1,2,3,4,5,6,7,8,9,10,12,13,14,15,16,17,18,19,20,21,22,23];
 var _pdfUrls = {};
 var _pdfDocs = {};
-var API_BASE = localStorage.getItem('lorettoAdminApiBase') || (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? 'http://localhost:3000' : 'https://lcscbse-production.up.railway.app');
+var API_BASE = ''; // Use relative paths, AdminAuth will resolve base automatically
 var ADMIN_TOKEN = (window.AdminAuth && typeof window.AdminAuth.getToken === 'function') ? window.AdminAuth.getToken() : (localStorage.getItem('token') || '');
 var _saveInFlight = false;
 
@@ -1716,7 +1716,7 @@ async function syncDisclosurePdf(pageNum, pageData) {
     }
   };
 
-  var endpoint = existing ? (API_BASE + '/api/documents/' + existing._id) : (API_BASE + '/api/documents');
+  var endpoint = existing ? ('/api/documents/' + existing._id) : ('/api/documents');
   var method = existing ? 'PUT' : 'POST';
   var res = await fetch(endpoint, {
     method: method,
@@ -1792,11 +1792,11 @@ async function uploadPDF(input, urlInputId, pageNum) {
   showToast('Uploading PDF to Cloudinary...');
   var fd=new FormData(); fd.append('file',input.files[0]);
   try {
-    var headers = apiH({});
-    delete headers['Content-Type'];
-    var res = await fetch(API_BASE + '/api/upload', {
+    var h = apiH({});
+    delete h['Content-Type'];
+    var res = await fetch('/api/upload', {
       method: 'POST',
-      headers: headers,
+      headers: h,
       body: fd
     });
     var data=await res.json();
@@ -1809,13 +1809,16 @@ async function uploadPDF(input, urlInputId, pageNum) {
       return;
     }
     showToast('PDF uploaded!');
-  } catch(e){showToast(e.message,true);}
+  } catch(e){
+    console.error('Upload Error:', e);
+    showToast(e.message,true);
+  }
 }
 
 /* ── LOAD EXISTING PDFs ── */
 async function loadExistingPDFs() {
   try {
-    var res=await fetch(API_BASE+'/api/documents');
+    var res=await fetch('/api/documents');
     if(!res.ok) return;
     var docs=await res.json();
     (Array.isArray(docs)?docs:[]).forEach(function(d){
