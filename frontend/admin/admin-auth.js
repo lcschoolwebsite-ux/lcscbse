@@ -408,7 +408,30 @@
       }
 
       var nextInit = Object.assign({}, init || {});
-      nextInit.headers = withAuthHeaders(nextInit.headers);
+      var isFormData = nextInit.body instanceof FormData;
+
+      // Add auth headers
+      var token = getToken();
+      var identifier = getIdentifier();
+      if (token || identifier) {
+        var h = nextInit.headers;
+        var finalHeaders = h instanceof Headers ? h : new Headers(h || {});
+        if (token && !finalHeaders.has('x-admin-token')) finalHeaders.set('x-admin-token', token);
+        if (identifier && !finalHeaders.has('x-admin-identifier')) finalHeaders.set('x-admin-identifier', identifier);
+        
+        // Convert back to plain object if it was a plain object to be safe with older fetch implementations
+        if (!(h instanceof Headers) && !isFormData) {
+          var obj = {};
+          finalHeaders.forEach(function(v, k) { obj[k] = v; });
+          nextInit.headers = obj;
+        } else {
+          nextInit.headers = finalHeaders;
+        }
+      }
+
+      // CRITICAL: For FormData, many browsers fail if ANY headers object is passed that was manually constructed
+      // but doesn't include the boundary. If we only added auth tokens, we should be fine, but some environments are sensitive.
+      
       return nativeFetch(resolvedUrl, nextInit).then(function (res) {
         if (res.status === 401 && !isLoginPage) {
           clearToken();

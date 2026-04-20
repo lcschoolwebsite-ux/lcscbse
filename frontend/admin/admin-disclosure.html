@@ -1794,12 +1794,17 @@ async function uploadPDF(input, urlInputId, pageNum) {
   try {
     var h = apiH({});
     delete h['Content-Type'];
+    console.log('[DEBUG] Uploading to:', '/api/upload');
     var res = await fetch('/api/upload', {
       method: 'POST',
       headers: h,
       body: fd
     });
+    
+    console.log('[DEBUG] Upload Status:', res.status);
     var responseText = await res.text();
+    console.log('[DEBUG] Response Start:', responseText.substring(0, 100));
+    
     var data;
     try {
       data = JSON.parse(responseText);
