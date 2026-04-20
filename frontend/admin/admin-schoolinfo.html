@@ -301,18 +301,7 @@
                 <div class="lr"><input value="Black leather shoes (well-polished) with white socks"/><button class="ab del" onclick="this.closest('.lr').remove()"></button></div>
                 <div class="lr"><input value="School tie and school belt as prescribed"/><button class="ab del" onclick="this.closest('.lr').remove()"></button></div>
                 <div class="lr"><input value="School ID card worn at all times within campus"/><button class="ab del" onclick="this.closest('.lr').remove()"></button></div>
-              </div><button class="add-btn" onclick="addLR('uni-boys')">＋ Add Item</button>
-              <div class="f" style="margin-top:14px;">
-                <label>Boys' Uniform Photo <span class="dbh">uniformImage</span></label>
-                <div id="uni-boys-img-prev" class="cld-prev" style="height:160px;cursor:pointer;" onclick="document.getElementById('uni-boys-img-f').click()">
-                  <span style="font-size:1.5rem;">📷</span><span style="margin-top:6px;font-size:0.75rem;">Click to upload uniform photo</span>
-                </div>
-                <div class="cld-row">
-                  <input type="url" class="blk-uni-img" id="uni-boys-img" placeholder="https://res.cloudinary.com/..." oninput="this.setAttribute('value',this.value);var p=document.getElementById('uni-boys-img-prev');if(this.value){p.innerHTML='<img src=\''+this.value+'\' style=\'width:100%;height:100%;object-fit:cover;\'/>';}else{p.innerHTML='<span style=\'font-size:1.5rem;\'>📷</span><span style=\'margin-top:6px;font-size:0.75rem;\'>Click to upload uniform photo</span>';}"/>
-                  <button class="cld-up" onclick="document.getElementById('uni-boys-img-f').click()">Upload Image</button>
-                  <input type="file" id="uni-boys-img-f" accept="image/*" style="display:none" onchange="cldUp(this,'uni-boys-img').then(function(){var v=document.getElementById('uni-boys-img').value;var p=document.getElementById('uni-boys-img-prev');if(v)p.innerHTML='<img src=\''+v+'\' style=\'width:100%;height:100%;object-fit:cover;\'/>';})"/>
-                </div>
-              </div></div>
+              </div><button class="add-btn" onclick="addLR('uni-boys')">＋ Add Item</button></div>
             </div>
 
             <div class="block"><div class="bh"><div class="bt"> Girls' Uniform <span class="dbc">uniform.girls[]</span></div><div class="ba"><button class="btn gd" onclick="save()"> Save</button></div></div>
@@ -322,18 +311,7 @@
                 <div class="lr"><input value="Black shoes (well-polished) with white socks"/><button class="ab del" onclick="this.closest('.lr').remove()"></button></div>
                 <div class="lr"><input value="Hair neatly tied — plaited or ponytail with black/navy ribbon"/><button class="ab del" onclick="this.closest('.lr').remove()"></button></div>
                 <div class="lr"><input value="School ID card worn at all times within campus"/><button class="ab del" onclick="this.closest('.lr').remove()"></button></div>
-              </div><button class="add-btn" onclick="addLR('uni-girls')">＋ Add Item</button>
-              <div class="f" style="margin-top:14px;">
-                <label>Girls' Uniform Photo <span class="dbh">uniformImage</span></label>
-                <div id="uni-girls-img-prev" class="cld-prev" style="height:160px;cursor:pointer;" onclick="document.getElementById('uni-girls-img-f').click()">
-                  <span style="font-size:1.5rem;">📷</span><span style="margin-top:6px;font-size:0.75rem;">Click to upload uniform photo</span>
-                </div>
-                <div class="cld-row">
-                  <input type="url" class="blk-uni-img" id="uni-girls-img" placeholder="https://res.cloudinary.com/..." oninput="this.setAttribute('value',this.value);var p=document.getElementById('uni-girls-img-prev');if(this.value){p.innerHTML='<img src=\''+this.value+'\' style=\'width:100%;height:100%;object-fit:cover;\'/>';}else{p.innerHTML='<span style=\'font-size:1.5rem;\'>📷</span><span style=\'margin-top:6px;font-size:0.75rem;\'>Click to upload uniform photo</span>';}"/>
-                  <button class="cld-up" onclick="document.getElementById('uni-girls-img-f').click()">Upload Image</button>
-                  <input type="file" id="uni-girls-img-f" accept="image/*" style="display:none" onchange="cldUp(this,'uni-girls-img').then(function(){var v=document.getElementById('uni-girls-img').value;var p=document.getElementById('uni-girls-img-prev');if(v)p.innerHTML='<img src=\''+v+'\' style=\'width:100%;height:100%;object-fit:cover;\'/>';})"/>
-                </div>
-              </div></div>
+              </div><button class="add-btn" onclick="addLR('uni-girls')">＋ Add Item</button></div>
             </div>
 
             <div class="block"><div class="bh"><div class="bt"> PE / Sports Uniform <span class="dbc">uniform.pe[]</span></div><div class="ba"><button class="btn gd" onclick="save()"> Save</button></div></div>
