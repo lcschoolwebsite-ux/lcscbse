@@ -169,7 +169,74 @@
     style.id = 'school-info-runtime-style';
     style.textContent = [
       '.notice-box a{color:var(--gold-light);font-weight:700;text-decoration:none;}',
-      '.notice-box a:hover{color:#fff;text-decoration:underline;}'
+      '.notice-box a:hover{color:#fff;text-decoration:underline;}',
+
+      /* ── Calendar PDF Card ── */
+      '.cal-pdf-card{',
+        'position:relative;overflow:hidden;',
+        'background:linear-gradient(135deg,#094f4f 0%,#0e6b6b 45%,#127a7a 100%);',
+        'border-radius:18px;padding:40px 44px;margin:32px 0 0;',
+        'display:flex;align-items:center;gap:36px;',
+        'box-shadow:0 16px 48px rgba(9,79,79,0.30),0 4px 16px rgba(0,0,0,0.12);',
+      '}',
+      '.cal-pdf-card::before{',
+        'content:"";position:absolute;inset:0;',
+        'background:radial-gradient(ellipse 80% 80% at 110% -10%,rgba(200,150,12,0.28) 0%,transparent 60%),',
+        'radial-gradient(ellipse 60% 60% at -10% 110%,rgba(14,107,107,0.5) 0%,transparent 55%);',
+        'pointer-events:none;',
+      '}',
+      '.cal-pdf-card::after{',
+        'content:"";position:absolute;top:-60%;left:-30%;',
+        'width:200px;height:300%;',
+        'background:linear-gradient(105deg,transparent 40%,rgba(255,255,255,0.07) 50%,transparent 60%);',
+        'transform:rotate(15deg);',
+        'animation:calShimmer 4s ease-in-out infinite;',
+        'pointer-events:none;',
+      '}',
+      '@keyframes calShimmer{0%,100%{left:-30%}50%{left:120%}}',
+      '.cal-pdf-icon-wrap{',
+        'flex-shrink:0;width:88px;height:88px;border-radius:50%;',
+        'background:rgba(255,255,255,0.10);border:2px solid rgba(255,255,255,0.18);',
+        'display:flex;align-items:center;justify-content:center;',
+        'font-size:2.6rem;position:relative;z-index:1;',
+        'box-shadow:0 0 0 6px rgba(200,150,12,0.15),0 8px 24px rgba(0,0,0,0.20);',
+        'animation:calPulse 3s ease-in-out infinite;',
+      '}',
+      '@keyframes calPulse{0%,100%{box-shadow:0 0 0 6px rgba(200,150,12,0.15),0 8px 24px rgba(0,0,0,0.20)}50%{box-shadow:0 0 0 12px rgba(200,150,12,0.08),0 8px 24px rgba(0,0,0,0.20)}}',
+      '.cal-pdf-body{flex:1;position:relative;z-index:1;}',
+      '.cal-pdf-tag{display:inline-block;background:rgba(200,150,12,0.20);border:1px solid rgba(200,150,12,0.45);',
+        'color:var(--gold-light);font-size:0.68rem;font-weight:800;letter-spacing:0.12em;',
+        'text-transform:uppercase;padding:3px 10px;border-radius:20px;margin-bottom:12px;}',
+      '.cal-pdf-title{font-family:"Playfair Display",serif;font-size:1.65rem;font-weight:800;',
+        'color:#fff;margin-bottom:8px;line-height:1.25;letter-spacing:0.01em;}',
+      '.cal-pdf-desc{font-size:0.92rem;color:rgba(255,255,255,0.72);line-height:1.65;margin-bottom:24px;}',
+      '.cal-pdf-btn{',
+        'display:inline-flex;align-items:center;gap:10px;',
+        'background:linear-gradient(135deg,var(--gold) 0%,var(--gold-light) 100%);',
+        'color:#094f4f !important;font-weight:800;font-size:0.88rem;letter-spacing:0.04em;',
+        'text-transform:uppercase;text-decoration:none !important;',
+        'padding:13px 28px;border-radius:10px;',
+        'box-shadow:0 6px 20px rgba(200,150,12,0.45),inset 0 1px 0 rgba(255,255,255,0.35);',
+        'transition:transform 0.25s cubic-bezier(0.4,0,0.2,1),box-shadow 0.25s,filter 0.25s;',
+        'position:relative;overflow:hidden;',
+      '}',
+      '.cal-pdf-btn::before{content:"";position:absolute;inset:0;',
+        'background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,0.22) 50%,transparent 100%);',
+        'transform:translateX(-100%);transition:transform 0.5s ease;}',
+      '.cal-pdf-btn:hover::before{transform:translateX(100%);}',
+      '.cal-pdf-btn:hover{transform:translateY(-3px);box-shadow:0 10px 30px rgba(200,150,12,0.55),inset 0 1px 0 rgba(255,255,255,0.35);}',
+      '.cal-pdf-btn:active{transform:translateY(0);filter:brightness(0.95);}',
+      '.cal-pdf-btn svg{width:18px;height:18px;flex-shrink:0;}',
+      '.cal-pdf-divider{width:1px;height:80px;background:rgba(255,255,255,0.14);flex-shrink:0;align-self:center;position:relative;z-index:1;}',
+      '.cal-pdf-meta{flex-shrink:0;text-align:center;position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:6px;}',
+      '.cal-pdf-meta-icon{font-size:1.4rem;margin-bottom:2px;}',
+      '.cal-pdf-meta-label{font-size:0.7rem;color:rgba(255,255,255,0.5);font-weight:700;letter-spacing:0.08em;text-transform:uppercase;}',
+      '.cal-pdf-meta-val{font-size:0.88rem;color:rgba(255,255,255,0.88);font-weight:700;}',
+      '@media(max-width:680px){',
+        '.cal-pdf-card{flex-direction:column;padding:30px 24px;gap:24px;text-align:center;}',
+        '.cal-pdf-divider{display:none;}',
+        '.cal-pdf-meta{flex-direction:row;justify-content:center;gap:24px;}',
+      '}'
     ].join('');
     document.head.appendChild(style);
   }
@@ -339,9 +406,34 @@
     var url = inputValue(body.querySelector('#cal-pdf')) || inputValue(body.querySelector('.cld-row input[type="url"]'));
     if (!url) return '';
 
-    return '<div class="notice-box"><p><strong>' + escapeHtml(title || 'Download') + ':</strong> '
-      + '<a href="' + escapeHtml(url) + '" target="_blank" rel="noopener noreferrer">Open the latest PDF</a>'
-      + '</p></div>';
+    var cardTitle = escapeHtml(title || 'School Calendar PDF');
+    var safeUrl   = escapeHtml(url);
+
+    return [
+      '<div class="cal-pdf-card">',
+        '<div class="cal-pdf-icon-wrap">&#128197;</div>',
+        '<div class="cal-pdf-body">',
+          '<span class="cal-pdf-tag">&#128196;&nbsp; Official Document</span>',
+          '<div class="cal-pdf-title">' + cardTitle + '</div>',
+          '<div class="cal-pdf-desc">Download the complete academic calendar for the current session &mdash; important dates, holidays, events &amp; examinations all in one place.</div>',
+          '<a href="' + safeUrl + '" target="_blank" rel="noopener noreferrer" class="cal-pdf-btn">',
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">',
+              '<path d="M12 15V3"/><path d="M17 10l-5 5-5-5"/><path d="M20 21H4"/>',
+            '</svg>',
+            'Download Calendar PDF',
+          '</a>',
+        '</div>',
+        '<div class="cal-pdf-divider"></div>',
+        '<div class="cal-pdf-meta">',
+          '<div class="cal-pdf-meta-icon">&#128274;</div>',
+          '<div class="cal-pdf-meta-label">Format</div>',
+          '<div class="cal-pdf-meta-val">PDF</div>',
+          '<div class="cal-pdf-meta-icon" style="margin-top:12px">&#9989;</div>',
+          '<div class="cal-pdf-meta-label">Verified</div>',
+          '<div class="cal-pdf-meta-val">Official</div>',
+        '</div>',
+      '</div>'
+    ].join('');
   }
 
   function renderPolicyGrid(title, body) {
