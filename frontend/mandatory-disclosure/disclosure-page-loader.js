@@ -126,18 +126,50 @@
       'http://127.0.0.1:3000/api'
     ];
 
-    for (var i = 0; i < candidates.length; i += 1) {
-      var base = String(candidates[i] || '').replace(/\/+$/, '');
-      if (!base) continue;
-      try {
-        var response = await fetch(base + '/health', { method: 'GET', mode: 'cors' });
-        if (response.ok) return base;
-      } catch (error) {
-        /* ignore probe failures */
+    // Deduplicate
+    var uniqueCandidates = [];
+    var seen = {};
+    for (var i = 0; i < candidates.length; i++) {
+      var c = candidates[i];
+      if (c && !seen[c]) {
+        uniqueCandidates.push(c);
+        seen[c] = true;
       }
     }
 
-    return '/api';
+    async function probe(base) {
+      return new Promise(function (resolve, reject) {
+        var timer = setTimeout(function () { reject(new Error('Timeout')); }, 2500);
+        fetch(base.replace(/\/+$/, '') + '/health', { method: 'GET', mode: 'cors' })
+          .then(function (res) {
+            clearTimeout(timer);
+            if (res.ok) resolve(base);
+            else reject(new Error('Not OK'));
+          })
+          .catch(function (err) {
+            clearTimeout(timer);
+            reject(err);
+          });
+      });
+    }
+
+    try {
+      return await new Promise(function (resolve, reject) {
+        var finished = 0;
+        var resolved = false;
+        if (uniqueCandidates.length === 0) return resolve('/api');
+        uniqueCandidates.forEach(function (base) {
+          probe(base).then(function (res) {
+            if (!resolved) { resolved = true; resolve(res); }
+          }).catch(function () {
+            finished++;
+            if (finished === uniqueCandidates.length && !resolved) resolve('/api');
+          });
+        });
+      });
+    } catch (e) {
+      return '/api';
+    }
   }
 
   async function fetchJson(endpoint) {

@@ -263,19 +263,51 @@
     }
 
     var bases = await getApiBases();
-
-    for (var index = 0; index < bases.length; index += 1) {
-      var base = String(bases[index] || '').replace(/\/+$/, '');
-      if (!base) continue;
-
-      try {
-        var response = await fetch(base + path);
-        if (!response.ok) continue;
-        return await response.json().catch(function () { return null; });
-      } catch (error) { }
+    var uniqueBases = [];
+    var seen = {};
+    for (var i = 0; i < bases.length; i++) {
+      var b = bases[i];
+      if (b && !seen[b]) {
+        uniqueBases.push(b);
+        seen[b] = true;
+      }
     }
 
-    return null;
+    try {
+      return await new Promise(function (resolve, reject) {
+        var finished = 0;
+        var resolved = false;
+        if (uniqueBases.length === 0) return resolve(null);
+
+        uniqueBases.forEach(function (base) {
+          var timer = setTimeout(function () {
+            onFail();
+          }, 3000);
+
+          function onFail() {
+            clearTimeout(timer);
+            finished++;
+            if (finished === uniqueBases.length && !resolved) resolve(null);
+          }
+
+          fetch(base.replace(/\/+$/, '') + '/' + endpoint)
+            .then(function (res) {
+              clearTimeout(timer);
+              if (res.ok) return res.json();
+              throw new Error('Not OK');
+            })
+            .then(function (data) {
+              if (!resolved) {
+                resolved = true;
+                resolve(data);
+              }
+            })
+            .catch(onFail);
+        });
+      });
+    } catch (e) {
+      return null;
+    }
   }
 
   function setText(selector, value) {

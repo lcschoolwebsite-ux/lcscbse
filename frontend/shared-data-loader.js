@@ -10,7 +10,7 @@ var PROD_API_BASE = 'https://lcscbse-production.up.railway.app/api';
 var IS_LOCAL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.hostname.indexOf('.local') !== -1);
 var RESOLVED_API_BASE = '';
 var CACHE_PREFIX = 'loretto_cache_';
-var CACHE_TTL_MS = 1 * 60 * 1000; // Reduced to 1 minute for better responsiveness
+var CACHE_TTL_MS = 5 * 60 * 1000; // Increased to 5 minutes for better performance
 var CACHE_BUST_KEY = 'loretto_public_cache_bust';
 var REQUEST_CACHE = Object.create(null);
 var PENDING_REQUESTS = Object.create(null);
@@ -77,34 +77,81 @@ async function resolveApiBase() {
       origin + '/api',
       'http://localhost:3000/api',
       'http://127.0.0.1:3000/api',
-      'https://lcscbse-production.up.railway.app/api' // Legacy Railway
+      'https://lcscbse-production.up.railway.app/api'
     ];
 
-    for (var i = 0; i < candidates.length; i += 1) {
-      var base = candidates[i];
-      if (!base) continue;
-      try {
-        var probeUrl = String(base).replace(/\/+$/, '') + '/health';
-        var res = await fetch(probeUrl, { method: 'GET', mode: 'cors' });
-        if (res.ok) {
-          var data = await res.json().catch(function () { return null; });
-          // If the backend has our health footprint, we use it
-          if (data && (data.service === 'loretto-backend' || data.ok === true)) {
-            RESOLVED_API_BASE = base;
-            storageSet(API_BASE_KEY, base);
-            storageSet(API_BASE_OK_KEY, 'true');
-            return base;
-          }
-        }
-      } catch (error) {
-        // Ignore probe failures.
+    // Filter out duplicates and nulls
+    var uniqueCandidates = [];
+    var seen = {};
+    for (var i = 0; i < candidates.length; i++) {
+      var c = candidates[i];
+      if (c && !seen[c]) {
+        uniqueCandidates.push(c);
+        seen[c] = true;
       }
     }
 
-    // Default fallback if probing fails
-    var fallback = IS_LOCAL ? 'http://localhost:3000/api' : '/api';
-    RESOLVED_API_BASE = fallback;
-    return fallback;
+    async function probe(base) {
+      return new Promise(function (resolve, reject) {
+        var timer = setTimeout(function () {
+          reject(new Error('Timeout'));
+        }, 2500); // 2.5s timeout for fast fail
+
+        var probeUrl = String(base).replace(/\/+$/, '') + '/health';
+        fetch(probeUrl, { method: 'GET', mode: 'cors' })
+          .then(function (res) {
+            clearTimeout(timer);
+            if (res.ok) {
+              return res.json();
+            }
+            throw new Error('Not OK');
+          })
+          .then(function (data) {
+            if (data && (data.service === 'loretto-backend' || data.ok === true)) {
+              resolve(base);
+            } else {
+              reject(new Error('Invalid footprint'));
+            }
+          })
+          .catch(function (err) {
+            clearTimeout(timer);
+            reject(err);
+          });
+      });
+    }
+
+    // Parallel Probing
+    try {
+      var winner = await new Promise(function (resolve, reject) {
+        var finished = 0;
+        var resolved = false;
+        if (uniqueCandidates.length === 0) return reject(new Error('No candidates'));
+
+        uniqueCandidates.forEach(function (base) {
+          probe(base).then(function (result) {
+            if (!resolved) {
+              resolved = true;
+              resolve(result);
+            }
+          }).catch(function () {
+            finished++;
+            if (finished === uniqueCandidates.length && !resolved) {
+              reject(new Error('All probes failed'));
+            }
+          });
+        });
+      });
+
+      RESOLVED_API_BASE = winner;
+      storageSet(API_BASE_KEY, winner);
+      storageSet(API_BASE_OK_KEY, 'true');
+      return winner;
+    } catch (error) {
+      // Default fallback if probing fails
+      var fallback = IS_LOCAL ? 'http://localhost:3000/api' : '/api';
+      RESOLVED_API_BASE = fallback;
+      return fallback;
+    }
   })();
 
   try {
