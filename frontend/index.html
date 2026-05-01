@@ -11,6 +11,15 @@
     gtag("config", "G-DBNE16BEN6");
   </script>
 
+  <script>
+    (function() {
+      var SEEN_KEY = 'lcs_intro_seen';
+      if (!localStorage.getItem(SEEN_KEY)) {
+        window.location.replace('splash.html');
+      }
+    })();
+  </script>
+
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Loretto Central School</title>

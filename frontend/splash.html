@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Loretto Central School</title>
+  <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Cinzel:wght@400;600;700&family=Nunito:wght@300;400;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --cream:       #fdf8f0;
+      --cream-dark:  #f5edd8;
+      --gold:        #c8960c;
+      --gold-light:  #e8b020;
+      --gold-pale:   #f5e6c0;
+      --text-dark:   #2a1f0e;
+    }
+
+    html, body {
+      width: 100%; height: 100%;
+      overflow: hidden;
+      background: var(--cream);
+    }
+
+    /* ═══════════════════════════════════════
+       SPLASH WRAPPER
+    ═══════════════════════════════════════ */
+    #splash {
+      position: fixed;
+      inset: 0;
+      z-index: 99999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: var(--cream);
+      overflow: hidden;
+      opacity: 0; /* Initial state */
+      animation: splashFadeIn 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+      transition: opacity 1.4s cubic-bezier(0.4, 0, 0.2, 1),
+                  transform 1.4s cubic-bezier(0.4, 0, 0.2, 1),
+                  filter 1.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    @keyframes splashFadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    #splash.fade-out {
+      opacity: 0;
+      transform: scale(1.08);
+      filter: blur(12px);
+      pointer-events: none;
+    }
+
+    /* ── PAPER TEXTURE ── */
+    #splash::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.6;
+    }
+
+    /* ── RADIAL CENTER GLOW ── */
+    .bg-glow-center {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 700px; height: 700px;
+      border-radius: 50%;
+      background: radial-gradient(ellipse,
+        rgba(245, 230, 192, 0.85) 0%,
+        rgba(253, 248, 240, 0.4) 45%,
+        transparent 72%);
+      pointer-events: none;
+      z-index: 0;
+      animation: centerBreath 6s ease-in-out infinite;
+    }
+
+    @keyframes centerBreath {
+      0%,100% { transform: translate(-50%,-50%) scale(1);    opacity: 0.8; }
+      50%      { transform: translate(-50%,-50%) scale(1.08); opacity: 1;   }
+    }
+
+    /* ── CORNER ORNAMENTS ── */
+    .corner {
+      position: absolute;
+      width: 110px; height: 110px;
+      z-index: 1;
+      opacity: 0;
+      animation: cornerReveal 0.9s ease forwards;
+    }
+
+    .corner svg { width: 100%; height: 100%; }
+
+    .corner-tl { top: 22px;    left: 22px;  animation-delay: 0.6s; }
+    .corner-tr { top: 22px;    right: 22px; animation-delay: 0.8s; transform-origin: right top; }
+    .corner-bl { bottom: 22px; left: 22px;  animation-delay: 1.0s; transform-origin: left bottom; }
+    .corner-br { bottom: 22px; right: 22px; animation-delay: 1.2s; transform-origin: right bottom; }
+
+    @keyframes cornerReveal {
+      from { opacity: 0; transform: scale(0.6); }
+      to   { opacity: 1; transform: scale(1);   }
+    }
+
+    /* Flip corners correctly with scaleX/scaleY */
+    .corner-tr svg { transform: scaleX(-1); }
+    .corner-bl svg { transform: scaleY(-1); }
+    .corner-br svg { transform: scale(-1);  }
+
+    /* ── BORDER RULES ── */
+    .h-rule {
+      position: absolute;
+      left: 130px; right: 130px;
+      height: 1px;
+      background: linear-gradient(90deg,
+        transparent, rgba(200,150,12,0.3) 20%,
+        rgba(200,150,12,0.7) 50%,
+        rgba(200,150,12,0.3) 80%, transparent);
+      z-index: 1;
+      transform: scaleX(0);
+      animation: ruleExpand 1.2s cubic-bezier(0.34,1.4,0.64,1) forwards;
+    }
+
+    .h-rule-top    { top: 65px;    animation-delay: 0.4s; }
+    .h-rule-bottom { bottom: 65px; animation-delay: 0.6s; }
+
+    .h-rule::after {
+      content: '◆';
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      color: var(--gold);
+      font-size: 0.45rem;
+    }
+
+    @keyframes ruleExpand {
+      from { transform: scaleX(0); opacity: 0; }
+      to   { transform: scaleX(1); opacity: 1; }
+    }
+
+    .v-rule {
+      position: absolute;
+      top: 105px; bottom: 105px;
+      width: 1px;
+      background: linear-gradient(to bottom,
+        transparent, rgba(200,150,12,0.35) 25%,
+        rgba(200,150,12,0.55) 50%,
+        rgba(200,150,12,0.35) 75%, transparent);
+      z-index: 1;
+      transform: scaleY(0);
+      animation: ruleExpandV 1.2s cubic-bezier(0.34,1.4,0.64,1) 0.8s forwards;
+    }
+
+    .v-rule-left  { left: 65px; }
+    .v-rule-right { right: 65px; }
+
+    @keyframes ruleExpandV {
+      from { transform: scaleY(0); opacity: 0; }
+      to   { transform: scaleY(1); opacity: 1; }
+    }
+
+    /* ── FLOATING SPECKS ── */
+    .speck {
+      position: absolute;
+      border-radius: 50%;
+      background: var(--gold-light);
+      z-index: 1;
+      pointer-events: none;
+      animation: speckFloat var(--d,6s) var(--dl,0s) ease-in-out infinite;
+    }
+
+    @keyframes speckFloat {
+      0%,100% { transform: translateY(0) scale(1);      opacity: 0.2; }
+      50%      { transform: translateY(-16px) scale(1.3); opacity: 0.55; }
+    }
+
+    /* ═══════════════════════════════════════
+       MAIN STAGE
+    ═══════════════════════════════════════ */
+    .stage {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* Top school name */
+    .school-name-top {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(0.68rem, 1.8vw, 0.92rem);
+      font-weight: 600;
+      letter-spacing: 0.40em;
+      color: var(--gold);
+      text-transform: uppercase;
+      text-align: center;
+      margin-bottom: 22px;
+      opacity: 0;
+      animation: textRise 0.9s ease 0.3s forwards;
+    }
+
+    @keyframes textRise {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── VIDEO FRAME SYSTEM ── */
+    .frame-wrapper {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    /* Side flourishes */
+    .flourish {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      opacity: 0;
+      animation: flourishIn 0.9s ease 1.2s forwards;
+    }
+
+    .flourish-left  { margin-right: 32px; }
+    .flourish-right { margin-left: 32px; }
+
+    @keyframes flourishIn {
+      from { opacity: 0; transform: translateX(-8px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+
+    .flourish-right { animation-name: flourishInR; }
+    @keyframes flourishInR {
+      from { opacity: 0; transform: translateX(8px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+
+    .fl-line {
+      width: 1px;
+      min-height: 55px;
+      background: linear-gradient(to bottom, transparent, rgba(200,150,12,0.6), transparent);
+    }
+
+    .fl-diamond {
+      width: 7px; height: 7px;
+      background: var(--gold);
+      transform: rotate(45deg);
+      box-shadow: 0 0 8px rgba(200,150,12,0.7);
+      animation: diamondPulse 2.5s ease-in-out infinite;
+    }
+
+    @keyframes diamondPulse {
+      0%,100% { box-shadow: 0 0 8px rgba(200,150,12,0.7);  transform: rotate(45deg) scale(1);    }
+      50%      { box-shadow: 0 0 16px rgba(200,150,12,1);   transform: rotate(45deg) scale(1.25); }
+    }
+
+    .fl-dot {
+      width: 3px; height: 3px;
+      border-radius: 50%;
+      background: rgba(200,150,12,0.5);
+    }
+
+    /* Outer animated gold border */
+    .video-frame-outer {
+      position: relative;
+      padding: 3px;
+      border-radius: 22px;
+      background: linear-gradient(135deg,
+        #c8960c 0%, #f5e6c0 25%, #e8b020 50%, #f5e6c0 75%, #c8960c 100%);
+      background-size: 300% 300%;
+      animation:
+        borderRotate 5s linear infinite,
+        frameReveal 1s cubic-bezier(0.34,1.56,0.64,1) 0.1s both;
+    }
+
+    @keyframes borderRotate {
+      0%   { background-position: 0%   50%; }
+      50%  { background-position: 100% 50%; }
+      100% { background-position: 0%   50%; }
+    }
+
+    @keyframes frameReveal {
+      from { opacity: 0; transform: scale(0.80) translateY(28px); }
+      to   { opacity: 1; transform: scale(1)    translateY(0);     }
+    }
+
+    /* Spinning dashed outer ring */
+    .video-frame-outer::before {
+      content: '';
+      position: absolute;
+      inset: -14px;
+      border-radius: 30px;
+      border: 1px dashed rgba(200,150,12,0.30);
+      animation: spinCW 20s linear infinite;
+      pointer-events: none;
+    }
+
+    /* Spinning dotted second ring */
+    .video-frame-outer::after {
+      content: '';
+      position: absolute;
+      inset: -26px;
+      border-radius: 38px;
+      border: 1px dotted rgba(200,150,12,0.16);
+      animation: spinCCW 30s linear infinite;
+      pointer-events: none;
+    }
+
+    @keyframes spinCW  { to { transform: rotate(360deg);  } }
+    @keyframes spinCCW { to { transform: rotate(-360deg); } }
+
+    /* Glowing halo */
+    .frame-halo {
+      position: absolute;
+      inset: -50px;
+      border-radius: 50px;
+      background: radial-gradient(ellipse,
+        rgba(200,150,12,0.16) 0%,
+        rgba(200,150,12,0.05) 55%,
+        transparent 75%);
+      pointer-events: none;
+      z-index: -1;
+      animation: haloPulse 3.5s ease-in-out infinite;
+    }
+
+    @keyframes haloPulse {
+      0%,100% { opacity: 0.7; transform: scale(1);    }
+      50%      { opacity: 1;   transform: scale(1.07); }
+    }
+
+    /* Corner jewels */
+    .jewel {
+      position: absolute;
+      width: 13px; height: 13px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #fff9ec 0%, #e8b020 45%, #c8960c 100%);
+      box-shadow: 0 0 10px rgba(200,150,12,0.9), 0 0 22px rgba(200,150,12,0.45);
+      z-index: 4;
+      animation: jewelGlow 2.5s ease-in-out infinite;
+    }
+
+    @keyframes jewelGlow {
+      0%,100% { box-shadow: 0 0 10px rgba(200,150,12,0.9), 0 0 22px rgba(200,150,12,0.45); transform: scale(1);    }
+      50%      { box-shadow: 0 0 18px rgba(200,150,12,1),   0 0 36px rgba(200,150,12,0.65); transform: scale(1.18); }
+    }
+
+    .jewel-tl { top: -6px;    left: -6px;    animation-delay: 0.0s; }
+    .jewel-tr { top: -6px;    right: -6px;   animation-delay: 0.6s; }
+    .jewel-bl { bottom: -6px; left: -6px;    animation-delay: 1.2s; }
+    .jewel-br { bottom: -6px; right: -6px;   animation-delay: 1.8s; }
+
+    /* Inner white frame */
+    .video-frame-inner {
+      border-radius: 20px;
+      overflow: hidden;
+      background: var(--cream-dark);
+      position: relative;
+    }
+
+    /* The video */
+    #logoVideo {
+      display: block;
+      width: min(370px, 78vw);
+      height: auto;
+      border-radius: 20px;
+      opacity: 0;
+      animation: videoFadeIn 1.4s ease 0.8s forwards;
+    }
+
+    @keyframes videoFadeIn {
+      from { opacity: 0; filter: brightness(0.5) blur(4px); }
+      to   { opacity: 1; filter: brightness(1)   blur(0);    }
+    }
+
+    /* ── BOTTOM BRANDING ── */
+    .bottom-text {
+      margin-top: 28px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 7px;
+      opacity: 0;
+      animation: textRise 0.9s ease 1.0s forwards;
+    }
+
+    .school-full-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1.45rem, 3.8vw, 2.1rem);
+      font-weight: 300;
+      font-style: italic;
+      color: var(--text-dark);
+      letter-spacing: 0.05em;
+    }
+
+    .school-full-name strong {
+      font-weight: 600;
+      font-style: normal;
+    }
+
+    .tagline-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .tagline-dash {
+      width: 26px; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold));
+    }
+
+    .tagline-dash.r {
+      background: linear-gradient(90deg, var(--gold), transparent);
+    }
+
+    .tagline-text {
+      font-family: 'Nunito', sans-serif;
+      font-size: clamp(0.58rem, 1.4vw, 0.72rem);
+      font-weight: 600;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+
+    /* ── PROGRESS BAR ── */
+    .progress-wrap {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 2px;
+      background: rgba(200,150,12,0.1);
+      z-index: 3;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--gold), var(--gold-light), var(--gold));
+      background-size: 200% 100%;
+      animation: barShimmer 2s linear infinite;
+      box-shadow: 0 0 8px rgba(200,150,12,0.5);
+      transition: width linear;
+    }
+
+    @keyframes barShimmer {
+      0%   { background-position:  200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 700px) {
+      .corner    { width: 68px; height: 68px; }
+      .corner-tl { top: 12px; left: 12px; }
+      .corner-tr { top: 12px; right: 12px; }
+      .corner-bl { bottom: 12px; left: 12px; }
+      .corner-br { bottom: 12px; right: 12px; }
+      .h-rule    { left: 76px; right: 76px; }
+      .h-rule-top    { top: 42px; }
+      .h-rule-bottom { bottom: 42px; }
+      .v-rule    { display: none; }
+      .flourish  { display: none; }
+    }
+
+    @media (max-width: 420px) {
+      .corner { display: none; }
+      .h-rule { left: 20px; right: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="splash">
+
+  <!-- Atmosphere -->
+  <div class="bg-glow-center"></div>
+
+  <!-- Border decorations -->
+  <div class="h-rule h-rule-top"></div>
+  <div class="h-rule h-rule-bottom"></div>
+  <div class="v-rule v-rule-left"></div>
+  <div class="v-rule v-rule-right"></div>
+
+  <!-- Corner ornaments -->
+  <div class="corner corner-tl">
+    <svg viewBox="0 0 110 110" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M10 10 L10 55" stroke="#c8960c" stroke-width="1.5" stroke-linecap="round"/>
+      <path d="M10 10 L55 10" stroke="#c8960c" stroke-width="1.5" stroke-linecap="round"/>
+      <path d="M10 10 L40 40" stroke="#c8960c" stroke-width="0.8" stroke-dasharray="3 5" opacity="0.5"/>
+      <circle cx="10" cy="10" r="3.5" fill="#c8960c"/>
+      <circle cx="10" cy="34" r="2" fill="none" stroke="#c8960c" stroke-width="1" opacity="0.6"/>
+      <circle cx="34" cy="10" r="2" fill="none" stroke="#c8960c" stroke-width="1" opacity="0.6"/>
+      <path d="M16 16 Q30 11 40 16 Q45 30 40 40 Q30 45 16 40 Q11 30 16 16Z"
+        stroke="#c8960c" stroke-width="0.7" fill="none" opacity="0.35"/>
+      <circle cx="28" cy="28" r="5" fill="none" stroke="#c8960c" stroke-width="0.8" opacity="0.4"/>
+      <circle cx="28" cy="28" r="1.5" fill="#c8960c" opacity="0.55"/>
+    </svg>
+  </div>
+  <div class="corner corner-tr">
+    <svg viewBox="0 0 110 110" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M10 10 L10 55" stroke="#c8960c" stroke-width="1.5" stroke-linecap="round"/>
+      <path d="M10 10 L55 10" stroke="#c8960c" stroke-width="1.5" stroke-linecap="round"/>
+      <path d="M10 10 L40 40" stroke="#c8960c" stroke-width="0.8" stroke-dasharray="3 5" opacity="0.5"/>
+      <circle cx="10" cy="10" r="3.5" fill="#c8960c"/>
+      <circle cx="10" cy="34" r="2" fill="none" stroke="#c8960c" stroke-width="1" opacity="0.6"/>
+      <circle cx="34" cy="10" r="2" fill="none" stroke="#c8960c" stroke-width="1" opacity="0.6"/>
+      <path d="M16 16 Q30 11 40 16 Q45 30 40 40 Q30 45 16 40 Q11 30 16 16Z"
+        stroke="#c8960c" stroke-width="0.7" fill="none" opacity="0.35"/>
+      <circle cx="28" cy="28" r="5" fill="none" stroke="#c8960c" stroke-width="0.8" opacity="0.4"/>
+      <circle cx="28" cy="28" r="1.5" fill="#c8960c" opacity="0.55"/>
+    </svg>
+  </div>
+  <div class="corner corner-bl">
+    <svg viewBox="0 0 110 110" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M10 10 L10 55" stroke="#c8960c" stroke-width="1.5" stroke-linecap="round"/>
+      <path d="M10 10 L55 10" stroke="#c8960c" stroke-width="1.5" stroke-linecap="round"/>
+      <path d="M10 10 L40 40" stroke="#c8960c" stroke-width="0.8" stroke-dasharray="3 5" opacity="0.5"/>
+      <circle cx="10" cy="10" r="3.5" fill="#c8960c"/>
+      <circle cx="10" cy="34" r="2" fill="none" stroke="#c8960c" stroke-width="1" opacity="0.6"/>
+      <circle cx="34" cy="10" r="2" fill="none" stroke="#c8960c" stroke-width="1" opacity="0.6"/>
+      <path d="M16 16 Q30 11 40 16 Q45 30 40 40 Q30 45 16 40 Q11 30 16 16Z"
+        stroke="#c8960c" stroke-width="0.7" fill="none" opacity="0.35"/>
+      <circle cx="28" cy="28" r="5" fill="none" stroke="#c8960c" stroke-width="0.8" opacity="0.4"/>
+      <circle cx="28" cy="28" r="1.5" fill="#c8960c" opacity="0.55"/>
+    </svg>
+  </div>
+  <div class="corner corner-br">
+    <svg viewBox="0 0 110 110" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M10 10 L10 55" stroke="#c8960c" stroke-width="1.5" stroke-linecap="round"/>
+      <path d="M10 10 L55 10" stroke="#c8960c" stroke-width="1.5" stroke-linecap="round"/>
+      <path d="M10 10 L40 40" stroke="#c8960c" stroke-width="0.8" stroke-dasharray="3 5" opacity="0.5"/>
+      <circle cx="10" cy="10" r="3.5" fill="#c8960c"/>
+      <circle cx="10" cy="34" r="2" fill="none" stroke="#c8960c" stroke-width="1" opacity="0.6"/>
+      <circle cx="34" cy="10" r="2" fill="none" stroke="#c8960c" stroke-width="1" opacity="0.6"/>
+      <path d="M16 16 Q30 11 40 16 Q45 30 40 40 Q30 45 16 40 Q11 30 16 16Z"
+        stroke="#c8960c" stroke-width="0.7" fill="none" opacity="0.35"/>
+      <circle cx="28" cy="28" r="5" fill="none" stroke="#c8960c" stroke-width="0.8" opacity="0.4"/>
+      <circle cx="28" cy="28" r="1.5" fill="#c8960c" opacity="0.55"/>
+    </svg>
+  </div>
+
+  <!-- Floating specks -->
+  <div id="specks"></div>
+
+  <!-- Stage -->
+  <div class="stage">
+
+    <div class="school-name-top">Loretto Central School</div>
+
+    <div class="frame-wrapper">
+
+      <!-- Left flourish -->
+      <div class="flourish flourish-left">
+        <div class="fl-dot"></div>
+        <div class="fl-line"></div>
+        <div class="fl-diamond"></div>
+        <div class="fl-line"></div>
+        <div class="fl-dot"></div>
+      </div>
+
+      <!-- Framed video -->
+      <div class="video-frame-outer">
+        <div class="frame-halo"></div>
+        <div class="jewel jewel-tl"></div>
+        <div class="jewel jewel-tr"></div>
+        <div class="jewel jewel-bl"></div>
+        <div class="jewel jewel-br"></div>
+        <div class="video-frame-inner">
+          <!--
+            Replace "logo-animation.mp4" with your actual video filename.
+          -->
+          <video
+            id="logoVideo"
+            autoplay muted playsinline preload="auto"
+            onended="onVideoEnd()"
+            onerror="onVideoEnd()"
+          >
+            <source src="logo-animation.mp4" type="video/mp4" />
+          </video>
+        </div>
+      </div>
+
+      <!-- Right flourish -->
+      <div class="flourish flourish-right">
+        <div class="fl-dot"></div>
+        <div class="fl-line"></div>
+        <div class="fl-diamond"></div>
+        <div class="fl-line"></div>
+        <div class="fl-dot"></div>
+      </div>
+
+    </div><!-- /frame-wrapper -->
+
+    <!-- Bottom branding -->
+    <div class="bottom-text">
+      <div class="school-full-name"><strong>Loretto</strong> Central School</div>
+      <div class="tagline-row">
+        <div class="tagline-dash"></div>
+        <div class="tagline-text">CBSE Affiliated &nbsp;·&nbsp; Est. 2010</div>
+        <div class="tagline-dash r"></div>
+      </div>
+    </div>
+
+  </div><!-- /stage -->
+
+  <!-- Progress bar -->
+  <div class="progress-wrap">
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+
+</div><!-- /#splash -->
+
+<script src="shared-data-loader.js"></script>
+<script>
+  /* ── PRE-LOADER & SYNC ── */
+  (function() {
+    // 1. Resolve API immediately in background
+    if (typeof window.resolveApiBase === 'function') {
+      window.resolveApiBase().then(function(base) {
+        console.log('API Base Pre-resolved:', base);
+      });
+    }
+
+    // 2. Pre-fetch common data to warm up the cache
+    if (typeof window.fetchData === 'function') {
+      var preloadEndpoints = ['settings/site', 'news', 'contact'];
+      preloadEndpoints.forEach(function(ep) {
+        window.fetchData(ep).then(function() {
+          console.log('Pre-fetched:', ep);
+        }).catch(function(){});
+      });
+    }
+  })();
+
+  /* ── SHOW-ONCE ── */
+  var REDIRECT_URL = 'index.html';
+  var MAX_WAIT_MS  = 8000;
+  var SEEN_KEY     = 'lcs_intro_seen';
+
+  if (localStorage.getItem(SEEN_KEY)) {
+    window.location.replace(REDIRECT_URL);
+  }
+
+  /* ── FLOATING GOLD SPECKS ── */
+  (function () {
+    var host = document.getElementById('specks');
+    for (var i = 0; i < 20; i++) {
+      var s = document.createElement('div');
+      s.className = 'speck';
+      var sz = Math.random() * 4 + 2;
+      s.style.cssText = [
+        'left:'   + (Math.random() * 100) + '%',
+        'top:'    + (Math.random() * 100) + '%',
+        'width:'  + sz + 'px',
+        'height:' + sz + 'px',
+        '--d:'    + (Math.random() * 4 + 4) + 's',
+        '--dl:-'  + (Math.random() * 7) + 's'
+      ].join(';');
+      host.appendChild(s);
+    }
+  })();
+
+  /* ── PROGRESS BAR ── */
+  var progressBar = document.getElementById('progressBar');
+  var video       = document.getElementById('logoVideo');
+  var rafId;
+
+  function updateProgress() {
+    if (!video.duration || video.paused || video.ended) return;
+    progressBar.style.width = (video.currentTime / video.duration * 100) + '%';
+    rafId = requestAnimationFrame(updateProgress);
+  }
+
+  video.addEventListener('loadedmetadata', function () {
+    cancelAnimationFrame(rafId);
+    rafId = requestAnimationFrame(updateProgress);
+  });
+
+  video.addEventListener('play', function () {
+    if (!video.duration) {
+      var start = Date.now();
+      (function fallback() {
+        if (video.ended || video.paused) return;
+        progressBar.style.width = Math.min((Date.now() - start) / MAX_WAIT_MS * 100, 99) + '%';
+        rafId = requestAnimationFrame(fallback);
+      })();
+    }
+  });
+
+  /* ── TRANSITION ── */
+  var done = false;
+
+  function doTransition() {
+    if (done) return;
+    done = true;
+    cancelAnimationFrame(rafId);
+    try { localStorage.setItem(SEEN_KEY, '1'); } catch(e) {}
+
+    progressBar.style.transition = 'width 0.4s ease';
+    progressBar.style.width = '100%';
+
+    setTimeout(function () {
+      document.getElementById('splash').classList.add('fade-out');
+      setTimeout(function () {
+        window.location.href = REDIRECT_URL;
+      }, 1450);
+    }, 380);
+  }
+
+  function onVideoEnd() { doTransition(); }
+  setTimeout(doTransition, MAX_WAIT_MS);
+</script>
+
+</body>
+</html>
