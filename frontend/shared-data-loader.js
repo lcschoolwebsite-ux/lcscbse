@@ -75,12 +75,12 @@ async function resolveApiBase() {
     var candidates = [
       '/api',
       origin + '/api',
+      'https://lcscbse-production.up.railway.app/api',
       'http://localhost:3000/api',
-      'http://127.0.0.1:3000/api',
-      'https://lcscbse-production.up.railway.app/api'
+      'http://127.0.0.1:3000/api'
     ];
 
-    // Filter out duplicates and nulls
+    // Deduplicate and prioritize
     var uniqueCandidates = [];
     var seen = {};
     for (var i = 0; i < candidates.length; i++) {
@@ -93,17 +93,18 @@ async function resolveApiBase() {
 
     async function probe(base) {
       return new Promise(function (resolve, reject) {
+        // Aggressive timeout for localhost when in production to avoid hanging
+        var timeoutMs = (base.indexOf('localhost') !== -1 || base.indexOf('127.0.0.1') !== -1) ? 1500 : 3000;
+        
         var timer = setTimeout(function () {
           reject(new Error('Timeout'));
-        }, 2500); // 2.5s timeout for fast fail
+        }, timeoutMs);
 
         var probeUrl = String(base).replace(/\/+$/, '') + '/health';
         fetch(probeUrl, { method: 'GET', mode: 'cors' })
           .then(function (res) {
             clearTimeout(timer);
-            if (res.ok) {
-              return res.json();
-            }
+            if (res.ok) return res.json();
             throw new Error('Not OK');
           })
           .then(function (data) {
