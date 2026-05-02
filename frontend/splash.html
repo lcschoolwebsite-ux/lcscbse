@@ -608,39 +608,72 @@
 
   </div><!-- /stage -->
 
-  <!-- Progress bar -->
+  <!-- Progress bar & Status -->
   <div class="progress-wrap">
+    <div id="loaderStatus" class="loader-status">Connecting to Loretto Central School...</div>
     <div class="progress-bar" id="progressBar"></div>
   </div>
 
 </div><!-- /#splash -->
 
+<style>
+  .loader-status {
+    position: absolute;
+    bottom: 20px;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.65rem;
+    color: var(--gold);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    opacity: 0.6;
+    transition: opacity 0.3s ease;
+  }
+</style>
+
 <script src="shared-data-loader.js"></script>
 <script>
+  /* ── FUNCTIONAL LOADER STATE ── */
+  var REDIRECT_URL = 'index.html';
+  var MAX_WAIT_MS  = 12000;
+  var SEEN_KEY     = 'lcs_intro_seen';
+  var DATA_READY   = false;
+  var VIDEO_DONE   = false;
+  var START_TIME   = Date.now();
+
+  var statusEl = document.getElementById('loaderStatus');
+
   /* ── PRE-LOADER & SYNC ── */
   (function() {
-    // 1. Resolve API immediately in background
-    if (typeof window.resolveApiBase === 'function') {
-      window.resolveApiBase().then(function(base) {
-        console.log('API Base Pre-resolved:', base);
-      });
-    }
+    var critical = ['settings/site', 'news', 'contact'];
+    var loaded = 0;
 
-    // 2. Pre-fetch common data to warm up the cache
-    if (typeof window.fetchData === 'function') {
-      var preloadEndpoints = ['settings/site', 'news', 'contact'];
-      preloadEndpoints.forEach(function(ep) {
-        window.fetchData(ep).then(function() {
-          console.log('Pre-fetched:', ep);
-        }).catch(function(){});
+    if (typeof window.resolveApiBase === 'function') {
+      window.resolveApiBase().then(function() {
+        statusEl.textContent = "Syncing with campus data...";
+        
+        if (typeof window.fetchData === 'function') {
+          critical.forEach(function(ep) {
+            window.fetchData(ep).then(function() {
+              loaded++;
+              if (loaded >= critical.length) {
+                DATA_READY = true;
+                statusEl.textContent = "Data synchronized. Preparing view...";
+                checkFinalTransition();
+              }
+            }).catch(function() {
+              loaded++; // Count as "done" even if failed to avoid hanging
+              if (loaded >= critical.length) DATA_READY = true;
+            });
+          });
+        }
       });
+    } else {
+      DATA_READY = true; // Fallback
     }
   })();
-
-  /* ── SHOW-ONCE ── */
-  var REDIRECT_URL = 'index.html';
-  var MAX_WAIT_MS  = 11000;
-  var SEEN_KEY     = 'lcs_intro_seen';
 
   if (localStorage.getItem(SEEN_KEY)) {
     window.location.replace(REDIRECT_URL);
@@ -649,6 +682,7 @@
   /* ── FLOATING GOLD SPECKS ── */
   (function () {
     var host = document.getElementById('specks');
+    if (!host) return;
     for (var i = 0; i < 20; i++) {
       var s = document.createElement('div');
       s.className = 'speck';
@@ -671,29 +705,52 @@
   var rafId;
 
   function updateProgress() {
-    if (!video.duration || video.paused || video.ended) return;
-    progressBar.style.width = (video.currentTime / video.duration * 100) + '%';
+    if (done) return;
+    var progress = 0;
+    
+    if (video && video.duration) {
+      progress = (video.currentTime / video.duration) * 100;
+    } else {
+      progress = Math.min((Date.now() - START_TIME) / MAX_WAIT_MS * 100, 95);
+    }
+    
+    progressBar.style.width = progress + '%';
     rafId = requestAnimationFrame(updateProgress);
   }
 
-  video.addEventListener('loadedmetadata', function () {
-    cancelAnimationFrame(rafId);
-    rafId = requestAnimationFrame(updateProgress);
-  });
-
-  video.addEventListener('play', function () {
-    if (!video.duration) {
-      var start = Date.now();
-      (function fallback() {
-        if (video.ended || video.paused) return;
-        progressBar.style.width = Math.min((Date.now() - start) / MAX_WAIT_MS * 100, 99) + '%';
-        rafId = requestAnimationFrame(fallback);
-      })();
-    }
-  });
+  if (video) {
+    video.addEventListener('loadedmetadata', function () {
+      cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(updateProgress);
+    });
+    video.addEventListener('play', function () {
+      cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(updateProgress);
+    });
+    video.addEventListener('ended', function() {
+      VIDEO_DONE = true;
+      checkFinalTransition();
+    });
+    video.addEventListener('error', function() {
+      VIDEO_DONE = true;
+      checkFinalTransition();
+    });
+  } else {
+    VIDEO_DONE = true;
+  }
 
   /* ── TRANSITION ── */
   var done = false;
+
+  function checkFinalTransition() {
+    // Only transition if video is done AND data is ready (or we hit a safety timeout)
+    var elapsed = Date.now() - START_TIME;
+    var safetyTimeout = elapsed > MAX_WAIT_MS;
+
+    if ((VIDEO_DONE && DATA_READY) || safetyTimeout) {
+      doTransition();
+    }
+  }
 
   function doTransition() {
     if (done) return;
@@ -701,19 +758,25 @@
     cancelAnimationFrame(rafId);
     try { localStorage.setItem(SEEN_KEY, '1'); } catch(e) {}
 
+    statusEl.style.opacity = '0';
     progressBar.style.transition = 'width 0.4s ease';
     progressBar.style.width = '100%';
 
     setTimeout(function () {
-      document.getElementById('splash').classList.add('fade-out');
+      var splash = document.getElementById('splash');
+      if (splash) splash.classList.add('fade-out');
       setTimeout(function () {
         window.location.href = REDIRECT_URL;
       }, 1450);
     }, 380);
   }
 
-  function onVideoEnd() { doTransition(); }
-  setTimeout(doTransition, MAX_WAIT_MS);
+  // Safety timeout
+  setTimeout(function() {
+    VIDEO_DONE = true;
+    DATA_READY = true;
+    checkFinalTransition();
+  }, MAX_WAIT_MS);
 </script>
 
 </body>
