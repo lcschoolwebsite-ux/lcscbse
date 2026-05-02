@@ -736,6 +736,36 @@
         right: 20px;
       }
     }
+
+    .powered-by {
+      position: absolute;
+      bottom: 22px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.62rem;
+      color: var(--gold);
+      text-decoration: none;
+      opacity: 0;
+      animation: fadeInSplash 1s ease 1.5s forwards;
+      z-index: 100;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      font-weight: 700;
+      transition: all 0.3s ease;
+      white-space: nowrap;
+    }
+
+    .powered-by:hover {
+      color: var(--gold-light);
+      letter-spacing: 0.3em;
+      opacity: 1 !important;
+    }
+
+    @keyframes fadeInSplash {
+      from { opacity: 0; transform: translate(-50%, 10px); }
+      to { opacity: 0.8; transform: translate(-50%, 0); }
+    }
   </style>
 </head>
 
@@ -874,6 +904,10 @@
     <div class="progress-wrap">
       <div class="progress-bar" id="progressBar"></div>
     </div>
+
+    <a href="https://appvertex.in" target="_blank" class="powered-by">
+      <span>AppVertex</span>
+    </a>
 
   </div><!-- /#splash -->
 
