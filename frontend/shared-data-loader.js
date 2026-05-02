@@ -57,16 +57,18 @@ function persistentSet(key, value) {
   }
 }
 
-if (IS_LOCAL) {
-  RESOLVED_API_BASE = storageGet(API_BASE_KEY) || '';
-}
+// Initial resolution state from persistence
+RESOLVED_API_BASE = persistentGet(API_BASE_KEY) || '';
 
 ACTIVE_CACHE_BUST_TOKEN = persistentGet(CACHE_BUST_KEY) || '';
 
 async function resolveApiBase() {
-  var cachedOk = storageGet(API_BASE_OK_KEY) === 'true';
-  var cachedBase = storageGet(API_BASE_KEY);
-  if (cachedBase && cachedOk) return cachedBase;
+  var cachedOk = persistentGet(API_BASE_OK_KEY) === 'true';
+  var cachedBase = persistentGet(API_BASE_KEY);
+  if (cachedBase && cachedOk) {
+    RESOLVED_API_BASE = cachedBase;
+    return cachedBase;
+  }
 
   if (API_BASE_PROMISE) return API_BASE_PROMISE;
 
@@ -94,7 +96,8 @@ async function resolveApiBase() {
     async function probe(base) {
       return new Promise(function (resolve, reject) {
         // Aggressive timeout for localhost when in production to avoid hanging
-        var timeoutMs = (base.indexOf('localhost') !== -1 || base.indexOf('127.0.0.1') !== -1) ? 1500 : 3000;
+        var isLocalProbe = (base.indexOf('localhost') !== -1 || base.indexOf('127.0.0.1') !== -1);
+        var timeoutMs = isLocalProbe ? 1200 : 3500;
         
         var timer = setTimeout(function () {
           reject(new Error('Timeout'));
@@ -144,8 +147,8 @@ async function resolveApiBase() {
       });
 
       RESOLVED_API_BASE = winner;
-      storageSet(API_BASE_KEY, winner);
-      storageSet(API_BASE_OK_KEY, 'true');
+      persistentSet(API_BASE_KEY, winner);
+      persistentSet(API_BASE_OK_KEY, 'true');
       return winner;
     } catch (error) {
       // Default fallback if probing fails
@@ -156,11 +159,17 @@ async function resolveApiBase() {
   })();
 
   try {
-    return await API_BASE_PROMISE;
+    var finalBase = await API_BASE_PROMISE;
+    return finalBase;
   } finally {
     API_BASE_PROMISE = null;
   }
 }
+
+// Auto-start discovery immediately
+(function() {
+  setTimeout(resolveApiBase, 10);
+})();
 
 function cacheKey(endpoint) {
   return String(endpoint || '').replace(/^\/+/, '');
