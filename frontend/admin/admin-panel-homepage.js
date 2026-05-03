@@ -126,13 +126,15 @@
   function syncUploadZoneDeleteButtons() {
     var heroBlocks = qsa('.section-block', panel('hero'));
     if (heroBlocks[0]) {
+      var inp = document.getElementById('heroImgUrl');
       ensureUploadZoneDeleteButton(
-        qs('.upload-zone', heroBlocks[0]),
+        inp,
         'hero',
-        function () { return state.heroImage; },
+        function () { return inp ? inp.value : state.heroImage; },
         function () {
+          if (inp) inp.value = '';
           state.heroImage = '';
-          populateHero({ backgroundImage: '' });
+          syncUploadZoneDeleteButtons();
         },
         'hero background image',
         'Hero background deleted from Cloudinary. Save Hero to keep the change.'
@@ -141,13 +143,15 @@
 
     var aboutBlocks = qsa('.section-block', panel('about'));
     if (aboutBlocks[2]) {
+      var inp = document.getElementById('aboutImgUrl');
       ensureUploadZoneDeleteButton(
-        qs('.upload-zone', aboutBlocks[2]),
+        inp,
         'about',
-        function () { return state.aboutImage; },
+        function () { return inp ? inp.value : state.aboutImage; },
         function () {
+          if (inp) inp.value = '';
           state.aboutImage = '';
-          populateAbout({ image: '' });
+          syncUploadZoneDeleteButtons();
         },
         'about section image',
         'About image deleted from Cloudinary. Save About to keep the change.'
@@ -156,13 +160,15 @@
 
     var settingsBlocks = qsa('.section-block', panel('settings'));
     if (settingsBlocks[0]) {
+      var inp = document.getElementById('schoolLogoUrl');
       ensureUploadZoneDeleteButton(
-        qs('.upload-zone', settingsBlocks[0]),
+        inp,
         'logo',
-        function () { return state.logo; },
+        function () { return inp ? inp.value : state.logo; },
         function () {
+          if (inp) inp.value = '';
           state.logo = '';
-          populateSettings({ logo: '' });
+          syncUploadZoneDeleteButtons();
         },
         'site logo',
         'Logo deleted from Cloudinary. Save Settings to keep the change.'
@@ -293,7 +299,7 @@
     var toggles = qsa('input[type="checkbox"]', blocks[4]);
 
     return {
-      backgroundImage: state.heroImage,
+      backgroundImage: document.getElementById('heroImgUrl') ? document.getElementById('heroImgUrl').value.trim() : state.heroImage,
       badgeText: contentInputs[0] ? contentInputs[0].value.trim() : '',
       subtitle: qs('#heroSubtext', heroPanel) ? qs('#heroSubtext', heroPanel).value.trim() : '',
       primaryButton: {
@@ -338,11 +344,9 @@
     var toggles = qsa('input[type="checkbox"]', blocks[4]);
 
     state.heroImage = data.backgroundImage || state.heroImage || '';
-    setUploadZoneMessage(
-      qs('.upload-zone', blocks[0]),
-      state.heroImage ? 'Hero background connected to Cloudinary' : 'Click to upload hero background photo',
-      state.heroImage ? 'Stored in MongoDB and delivered from Cloudinary.<br><strong>' + state.heroImage + '</strong>' : 'Recommended: 1920x1080px'
-    );
+    if (document.getElementById('heroImgUrl')) {
+      document.getElementById('heroImgUrl').value = state.heroImage;
+    }
     syncUploadZoneDeleteButtons();
 
     if (contentInputs[0]) contentInputs[0].value = data.badgeText || contentInputs[0].value;
@@ -394,7 +398,7 @@
         var inputs = qsa('input', row);
         return inputs[1] ? inputs[1].value.trim() : '';
       }).filter(Boolean),
-      image: state.aboutImage,
+      image: document.getElementById('aboutImgUrl') ? document.getElementById('aboutImgUrl').value.trim() : state.aboutImage,
       miniCards: [
         { icon: miniInputs[0] ? miniInputs[0].value.trim() : '', text: miniInputs[1] ? miniInputs[1].value.trim() : '' },
         { icon: miniInputs[2] ? miniInputs[2].value.trim() : '', text: miniInputs[3] ? miniInputs[3].value.trim() : '' }
@@ -431,15 +435,10 @@
       }
     }
 
-    setUploadZoneMessage(
-      qs('.upload-zone', blocks[2]),
-      state.aboutImage ? 'About image connected to Cloudinary' : 'About Section Photo',
-      state.aboutImage
-        ? 'Stored in MongoDB and delivered from Cloudinary.<br><strong>' + state.aboutImage + '</strong>'
-        : (state.heroImage
-          ? 'No dedicated About image uploaded. This section will use the Hero image.<br><strong>' + state.heroImage + '</strong>'
-          : 'Optional override. If empty, the homepage hero image will be used here.')
-    );
+    state.aboutImage = data.image || state.aboutImage || '';
+    if (document.getElementById('aboutImgUrl')) {
+      document.getElementById('aboutImgUrl').value = state.aboutImage;
+    }
     syncUploadZoneDeleteButtons();
 
     if (Array.isArray(data.miniCards)) {
@@ -679,7 +678,7 @@
       schoolName: generalInputs[0] ? generalInputs[0].value.trim() : '',
       tagline: generalInputs[1] ? generalInputs[1].value.trim() : '',
       affiliation: generalInputs[2] ? generalInputs[2].value.trim() : '',
-      logo: state.logo,
+      logo: document.getElementById('schoolLogoUrl') ? document.getElementById('schoolLogoUrl').value.trim() : state.logo,
       showNoticeBar: !!(noticeChecks[0] && noticeChecks[0].checked),
       noticeText: noticeInput ? noticeInput.value.trim() : '',
       colors: {
@@ -707,11 +706,10 @@
     if (colorInputs[1]) colorInputs[1].value = data.colors && data.colors.secondary || colorInputs[1].value;
     if (colorInputs[2]) colorInputs[2].value = data.colors && data.colors.accent || colorInputs[2].value;
 
-    setUploadZoneMessage(
-      qs('.upload-zone', blocks[0]),
-      state.logo ? 'Logo connected to Cloudinary' : 'Upload Logo',
-      state.logo ? 'Stored in MongoDB and delivered from Cloudinary.<br><strong>' + state.logo + '</strong>' : 'PNG with transparent bg'
-    );
+    state.logo = data.logo || state.logo || '';
+    if (document.getElementById('schoolLogoUrl')) {
+      document.getElementById('schoolLogoUrl').value = state.logo;
+    }
     syncUploadZoneDeleteButtons();
   }
 

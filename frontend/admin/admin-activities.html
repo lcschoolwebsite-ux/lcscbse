@@ -14,6 +14,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Activities & Clubs - Admin | Loretto Central School</title>
   <script src="/admin/admin-auth.js?v=20260330-1"></script>
+  <script src="/admin/admin-cloudinary.js?v=20260330-1"></script>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800&family=Nunito:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
   <script src="/admin/adminfooter.js"></script>
   <style>
@@ -118,8 +119,8 @@
     .tog input:checked~.togt{background:var(--navy);border-color:var(--navy-dark)}.tog input:checked~.togt::after{transform:translateX(18px)}
     .cld-row{display:flex;gap:7px;align-items:center}
     .cld-row input{flex:1;font-size:.8rem}
-    .cld-up{flex-shrink:0;padding:6px 10px;border-radius:8px;cursor:pointer;background:rgba(200,150,12,.1);border:1.5px solid rgba(200,150,12,.25);color:var(--gold);font-family:'Nunito',sans-serif;font-size:.7rem;font-weight:700;transition:all .2s;white-space:nowrap}
-    .cld-up:hover{background:rgba(200,150,12,.2)}
+    .cld-up{flex-shrink:0;padding:6px 10px;border-radius:8px;cursor:pointer;background:rgba(14,107,107,.1);border:1.5px solid rgba(14,107,107,.25);color:var(--navy);font-family:'Nunito',sans-serif;font-size:.7rem;font-weight:700;transition:all .2s;white-space:nowrap}
+    .cld-up:hover{background:rgba(14,107,107,.2)}
     .toast{position:fixed;bottom:24px;right:24px;background:var(--navy-deep);color:#fff;padding:11px 18px;border-radius:10px;font-size:.79rem;font-weight:700;display:flex;align-items:center;gap:8px;box-shadow:0 8px 28px rgba(0,0,0,.22);transform:translateY(80px);opacity:0;transition:all .3s cubic-bezier(.34,1.56,.64,1);z-index:99998;border-left:4px solid var(--gold-light);pointer-events:none;max-width:320px}
     .toast.show{transform:translateY(0);opacity:1}
     @media(max-width:1100px){.two-col{grid-template-columns:1fr}.ov-items{grid-template-columns:repeat(4,1fr)!important}}
@@ -408,18 +409,36 @@ function addItem(cid){
   c.appendChild(r);r.querySelector('input').focus();
 }
 function esc(s){return(s||'').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
-function makeGS(url){return'<div class="gal-slot"><div class="gal-prev">'+(url?'<img src="'+url+'"/>':'')+'</div><div class="gal-tag">w_800,q_auto,f_auto</div><input class="gal-inp" type="url" value="'+(url||'')+'" placeholder="Cloudinary image URL..." oninput="updGS(this)"/></div>';}
+function makeGS(url){
+  var id = 'gal-url-' + Math.random().toString(36).substr(2, 9);
+  var fid = 'gal-file-' + Math.random().toString(36).substr(2, 9);
+  return '<div class="gal-slot">'+
+    '<div class="gal-prev">'+(url?'<img src="'+url+'"/>':'')+'</div>'+
+    '<div class="gal-tag">w_800,q_auto,f_auto</div>'+
+    '<div class="cld-row" style="padding:4px;background:var(--white);border-top:1px solid var(--border);">'+
+      '<input class="gal-inp" type="url" id="'+id+'" value="'+(url||'')+'" placeholder="Cloudinary URL..." oninput="updGS(this)"/>'+
+      '<button class="cld-up" style="padding:4px 8px;font-size:.62rem;" onclick="document.getElementById(\''+fid+'\').click()">Up</button>'+
+      '<input type="file" id="'+fid+'" accept="image/*" style="display:none" onchange="AdminCloudinary.uploadSingleImage(this, \''+id+'\').then(function(u){ if(u) updGS(document.getElementById(\''+id+'\')); })"/>'+
+    '</div>'+
+  '</div>';
+}
 function addGalSlot(){document.getElementById('gal-grid').insertAdjacentHTML('beforeend',makeGS());}
 function updGS(inp){var s=inp.closest('.gal-slot'),p=s.querySelector('.gal-prev'),u=inp.value.trim();p.innerHTML=u?'<img src="'+u+'" onerror="this.parentElement.textContent=\'\'"/>':'';}
 async function uploadGalImages(inp){
   if(!inp.files.length)return;
   toast('Uploading '+inp.files.length+' image(s)...');
   var urls=[];
-  for(var i=0;i<Math.min(inp.files.length,6);i++){
+  for(var i=0;i<Math.min(inp.files.length,10);i++){
     var fd=new FormData();fd.append('file',inp.files[i]);
     try{var r=await fetch(API_BASE+'/api/upload',{method:'POST',body:fd});var d=await r.json();if(d.url)urls.push(d.url);}catch(e){}
   }
-  if(urls.length){document.getElementById('gal-grid').innerHTML=urls.map(function(u){return makeGS(u);}).join('')+(urls.length<3?makeGS():'');toast('Uploaded '+urls.length+' image(s)!');}
+  if(urls.length){
+    // Keep existing if we want, or replace. The user wants "6 images option", so let's replace or fill.
+    var currentCount = document.querySelectorAll('.gal-slot').length;
+    var html = urls.map(function(u){return makeGS(u);}).join('');
+    document.getElementById('gal-grid').insertAdjacentHTML('beforeend', html);
+    toast('Uploaded '+urls.length+' image(s)!');
+  }
   else toast('Upload failed',true);
 }
 function collectData(){

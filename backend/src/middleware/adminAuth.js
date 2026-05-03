@@ -6,7 +6,15 @@ export function requireAdmin(req, res, next) {
   }
 
   const token = req.header('x-admin-token');
-  if (token !== env.adminToken) {
+  const identifier = (req.header('x-admin-identifier') || '').trim().toLowerCase();
+
+  const tokenMatches = token === env.adminToken;
+  const identifierConfigured = Boolean(env.adminUsername || env.adminEmail);
+  const identifierMatches = !identifierConfigured
+    ? true
+    : (identifier === env.adminUsername?.toLowerCase() || identifier === env.adminEmail?.toLowerCase());
+
+  if (!tokenMatches || !identifierMatches) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
 

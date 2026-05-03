@@ -22,8 +22,18 @@ function isTransformationSegment(value = '') {
 
 export function uploadToCloudinary(file) {
   const isPdf = file.mimetype === 'application/pdf';
-  const folder = isPdf ? 'loretto/documents' : 'loretto/images';
-  const resourceType = isPdf ? 'raw' : 'image';
+  const isVideo = file.mimetype.startsWith('video/');
+  let folder = 'loretto/images';
+  let resourceType = 'image';
+
+  if (isPdf) {
+    folder = 'loretto/documents';
+    resourceType = 'raw';
+  } else if (isVideo) {
+    folder = 'loretto/videos';
+    resourceType = 'video';
+  }
+
   const publicId = isPdf ? buildPdfPublicId(file.originalname) : crypto.randomUUID();
 
   return new Promise((resolve, reject) => {

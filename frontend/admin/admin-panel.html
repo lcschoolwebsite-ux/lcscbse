@@ -300,6 +300,14 @@
       border: 2px solid var(--white);
     }
 
+    /* Cloudinary & Upload Standard Styling */
+    .cld-url-row { display: flex; gap: 8px; align-items: center; }
+    .cld-url-row input { flex: 1; padding: 9px 12px; border: 1.5px solid var(--border); border-radius: 9px; font-family: 'Nunito', sans-serif; font-size: 0.86rem; color: var(--text); background: var(--white); outline: none; }
+    .cld-upload-btn { flex-shrink: 0; padding: 8px 16px; border-radius: 8px; cursor: pointer; background: rgba(14,107,107,0.1); border: 1.5px solid rgba(14,107,107,0.2); color: var(--navy); font-family: 'Nunito', sans-serif; font-size: 0.74rem; font-weight: 700; transition: all 0.2s; white-space: nowrap; }
+    .cld-upload-btn:hover { background: rgba(14,107,107,0.18); }
+    .cld-upload-btn.file-btn { background: rgba(200,150,12,0.1); border-color: rgba(200,150,12,0.25); color: var(--gold); }
+    .cld-upload-btn.file-btn:hover { background: rgba(200,150,12,0.2); }
+
     /* Page body */
     .page-body { padding: 28px; flex: 1; }
 
@@ -1183,14 +1191,12 @@
                 <div class="section-block-title"><span class="icon"></span> Hero Background Image</div>
                 <div class="section-block-actions"><button class="btn-sm gold" onclick="saveSection('Hero')"> Save</button></div>
               </div>
-              <div class="section-block-body">
-                <div class="upload-zone" onclick="triggerUpload('heroImg')">
-                  <div class="uz-icon"></div>
-                  <div class="uz-title">Click to upload hero background photo</div>
-                  <div class="uz-sub">Recommended: 1920×1080px · WEBP or JPG · Max 2MB<br>Current: <strong>IMGS/school img.webp</strong></div>
+                <div class="cld-url-row">
+                  <input type="url" id="heroImgUrl" placeholder="Cloudinary image URL..." />
+                  <button class="cld-upload-btn file-btn" onclick="triggerUpload('heroImgFile')"> Upload</button>
+                  <input type="file" id="heroImgFile" style="display:none;" accept="image/*" onchange="uploadSingleImage(this, 'heroImgUrl')"/>
                 </div>
-                <input type="file" id="heroImg" style="display:none;" accept="image/*"/>
-              </div>
+                <div class="form-hint">Recommended: 1920×1080px · High resolution</div>
             </div>
 
             <div class="section-block">
@@ -1443,11 +1449,12 @@
                 <div class="section-block-actions"><button class="btn-sm gold" onclick="saveSection('About')"> Save</button></div>
               </div>
               <div class="section-block-body">
-                <div class="upload-zone">
-                  <div class="uz-icon"></div>
-                  <div class="uz-title">About Section Photo</div>
-                  <div class="uz-sub">Optional override. If empty, the homepage hero image will be used here.<br>Recommended 600×430px</div>
+                <div class="cld-url-row">
+                  <input type="url" id="aboutImgUrl" placeholder="Cloudinary image URL..." />
+                  <button class="cld-upload-btn file-btn" onclick="triggerUpload('aboutImgFile')"> Upload</button>
+                  <input type="file" id="aboutImgFile" style="display:none;" accept="image/*" onchange="uploadSingleImage(this, 'aboutImgUrl')"/>
                 </div>
+                <div class="form-hint">Optional override. If empty, hero image is used.</div>
               </div>
             </div>
             <div class="section-block">
@@ -1661,9 +1668,9 @@
                   <td>
                     <div style="display:flex;align-items:center;gap:10px;">
                       <div style="width:54px;height:42px;border-radius:8px;overflow:hidden;background:var(--bg2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:.68rem;color:var(--text-muted);">IMG</div>
-                      <div style="display:grid;gap:6px;width:100%;">
-                        <input type="url" value="" placeholder="Cloudinary image URL" style="border:1px solid var(--border);border-radius:6px;padding:6px 10px;font-family:Nunito;font-size:0.8rem;"/>
-                        <button class="btn-sm outline" type="button" data-action="upload-gallery">Upload</button>
+                      <div class="cld-url-row">
+                        <input type="url" value="" placeholder="Cloudinary image URL" />
+                        <button class="cld-upload-btn file-btn" type="button" data-action="upload-gallery"> Upload</button>
                       </div>
                     </div>
                   </td>
@@ -1675,9 +1682,9 @@
                   <td>
                     <div style="display:flex;align-items:center;gap:10px;">
                       <div style="width:54px;height:42px;border-radius:8px;overflow:hidden;background:var(--bg2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:.68rem;color:var(--text-muted);">IMG</div>
-                      <div style="display:grid;gap:6px;width:100%;">
-                        <input type="url" value="" placeholder="Cloudinary image URL" style="border:1px solid var(--border);border-radius:6px;padding:6px 10px;font-family:Nunito;font-size:0.8rem;"/>
-                        <button class="btn-sm outline" type="button" data-action="upload-gallery">Upload</button>
+                      <div class="cld-url-row">
+                        <input type="url" value="" placeholder="Cloudinary image URL" />
+                        <button class="cld-upload-btn file-btn" type="button" data-action="upload-gallery"> Upload</button>
                       </div>
                     </div>
                   </td>
@@ -1689,9 +1696,9 @@
                   <td>
                     <div style="display:flex;align-items:center;gap:10px;">
                       <div style="width:54px;height:42px;border-radius:8px;overflow:hidden;background:var(--bg2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:.68rem;color:var(--text-muted);">IMG</div>
-                      <div style="display:grid;gap:6px;width:100%;">
-                        <input type="url" value="" placeholder="Cloudinary image URL" style="border:1px solid var(--border);border-radius:6px;padding:6px 10px;font-family:Nunito;font-size:0.8rem;"/>
-                        <button class="btn-sm outline" type="button" data-action="upload-gallery">Upload</button>
+                      <div class="cld-url-row">
+                        <input type="url" value="" placeholder="Cloudinary image URL" />
+                        <button class="cld-upload-btn file-btn" type="button" data-action="upload-gallery"> Upload</button>
                       </div>
                     </div>
                   </td>
@@ -1703,9 +1710,9 @@
                   <td>
                     <div style="display:flex;align-items:center;gap:10px;">
                       <div style="width:54px;height:42px;border-radius:8px;overflow:hidden;background:var(--bg2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:.68rem;color:var(--text-muted);">IMG</div>
-                      <div style="display:grid;gap:6px;width:100%;">
-                        <input type="url" value="" placeholder="Cloudinary image URL" style="border:1px solid var(--border);border-radius:6px;padding:6px 10px;font-family:Nunito;font-size:0.8rem;"/>
-                        <button class="btn-sm outline" type="button" data-action="upload-gallery">Upload</button>
+                      <div class="cld-url-row">
+                        <input type="url" value="" placeholder="Cloudinary image URL" />
+                        <button class="cld-upload-btn file-btn" type="button" data-action="upload-gallery"> Upload</button>
                       </div>
                     </div>
                   </td>
@@ -2017,11 +2024,12 @@
                   </div>
                   <div class="form-field">
                     <label>School Logo</label>
-                    <div class="upload-zone" style="padding:16px;">
-                      <div class="uz-icon"></div>
-                      <div class="uz-title">Upload Logo</div>
-                      <div class="uz-sub">PNG with transparent bg · 200×200px ideal</div>
+                    <div class="cld-url-row">
+                      <input type="url" id="schoolLogoUrl" placeholder="Cloudinary logo URL..." />
+                      <button class="cld-upload-btn file-btn" onclick="triggerUpload('schoolLogoFile')"> Upload</button>
+                      <input type="file" id="schoolLogoFile" style="display:none;" accept="image/*" onchange="uploadSingleImage(this, 'schoolLogoUrl')"/>
                     </div>
+                    <div class="form-hint">PNG with transparent bg · 200×200px ideal</div>
                   </div>
                 </div>
               </div>
@@ -2103,14 +2111,13 @@
         </div>
         <div class="form-field">
           <label>Photo</label>
-          <div class="upload-zone" id="testiPhotoZone" style="padding:16px;" onclick="triggerUpload('testiPhotoFile')">
-            <div class="uz-icon"></div>
-            <div class="uz-title">Upload testimonial photo</div>
-            <div class="uz-sub">JPG, PNG or WEBP via Cloudinary</div>
+          <div class="cld-url-row">
+            <input type="url" id="testiPhotoUrl" placeholder="https://res.cloudinary.com/..."/>
+            <button class="cld-upload-btn file-btn" onclick="triggerUpload('testiPhotoFile')"> Upload</button>
+            <input type="file" id="testiPhotoFile" style="display:none;" accept="image/*" onchange="uploadSingleImage(this, 'testiPhotoUrl')"/>
           </div>
-          <input type="file" id="testiPhotoFile" style="display:none;" accept="image/*"/>
+          <div class="form-hint">JPG, PNG or WEBP via Cloudinary</div>
         </div>
-        <div class="form-field"><label>Photo URL</label><input type="url" id="testiPhotoUrl" placeholder="https://res.cloudinary.com/..."/></div>
         <div class="form-field"><label>Testimonial Text</label><textarea id="testiText" placeholder="What they said about the school..."></textarea></div>
         <div class="form-field">
           <label>Star Rating</label>
@@ -2208,6 +2215,32 @@
 
   /* ══ FILE UPLOAD TRIGGER ══ */
   function triggerUpload(id) { document.getElementById(id)?.click(); }
+
+  async function uploadSingleImage(fileInp, targetId) {
+    if (!fileInp.files || !fileInp.files[0]) return;
+    const file = fileInp.files[0];
+    const target = document.getElementById(targetId);
+    if (!target) return;
+
+    try {
+      showToast('Uploading to Cloudinary...');
+      const formData = new FormData();
+      formData.append('file', file);
+      const res = await fetch('/api/upload', { method: 'POST', body: formData });
+      const data = await res.json();
+      if (data.url) {
+        target.value = data.url;
+        target.dispatchEvent(new Event('input', { bubbles: true }));
+        target.dispatchEvent(new Event('change', { bubbles: true }));
+        showToast('Image uploaded successfully!');
+      } else {
+        throw new Error(data.error || 'Upload failed');
+      }
+    } catch (e) {
+      showToast('Error: ' + e.message);
+      console.error(e);
+    }
+  }
 
   /* ══ Ctrl+S handled by AdminNavbar.js ══ */
 

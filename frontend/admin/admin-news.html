@@ -413,21 +413,21 @@
               <div id="img-preview-wrap" style="display:none;margin-bottom:8px">
                 <img id="img-preview" class="img-prev" src="" alt="Preview"/>
               </div>
-              <div class="cld-row">
-                <input type="url" id="f-image" placeholder="https://res.cloudinary.com/your-cloud/image/upload/..." oninput="previewImage();updatePreview()"/>
-                <button class="cld-up" onclick="document.getElementById('img-file').click()"> Upload</button>
+              <div class="cld-url-row">
+                <input type="url" id="f-image" placeholder="https://res.cloudinary.com/..." oninput="previewImage();updatePreview()"/>
+                <button class="cld-up" onclick="AdminCloudinary.triggerUpload('img-file')"> Upload</button>
                 <input type="file" id="img-file" accept="image/*" style="display:none" onchange="uploadImage(this)"/>
               </div>
-              <div class="fhint">Upload via Cloudinary or paste URL directly. Recommended: <code>w_800,h_500,c_fill,q_auto,f_auto</code></div>
+              <div class="fhint">Standard cover image for the news card. Recommended: <code>w_800,h_500,c_fill</code></div>
             </div>
 
             <div class="f">
               <label>Additional Images <span class="dbh">news.images[]</span></label>
               <div id="gallery-preview-wrap" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:10px;margin-bottom:10px;"></div>
-              <div class="cld-row" style="margin-bottom:8px;">
-                <input type="url" id="f-gallery-url" placeholder="https://res.cloudinary.com/your-cloud/image/upload/..."/>
+              <div class="cld-url-row" style="margin-bottom:8px;">
+                <input type="url" id="f-gallery-url" placeholder="Paste URL..."/>
                 <button class="cld-up" type="button" onclick="addGalleryUrl()"> Add URL</button>
-                <button class="cld-up" type="button" onclick="document.getElementById('gallery-files').click()"> Upload Many</button>
+                <button class="cld-up" type="button" onclick="AdminCloudinary.triggerUpload('gallery-files')"> Upload Many</button>
                 <input type="file" id="gallery-files" accept="image/*" multiple style="display:none" onchange="uploadGalleryImages(this)"/>
               </div>
               <textarea id="f-gallery-urls" rows="4" placeholder="Uploaded image URLs will appear here, one per line..." oninput="syncGalleryUrlsFromTextarea()" style="margin-top:8px;"></textarea>
@@ -847,19 +847,10 @@ function closeView() { document.getElementById('viewModal').classList.remove('op
    IMAGE UPLOAD
 ═══════════════════════════════════════════════════ */
 async function uploadImage(input) {
-  if (!input.files[0]) return;
-  toast('Uploading to Cloudinary...');
-  var fd = new FormData();
-  fd.append('file', input.files[0]);
-  try {
-    var res = await fetch(API_BASE + '/api/upload', { method:'POST', body:fd });
-    var data = await res.json();
-    if (!res.ok || !data.url) throw new Error(data.error || 'Upload failed');
-    document.getElementById('f-image').value = data.url;
+  return AdminCloudinary.uploadSingleImage(input, 'f-image').then(function() {
     previewImage();
     updatePreview();
-    toast('Image uploaded!');
-  } catch(e) { toast(e.message, true); }
+  });
 }
 
 async function uploadGalleryImages(input) {
@@ -872,13 +863,18 @@ async function uploadGalleryImages(input) {
       var fd = new FormData();
       fd.append('file', files[i]);
       toast('Uploading image ' + (i + 1) + ' of ' + files.length + '...');
-      var res = await fetch(API_BASE + '/api/upload', { method:'POST', body:fd });
-      var data = await res.json();
-      if (!res.ok || !data.url) throw new Error(data.error || 'Upload failed');
-      _galleryImages.push(data.url);
-      renderGalleryPreview();
-      syncGalleryUrlsTextarea();
-      updatePreview();
+      try {
+        var res = await fetch(API_BASE + '/api/upload', { method:'POST', body:fd });
+        var data = await res.json();
+        if (!res.ok || !data.url) throw new Error(data.error || 'Upload failed');
+        _galleryImages.push(data.url);
+        renderGalleryPreview();
+        syncGalleryUrlsTextarea();
+        updatePreview();
+      } catch (e) {
+        console.error('Gallery upload error:', e);
+        toast('Upload failed for image ' + (i+1), true);
+      }
     }
   })();
 

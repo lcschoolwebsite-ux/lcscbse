@@ -14,6 +14,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>School Information — Admin | Loretto Central School</title>
   <script src="/admin/admin-auth.js?v=20260420-1"></script>
+  <script src="/admin/admin-cloudinary.js?v=20260330-1"></script>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800&family=Nunito:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
   <script src="/admin/adminfooter.js"></script>
   <style>
@@ -844,7 +845,7 @@ function _ensureUniImg(label, listId, imgBaseId){
     var fileId = n + '-f';
     
     html += '<div style="background:var(--bg2); border-radius:10px; padding:10px; border:1.5px solid var(--border);">';
-    html += '  <div id="'+prevId+'" class="cld-prev" style="height:110px;cursor:pointer;flex-direction:column;margin-bottom:8px;" onclick="document.getElementById(\''+fileId+'\').click()">'+
+    html += '  <div id="'+prevId+'" class="cld-prev" style="height:110px;cursor:pointer;flex-direction:column;margin-bottom:8px;display:flex;align-items:center;justify-content:center;background:var(--bg);border-radius:8px;border:1px solid var(--border);" onclick="AdminCloudinary.triggerUpload(\''+fileId+'\')">'+
                 '<span style="font-size:1.2rem">\uD83D\uDCF7</span>'+
                 '<span style="margin-top:4px;font-size:0.65rem">Slot '+i+'</span>'+
               '</div>'+
@@ -854,9 +855,9 @@ function _ensureUniImg(label, listId, imgBaseId){
                   'var p=document.getElementById(\''+prevId+'\');'+
                   'if(this.value){p.innerHTML=\'<img src=\\\'\'+this.value+\'\\\' style=\\\'width:100%;height:100%;object-fit:cover;\\\'/>\'}'+
                   'else{p.innerHTML=\'<span style=\\\'font-size:1.2rem\\\'>\uD83D\uDCF7</span><span style=\\\'margin-top:4px;font-size:0.65rem\\\'>Slot '+i+'</span>\'}"/>'+
-                '<button class="cld-up" style="padding:5px 8px; font-size:0.65rem;" onclick="document.getElementById(\''+fileId+'\').click()">Up</button>'+
+                '<button class="cld-up" style="padding:5px 8px; font-size:0.65rem;" onclick="AdminCloudinary.triggerUpload(\''+fileId+'\')">Upload</button>'+
                 '<input type="file" id="'+fileId+'" accept="image/*" style="display:none"'+
-                  ' onchange="cldUp(this,\''+n+'\').then(function(){'+
+                  ' onchange="AdminCloudinary.uploadSingleImage(this,\''+n+'\').then(function(){'+
                     'var v=document.getElementById(\''+n+'\').value;'+
                     'var p=document.getElementById(\''+prevId+'\');'+
                     'if(v)p.innerHTML=\'<img src=\\\'\'+v+\'\\\' style=\\\'width:100%;height:100%;object-fit:cover;\\\'/>\';'+
@@ -957,8 +958,8 @@ function addPolicyRow(tbodyId){
   var sync = 'oninput="this.setAttribute(\'value\',this.value)"';
   tr.innerHTML='<td><input type="text" placeholder="Title..." '+sync+'/></td>'
     +'<td><input type="text" placeholder="Short description..." '+sync+'/></td>'
-    +'<td><div class="cld-row"><input type="url" id="p-up-'+n+'" placeholder="PDF URL..." '+sync+'/><button class="cld-up" onclick="document.getElementById(\'p-f-'+n+'\').click()"> Upload</button>'
-    +'<input type="file" id="p-f-'+n+'" accept="application/pdf" style="display:none" onchange="cldUp(this,\'p-up-'+n+'\'); this.setAttribute(\'value\', \'\')"/></div></td>'
+    +'<td><div class="cld-row"><input type="url" id="p-up-'+n+'" placeholder="PDF URL..." '+sync+'/><button class="cld-up" onclick="AdminCloudinary.triggerUpload(\'p-f-'+n+'\')"> Upload</button>'
+    +'<input type="file" id="p-f-'+n+'" accept="application/pdf" style="display:none" onchange="AdminCloudinary.uploadSingleImage(this,\'p-up-'+n+'\')"/></div></td>'
     +'<td><button class="ab del" onclick="this.closest(\'tr\').remove()">×</button></td>';
   tb.appendChild(tr);tr.querySelector('input').focus();
 }
@@ -967,35 +968,7 @@ function addPolicyRow(tbodyId){
    CLOUDINARY UPLOAD
 ═══════════════════════════════════ */
 async function cldUp(input,outputId){
-  if(!input.files[0])return;
-  toast('Uploading to Cloudinary...');
-  var fd=new FormData();fd.append('file',input.files[0]);
-  try{
-    var res = await fetch('/api/upload', {
-      method: 'POST',
-      body: fd
-    });
-    
-    var responseText = await res.text();
-    var data;
-    try {
-      data = JSON.parse(responseText);
-    } catch (e) {
-      console.error('Invalid Response Body:', responseText);
-      throw new Error('Server returned non-JSON response (Status: ' + res.status + '). Please check console for details.');
-    }
-    
-    if(!res.ok||!data.url) throw new Error(data.error||'Upload failed');
-    var el=document.getElementById(outputId);
-    if(el){
-      el.value=data.url;
-      el.setAttribute('value', data.url);
-    }
-    toast('Uploaded to Cloudinary!');
-  }catch(e){
-    console.error('Upload Error Details:', e);
-    toast('🔴 RELOAD ERROR: ' + e.message,true);
-  }
+  return AdminCloudinary.uploadSingleImage(input, outputId);
 }
 
 /* ═══════════════════════════════════

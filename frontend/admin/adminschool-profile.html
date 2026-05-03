@@ -14,6 +14,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>About Us — Admin | Loretto Central School</title>
   <script src="/admin/admin-auth.js?v=20260330-1"></script>
+  <script src="/admin/admin-cloudinary.js?v=20260330-1"></script>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800&family=Nunito:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -415,14 +416,15 @@
                           </div>
                           <div class="cld-transform-tag">w_1600,q_auto,f_auto</div>
                         </div>
-                        <div class="cld-add" onclick="document.getElementById('bannerUrlInput').focus()">
+                        <div class="cld-add" onclick="AdminCloudinary.triggerUpload('banner-f')">
                           <span class="cld-add-ic"></span>
-                          <span class="cld-add-txt">Cloudinary URL</span>
+                          <span class="cld-add-txt">Upload Image</span>
                         </div>
                       </div>
                       <div class="cld-url-row">
-                        <input type="url" id="bannerUrlInput" placeholder="https://res.cloudinary.com/your-cloud/image/upload/..." />
-                        <button class="cld-paste-btn" onclick="applyCldUrl('bannerUrlInput','bannerImg')">Apply</button>
+                        <input type="url" id="bannerUrlInput" placeholder="https://res.cloudinary.com/..." oninput="applyCldUrl('bannerUrlInput','bannerImg')" />
+                        <button class="cld-paste-btn" onclick="AdminCloudinary.triggerUpload('banner-f')"> Upload</button>
+                        <input type="file" id="banner-f" accept="image/*" style="display:none" onchange="AdminCloudinary.uploadSingleImage(this,'bannerUrlInput').then(function(){ applyCldUrl('bannerUrlInput','bannerImg'); })"/>
                       </div>
                       <div class="cld-transforms">
                         <span class="cld-t on">w_1600</span>
@@ -797,8 +799,9 @@ It is with great joy and pride that I welcome you to Loretto Central School. Our
                     </div>
                   </div>
                   <div class="cld-url-row">
-                    <input type="url" id="managerUrlInput" placeholder="https://res.cloudinary.com/your-cloud/image/upload/..." />
-                    <button class="cld-paste-btn">Apply</button>
+                    <input type="url" id="managerUrlInput" placeholder="https://res.cloudinary.com/..." oninput="updateImagePreviewFromInput(this, document.getElementById('managerImg'))" />
+                    <button class="cld-paste-btn" onclick="AdminCloudinary.triggerUpload('mgr-f')"> Upload</button>
+                    <input type="file" id="mgr-f" accept="image/*" style="display:none" onchange="AdminCloudinary.uploadSingleImage(this,'managerUrlInput').then(function(){ updateImagePreviewFromInput(document.getElementById('managerUrlInput'), document.getElementById('managerImg')); })"/>
                   </div>
                   <div class="cld-transforms">
                     <span class="cld-t on">w_400</span>
@@ -866,8 +869,9 @@ Welcome to Loretto Central School. As your Principal, it is my mission to ensure
                     </div>
                   </div>
                   <div class="cld-url-row">
-                    <input type="url" placeholder="https://res.cloudinary.com/..." />
-                    <button class="cld-paste-btn">Apply</button>
+                    <input type="url" id="principalUrlInput" placeholder="https://res.cloudinary.com/..." oninput="updateImagePreviewFromInput(this, document.getElementById('principalImg'))" />
+                    <button class="cld-paste-btn" onclick="AdminCloudinary.triggerUpload('prn-f')"> Upload</button>
+                    <input type="file" id="prn-f" accept="image/*" style="display:none" onchange="AdminCloudinary.uploadSingleImage(this,'principalUrlInput').then(function(){ updateImagePreviewFromInput(document.getElementById('principalUrlInput'), document.getElementById('principalImg')); })"/>
                   </div>
                   <div class="cld-transforms">
                     <span class="cld-t on">w_400</span><span class="cld-t on">q_auto</span><span class="cld-t on">f_auto</span><span class="cld-t">r_max</span><span class="cld-t">g_face</span>
@@ -1078,7 +1082,8 @@ Welcome to Loretto Central School. As your Principal, it is my mission to ensure
         <div class="f"><label>Photo (Cloudinary URL) <span class="dbh">photo.url</span></label>
           <div class="cld-url-row">
             <input id="personPhotoInput" type="url" placeholder="https://res.cloudinary.com/..." />
-            <button class="cld-paste-btn">Apply</button>
+            <button class="cld-paste-btn" onclick="AdminCloudinary.triggerUpload('person-f')"> Upload</button>
+            <input type="file" id="person-f" accept="image/*" style="display:none" onchange="AdminCloudinary.uploadSingleImage(this,'personPhotoInput')"/>
           </div>
           <div class="cld-transforms" style="margin-top:6px;">
             <span class="cld-t on">w_400</span><span class="cld-t on">q_auto</span><span class="cld-t on">f_auto</span><span class="cld-t">r_max</span><span class="cld-t">g_face</span>
@@ -1185,14 +1190,7 @@ Welcome to Loretto Central School. As your Principal, it is my mission to ensure
   }
 
   async function uploadFile(file) {
-    var fd = new FormData();
-    fd.append('file', file);
-    var res = await fetch(API_BASE + '/api/upload', { method: 'POST', body: fd });
-    var data = await res.json().catch(function () { return {}; });
-    if (!res.ok || !data.url) {
-      throw new Error(data.error || 'Upload failed');
-    }
-    return data.url;
+    return AdminCloudinary.uploadSingleImage({files:[file]}, null, true); // Returns URL
   }
 
   function getTabPanel(id) {
@@ -1640,18 +1638,7 @@ Welcome to Loretto Central School. As your Principal, it is my mission to ensure
     if (fileInput && !fileInput.__galleryUploadBound) {
       fileInput.__galleryUploadBound = true;
       fileInput.addEventListener('change', async function () {
-        if (!fileInput.files || !fileInput.files[0]) return;
-        try {
-          showToast('Uploading image to Cloudinary...');
-          var url = await uploadFile(fileInput.files[0]);
-          urlInput.value = url;
-          if (preview) updateImagePreviewFromInput(urlInput, preview);
-          showToast('Image uploaded successfully!');
-        } catch (err) {
-          showToast(err.message, true);
-        } finally {
-          fileInput.value = '';
-        }
+        return AdminCloudinary.uploadSingleImage(fileInput, urlInput);
       });
     }
   }
@@ -1707,18 +1694,7 @@ Welcome to Loretto Central School. As your Principal, it is my mission to ensure
       if (!fileInput.__uploadBound) {
         fileInput.__uploadBound = true;
         fileInput.addEventListener('change', async function () {
-          if (!fileInput.files || !fileInput.files[0]) return;
-          try {
-            showToast('Uploading to Cloudinary...');
-            var url = await uploadFile(fileInput.files[0]);
-            urlInput.value = url;
-            urlInput.dispatchEvent(new Event('input', { bubbles: true }));
-            showToast((isPdf ? 'PDF' : 'File') + ' uploaded successfully!');
-          } catch (err) {
-            showToast(err.message, true);
-          } finally {
-            fileInput.value = '';
-          }
+          return AdminCloudinary.uploadSingleImage(fileInput, urlInput);
         });
       }
 

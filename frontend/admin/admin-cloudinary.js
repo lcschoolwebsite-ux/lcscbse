@@ -283,12 +283,51 @@
     });
   }
 
+  async function uploadSingleImage(input, outputId) {
+    if (!input.files || !input.files[0]) return;
+    
+    var outputField = typeof outputId === 'string' ? document.getElementById(outputId) : outputId;
+    if (!outputField) {
+      toast('Output field not found.', true);
+      return;
+    }
+
+    toast('Uploading image...');
+    var fd = new FormData();
+    fd.append('file', input.files[0]);
+
+    try {
+      var res = await fetch('/api/upload', {
+        method: 'POST',
+        body: fd
+      });
+      var data = await res.json().catch(function() { return {}; });
+      if (!res.ok || !data.url) throw new Error(data.error || 'Upload failed');
+
+      outputField.value = data.url;
+      dispatchValueEvents(outputField);
+      toast('Image uploaded successfully!');
+      return data.url;
+    } catch (error) {
+      toast(error.message || 'Upload failed', true);
+    } finally {
+      input.value = ''; // clear file input
+    }
+  }
+
+  function triggerUpload(fileInputId) {
+    var el = typeof fileInputId === 'string' ? document.getElementById(fileInputId) : fileInputId;
+    if (el) el.click();
+  }
+
   window.AdminCloudinary = {
     enhance: enhance,
     isCloudinaryUrl: isCloudinaryUrl,
     deleteByUrl: deleteByUrl,
     deleteInputAsset: deleteInputAsset,
     bindDeleteButton: bindDeleteButton,
+    uploadSingleImage: uploadSingleImage,
+    triggerUpload: triggerUpload,
     toast: toast
   };
 
