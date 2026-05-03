@@ -149,10 +149,15 @@ async function resolveApiBase() {
       RESOLVED_API_BASE = winner;
       persistentSet(API_BASE_KEY, winner);
       persistentSet(API_BASE_OK_KEY, 'true');
+      console.log('[Loretto API] Resolved to: ' + winner);
       return winner;
     } catch (error) {
-      // Default fallback if probing fails
-      var fallback = IS_LOCAL ? 'http://localhost:3000/api' : '/api';
+      console.warn('[Loretto API] All probes failed or timed out. Falling back to default.', error);
+      // If we are in production and all probes failed, the absolute Railway URL is often the safest bet 
+      // if the relative /api doesn't exist on the frontend host.
+      var fallback = IS_LOCAL ? 'http://localhost:3000/api' : 'https://lcscbse-production.up.railway.app/api';
+      
+      // We don't cache the fallback as "OK" because we want to retry discovery next time
       RESOLVED_API_BASE = fallback;
       return fallback;
     }
