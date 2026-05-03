@@ -279,7 +279,7 @@
                 <div style="display:flex;gap:7px;align-items:center;margin-top:6px">
                   <button class="cld-up" onclick="document.getElementById('gal-file').click()"> Upload Images</button>
                   <input type="file" id="gal-file" accept="image/*" multiple style="display:none" onchange="uploadGalImages(this)"/>
-                  <span class="fhint">Up to 6 photos</span>
+                  <span class="fhint">Up to 6 photos (recommended)</span>
                 </div>
               </div>
             </div>
@@ -377,9 +377,14 @@ async function go(id){
   renderList('sec2-list',p.s2);
   document.getElementById('seo-title').value=p.title+' | Activities & Clubs | Loretto Central School';
   document.getElementById('seo-desc').value=p.desc.substring(0,160);
-  document.getElementById('gal-grid').innerHTML=makeGS()+makeGS()+makeGS();
+  document.getElementById('gal-grid').innerHTML='';
+  for(var i=0;i<6;i++) document.getElementById('gal-grid').insertAdjacentHTML('beforeend',makeGS());
   if(p.content && Array.isArray(p.content.gallery) && p.content.gallery.length){
-    document.getElementById('gal-grid').innerHTML=p.content.gallery.map(function(u){return makeGS(u);}).join('');
+    var gHtml = '';
+    for(var i=0;i<6;i++){
+      gHtml += makeGS(p.content.gallery[i] || '');
+    }
+    document.getElementById('gal-grid').innerHTML=gHtml;
   }
 }
 function liveUpdate(){
@@ -451,7 +456,8 @@ function previewPage(){if(!currentId)return;var p=PAGES[currentId];if(p)window.o
 function toast(msg,err){var t=document.getElementById('toast');t.textContent=msg;t.style.borderLeftColor=err?'var(--red)':'var(--gold-light)';t.classList.add('show');setTimeout(function(){t.classList.remove('show')},3200);}
 // Admin token prompt removed
 document.addEventListener('keydown',function(e){if((e.ctrlKey||e.metaKey)&&e.key==='s'){e.preventDefault();savePage();}});
-document.getElementById('gal-grid').innerHTML=makeGS()+makeGS()+makeGS();
+document.getElementById('gal-grid').innerHTML='';
+for(var i=0;i<6;i++) document.getElementById('gal-grid').insertAdjacentHTML('beforeend',makeGS());
 </script>
 </body>
 </html>
