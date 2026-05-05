@@ -12,7 +12,9 @@
     var path = window.location.pathname;
     if (path.endsWith('/')) path = path.slice(0, -1);
     var parts = path.split('/').filter(Boolean);
+    // If the last part is a filename, remove it
     if (parts.length > 0 && parts[parts.length - 1].indexOf('.') > -1) parts.pop();
+    
     var prefix = '';
     for (var i = 0; i < parts.length; i++) prefix += '../';
     return prefix || './';
@@ -21,29 +23,31 @@
   var R = getRootPrefix();
 
   /**
-   * Fetches general contact data (address, phone, email)
+   * Helper to fetch JSON with error handling
    */
-  async function loadContact() {
+  async function fetchJson(url) {
     try {
-      if (typeof window.loadContactData === 'function') return await window.loadContactData();
-      const res = await fetch(R + 'api/contact');
-      if (res.ok) return await res.json();
-    } catch (e) { }
-    return null;
+      const res = await fetch(url);
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      return await res.json();
+    } catch (e) {
+      console.warn('[Footer] Fetch failed for: ' + url, e.message);
+      return null;
+    }
   }
 
-  /**
-   * Fetches specific footer content and social links from the admin panel settings
-   */
+  async function loadContact() {
+    // Try relative then absolute
+    let data = await fetchJson(R + 'api/contact');
+    if (!data) data = await fetchJson('/api/contact');
+    return data;
+  }
+
   async function loadFooterSettings() {
-    try {
-      const res = await fetch(R + 'api/content/homepage.footer');
-      if (res.ok) {
-        const item = await res.json();
-        return item && item.data ? item.data : null;
-      }
-    } catch (e) { }
-    return null;
+    // Try relative then absolute
+    let item = await fetchJson(R + 'api/content/homepage.footer');
+    if (!item) item = await fetchJson('/api/content/homepage.footer');
+    return item && item.data ? item.data : null;
   }
 
   /* ── CSS ── */
@@ -150,8 +154,6 @@
   /* ── HTML STRUCTURE ── */
   var FOOTER_HTML = [
     '<div class="ft-wrap" id="lcs-footer">',
-
-    /* --- DESKTOP VIEW --- */
     '  <div class="ft-desktop">',
     '    <div class="ft-top-bar">',
     '      <div class="ft-topbar-item">',
@@ -174,7 +176,6 @@
     '        Mon–Sat: 8:00 AM – 4:00 PM',
     '      </div>',
     '    </div>',
-
     '    <div class="ft-main">',
     '      <div class="ft-col">',
     '        <a class="ft-brand-logo" href="' + R + 'index.html">',
@@ -192,7 +193,6 @@
     '          <a class="ft-soc-btn" aria-label="YouTube" href="#"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-1.96C18.88 4 12 4 12 4s-6.88 0-8.6.46A2.78 2.78 0 0 0 1.46 6.42 29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58A2.78 2.78 0 0 0 3.4 19.54C5.12 20 12 20 12 20s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-1.96A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#071f1f"/></svg></a>',
     '        </div>',
     '      </div>',
-
     '      <div class="ft-col" style="padding-left:32px;">',
     '        <div class="ft-col-heading">Quick Links</div>',
     '        <ul class="ft-links" id="ft-quick-links">',
@@ -204,7 +204,6 @@
     '          <li><a href="' + R + 'contact.html">Contact Us</a></li>',
     '        </ul>',
     '      </div>',
-
     '      <div class="ft-col" style="padding-left:32px;">',
     '        <div class="ft-col-heading">Academics</div>',
     '        <ul class="ft-links">',
@@ -216,7 +215,6 @@
     '          <li><a href="' + R + 'academics/3-cbse-circulars.html">CBSE Circulars</a></li>',
     '        </ul>',
     '      </div>',
-
     '      <div class="ft-col">',
     '        <div class="ft-col-heading">Contact</div>',
     '        <div class="ft-contact-item">',
@@ -246,17 +244,14 @@
     '        </a>',
     '      </div>',
     '    </div>',
-
     '    <div class="ft-bottom">',
-    '      <span class="ft-copy" id="ft-copyright">© <span class="ft-year"></span> Loretto Central School, Bantwal. All rights reserved. &nbsp;·&nbsp; CBSE Affiliation No. 831368</span>',
+    '      <span class="ft-copy" id="ft-copyright">© <span class="ft-year"></span> Loretto Central School. All rights reserved.</span>',
     '      <div class="ft-bottom-links">',
     '        <a href="' + R + 'school-information/9-website-privacy-policy.html">Privacy &amp; Policy</a>',
     '        <a href="' + R + 'mandatory-disclosure.html">Mandatory Disclosure</a>',
     '      </div>',
     '    </div>',
     '  </div>',
-
-    /* --- MOBILE VIEW --- */
     '  <div class="ft-mobile">',
     '    <div class="mob-ft-base">',
     '      <div class="mob-ft-card">',
@@ -295,18 +290,15 @@
     '      </div>',
     '    </div>',
     '  </div>',
-
     '  <div class="ft-credits">',
     '    <span>Developed by <a href="https://appvertex.in" target="_blank" rel="noopener">AppVertex</a></span>',
     '    <span style="color:rgba(255,255,255,0.12);">·</span>',
     '    <span>Built by <strong>Leston</strong> &amp; <strong>Lenstar</strong></span>',
     '    <a class="ft-admin-trigger" id="ft-admin-trigger" href="' + R + 'admin/admin-login.html" title="Admin Access"></a>',
     '  </div>',
-
     '  <button id="ft-scroll-top" aria-label="Scroll to top" title="Scroll to top">',
     '    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"/></svg>',
     '  </button>',
-
     '</div>'
   ].join('\n');
 
@@ -326,70 +318,78 @@
     document.querySelectorAll('.ft-year').forEach(function(el) { el.textContent = yr; });
 
     // Fetch and Apply Data
-    const contact = await loadContact();
-    const settings = await loadFooterSettings();
+    try {
+      const [contact, settings] = await Promise.all([loadContact(), loadFooterSettings()]);
+      
+      console.log('[Footer] Loaded data:', { contact, settings });
 
-    if (contact) {
-      if (contact.address) document.querySelectorAll('.ft-data-address').forEach(el => el.textContent = contact.address);
-      if (contact.phone) {
-        document.querySelectorAll('.ft-data-phone').forEach(el => {
-          el.textContent = contact.phone;
-          if (el.tagName === 'A') el.href = 'tel:' + contact.phone.replace(/\s/g, '');
-        });
+      if (contact) {
+        if (contact.address) document.querySelectorAll('.ft-data-address').forEach(el => el.textContent = contact.address);
+        if (contact.phones && contact.phones[0]) {
+          const ph = contact.phones[0];
+          document.querySelectorAll('.ft-data-phone').forEach(el => {
+            el.textContent = ph;
+            if (el.tagName === 'A') el.href = 'tel:' + ph.replace(/\s/g, '');
+          });
+        } else if (contact.phone) {
+           document.querySelectorAll('.ft-data-phone').forEach(el => {
+            el.textContent = contact.phone;
+            if (el.tagName === 'A') el.href = 'tel:' + contact.phone.replace(/\s/g, '');
+          });
+        }
+        if (contact.email) {
+          document.querySelectorAll('.ft-data-email').forEach(el => {
+            el.textContent = contact.email;
+            if (el.tagName === 'A') el.href = 'mailto:' + contact.email;
+          });
+        }
       }
-      if (contact.email) {
-        document.querySelectorAll('.ft-data-email').forEach(el => {
-          el.textContent = contact.email;
-          if (el.tagName === 'A') el.href = 'mailto:' + contact.email;
-        });
-      }
-    }
 
-    if (settings) {
-      // 1. Description
-      if (settings.description) {
-        var desc = document.getElementById('ft-desc');
-        if (desc) desc.textContent = settings.description;
-      }
-      // 2. Copyright
-      if (settings.copyright) {
-        var copy = document.getElementById('ft-copyright');
-        if (copy) copy.innerHTML = settings.copyright.replace('{{year}}', '<span class="ft-year">' + yr + '</span>');
-      }
-      // 3. Social Links
-      if (settings.socialLinks) {
-        var socials = settings.socialLinks;
-        var targets = {
-          'Facebook': socials.facebook,
-          'Instagram': socials.instagram,
-          'Twitter': socials.twitter,
-          'YouTube': socials.youtube
-        };
-        for (var label in targets) {
-          if (targets[label]) {
+      if (settings) {
+        if (settings.description) {
+          var desc = document.getElementById('ft-desc');
+          if (desc) desc.textContent = settings.description;
+        }
+        if (settings.copyright) {
+          var copy = document.getElementById('ft-copyright');
+          if (copy) copy.innerHTML = settings.copyright.replace('{{year}}', '<span class="ft-year">' + yr + '</span>');
+        }
+        if (settings.socialLinks) {
+          var socials = settings.socialLinks;
+          var targets = {
+            'Facebook': socials.facebook,
+            'Instagram': socials.instagram,
+            'Twitter': socials.twitter,
+            'YouTube': socials.youtube
+          };
+          for (var label in targets) {
+            var url = targets[label];
             document.querySelectorAll('.ft-soc-btn[aria-label="' + label + '"]').forEach(el => {
-              el.href = targets[label];
-              el.style.display = 'flex';
+              if (url && url.trim()) {
+                el.href = url.trim();
+                el.style.display = 'flex';
+              } else {
+                el.style.display = 'none';
+              }
             });
-          } else {
-            document.querySelectorAll('.ft-soc-btn[aria-label="' + label + '"]').forEach(el => el.style.display = 'none');
+          }
+        }
+        if (Array.isArray(settings.quickLinks) && settings.quickLinks.length) {
+          var qlContainer = document.getElementById('ft-quick-links');
+          var mqlContainer = document.getElementById('mob-ft-quick-links');
+          if (qlContainer) {
+            qlContainer.innerHTML = settings.quickLinks.map(link => '<li><a href="' + link.url + '">' + link.text + '</a></li>').join('');
+          }
+          if (mqlContainer) {
+            mqlContainer.innerHTML = settings.quickLinks.map(link => '<a href="' + link.url + '" class="mob-ft-link">' + link.text + '</a>').join('');
           }
         }
       }
-      // 4. Quick Links (Optional but good)
-      if (Array.isArray(settings.quickLinks) && settings.quickLinks.length) {
-        var qlContainer = document.getElementById('ft-quick-links');
-        var mqlContainer = document.getElementById('mob-ft-quick-links');
-        if (qlContainer) {
-          qlContainer.innerHTML = settings.quickLinks.map(link => '<li><a href="' + link.url + '">' + link.text + '</a></li>').join('');
-        }
-        if (mqlContainer) {
-          mqlContainer.innerHTML = settings.quickLinks.map(link => '<a href="' + link.url + '" class="mob-ft-link">' + link.text + '</a>').join('');
-        }
-      }
+    } catch (err) {
+      console.error('[Footer] Error applying data:', err);
     }
 
-    // Scroll to top logic
+    // Scroll to top
     var scrollBtn = document.getElementById('ft-scroll-top');
     if (scrollBtn) {
       window.addEventListener('scroll', function() {
