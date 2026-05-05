@@ -12,41 +12,61 @@
     var path = window.location.pathname;
     if (path.endsWith('/')) path = path.slice(0, -1);
     var parts = path.split('/').filter(Boolean);
-    // If the last part is a filename, remove it
     if (parts.length > 0 && parts[parts.length - 1].indexOf('.') > -1) parts.pop();
-    
     var prefix = '';
     for (var i = 0; i < parts.length; i++) prefix += '../';
     return prefix || './';
   }
 
   var R = getRootPrefix();
+  var PROD_API = 'https://lcscbse-production.up.railway.app/api';
 
   /**
-   * Helper to fetch JSON with error handling
+   * Helper to fetch JSON with robust error handling and type checking.
    */
   async function fetchJson(url) {
     try {
       const res = await fetch(url);
-      if (!res.ok) throw new Error('HTTP ' + res.status);
+      if (!res.ok) return null;
+      const contentType = res.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        return null; // Probably an HTML 404 page
+      }
       return await res.json();
     } catch (e) {
-      console.warn('[Footer] Fetch failed for: ' + url, e.message);
       return null;
     }
   }
 
-  async function loadContact() {
-    // Try relative then absolute
-    let data = await fetchJson(R + 'api/contact');
-    if (!data) data = await fetchJson('/api/contact');
-    return data;
+  async function getApiBase() {
+    // If shared-data-loader is present, use its resolved base
+    if (window.RESOLVED_API_BASE) return window.RESOLVED_API_BASE;
+    if (window.resolveApiBase) return await window.resolveApiBase();
+
+    // Otherwise, try to find it ourselves
+    const candidates = [
+      R + 'api',
+      '/api',
+      'http://localhost:3000/api',
+      PROD_API
+    ];
+
+    for (let base of candidates) {
+      const cleanBase = base.replace(/\/+$/, '');
+      const data = await fetchJson(cleanBase + '/health');
+      if (data && (data.ok || data.service === 'loretto-backend')) {
+        return cleanBase;
+      }
+    }
+    return '/api'; // Final fallback
   }
 
-  async function loadFooterSettings() {
-    // Try relative then absolute
-    let item = await fetchJson(R + 'api/content/homepage.footer');
-    if (!item) item = await fetchJson('/api/content/homepage.footer');
+  async function loadContact(apiBase) {
+    return await fetchJson(apiBase + '/contact');
+  }
+
+  async function loadFooterSettings(apiBase) {
+    const item = await fetchJson(apiBase + '/content/homepage.footer');
     return item && item.data ? item.data : null;
   }
 
@@ -319,9 +339,12 @@
 
     // Fetch and Apply Data
     try {
-      const [contact, settings] = await Promise.all([loadContact(), loadFooterSettings()]);
+      const apiBase = await getApiBase();
+      console.log('[Footer] Using API base:', apiBase);
+
+      const [contact, settings] = await Promise.all([loadContact(apiBase), loadFooterSettings(apiBase)]);
       
-      console.log('[Footer] Loaded data:', { contact, settings });
+      console.log('[Footer] Data loaded:', { contact, settings });
 
       if (contact) {
         if (contact.address) document.querySelectorAll('.ft-data-address').forEach(el => el.textContent = contact.address);
