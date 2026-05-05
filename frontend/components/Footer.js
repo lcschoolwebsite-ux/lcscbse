@@ -393,10 +393,6 @@
     '          <span class="mob-ft-cbse">CBSE 831368</span>',
     '        </div>',
     '      </div>',
-    '      <div class="mob-ft-credits">',
-    '        Developed by <a href="https://appvertex.in" target="_blank" rel="noopener">AppVertex</a>',
-    '        · Built by <strong>Leston</strong> &amp; <strong>Lenstar</strong>',
-    '      </div>',
     '    </div>',
     '  </div>',
 
