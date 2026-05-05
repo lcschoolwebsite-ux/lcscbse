@@ -202,7 +202,7 @@
     '          <div class="ft-logo-ring"><img src="' + R + 'logo.png" alt="LCS"></div>',
     '          <div>',
     '            <div class="ft-brand-name">Loretto Central School</div>',
-    '            <div class="ft-brand-tag">CBSE Affiliated · Est. 1990</div>',
+    '            <div class="ft-brand-tag">CBSE Affiliated · Est. 2010</div>',
     '          </div>',
     '        </a>',
     '        <p class="ft-brand-desc" id="ft-desc">Shaping young minds for over three decades with excellence in education, rooted in values, innovation, and care.</p>',
