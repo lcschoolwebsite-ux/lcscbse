@@ -1654,6 +1654,31 @@
       <div class="panel" id="panel-gallery">
         <div class="section-block">
           <div class="section-block-header">
+            <div class="section-block-title"><span class="icon"></span> Gallery Section Title</div>
+            <div class="section-block-actions">
+              <button class="btn-sm gold" onclick="saveSection('Gallery')"> Save</button>
+            </div>
+          </div>
+          <div class="section-block-body">
+            <div class="form-grid">
+              <div class="form-field">
+                <label>Section Tag (Gold Label)</label>
+                <input type="text" id="galTag" placeholder="e.g. SCHOOL GALLERY" />
+              </div>
+              <div class="form-field">
+                <label>Main Heading</label>
+                <input type="text" id="galHeading" placeholder="e.g. Life at Loretto Central School" />
+              </div>
+              <div class="form-field">
+                <label>Description Paragraph</label>
+                <textarea id="galDescription" style="min-height:70px;" placeholder="A brief intro to the gallery..."></textarea>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-block">
+          <div class="section-block-header">
             <div class="section-block-title"><span class="icon"></span> Gallery Images <span class="count-pill">Homepage photos</span></div>
             <div class="section-block-actions">
               <button class="btn-sm outline" onclick="addGalleryImageRow()">+ Add Image</button>
@@ -1720,6 +1745,24 @@
                   <td><label class="toggle"><input type="checkbox" checked/><span class="toggle-track"></span></label></td>
                   <td><div class="action-btns"><button class="act-btn del"></button></div></td>
                 </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="section-block">
+          <div class="section-block-header">
+            <div class="section-block-title"><span class="icon"></span> Achievement Counters <span class="count-pill">Bottom bar stats</span></div>
+            <div class="section-block-actions">
+              <button class="btn-sm outline" onclick="addGalleryCounterRow()">+ Add Counter</button>
+              <button class="btn-sm gold" onclick="saveSection('Gallery')"> Save</button>
+            </div>
+          </div>
+          <div class="section-block-body" style="padding:0;">
+            <table class="data-table">
+              <thead><tr><th>Value</th><th>Label</th><th>Actions</th></tr></thead>
+              <tbody id="galleryCounterRows">
+                <!-- Dynamic rows -->
               </tbody>
             </table>
           </div>

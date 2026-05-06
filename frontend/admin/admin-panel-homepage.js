@@ -213,10 +213,28 @@
       + '</tr>';
   }
 
+  function galleryCounterRowHtml(item) {
+    var value = item && item.value ? item.value : '';
+    var label = item && item.label ? item.label : '';
+    return ''
+      + '<tr>'
+      + '<td><input type="text" value="' + escapeAttr(value) + '" placeholder="e.g. 25+" style="border:1px solid var(--border);border-radius:6px;padding:6px 10px;font-family:Nunito;"/></td>'
+      + '<td><input type="text" value="' + escapeAttr(label) + '" placeholder="e.g. Years of Excellence" style="border:1px solid var(--border);border-radius:6px;padding:6px 10px;font-family:Nunito;"/></td>'
+      + '<td><div class="action-btns"><button class="act-btn del" data-action="delete-counter-row"></button></div></td>'
+      + '</tr>';
+  }
+
   function addGalleryImageRow(item) {
     var host = document.getElementById('galleryImageRows');
     if (!host) return;
     host.insertAdjacentHTML('beforeend', galleryRowHtml(item || {}));
+    bindDynamicActions();
+  }
+
+  function addGalleryCounterRow(item) {
+    var host = document.getElementById('galleryCounterRows');
+    if (!host) return;
+    host.insertAdjacentHTML('beforeend', galleryCounterRowHtml(item || {}));
     bindDynamicActions();
   }
 
@@ -512,12 +530,14 @@
   };
 
   function collectGalleryData() {
-    var rows = qsa('#panel-gallery tbody tr');
+    var imagesRows = qsa('#galleryImageRows tr');
+    var counterRows = qsa('#galleryCounterRows tr');
+    
     return {
-      tag: 'School Gallery',
-      heading: 'Life at Loretto Central School',
-      description: 'A glimpse into our vibrant campus life, events, achievements, and everyday moments.',
-      images: rows.map(function (row) {
+      tag: document.getElementById('galTag') ? document.getElementById('galTag').value.trim() : 'School Gallery',
+      heading: document.getElementById('galHeading') ? document.getElementById('galHeading').value.trim() : 'Life at Loretto Central School',
+      description: document.getElementById('galDescription') ? document.getElementById('galDescription').value.trim() : '',
+      images: imagesRows.map(function (row) {
         var inputs = qsa('input', row);
         return {
           image: inputs[0] ? inputs[0].value.trim() : '',
@@ -527,22 +547,37 @@
       }).filter(function (item) {
         return item.image;
       }),
-      counters: qsa('#galCounter .gal-counter-item').map(function (item) {
+      counters: counterRows.map(function (row) {
+        var inputs = qsa('input', row);
         return {
-          value: qs('.gal-counter-num', item) ? qs('.gal-counter-num', item).textContent.trim() : '',
-          label: item.textContent.replace((qs('.gal-counter-num', item) ? qs('.gal-counter-num', item).textContent : ''), '').trim()
+          value: inputs[0] ? inputs[0].value.trim() : '',
+          label: inputs[1] ? inputs[1].value.trim() : ''
         };
+      }).filter(function (item) {
+        return item.value || item.label;
       })
     };
   }
 
   function populateGallery(data) {
+    if (document.getElementById('galTag')) document.getElementById('galTag').value = data.tag || '';
+    if (document.getElementById('galHeading')) document.getElementById('galHeading').value = data.heading || '';
+    if (document.getElementById('galDescription')) document.getElementById('galDescription').value = data.description || '';
+
     var host = document.getElementById('galleryImageRows');
-    if (!host) return;
-    if (!Array.isArray(data.images) || !data.images.length) return;
-    host.innerHTML = data.images.map(function (item) {
-      return galleryRowHtml(item);
-    }).join('');
+    if (host) {
+      host.innerHTML = (data.images || []).map(function (item) {
+        return galleryRowHtml(item);
+      }).join('');
+    }
+
+    var chost = document.getElementById('galleryCounterRows');
+    if (chost) {
+      chost.innerHTML = (data.counters || []).map(function (item) {
+        return galleryCounterRowHtml(item);
+      }).join('');
+    }
+
     bindDynamicActions();
   }
 
@@ -795,6 +830,15 @@
           }
         });
         input.click();
+      });
+    });
+
+    qsa('[data-action="delete-counter-row"]').forEach(function (btn) {
+      if (btn.dataset.bound === 'true') return;
+      btn.dataset.bound = 'true';
+      btn.addEventListener('click', function () {
+        var row = btn.closest('tr');
+        if (row) row.remove();
       });
     });
 
@@ -1133,6 +1177,10 @@
 
   window.addGalleryImageRow = function () {
     addGalleryImageRow({});
+  };
+
+  window.addGalleryCounterRow = function () {
+    addGalleryCounterRow({});
   };
 
   window.triggerUpload = function (id) {
