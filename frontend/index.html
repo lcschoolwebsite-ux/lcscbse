@@ -2712,53 +2712,7 @@
       pointer-events: none;
     }
 
-    /* ── GALLERY — ORBITAL SPREAD ── */
-
-    @keyframes sectionTagSlide {
-      from {
-        opacity: 0;
-        letter-spacing: 0.3em
-      }
-
-      to {
-        opacity: 1;
-        letter-spacing: 0.12em
-      }
-    }
-
-    @keyframes galOrbFloat {
-
-      0%,
-      100% {
-        transform: translateY(0) scale(1);
-      }
-
-      50% {
-        transform: translateY(-22px) scale(1.04);
-      }
-    }
-
-    @keyframes galCardShine {
-      0% {
-        left: -100%;
-      }
-
-      100% {
-        left: 130%;
-      }
-    }
-
-    @keyframes galIconPulse {
-
-      0%,
-      100% {
-        transform: translateY(0) scale(1) rotate(0deg);
-      }
-
-      50% {
-        transform: translateY(-10px) scale(1.12) rotate(4deg);
-      }
-    }
+    /* ── GALLERY — MASONRY GRID ── */
 
     @keyframes galBgShimmer {
       0% {
@@ -2774,10 +2728,22 @@
       }
     }
 
-    @keyframes galCounterIn {
+    @keyframes sectionTagSlide {
       from {
         opacity: 0;
-        transform: translateY(18px) scale(0.92);
+        letter-spacing: .3em
+      }
+
+      to {
+        opacity: 1;
+        letter-spacing: .12em
+      }
+    }
+
+    @keyframes masonryFadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(28px) scale(0.97);
       }
 
       to {
@@ -2786,9 +2752,8 @@
       }
     }
 
-    /* Section wrapper */
     .gallery {
-      padding: 110px 0 90px;
+      padding: 100px 0 90px;
       position: relative;
       overflow: hidden;
       background: linear-gradient(135deg, #f9f6ef 0%, #f4faf9 35%, #f9f6ef 70%, #fff8ee 100%);
@@ -2796,7 +2761,7 @@
       animation: galBgShimmer 14s ease infinite;
     }
 
-    /* Top gold rule */
+    /* top gold rule */
     .gallery::before {
       content: '';
       position: absolute;
@@ -2807,7 +2772,7 @@
       background: linear-gradient(90deg, transparent, var(--gold), var(--gold-light), var(--gold), transparent);
     }
 
-    /* Ambient glow orb - top right */
+    /* ambient orb */
     .gallery::after {
       content: '';
       position: absolute;
@@ -2820,278 +2785,166 @@
       pointer-events: none;
     }
 
-    /* ── Orbital stack container ── */
-    .gallery-orbital {
+    /* ── Masonry wrapper ── */
+    .gallery-masonry {
+      columns: 3;
+      column-gap: 16px;
+      margin: 3rem 0 1.5rem;
+    }
+
+    /* ── Individual tile ── */
+    .gal-tile {
+      break-inside: avoid;
+      margin-bottom: 16px;
+      border-radius: 16px;
+      overflow: hidden;
       position: relative;
-      height: 500px;
+      cursor: pointer;
+      display: block;
+      opacity: 0;
+      animation: masonryFadeUp 0.6s cubic-bezier(0.34, 1.2, 0.64, 1) forwards;
+    }
+
+    .gal-tile img {
+      width: 100%;
+      display: block;
+      object-fit: cover;
+      transition: transform 0.55s cubic-bezier(0.23, 1, 0.32, 1);
+      border-radius: 16px;
+    }
+
+    /* Tinted overlay */
+    .gal-tile-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top,
+          rgba(5, 26, 26, 0.78) 0%,
+          rgba(5, 26, 26, 0.20) 45%,
+          transparent 70%);
+      border-radius: 16px;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+      display: flex;
+      align-items: flex-end;
+      padding: 18px;
+    }
+
+    .gal-tile-label {
+      color: #fff;
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      transform: translateY(8px);
+      transition: transform 0.4s ease;
+    }
+
+    .gal-tile-zoom {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: rgba(200, 150, 12, 0.85);
       display: flex;
       align-items: center;
       justify-content: center;
-      perspective: 1600px;
-      margin: 3rem 0 1rem;
-    }
-
-    /* Subtle ambient glow behind the stack */
-    .gallery-orbital::before {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 500px;
-      height: 300px;
-      border-radius: 50%;
-      background: radial-gradient(ellipse, rgba(14, 107, 107, 0.07) 0%, transparent 70%);
-      pointer-events: none;
-    }
-
-    /* ── Individual orbital card ── */
-    .orb-card {
-      position: absolute;
-      width: 290px;
-      height: 360px;
-      border-radius: 22px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-end;
-      padding: 28px 24px;
-      cursor: pointer;
       color: #fff;
-      overflow: hidden;
-      border: 1px solid rgba(255, 255, 255, 0.18);
-      box-shadow: 0 18px 50px rgba(0, 0, 0, 0.18), 0 0 30px rgba(200, 150, 12, 0.15);
-      transition: all 0.65s cubic-bezier(0.23, 1, 0.32, 1);
-      transform-style: preserve-3d;
-      perspective: 1000px;
+      font-size: 0.85rem;
+      opacity: 0;
+      transform: scale(0.7);
+      transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.34, 1.4, 0.64, 1);
     }
 
-    /* Animated gradient background */
-    .orb-card::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(45deg, rgba(255, 255, 255, 0.08) 0%, transparent 50%, rgba(200, 150, 12, 0.05) 100%);
-      animation: cardGradientShift 4s ease-in-out infinite;
-      pointer-events: none;
-      z-index: 4;
+    /* hover states */
+    .gal-tile:hover img {
+      transform: scale(1.07);
     }
 
-    @keyframes cardGradientShift {
-
-      0%,
-      100% {
-        background: linear-gradient(45deg, rgba(255, 255, 255, 0.08) 0%, transparent 50%, rgba(200, 150, 12, 0.05) 100%);
-      }
-
-      50% {
-        background: linear-gradient(225deg, rgba(255, 255, 255, 0.12) 0%, transparent 50%, rgba(200, 150, 12, 0.08) 100%);
-      }
+    .gal-tile:hover .gal-tile-overlay {
+      opacity: 1;
     }
 
-    /* Shine sweep on hover */
-    .orb-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-      transition: none;
-      pointer-events: none;
-      z-index: 5;
+    .gal-tile:hover .gal-tile-label {
+      transform: translateY(0);
     }
 
-    .orb-card:hover::before {
-      animation: galCardShineEnhanced 0.7s ease forwards;
+    .gal-tile:hover .gal-tile-zoom {
+      opacity: 1;
+      transform: scale(1);
     }
 
-    @keyframes galCardShineEnhanced {
-      0% {
-        left: -100%;
-      }
-
-      100% {
-        left: 100%;
-      }
+    /* stagger delays */
+    .gal-tile:nth-child(1) {
+      animation-delay: 0.05s;
     }
 
-    /* Dark gradient overlay at bottom */
-    .orb-card-overlay {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      height: 65%;
-      background: linear-gradient(to top, rgba(3, 18, 18, 0.80) 0%, transparent 100%);
-      border-radius: 0 0 22px 22px;
-      pointer-events: none;
+    .gal-tile:nth-child(2) {
+      animation-delay: 0.10s;
     }
 
-    /* Big emoji / icon */
-    .orb-card-icon {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -65%);
-      font-size: 4rem;
-      filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.35));
-      z-index: 2;
-      animation: galIconPulse var(--oi-d, 5.5s) ease-in-out infinite var(--oi-dl, 0s), galIconFloat 3s ease-in-out infinite;
-      transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+    .gal-tile:nth-child(3) {
+      animation-delay: 0.15s;
     }
 
-    /* Image in gallery card - fit to card */
-    .orb-card-icon[src$=".jpg"],
-    .orb-card-icon[src$=".webp"],
-    .orb-card-icon[src$=".png"],
-    .orb-card-icon[src*="IMGS/"] {
-      position: absolute;
-      inset: 0;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      object-position: center;
-      transform: none;
-      font-size: inherit;
-      filter: brightness(0.95) contrast(1.05);
-      animation: none;
-      transition: filter 0.4s ease, transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
-      z-index: 1;
+    .gal-tile:nth-child(4) {
+      animation-delay: 0.20s;
     }
 
-    .orb-card:hover .orb-card-icon[src$=".jpg"],
-    .orb-card:hover .orb-card-icon[src$=".webp"],
-    .orb-card:hover .orb-card-icon[src$=".png"],
-    .orb-card:hover .orb-card-icon[src*="IMGS/"] {
-      filter: brightness(1) contrast(1.1);
-      transform: scale(1.08);
+    .gal-tile:nth-child(5) {
+      animation-delay: 0.25s;
     }
 
-    /* Content block */
-    .orb-card-content {
-      position: relative;
-      z-index: 3;
+    .gal-tile:nth-child(6) {
+      animation-delay: 0.30s;
+    }
+
+    .gal-tile:nth-child(7) {
+      animation-delay: 0.35s;
+    }
+
+    .gal-tile:nth-child(8) {
+      animation-delay: 0.40s;
+    }
+
+    .gal-tile:nth-child(9) {
+      animation-delay: 0.45s;
+    }
+
+    /* ── View All button ── */
+    .gallery-view-all {
       text-align: center;
+      margin-top: 12px;
     }
 
-    .orb-card-tag {
-      display: inline-block;
-      font-size: 0.62rem;
-      font-weight: 800;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--gold-light);
-      background: rgba(200, 150, 12, 0.18);
-      border: 1px solid rgba(200, 150, 12, 0.3);
-      border-radius: 20px;
-      padding: 3px 11px;
-      margin-bottom: 8px;
-    }
-
-    .orb-card h3 {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.15rem;
+    .gallery-view-all a {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      border: 2px solid var(--navy);
+      color: var(--navy);
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.88rem;
       font-weight: 700;
-      margin-bottom: 6px;
-      letter-spacing: -0.2px;
+      padding: 11px 28px;
+      border-radius: 30px;
+      text-decoration: none;
+      transition: all 0.25s;
+    }
+
+    .gallery-view-all a:hover {
+      background: var(--navy);
       color: #fff;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(14, 107, 107, 0.22);
     }
 
-    .orb-card p {
-      font-size: 0.78rem;
-      font-weight: 400;
-      color: rgba(255, 255, 255, 0.78);
-      line-height: 1.55;
-      max-width: 230px;
-      margin: 0 auto;
-    }
-
-    /* ── Card 1 — left, tilted back ── */
-    /* ── Card 1 — far left ── */
-    .orb-card:nth-child(1) {
-      background: linear-gradient(145deg, #062f2f 0%, #0e6b6b 55%, #c8960c 100%);
-      transform: translateX(-370px) translateY(30px) rotateZ(-20deg) rotateY(30deg) scale(0.82);
-      z-index: 1;
-      opacity: 0.72;
-    }
-
-    /* ── Card 2 — near left ── */
-    .orb-card:nth-child(2) {
-      background: linear-gradient(145deg, #0a4545 0%, #0e7a7a 55%, #e8b020 100%);
-      transform: translateX(-185px) translateY(12px) rotateZ(-10deg) rotateY(16deg) scale(0.92);
-      z-index: 3;
-      opacity: 0.88;
-    }
-
-    /* ── Card 3 — centre hero ── */
-    .orb-card:nth-child(3) {
-      background: linear-gradient(145deg, #083535 0%, #0c6464 55%, #d4a014 100%);
-      transform: translateX(0) translateY(0) rotateZ(0deg) rotateY(0deg) scale(1);
-      z-index: 5;
-      box-shadow: 0 28px 70px rgba(0, 0, 0, 0.26), 0 0 0 1.5px rgba(200, 150, 12, 0.3);
-    }
-
-    /* ── Card 4 — near right ── */
-    .orb-card:nth-child(4) {
-      background: linear-gradient(145deg, #042020 0%, #083838 55%, #906005 100%);
-      transform: translateX(185px) translateY(12px) rotateZ(10deg) rotateY(-16deg) scale(0.92);
-      z-index: 3;
-      opacity: 0.88;
-    }
-
-    /* ── Card 5 — far right ── */
-    .orb-card:nth-child(5) {
-      background: linear-gradient(145deg, #073030 0%, #0c5858 55%, #b5840a 100%);
-      transform: translateX(370px) translateY(30px) rotateZ(20deg) rotateY(-30deg) scale(0.82);
-      z-index: 1;
-      opacity: 0.72;
-    }
-
-    /* ── HOVER ON THE CONTAINER — orbital spread ── */
-    .gallery-orbital:hover .orb-card:nth-child(1) {
-      transform: translateX(-490px) translateY(40px) rotateZ(-28deg) rotateY(40deg) scale(0.76);
-      opacity: 0.50;
-    }
-
-    .gallery-orbital:hover .orb-card:nth-child(2) {
-      transform: translateX(-250px) translateY(-16px) rotateZ(-16deg) rotateY(26deg) scale(0.87);
-      opacity: 0.75;
-    }
-
-    .gallery-orbital:hover .orb-card:nth-child(3) {
-      transform: translateX(0) translateY(-44px) rotateZ(0) rotateY(0) scale(1.07);
-      box-shadow: 0 48px 100px rgba(0, 0, 0, 0.32), 0 0 0 2px rgba(200, 150, 12, 0.45);
-      z-index: 10;
-    }
-
-    .gallery-orbital:hover .orb-card:nth-child(4) {
-      transform: translateX(250px) translateY(-16px) rotateZ(16deg) rotateY(-26deg) scale(0.87);
-      opacity: 0.75;
-    }
-
-    .gallery-orbital:hover .orb-card:nth-child(5) {
-      transform: translateX(490px) translateY(40px) rotateZ(28deg) rotateY(-40deg) scale(0.76);
-      opacity: 0.50;
-    }
-
-    /* Allow individual card hover to lift it to hero */
-    .orb-card:hover {
-      transform: translateX(0) translateY(-40px) rotateZ(0) rotateY(0) scale(1.06) !important;
-      z-index: 20 !important;
-      opacity: 1 !important;
-      box-shadow: 0 44px 90px rgba(0, 0, 0, 0.30), 0 0 0 2px rgba(200, 150, 12, 0.45) !important;
-    }
-
-    /* ── Gallery counter bar ── */
+    /* ── Counter bar ── */
     .gallery-counter {
       display: flex;
       justify-content: center;
       gap: 12px;
-      margin-top: 28px;
+      margin-top: 32px;
       flex-wrap: wrap;
     }
 
@@ -3120,108 +2973,184 @@
       font-weight: 800;
     }
 
-    /* ── RESPONSIVE ── */
+    /* ── Lightbox ── */
+    .gal-lightbox {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(4, 18, 18, 0.92);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      z-index: 99999;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .gal-lightbox.open {
+      display: flex;
+    }
+
+    @keyframes lbIn {
+      from {
+        opacity: 0;
+        transform: scale(0.92) translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+      }
+    }
+
+    .gal-lb-inner {
+      position: relative;
+      max-width: 900px;
+      width: 100%;
+      animation: lbIn 0.35s cubic-bezier(0.34, 1.2, 0.64, 1);
+    }
+
+    .gal-lb-img {
+      width: 100%;
+      max-height: 80vh;
+      object-fit: contain;
+      border-radius: 18px;
+      display: block;
+      box-shadow: 0 32px 80px rgba(0, 0, 0, 0.5);
+    }
+
+    .gal-lb-caption {
+      text-align: center;
+      color: rgba(255, 255, 255, 0.75);
+      font-size: 0.82rem;
+      font-weight: 600;
+      margin-top: 14px;
+      letter-spacing: 0.04em;
+    }
+
+    .gal-lb-close {
+      position: absolute;
+      top: -14px;
+      right: -14px;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: var(--gold);
+      border: none;
+      cursor: pointer;
+      color: #fff;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      transition: background 0.2s, transform 0.2s;
+      box-shadow: 0 4px 14px rgba(200, 150, 12, 0.5);
+    }
+
+    .gal-lb-close:hover {
+      background: var(--gold-light);
+      transform: scale(1.1) rotate(90deg);
+    }
+
+    .gal-lb-nav {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.12);
+      border: 1.5px solid rgba(255, 255, 255, 0.3);
+      color: #fff;
+      font-size: 1.2rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s, transform 0.2s;
+      backdrop-filter: blur(4px);
+    }
+
+    .gal-lb-nav:hover {
+      background: rgba(200, 150, 12, 0.55);
+      transform: translateY(-50%) scale(1.1);
+    }
+
+    .gal-lb-prev {
+      left: -60px;
+    }
+
+    .gal-lb-next {
+      right: -60px;
+    }
+
+    .gal-lb-dots {
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+      margin-top: 16px;
+    }
+
+    .gal-lb-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.3);
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      transition: background 0.25s, transform 0.25s;
+    }
+
+    .gal-lb-dot.active {
+      background: var(--gold-light);
+      transform: scale(1.5);
+    }
+
+    /* ── Responsive ── */
     @media (max-width: 900px) {
-      .gallery-orbital {
-        height: 420px;
+      .gallery-masonry {
+        columns: 2;
       }
 
-      .orb-card {
-        width: 210px;
-        height: 275px;
+      .gal-lb-prev {
+        left: -48px;
       }
 
-      .orb-card:nth-child(1) {
-        transform: translateX(-260px) translateY(24px) rotateZ(-18deg) rotateY(26deg) scale(0.80);
-        opacity: 0.65;
-      }
-
-      .orb-card:nth-child(2) {
-        transform: translateX(-130px) translateY(10px) rotateZ(-8deg) rotateY(14deg) scale(0.90);
-      }
-
-      .orb-card:nth-child(4) {
-        transform: translateX(130px) translateY(10px) rotateZ(8deg) rotateY(-14deg) scale(0.90);
-      }
-
-      .orb-card:nth-child(5) {
-        transform: translateX(260px) translateY(24px) rotateZ(18deg) rotateY(-26deg) scale(0.80);
-        opacity: 0.65;
-      }
-
-      .gallery-orbital:hover .orb-card:nth-child(1) {
-        transform: translateX(-340px) translateY(36px) rotateZ(-26deg) rotateY(36deg) scale(0.74);
-        opacity: 0.45;
-      }
-
-      .gallery-orbital:hover .orb-card:nth-child(2) {
-        transform: translateX(-175px) translateY(-12px) rotateZ(-14deg) rotateY(22deg) scale(0.85);
-      }
-
-      .gallery-orbital:hover .orb-card:nth-child(4) {
-        transform: translateX(175px) translateY(-12px) rotateZ(14deg) rotateY(-22deg) scale(0.85);
-      }
-
-      .gallery-orbital:hover .orb-card:nth-child(5) {
-        transform: translateX(340px) translateY(36px) rotateZ(26deg) rotateY(-36deg) scale(0.74);
-        opacity: 0.45;
+      .gal-lb-next {
+        right: -48px;
       }
     }
 
     @media (max-width: 600px) {
-      .gallery-orbital {
-        height: 320px;
-        perspective: 900px;
+      .gallery {
+        padding: 56px 0 48px;
       }
 
-      .orb-card {
-        width: 160px;
-        height: 220px;
-        padding: 16px 12px;
+      .gallery-masonry {
+        columns: 2;
+        column-gap: 10px;
       }
 
-      .orb-card-icon {
-        font-size: 2.4rem;
+      .gal-tile {
+        margin-bottom: 10px;
+        border-radius: 12px;
       }
 
-      .orb-card h3 {
-        font-size: 0.85rem;
+      .gal-tile img {
+        border-radius: 12px;
       }
 
-      .orb-card p {
-        font-size: 0.65rem;
-      }
-
-      /* Hide cards 1 & 5 — show only cards 2, 3, 4 */
-      .orb-card:nth-child(1),
-      .orb-card:nth-child(5) {
+      .gal-lb-prev,
+      .gal-lb-next {
         display: none;
       }
 
-      /* Reposition the 3 visible cards */
-      .orb-card:nth-child(2) {
-        transform: translateX(-110px) translateY(10px) rotateZ(-8deg) rotateY(14deg) scale(0.88);
-      }
-
-      .orb-card:nth-child(3) {
-        transform: translateX(0px) translateY(0px) rotateZ(0deg) scale(1);
-      }
-
-      .orb-card:nth-child(4) {
-        transform: translateX(110px) translateY(10px) rotateZ(8deg) rotateY(-14deg) scale(0.88);
-      }
-
-      /* Hover spread for 3-card layout */
-      .gallery-orbital:hover .orb-card:nth-child(2) {
-        transform: translateX(-145px) translateY(-10px) rotateZ(-13deg) rotateY(20deg) scale(0.82);
-      }
-
-      .gallery-orbital:hover .orb-card:nth-child(3) {
-        transform: translateX(0px) translateY(-14px) rotateZ(0deg) scale(1.04);
-      }
-
-      .gallery-orbital:hover .orb-card:nth-child(4) {
-        transform: translateX(145px) translateY(-10px) rotateZ(13deg) rotateY(-20deg) scale(0.82);
+      .gallery-counter {
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
       }
     }
 
@@ -5074,31 +5003,41 @@
     </div>
   </section>
 
-  <!-- GALLERY — ORBITAL SPREAD -->
   <section class="gallery" id="gallery-section">
     <div class="container">
 
       <div class="section-title" id="galleryTitle">
-        <span class="tag" style="animation:sectionTagSlide 0.8s ease both;"> School Gallery</span>
+        <span class="tag" style="animation:sectionTagSlide 0.8s ease both;">✦ School Gallery</span>
         <h2>Life at Loretto Central School</h2>
         <p>A glimpse into our vibrant campus life, events, achievements, and everyday moments.</p>
         <div class="divider"></div>
       </div>
 
-      <!-- Orbital stack: hover the group to spread, hover a card to bring it forward -->
-      <div class="gallery-orbital" id="galleryGrid"></div>
+      <!-- Masonry grid — JS populates this -->
+      <div class="gallery-masonry" id="galleryGrid"></div>
 
-      <!-- Hint text -->
-      <p
-        style="text-align:center;font-size:0.78rem;color:var(--text-muted);margin-top:0;margin-bottom:28px;letter-spacing:.04em;">
-        Hover the gallery to explore — hover any card to bring it forward
-      </p>
+      <!-- View All link -->
+      <div class="gallery-view-all">
+        <a href="gallery.html">View Full Gallery →</a>
+      </div>
 
-      <!-- Counter bar -->
+      <!-- Counter bar — JS populates this -->
       <div class="gallery-counter" id="galCounter"></div>
 
     </div>
   </section>
+
+  <!-- Lightbox — outside the section so it renders over everything -->
+  <div class="gal-lightbox" id="galLightbox" onclick="if(event.target===this) galLbClose()">
+    <div class="gal-lb-inner">
+      <button class="gal-lb-close" onclick="galLbClose()" aria-label="Close lightbox">✕</button>
+      <button class="gal-lb-nav gal-lb-prev" onclick="galLbNav(-1)" aria-label="Previous image">&#8592;</button>
+      <button class="gal-lb-nav gal-lb-next" onclick="galLbNav(1)" aria-label="Next image">&#8594;</button>
+      <img class="gal-lb-img" id="galLbImg" src="" alt="" />
+      <div class="gal-lb-caption" id="galLbCaption"></div>
+      <div class="gal-lb-dots" id="galLbDots"></div>
+    </div>
+  </div>
 
   <!-- ADMISSIONS CTA -->
   <section class="admissions-cta">
@@ -5598,30 +5537,69 @@
           }
         }
 
+        // ── Gallery title fields
         if (gallery.tag) setText('#galleryTitle .tag', gallery.tag);
         if (gallery.heading) setText('#galleryTitle h2', gallery.heading);
         if (gallery.description) setText('#galleryTitle p', gallery.description);
-        if (Array.isArray(gallery.images) && gallery.images.length) {
-          var galleryGridHost = document.getElementById('galleryGrid');
-          if (galleryGridHost) {
-            galleryGridHost.innerHTML = gallery.images.slice(0, 5).map(function (item, index) {
-              var delays = [
-                { d: '5s', dl: '1.2s' },
-                { d: '6.5s', dl: '0.6s' },
-                { d: '5.5s', dl: '0s' },
-                { d: '6s', dl: '0.4s' },
-                { d: '7s', dl: '0.9s' }
-              ];
-              var del = delays[index] || delays[0];
-              return '<div class="orb-card"><div class="orb-card-overlay"></div><img class="orb-card-icon" style="--oi-d:' + del.d + ';--oi-dl:' + del.dl + ';" src="' + (item.image || item.url) + '" alt="' + (item.label || ('Gallery Image ' + (index + 1))) + '" /></div>';
-            }).join('');
-          }
+
+        // ── Masonry grid
+        var galImages = (Array.isArray(gallery.images) && gallery.images.length)
+          ? gallery.images.slice(0, 9)
+          : [
+            { image: 'https://images.unsplash.com/photo-1546410531-bb4caa6b424d?auto=format&fit=crop&q=80&w=800', label: 'School Campus' },
+            { image: 'https://images.unsplash.com/photo-1523050335456-c38730b0ebf6?auto=format&fit=crop&q=80&w=800', label: 'Annual Sports' },
+            { image: 'https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&q=80&w=800', label: 'Science Exhibition' },
+            { image: 'https://images.unsplash.com/photo-1577891729319-f4874c739880?auto=format&fit=crop&q=80&w=800', label: 'Art Gallery' },
+            { image: 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&q=80&w=800', label: 'Music Class' },
+            { image: 'https://images.unsplash.com/photo-1544531585-9847b68c8c86?auto=format&fit=crop&q=80&w=800', label: 'Graduation Day' },
+            { image: 'https://images.unsplash.com/photo-1588072432836-e10032774350?auto=format&fit=crop&q=80&w=800', label: 'Primary Wing' }
+          ];
+
+        var galleryGridHost = document.getElementById('galleryGrid');
+        if (galleryGridHost) {
+          // Store images globally so lightbox can access them
+          window._galImages = galImages;
+
+          galleryGridHost.innerHTML = galImages.map(function (item, index) {
+            var src = item.image || item.url || '';
+            var label = item.label || ('Photo ' + (index + 1));
+
+            var aspectStyles = [
+              'aspect-ratio:4/3',
+              'aspect-ratio:3/4',
+              'aspect-ratio:16/10',
+              'aspect-ratio:1/1',
+              'aspect-ratio:4/3',
+              'aspect-ratio:3/4',
+              'aspect-ratio:16/10',
+              'aspect-ratio:4/3',
+              'aspect-ratio:1/1',
+            ];
+            var imgStyle = aspectStyles[index % aspectStyles.length] + ';object-fit:cover;width:100%;display:block;';
+
+            return (
+              '<div class="gal-tile" onclick="galLbOpen(' + index + ')" tabindex="0" role="button" aria-label="View ' + label + '">' +
+              '<img src="' + src + '" alt="' + label + '" style="' + imgStyle + '" loading="lazy" />' +
+              '<div class="gal-tile-overlay">' +
+              '<span class="gal-tile-label">' + label + '</span>' +
+              '</div>' +
+              '<div class="gal-tile-zoom">&#x26F6;</div>' +
+              '</div>'
+            );
+          }).join('');
         }
+
+        // ── Counter bar
         if (Array.isArray(gallery.counters) && gallery.counters.length) {
           var galCounterHost = document.getElementById('galCounter');
           if (galCounterHost) {
             galCounterHost.innerHTML = gallery.counters.map(function (item) {
-              return '<div class="gal-counter-item"><span class="gal-counter-num">' + (item.value || '') + '</span> ' + (item.label || '') + '</div>';
+              return (
+                '<div class="gal-counter-item">' +
+                '<span class="gal-counter-num">' + (item.value || '') + '</span> ' +
+                (item.label || '') +
+                '</div>'
+              );
             }).join('');
           }
         }
@@ -6135,3 +6113,130 @@
       window.addEventListener('resize', resetContactPanels);
     })();
   </script>
+
+  <script id="STEP4_LIGHTBOX_JS">
+    (function () {
+
+      var _current = 0;
+
+      function getImages() {
+        return window._galImages || [];
+      }
+
+      function buildDots(images, current) {
+        var dotsEl = document.getElementById('galLbDots');
+        if (!dotsEl) return;
+        dotsEl.innerHTML = images.map(function (_, i) {
+          return '<button class="gal-lb-dot' + (i === current ? ' active' : '') + '" onclick="galLbGoTo(' + i + ')" aria-label="Image ' + (i + 1) + '"></button>';
+        }).join('');
+      }
+
+      function show(index) {
+        var images = getImages();
+        if (!images.length) return;
+        _current = (index + images.length) % images.length;
+
+        var item = images[_current];
+        var src = item.image || item.url || '';
+        var label = item.label || ('Photo ' + (_current + 1));
+        var imgEl = document.getElementById('galLbImg');
+        var capEl = document.getElementById('galLbCaption');
+
+        if (imgEl) {
+          imgEl.style.opacity = '0';
+          imgEl.style.transition = 'opacity 0.25s ease';
+          imgEl.src = src;
+          imgEl.alt = label;
+          imgEl.onload = function () { imgEl.style.opacity = '1'; };
+          // fallback for cached images
+          if (imgEl.complete) imgEl.style.opacity = '1';
+        }
+        if (capEl) capEl.textContent = label;
+
+        buildDots(images, _current);
+      }
+
+      window.galLbOpen = function (index) {
+        var lb = document.getElementById('galLightbox');
+        if (lb) {
+          lb.classList.add('open');
+          document.body.style.overflow = 'hidden';
+        }
+        show(index);
+      };
+
+      window.galLbClose = function () {
+        var lb = document.getElementById('galLightbox');
+        if (lb) lb.classList.remove('open');
+        document.body.style.overflow = '';
+      };
+
+      window.galLbNav = function (dir) {
+        show(_current + dir);
+      };
+
+      window.galLbGoTo = function (index) {
+        show(index);
+      };
+
+      /* Keyboard navigation */
+      document.addEventListener('keydown', function (e) {
+        var lb = document.getElementById('galLightbox');
+        if (!lb || !lb.classList.contains('open')) return;
+        if (e.key === 'ArrowRight') galLbNav(1);
+        if (e.key === 'ArrowLeft') galLbNav(-1);
+        if (e.key === 'Escape') galLbClose();
+      });
+
+      /* Touch/swipe support */
+      var _touchStartX = null;
+      document.addEventListener('touchstart', function (e) {
+        var lb = document.getElementById('galLightbox');
+        if (!lb || !lb.classList.contains('open')) return;
+        _touchStartX = e.touches[0].clientX;
+      }, { passive: true });
+
+      document.addEventListener('touchend', function (e) {
+        var lb = document.getElementById('galLightbox');
+        if (!lb || !lb.classList.contains('open') || _touchStartX === null) return;
+        var dx = e.changedTouches[0].clientX - _touchStartX;
+        if (Math.abs(dx) > 50) galLbNav(dx < 0 ? 1 : -1);
+        _touchStartX = null;
+      }, { passive: true });
+
+      /* Scroll-triggered entrance animation */
+      (function () {
+        var galSection = document.getElementById('gallery-section');
+        if (!galSection) return;
+        var io = new IntersectionObserver(function (entries) {
+          entries.forEach(function (e) {
+            if (e.isIntersecting) {
+              var tiles = e.target.querySelectorAll('.gal-tile');
+              tiles.forEach(function (t) {
+                // trigger animation by ensuring the element is in the DOM
+                t.style.animationPlayState = 'running';
+              });
+              io.unobserve(e.target);
+            }
+          });
+        }, { threshold: 0.1 });
+        io.observe(galSection);
+
+        // Pause animations until section is visible
+        var checkReady = setInterval(function () {
+          var tiles = document.querySelectorAll('.gal-tile');
+          if (tiles.length) {
+            clearInterval(checkReady);
+            tiles.forEach(function (t) {
+              t.style.animationPlayState = 'paused';
+            });
+            io.observe(galSection);
+          }
+        }, 100);
+      })();
+
+    })();
+  </script>
+</body>
+
+</html>
