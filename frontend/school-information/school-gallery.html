@@ -186,7 +186,7 @@
     if (data.description) document.getElementById('galleryDesc').innerText = data.description;
     if (data.heading) document.getElementById('bannerTitle').innerText = data.heading;
 
-    const images = Array.isArray(data.images) ? data.images.filter(img => img.visible !== false) : [];
+    const images = Array.isArray(data.images) ? data.images.filter(img => img.visible !== false).reverse() : [];
     const grid = document.getElementById('galleryGrid');
 
     if (images.length === 0) {
