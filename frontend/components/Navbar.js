@@ -562,6 +562,7 @@
       + '<a href="' + R + 'school-information/7-prevention-sexual-harassment.html">Prevention of Harassment</a>'
       + '<a href="' + R + 'school-information/8-child-protection-policy.html">Child Protection Policy</a>'
       + '<a href="' + R + 'school-information/9-website-privacy-policy.html">Privacy and Policy</a>'
+      + '<a href="' + R + 'school-information/school-gallery.html">School Gallery</a>'
       + '</div></div>'
 
       + '<div class="lcs-nav-item"><a href="#">Activities &amp; Clubs <span class="arrow">&#9660;</span></a>'
@@ -638,6 +639,7 @@
         ['Prevention of Harassment', R + 'school-information/7-prevention-sexual-harassment.html'],
         ['Child Protection Policy', R + 'school-information/8-child-protection-policy.html'],
         ['Privacy and Policy', R + 'school-information/9-website-privacy-policy.html'],
+        ['School Gallery', R + 'school-information/school-gallery.html'],
       ]],
       ['Activities & Clubs', '#', [
         ['Western Dance', R + 'activities-and-clubs/1-western-dance.html'],

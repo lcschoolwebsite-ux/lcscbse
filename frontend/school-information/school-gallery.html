@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-DBNE16BEN6"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag("js", new Date());
+    gtag("config", "G-DBNE16BEN6");
+  </script>
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>School Gallery | School Information | Loretto Central School</title>
+  <link rel="shortcut icon" href="../favicon.ico" type="image/x-icon">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800&family=Nunito:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --navy: #0e6b6b; --navy-dark: #094f4f; --gold: #c8960c; --gold-light: #e8b020;
+      --gold-pale: #f5e6c0; --white: #ffffff; --light-bg: #f9f6ef; --text: #1a2e2e; --text-muted: #5a6e6e; --border: #e2d5b0;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Nunito', sans-serif; color: var(--text); background: var(--white); overflow-x: hidden; }
+
+    /* TOP BAR & NAV styles from curriculum (trimmed for brevity but keeping core) */
+    .container { max-width: 1160px; margin: 0 auto; padding: 0 24px; }
+
+    /* PAGE BANNER */
+    .page-banner {
+      background: linear-gradient(135deg, #094f4f 0%, #0e6b6b 60%, #127a7a 100%);
+      padding: 60px 0 50px;
+      position: relative;
+      overflow: hidden;
+    }
+    .page-banner-content { position: relative; z-index: 2; text-align: center; }
+    .page-banner h1 { font-family: 'Playfair Display', serif; font-size: 2.6rem; font-weight: 800; color: #fff; margin-bottom: 12px; }
+    .breadcrumb { display: flex; gap: 8px; align-items: center; justify-content: center; font-size: 0.82rem; color: rgba(255,255,255,0.75); }
+    .breadcrumb a { color: var(--gold-light); text-decoration: none; }
+    .breadcrumb a:hover { color: #fff; }
+    .breadcrumb span { color: rgba(255,255,255,0.45); }
+
+    /* SCHOOL INFORMATION SUBNAV */
+    .si-subnav { background: var(--light-bg); border-bottom: 2px solid var(--border); }
+    .si-subnav-inner { display: flex; overflow-x: auto; max-width: 1160px; margin: 0 auto; padding: 0 24px; scrollbar-width: none; }
+    .si-subnav-inner::-webkit-scrollbar { display: none; }
+    .si-subnav-inner a { display: block; padding: 13px 16px; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); text-decoration: none; white-space: nowrap; border-bottom: 3px solid transparent; transition: all 0.2s; flex-shrink: 0; }
+    .si-subnav-inner a:hover { color: var(--navy); border-color: var(--navy); }
+    .si-subnav-inner a.active { color: var(--navy); border-color: var(--gold); background: rgba(200,150,12,0.06); }
+
+    /* CONTENT */
+    .page-content { padding: 64px 0; background: var(--light-bg); }
+    .content-card { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 48px; box-shadow: 0 4px 24px rgba(14,107,107,0.07); }
+    .content-card h2 { font-family: 'Playfair Display', serif; font-size: 2rem; color: var(--navy); margin-bottom: 20px; }
+    .content-card h2::after { content: ''; display: block; width: 50px; height: 3px; background: linear-gradient(90deg, var(--gold), var(--gold-light)); border-radius: 2px; margin-top: 10px; margin-bottom: 30px; }
+
+    /* ── MASONRY GALLERY STYLES ── */
+    .gallery-masonry {
+      column-count: 3;
+      column-gap: 16px;
+      width: 100%;
+    }
+    .gallery-item {
+      display: inline-block;
+      width: 100%;
+      margin-bottom: 16px;
+      position: relative;
+      border-radius: 16px;
+      overflow: hidden;
+      cursor: zoom-in;
+      background: #eee;
+      break-inside: avoid;
+      transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1), box-shadow 0.4s;
+    }
+    .gallery-item img {
+      display: block;
+      width: 100%;
+      height: auto;
+      transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+    }
+    .gallery-item:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+    }
+    .gallery-item:hover img { transform: scale(1.07); }
+    .gallery-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 60%);
+      opacity: 0; transition: opacity 0.3s;
+      display: flex; align-items: flex-end; padding: 20px;
+    }
+    .gallery-item:hover .gallery-overlay { opacity: 1; }
+    .gallery-label { color: #fff; font-size: 0.9rem; font-weight: 600; transform: translateY(10px); transition: transform 0.3s; }
+    .gallery-item:hover .gallery-label { transform: translateY(0); }
+    .zoom-icon {
+      position: absolute; top: 15px; right: 15px;
+      width: 36px; height: 36px; background: rgba(200,150,12,0.9);
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      color: #fff; font-size: 1.1rem; opacity: 0; transform: scale(0.8); transition: all 0.3s;
+    }
+    .gallery-item:hover .zoom-icon { opacity: 1; transform: scale(1); }
+
+    @media (max-width: 992px) { .gallery-masonry { column-count: 2; } }
+    @media (max-width: 480px) { .gallery-masonry { column-count: 1; } }
+
+    /* ── LIGHTBOX ── */
+    .lightbox {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.95);
+      z-index: 10000; display: none; align-items: center; justify-content: center;
+      backdrop-filter: blur(8px);
+    }
+    .lightbox.active { display: flex; animation: fadeIn 0.3s forwards; }
+    .lightbox-content { position: relative; max-width: 90%; max-height: 85vh; }
+    .lightbox-img { max-width: 100%; max-height: 85vh; border-radius: 8px; box-shadow: 0 0 40px rgba(0,0,0,0.5); }
+    .lightbox-close { position: absolute; top: -50px; right: 0; color: #fff; font-size: 2rem; cursor: pointer; }
+    .lightbox-caption { position: absolute; bottom: -40px; left: 0; right: 0; text-align: center; color: #fff; font-weight: 600; font-size: 1rem; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  </style>
+</head>
+<body>
+
+<!-- Note: Navbar and Footer are injected via Components JS -->
+
+<div class="page-banner">
+  <div class="container">
+    <div class="page-banner-content">
+      <h1 id="bannerTitle">School Gallery</h1>
+      <div class="breadcrumb">
+        <a href="../index.html">Home</a>
+        <span>›</span>
+        <span>School Information</span>
+        <span>›</span>
+        <span>School Gallery</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="si-subnav">
+  <div class="si-subnav-inner">
+    <a href="1-curriculum.html">Curriculum</a>
+    <a href="2-school-uniform.html">School Uniform</a>
+    <a href="3-school-calendar.html">School Calendar</a>
+    <a href="4-office-school-timings.html">Office &amp; School Timings</a>
+    <a href="5-provisions.html">Provisions</a>
+    <a href="6-facilities.html">Facilities in the School</a>
+    <a href="7-prevention-sexual-harassment.html">Prevention of Sexual Harassment</a>
+    <a href="8-child-protection-policy.html">Child Protection Policy</a>
+    <a href="9-website-privacy-policy.html">Privacy and Policy</a>
+    <a href="school-gallery.html" class="active">School Gallery</a>
+  </div>
+</div>
+
+<section class="page-content">
+  <div class="container">
+    <div class="content-card">
+      <h2 id="galleryHeading">Life at Loretto</h2>
+      <p id="galleryDesc" style="margin-bottom:40px; color: var(--text-muted);"></p>
+      <div class="gallery-masonry" id="galleryGrid">
+        <!-- Images injected here -->
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox">
+  <div class="lightbox-content">
+    <span class="lightbox-close" id="lightboxClose">&times;</span>
+    <img src="" alt="" class="lightbox-img" id="lightboxImg">
+    <div class="lightbox-caption" id="lightboxCaption"></div>
+  </div>
+</div>
+
+<script src="../shared-data-loader.js"></script>
+<script>
+  (async function() {
+    // 1. Fetch gallery data
+    const gallery = typeof window.loadContentBlock === 'function' 
+      ? await window.loadContentBlock('homepage.gallery') 
+      : { data: {} };
+    
+    const data = gallery.data || {};
+    if (data.heading) document.getElementById('galleryHeading').innerText = data.heading;
+    if (data.description) document.getElementById('galleryDesc').innerText = data.description;
+    if (data.heading) document.getElementById('bannerTitle').innerText = data.heading;
+
+    const images = Array.isArray(data.images) ? data.images.filter(img => img.visible !== false) : [];
+    const grid = document.getElementById('galleryGrid');
+
+    if (images.length === 0) {
+      grid.innerHTML = '<p style="text-align:center; grid-column: 1/-1; padding: 40px; color: #999;">No gallery images available at the moment.</p>';
+      return;
+    }
+
+    grid.innerHTML = images.map((img, idx) => `
+      <div class="gallery-item" onclick="openLightbox('${img.image}', '${img.label || ''}')">
+        <img src="${img.image}" alt="${img.label || 'Gallery Image'}" loading="lazy">
+        <div class="gallery-overlay">
+          <div class="gallery-label">${img.label || ''}</div>
+        </div>
+        <div class="zoom-icon">🔍</div>
+      </div>
+    `).join('');
+
+    // Lightbox Logic
+    const lightbox = document.getElementById('lightbox');
+    const lightboxImg = document.getElementById('lightboxImg');
+    const lightboxCap = document.getElementById('lightboxCaption');
+    const closeBtn = document.getElementById('lightboxClose');
+
+    window.openLightbox = (src, cap) => {
+      lightboxImg.src = src;
+      lightboxCap.innerText = cap;
+      lightbox.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    };
+
+    closeBtn.onclick = () => {
+      lightbox.classList.remove('active');
+      document.body.style.overflow = '';
+    };
+
+    lightbox.onclick = (e) => {
+      if (e.target === lightbox) closeBtn.onclick();
+    };
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && lightbox.classList.contains('active')) closeBtn.onclick();
+    });
+  })();
+</script>
+<script src="/components/Navbar.js"></script>
+<script src="/components/Footer.js"></script>
+</body>
+</html>
