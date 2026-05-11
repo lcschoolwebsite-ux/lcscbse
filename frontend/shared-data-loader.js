@@ -6,7 +6,10 @@
 /* ── API BASE RESOLUTION ── */
 var API_BASE_KEY = 'loretto_api_base';
 var API_BASE_OK_KEY = API_BASE_KEY + '_ok';
-var PROD_API_BASE = 'https://lcscbse-production.up.railway.app/api';
+// window.__VITE_API_URL__ is injected by Vite at build time from VITE_API_URL env var
+var PROD_API_BASE = (typeof window.__VITE_API_URL__ !== 'undefined' && window.__VITE_API_URL__)
+  ? window.__VITE_API_URL__
+  : 'https://lcscbse-production.up.railway.app';
 var IS_LOCAL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.hostname.indexOf('.local') !== -1);
 var RESOLVED_API_BASE = '';
 var CACHE_PREFIX = 'loretto_cache_';
@@ -75,6 +78,7 @@ async function resolveApiBase() {
   API_BASE_PROMISE = (async function () {
     var origin = window.location.origin.replace(/\/+$/, '');
     var candidates = [
+      PROD_API_BASE.replace(/\/+$/, '') + '/api',
       '/api',
       origin + '/api',
       'https://lcscbse-production.up.railway.app/api',
@@ -153,9 +157,10 @@ async function resolveApiBase() {
       return winner;
     } catch (error) {
       console.warn('[Loretto API] All probes failed or timed out. Falling back to default.', error);
-      // If we are in production and all probes failed, the absolute Railway URL is often the safest bet 
-      // if the relative /api doesn't exist on the frontend host.
-      var fallback = IS_LOCAL ? 'http://localhost:3000/api' : 'https://lcscbse-production.up.railway.app/api';
+      // If we are in production and all probes failed, use the build-time injected URL.
+      var fallback = IS_LOCAL
+        ? 'http://localhost:3000/api'
+        : (PROD_API_BASE.replace(/\/+$/, '') + '/api');
       
       // We don't cache the fallback as "OK" because we want to retry discovery next time
       RESOLVED_API_BASE = fallback;
