@@ -66,6 +66,13 @@ RESOLVED_API_BASE = persistentGet(API_BASE_KEY) || '';
 ACTIVE_CACHE_BUST_TOKEN = persistentGet(CACHE_BUST_KEY) || '';
 
 async function resolveApiBase() {
+  // Cache busting: if the stored base contains the old Railway URL, clear it to force re-probe
+  var cachedBase = localStorage.getItem(API_BASE_KEY);
+  if (cachedBase && cachedBase.includes('railway.app')) {
+    localStorage.removeItem(API_BASE_KEY);
+    localStorage.removeItem(API_BASE_OK_KEY);
+  }
+
   var cachedOk = persistentGet(API_BASE_OK_KEY) === 'true';
   var cachedBase = persistentGet(API_BASE_KEY);
   if (cachedBase && cachedOk) {
