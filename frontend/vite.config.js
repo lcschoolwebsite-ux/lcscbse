@@ -3,6 +3,8 @@ import { resolve } from 'path';
 import { readdirSync, statSync } from 'fs';
 import { fileURLToPath } from 'url';
 
+import { viteStaticCopy } from 'vite-plugin-static-copy';
+
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
 
 /**
@@ -12,6 +14,8 @@ function collectHtmlInputs(dir, base = dir, inputs = {}) {
   for (const entry of readdirSync(dir)) {
     const full = resolve(dir, entry);
     if (statSync(full).isDirectory()) {
+      // Skip dist and node_modules
+      if (entry === 'dist' || entry === 'node_modules') continue;
       collectHtmlInputs(full, base, inputs);
     } else if (entry.endsWith('.html')) {
       // Use a relative key like "admin/admin-panel"
@@ -28,6 +32,69 @@ export default defineConfig(({ mode }) => {
 
   return {
     root: __dirname,
+
+    plugins: [
+      viteStaticCopy({
+        targets: [
+          {
+            src: '*.js',
+            dest: '.'
+          },
+          {
+            src: 'components',
+            dest: '.'
+          },
+          {
+            src: 'admin',
+            dest: '.'
+          },
+          {
+            src: 'about-us/*.js',
+            dest: 'about-us'
+          },
+          {
+            src: 'academics/*.js',
+            dest: 'academics'
+          },
+          {
+            src: 'activities-and-clubs/*.js',
+            dest: 'activities-and-clubs'
+          },
+          {
+            src: 'admissions/*.js',
+            dest: 'admissions'
+          },
+          {
+            src: 'mandatory-disclosure/*.js',
+            dest: 'mandatory-disclosure'
+          },
+          {
+            src: 'school-information/*.js',
+            dest: 'school-information'
+          },
+          {
+            src: 'IMGS',
+            dest: '.'
+          },
+          {
+            src: 'logo.png',
+            dest: '.'
+          },
+          {
+            src: 'logo-animation.mp4',
+            dest: '.'
+          },
+          {
+            src: 'favicon.ico',
+            dest: '.'
+          },
+          {
+            src: 'sitemap.xml',
+            dest: '.'
+          }
+        ]
+      })
+    ],
 
     // Inject VITE_API_URL as a global constant accessible in any JS file
     define: {
