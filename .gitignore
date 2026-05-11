@@ -5,10 +5,10 @@ frontend/node_modules/
 # Vite build output
 frontend/dist/
 
-# Environment variables - NEVER commit these
+# Environment variables
 .env
 .env.local
-.env.production
+# .env.production is committed intentionally — it only contains a public API URL
 
 # Backups and temp files
 *.bak

@@ -9,7 +9,7 @@ var API_BASE_OK_KEY = API_BASE_KEY + '_ok';
 // window.__VITE_API_URL__ is injected by Vite at build time from VITE_API_URL env var
 var PROD_API_BASE = (typeof window.__VITE_API_URL__ !== 'undefined' && window.__VITE_API_URL__)
   ? window.__VITE_API_URL__
-  : 'https://lcscbse-production.up.railway.app';
+  : 'https://api.lorettocentralschool.edu.in';
 var IS_LOCAL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.hostname.indexOf('.local') !== -1);
 var RESOLVED_API_BASE = '';
 var CACHE_PREFIX = 'loretto_cache_';
@@ -81,7 +81,7 @@ async function resolveApiBase() {
       PROD_API_BASE.replace(/\/+$/, '') + '/api',
       '/api',
       origin + '/api',
-      'https://lcscbse-production.up.railway.app/api',
+      'https://api.lorettocentralschool.edu.in/api',
       'http://localhost:3000/api',
       'http://127.0.0.1:3000/api'
     ];
