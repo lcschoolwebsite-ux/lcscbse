@@ -121,7 +121,7 @@
     var candidates = [
       '/api',
       origin + '/api',
-      'https://lcscbse-production.up.railway.app/api',
+      'https://api.lorettocentralschool.edu.in/api',
       'http://localhost:3000/api',
       'http://127.0.0.1:3000/api'
     ];

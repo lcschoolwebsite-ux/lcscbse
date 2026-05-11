@@ -78,12 +78,7 @@ async function resolveApiBase() {
   API_BASE_PROMISE = (async function () {
     var origin = window.location.origin.replace(/\/+$/, '');
     var candidates = [
-      PROD_API_BASE.replace(/\/+$/, '') + '/api',
-      '/api',
-      origin + '/api',
-      'https://api.lorettocentralschool.edu.in/api',
-      'http://localhost:3000/api',
-      'http://127.0.0.1:3000/api'
+      'https://api.lorettocentralschool.edu.in/api'
     ];
 
     // Deduplicate and prioritize

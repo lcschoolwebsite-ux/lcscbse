@@ -24,7 +24,7 @@ function collectHtmlInputs(dir, base = dir, inputs = {}) {
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, __dirname, '');
-  const apiUrl = env.VITE_API_URL || 'https://lcscbse-production.up.railway.app';
+  const apiUrl = env.VITE_API_URL || 'https://api.lorettocentralschool.edu.in';
 
   return {
     root: __dirname,

@@ -19,7 +19,7 @@
   }
 
   var R = getRootPrefix();
-  var PROD_API = 'https://lcscbse-production.up.railway.app/api';
+  var PROD_API = 'https://api.lorettocentralschool.edu.in/api';
 
   /**
    * Helper to fetch JSON with robust error handling and type checking.
