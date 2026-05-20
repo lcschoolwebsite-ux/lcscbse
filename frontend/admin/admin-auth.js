@@ -260,7 +260,16 @@
     var cachedConfigured = localStorage.getItem(RESOLVED_OK_KEY) === 'true' || sessionStorage.getItem(RESOLVED_OK_KEY) === 'true';
     
     if (cached && cachedConfigured && !forceRefresh) {
-      return cached;
+      // Fast probe to verify the cached URL is still reachable
+      var verified = await probeApiBase(cached);
+      if (verified) {
+        return cached;
+      }
+      // If verification failed, clear the stale cache and fall through to re-probe
+      localStorage.removeItem(RESOLVED_API_BASE_KEY);
+      sessionStorage.removeItem(RESOLVED_API_BASE_KEY);
+      localStorage.removeItem(RESOLVED_OK_KEY);
+      sessionStorage.removeItem(RESOLVED_OK_KEY);
     }
  
     var candidates = getCandidateApiBases();
