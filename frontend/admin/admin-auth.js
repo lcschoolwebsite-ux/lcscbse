@@ -264,7 +264,7 @@
     }
  
     var candidates = getCandidateApiBases();
-    var resolved = normalizeOrigin(window.location.origin);
+    var resolved = 'https://api.lorettocentralschool.edu.in';
 
     // Try each candidate one by one
     for (var i = 0; i < candidates.length; i++) {
@@ -281,7 +281,7 @@
       }
     }
     
-    // Fallback to origin
+    // Fallback to production API URL instead of origin
     localStorage.setItem(RESOLVED_API_BASE_KEY, resolved);
     sessionStorage.setItem(RESOLVED_API_BASE_KEY, resolved);
     return resolved;
