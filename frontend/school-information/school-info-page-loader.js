@@ -246,7 +246,12 @@
       '.uni-img-view-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(9,79,79,0.45);color:#fff;font-size:0.75rem;font-weight:700;opacity:0;transition:opacity 0.3s ease;backdrop-filter:blur(2px);}',
       '.uni-img-item:hover .uni-img-view-overlay{opacity:1;}',
       '@media(max-width:850px){.uni-img-grid{grid-template-columns:repeat(2, 1fr);gap:12px;}}',
-      '@media(max-width:480px){.uni-img-grid{grid-template-columns:1fr;}}'
+      '@media(max-width:480px){.uni-img-grid{grid-template-columns:1fr;}}',
+
+      /* ── Facility Card Images ── */
+      '.feat-card-img-wrap{width:100%;aspect-ratio:16/10;border-radius:8px;overflow:hidden;margin-bottom:16px;background:rgba(0,0,0,0.02);border:1px solid var(--border);}',
+      '.feat-card-img{width:100%;height:100%;object-fit:cover;transition:transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);}',
+      '.feat-card:hover .feat-card-img{transform:scale(1.08);}'
     ].join('');
     document.head.appendChild(style);
   }
@@ -317,13 +322,18 @@
   function extractCards(body) {
     return Array.prototype.slice.call(body.querySelectorAll('.fcg .fce')).map(function (card) {
       var inputs = card.querySelectorAll('input');
+      var icon = inputs[0] ? inputValue(inputs[0]) : '';
+      var title = inputs[1] ? inputValue(inputs[1]) : '';
+      var imgInput = card.querySelector('.fc-img');
+      var image = imgInput ? inputValue(imgInput) : '';
       return {
-        icon: inputValue(inputs[0]),
-        title: inputValue(inputs[1]),
-        description: longValue(card.querySelector('textarea'))
+        icon: icon,
+        title: title,
+        description: longValue(card.querySelector('textarea')),
+        image: image
       };
     }).filter(function (card) {
-      return card.title || card.description || card.icon;
+      return card.title || card.description || card.icon || card.image;
     });
   }
 
@@ -391,11 +401,16 @@
     return renderSectionHeading(title)
       + '<div class="feat-grid">'
       + cards.map(function (card) {
-          return '<div class="feat-card">'
-            + (card.icon ? '<div class="icon">' + escapeHtml(card.icon) + '</div>' : '')
-            + (card.title ? '<h4>' + escapeHtml(card.title) + '</h4>' : '')
+          var cardHtml = '<div class="feat-card">';
+          if (card.image) {
+            cardHtml += '<div class="feat-card-img-wrap"><img src="' + escapeHtml(card.image) + '" alt="' + escapeHtml(card.title || 'Facility') + '" class="feat-card-img" /></div>';
+          } else if (card.icon) {
+            cardHtml += '<div class="icon">' + escapeHtml(card.icon) + '</div>';
+          }
+          cardHtml += (card.title ? '<h4>' + escapeHtml(card.title) + '</h4>' : '')
             + (card.description ? '<p>' + formatText(card.description) + '</p>' : '')
             + '</div>';
+          return cardHtml;
         }).join('')
       + '</div>';
   }

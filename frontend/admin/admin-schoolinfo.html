@@ -805,11 +805,53 @@ async function go(id){
   await loadSection(id);
   if(id==='privacy') ensurePrivacyBlocks();
   if(id==='uniform') ensureUniformImageFields();
+  if(id==='facilities') ensureFacilitiesImageFields();
 }
 
 function ensureUniformImageFields(){
   _ensureUniImg("Boys'",  'uni-boys',  'uni-boys-img');
   _ensureUniImg("Girls'", 'uni-girls', 'uni-girls-img');
+}
+
+function ensureFacilitiesImageFields(){
+  var c = document.getElementById('fac-c');
+  if(!c) return;
+  var cards = c.querySelectorAll('.fce');
+  cards.forEach(function(card) {
+    if (!card.querySelector('.cld-row')) {
+      var row = document.createElement('div');
+      row.className = 'cld-row';
+      row.style.marginTop = '8px';
+      row.style.display = 'flex';
+      row.style.gap = '8px';
+      row.style.alignItems = 'center';
+      
+      var input = document.createElement('input');
+      input.type = 'url';
+      input.className = 'fc-img';
+      input.placeholder = 'Image URL...';
+      input.setAttribute('oninput', "this.setAttribute('value', this.value)");
+      
+      var btn = document.createElement('button');
+      btn.className = 'cld-up';
+      btn.type = 'button';
+      btn.style.padding = '5px 8px';
+      btn.style.fontSize = '0.7rem';
+      btn.textContent = 'Upload';
+      btn.setAttribute('onclick', "AdminCloudinary.triggerUpload(this.closest('.cld-row').querySelector('input[type=file]'))");
+      
+      var fileInput = document.createElement('input');
+      fileInput.type = 'file';
+      fileInput.accept = 'image/*';
+      fileInput.style.display = 'none';
+      fileInput.setAttribute('onchange', "AdminCloudinary.uploadSingleImage(this, this.closest('.cld-row').querySelector('input[type=url]'))");
+      
+      row.appendChild(input);
+      row.appendChild(btn);
+      row.appendChild(fileInput);
+      card.appendChild(row);
+    }
+  });
 }
 
 function _ensureUniImg(label, listId, imgBaseId){
@@ -932,9 +974,22 @@ function addFC(id){
   var c=document.getElementById(id);if(!c)return;
   var n=c.children.length+1;
   var d=document.createElement('div');d.className='fce';
+  var isFacilities = (id === 'fac-c');
+  var imgHtml = '';
+  if (isFacilities) {
+    imgHtml = '<div class="cld-row" style="margin-top: 8px; display: flex; gap: 8px; align-items: center;">'
+      + '<input type="url" class="fc-img" placeholder="Image URL..." oninput="this.setAttribute(\'value\', this.value)"/>'
+      + '<button class="cld-up" type="button" style="padding: 5px 8px; font-size: 0.7rem;" onclick="AdminCloudinary.triggerUpload(this.closest(\'.cld-row\').querySelector(\'input[type=file]\'))">Upload</button>'
+      + '<input type="file" accept="image/*" style="display:none" onchange="AdminCloudinary.uploadSingleImage(this, this.closest(\'.cld-row\').querySelector(\'input[type=url]\'))"/>'
+      + '</div>';
+  }
   d.innerHTML='<div class="fch"><span class="fcn">Card '+n+'</span><button class="ab del" style="margin-left:auto" onclick="this.closest(\'.fce\').remove()">×</button></div>'
-    +'<input placeholder="Emoji icon..."/><input placeholder="Title..."/><textarea placeholder="Description..."></textarea>';
-  c.appendChild(d);d.querySelector('input').focus();
+    +'<input placeholder="Emoji icon..."/><input placeholder="Title..."/><textarea placeholder="Description..."></textarea>'
+    + imgHtml;
+  c.appendChild(d);
+  var titleInput = d.querySelectorAll('input')[1];
+  if(titleInput) titleInput.focus();
+  else d.querySelector('input').focus();
 }
 
 /* ═══════════════════════════════════
@@ -979,6 +1034,7 @@ document.addEventListener('keydown',function(e){if((e.ctrlKey||e.metaKey)&&e.key
 loadSection(currentTab).then(function(){
   if(currentTab==='privacy') ensurePrivacyBlocks();
   if(currentTab==='uniform') ensureUniformImageFields();
+  if(currentTab==='facilities') ensureFacilitiesImageFields();
 });
 </script>
 </body>
