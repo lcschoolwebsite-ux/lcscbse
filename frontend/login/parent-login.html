@@ -13,6 +13,17 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Site Under Construction - Loretto Central School</title>
+  <!-- Redirect parent-login to the external student portal -->
+  <meta http-equiv="refresh" content="0;url=https://portal.lorettocentralschool.edu.in/student-login">
+  <script>
+    // JS redirect fallback for browsers
+    (function(){
+      var target = 'https://portal.lorettocentralschool.edu.in/student-login';
+      if(window.location.href !== target){
+        try{ window.location.replace(target); } catch(e){ window.location.href = target; }
+      }
+    })();
+  </script>
   <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800&family=Nunito:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <style>
