@@ -496,8 +496,11 @@ async function renderNewsList(containerId, paginationId, page = 1) {
             Read Story
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
           </button>
-          <button class="share-btn" type="button" onclick="shareNewsItem(${JSON.stringify(item).replace(/"/g, '&quot;')})">
-            Share
+          <button class="icon-action-btn share-icon-btn" type="button" aria-label="Share article" title="Share article" onclick="shareNewsItem(${JSON.stringify(item).replace(/"/g, '&quot;')})">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.6" y1="10.9" x2="15.4" y2="7.1"></line><line x1="8.6" y1="13.1" x2="15.4" y2="16.9"></line></svg>
+          </button>
+          <button class="icon-action-btn copy-link-btn" type="button" aria-label="Copy article link" title="Copy article link" onclick="copyNewsLink(${JSON.stringify(item).replace(/"/g, '&quot;')})">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
           </button>
         </div>
       </div>
@@ -581,8 +584,11 @@ async function renderNewsListOld(containerId) {
             Read Story
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
           </button>
-          <button class="share-btn" type="button" onclick="shareNewsItem(${JSON.stringify(item).replace(/"/g, '&quot;')})">
-            Share
+          <button class="icon-action-btn share-icon-btn" type="button" aria-label="Share article" title="Share article" onclick="shareNewsItem(${JSON.stringify(item).replace(/"/g, '&quot;')})">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.6" y1="10.9" x2="15.4" y2="7.1"></line><line x1="8.6" y1="13.1" x2="15.4" y2="16.9"></line></svg>
+          </button>
+          <button class="icon-action-btn copy-link-btn" type="button" aria-label="Copy article link" title="Copy article link" onclick="copyNewsLink(${JSON.stringify(item).replace(/"/g, '&quot;')})">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
           </button>
         </div>
       </div>
@@ -866,6 +872,23 @@ async function shareNewsItem(item) {
   window.prompt('Copy this news link', url);
 }
 
+async function copyNewsLink(item) {
+  const url = getNewsShareUrl(item);
+  if (!url) return;
+
+  try {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      await navigator.clipboard.writeText(url);
+      showNewsShareToast('Link copied');
+      return;
+    }
+  } catch (error) {
+    // Fall through to prompt.
+  }
+
+  window.prompt('Copy this news link', url);
+}
+
 async function openSharedNewsArticle() {
   const params = new URLSearchParams(window.location.search || '');
   const sharedId = params.get('news') || params.get('article') || params.get('id');
@@ -946,4 +969,5 @@ function closeNewsModal(id) {
 }
 
 window.shareNewsItem = shareNewsItem;
+window.copyNewsLink = copyNewsLink;
 window.openSharedNewsArticle = openSharedNewsArticle;

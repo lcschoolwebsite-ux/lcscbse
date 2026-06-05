@@ -212,13 +212,16 @@
       gap: 10px;
       flex-wrap: wrap;
       margin-top: 16px;
+      align-items: center;
     }
-    .share-btn {
+    .icon-action-btn {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      padding: 8px 16px;
-      border-radius: 6px;
+      width: 38px;
+      height: 38px;
+      padding: 0;
+      border-radius: 10px;
       border: 1px solid var(--border);
       background: transparent;
       color: var(--navy);
@@ -226,12 +229,22 @@
       font-size: 0.82rem;
       font-weight: 700;
       cursor: pointer;
-      transition: background 0.2s, color 0.2s, transform 0.15s, border-color 0.2s;
+      transition: background 0.2s, color 0.2s, transform 0.15s, border-color 0.2s, box-shadow 0.2s;
     }
-    .share-btn:hover {
+    .icon-action-btn:hover {
       background: rgba(14,107,107,0.08);
       border-color: rgba(14,107,107,0.32);
       transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(14,107,107,0.10);
+    }
+    .icon-action-btn svg {
+      display: block;
+    }
+    .share-icon-btn:hover {
+      color: var(--navy-dark);
+    }
+    .copy-link-btn:hover {
+      color: var(--gold);
     }
 
     /* ── MODAL OVERLAY ── */
