@@ -491,10 +491,15 @@ async function renderNewsList(containerId, paginationId, page = 1) {
         </div>
         <h3>${item.title || 'Untitled'}</h3>
         <p class="news-excerpt">${item.excerpt || ''}</p>
-        <button class="read-more-btn" onclick="openNewsModal(${JSON.stringify(item).replace(/"/g, '&quot;')})">
-          Read Story 
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-        </button>
+        <div class="news-actions">
+          <button class="read-more-btn" onclick="openNewsModal(${JSON.stringify(item).replace(/"/g, '&quot;')})">
+            Read Story
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+          </button>
+          <button class="share-btn" type="button" onclick="shareNewsItem(${JSON.stringify(item).replace(/"/g, '&quot;')})">
+            Share
+          </button>
+        </div>
       </div>
     </article>
   `).join('') + `
@@ -571,10 +576,15 @@ async function renderNewsListOld(containerId) {
         </div>
         <h3>${item.title || 'Untitled'}</h3>
         <p class="news-excerpt">${item.excerpt || ''}</p>
-        <button class="read-more-btn" onclick="openNewsModal(${JSON.stringify(item).replace(/"/g, '&quot;')})">
-          Read Story 
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-        </button>
+        <div class="news-actions">
+          <button class="read-more-btn" onclick="openNewsModal(${JSON.stringify(item).replace(/"/g, '&quot;')})">
+            Read Story
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+          </button>
+          <button class="share-btn" type="button" onclick="shareNewsItem(${JSON.stringify(item).replace(/"/g, '&quot;')})">
+            Share
+          </button>
+        </div>
       </div>
     </article>
   `).join('');
@@ -780,6 +790,92 @@ function closeNewsImageModal() {
   if (viewer) viewer.remove();
 }
 
+function getNewsShareUrl(item) {
+  const id = item && item._id ? String(item._id).trim() : '';
+  if (!id) return '';
+  try {
+    return new URL('/news.html?news=' + encodeURIComponent(id), window.location.origin).href;
+  } catch (error) {
+    return window.location.origin + '/news.html?news=' + encodeURIComponent(id);
+  }
+}
+
+function showNewsShareToast(message) {
+  const text = String(message || '').trim();
+  if (!text) return;
+
+  let toast = document.getElementById('news-share-toast');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.id = 'news-share-toast';
+    toast.style.position = 'fixed';
+    toast.style.left = '50%';
+    toast.style.bottom = '24px';
+    toast.style.transform = 'translate(-50%, 18px)';
+    toast.style.background = 'rgba(6, 47, 47, 0.96)';
+    toast.style.color = '#fff';
+    toast.style.padding = '12px 18px';
+    toast.style.borderRadius = '999px';
+    toast.style.fontSize = '0.85rem';
+    toast.style.fontWeight = '700';
+    toast.style.boxShadow = '0 14px 34px rgba(0,0,0,0.22)';
+    toast.style.opacity = '0';
+    toast.style.transition = 'all 0.25s ease';
+    toast.style.zIndex = '100001';
+    document.body.appendChild(toast);
+  }
+
+  toast.textContent = text;
+  requestAnimationFrame(() => {
+    toast.style.opacity = '1';
+    toast.style.transform = 'translate(-50%, 0)';
+  });
+  clearTimeout(showNewsShareToast._timer);
+  showNewsShareToast._timer = setTimeout(() => {
+    toast.style.opacity = '0';
+    toast.style.transform = 'translate(-50%, 18px)';
+  }, 2400);
+}
+
+async function shareNewsItem(item) {
+  const url = getNewsShareUrl(item);
+  if (!url) return;
+
+  const title = item && item.title ? item.title : 'News & Events';
+  const text = item && item.excerpt ? item.excerpt : title;
+
+  try {
+    if (navigator.share) {
+      await navigator.share({ title, text, url });
+      return;
+    }
+  } catch (error) {
+    // Fall back to clipboard copy below.
+  }
+
+  try {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      await navigator.clipboard.writeText(url);
+      showNewsShareToast('Link copied');
+      return;
+    }
+  } catch (error) {
+    // Fall through to prompt.
+  }
+
+  window.prompt('Copy this news link', url);
+}
+
+async function openSharedNewsArticle() {
+  const params = new URLSearchParams(window.location.search || '');
+  const sharedId = params.get('news') || params.get('article') || params.get('id');
+  if (!sharedId) return;
+
+  const allNews = await loadNewsData();
+  const item = allNews.find((entry) => String(entry && entry._id) === String(sharedId));
+  if (item) openNewsModal(item);
+}
+
 function openNewsModal(item) {
   if (typeof item === 'string') {
     const existingModal = document.getElementById(item);
@@ -848,3 +944,6 @@ function closeNewsModal(id) {
     }, 300);
   }
 }
+
+window.shareNewsItem = shareNewsItem;
+window.openSharedNewsArticle = openSharedNewsArticle;

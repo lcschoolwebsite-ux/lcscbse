@@ -207,6 +207,32 @@
     .read-more-btn:hover { background: var(--gold); transform: translateY(-1px); }
     .read-more-btn svg { transition: transform 0.2s; }
     .read-more-btn:hover svg { transform: translateX(3px); }
+    .news-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 16px;
+    }
+    .share-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px 16px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--navy);
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s, transform 0.15s, border-color 0.2s;
+    }
+    .share-btn:hover {
+      background: rgba(14,107,107,0.08);
+      border-color: rgba(14,107,107,0.32);
+      transform: translateY(-1px);
+    }
 
     /* ── MODAL OVERLAY ── */
     .modal-overlay {
@@ -530,7 +556,9 @@
 
 <script>
   window.addEventListener('DOMContentLoaded', () => {
-    renderNewsList('news-grid', 'news-pagination');
+    renderNewsList('news-grid', 'news-pagination').then(() => {
+      if (window.openSharedNewsArticle) window.openSharedNewsArticle();
+    });
   });
 
   // Export for modal access if needed
