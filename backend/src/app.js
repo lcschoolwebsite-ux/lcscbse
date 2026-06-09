@@ -17,6 +17,10 @@ import enquiriesRoutes from './routes/enquiries.routes.js';
 
 const app = express();
 
+app.get('/health', (req, res) => {
+  res.json({ status: 'ok' });
+});
+
 app.use(
   cors({
     origin: env.corsOrigin === '*' ? true : env.corsOrigin.split(',').map((item) => item.trim()),
